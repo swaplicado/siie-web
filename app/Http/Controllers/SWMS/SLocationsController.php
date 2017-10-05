@@ -25,7 +25,7 @@ class SLocationsController extends Controller
        session(['menu' => $oMenu]);
        $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
 
-       $this->oCurrentUserPermission = SUtil::getTheUserPermission(!\Auth::check() ? \Config::get('scsys.UNDEFINED') : \Auth::user()->id, \Config::get('scperm.VIEW_CODE.LOCATIONS'));
+       $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.LOCATIONS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }

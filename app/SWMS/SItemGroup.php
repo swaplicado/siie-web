@@ -8,7 +8,7 @@ class SItemGroup extends Model {
   protected $primaryKey = 'id_group';
   protected $table = "wms_item_groups";
 
-  public static function getTable()
+  public function getTable()
   {
     return $this->table;
   }

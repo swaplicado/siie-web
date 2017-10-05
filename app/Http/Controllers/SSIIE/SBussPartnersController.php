@@ -25,7 +25,7 @@ class SBussPartnersController extends Controller {
          session(['menu' => $oMenu]);
          $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
 
-         $this->oCurrentUserPermission = SUtil::getTheUserPermission(!\Auth::check() ? \Config::get('scsys.UNDEFINED') : \Auth::user()->id, \Config::get('scperm.VIEW_CODE.BPS'));
+         $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.BPS'));
 
          $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
          $this->iFilterBp = \Config::get('scsiie.ATT.ALL');

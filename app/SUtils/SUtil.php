@@ -22,10 +22,48 @@ class SUtil {
    * @param  int  $id_user
    * @return App\SSYS\UserPermission
    */
-  public static function getTheUserPermission($id_user, $identifier)
+  public static function getTheUserPermission($iPermissionType, $iPermissionCode)
+  {
+    \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "");
+    
+      if (\Auth::check()) {
+        if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+        {
+            $userPermission = new SUserPermission();
+            $userPermission->id_usr_per = 0;
+            $userPermission->privilege_id = \Config::get('scsys.PRIVILEGES.MANAGER');
+            $userPermission->user_id = \Auth::user()->id;
+
+            return $userPermission;
+        }
+
+        foreach (\Auth::user()->userPermission as $oUserPermission)
+        {
+          if ($oUserPermission->permission->type_permission_id == $iPermissionType)
+          {
+              if ($oUserPermission->permission->code == $iPermissionCode)
+              {
+                  return $oUserPermission;
+              }
+          }
+        }
+      }
+
+      return NULL;
+  }
+
+  /**
+   * Return an UserPermission object with the privileges assigned.
+   * If the type user is ADMIN returns an UserPermission object with all the privileges.
+   *
+   * @param  int  $identifier
+   * @param  int  $id_user
+   * @return App\SSYS\UserPermission
+   */
+  public static function getTheUserPermissionDB($id_user, $identifier)
   {
       \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "");
-      
+
       if (\Auth::check() && \Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
       {
           $userPermission = new SUserPermission();
