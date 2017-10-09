@@ -80,7 +80,7 @@ class User extends Model implements AuthenticatableContract,
       return $this->hasMany('App\SSYS\SCoUsPermission');
     }
 
-    public function userCompany()
+    public function userCompanies()
     {
       return $this->hasMany('App\SSYS\SUserCompany');
     }

@@ -4,6 +4,10 @@
 	@include('templates.menu.menu')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_PERMISSIONS'))
 
 @section('content')
@@ -16,7 +20,6 @@
 			<th data-sortable="true">{{ trans('userinterface.labels.NAME') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.TYPE') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.STATUS') }}</th>
-			<th data-sortable="true">{{ trans('userinterface.labels.ACTION') }}</th>
 		</thead>
 		<tbody>
 			@foreach($permissions as $permission)
@@ -29,13 +32,6 @@
 						@else
 								<span class="label label-danger">{{ trans('userinterface.labels.INACTIVE') }}</span>
 						@endif
-					</td>
-					<td>
-						<?php
-								$oRegistry = $permission;
-								$iRegistryId = $permission->id_permission;
-						?>
-						@include('templates.list.options')
 					</td>
 				</tr>
 			@endforeach

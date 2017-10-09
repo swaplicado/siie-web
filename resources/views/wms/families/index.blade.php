@@ -32,6 +32,11 @@
 						<?php
 								$oRegistry = $family;
 								$iRegistryId = $family->id_family;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

@@ -35,6 +35,11 @@
 								$oRegistry = $branch;
 								$sRoute = 'siie.branches';
 								$iRegistryId = $branch->id_branch;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

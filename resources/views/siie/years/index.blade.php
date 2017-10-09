@@ -44,6 +44,12 @@
 								$oRegistry = $year;
 								$sRoute = 'siie.years';
 								$iRegistryId = $year->id_year;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
+
 						?>
 						<a href="{{ route('siie.months.index', $year->id_year) }}" class="btn btn-default">
 							<span class="glyphicon glyphicon-folder-open" aria-hidden = "true"/>

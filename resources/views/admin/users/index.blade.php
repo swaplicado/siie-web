@@ -4,6 +4,10 @@
 	@include('templates.menu.menu')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_USERS'))
 
 @section('content')
@@ -38,6 +42,13 @@
 						<?php
 								$oRegistry = $user;
 								$iRegistryId = $user->id;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+									\Config::get('scsys.OPTIONS.COPY'),
+									\Config::get('scsys.OPTIONS.MOD_PASS'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

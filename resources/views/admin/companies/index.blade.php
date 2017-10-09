@@ -4,6 +4,10 @@
 	@include('templates.menu.menu')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_COMPANIES'))
 
 @section('content')
@@ -37,6 +41,9 @@
 						<?php
 								$oRegistry = $company;
 								$iRegistryId = $company->id_company;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

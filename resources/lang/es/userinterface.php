@@ -16,6 +16,7 @@
 		'USERS' => 'Usuarios',
 		'PRIVILEGES' => 'Privilegios',
 		'USER_PERMISSIONS' => 'Asignación de permisos',
+		'USER_COMPANIES' => 'Acceso a empresas',
 		'PERMISSIONS' => 'Permisos',
 		'CATALOGUES' => 'Catálogos',
 
@@ -39,6 +40,7 @@
 											'LIST_LOCATIONS' => 'Ubicaciones',
 											'LIST_FAMILIES' => 'Familias',
 											'LIST_GROUPS' => 'Grupos',
+											'CHANGE_PASS' => 'Cambiar contraseña',
 											'CREATE_USER' => 'Crear usuario',
 											'CREATE_PERMISSION' => 'Crear usuario',
 											'CREATE_ASSIGNAMENT' => 'Crear asignación',
@@ -74,6 +76,8 @@
 								  		'CANCEL' => 'Cancelar',
 								  		'ACTIVATE' => 'Activar',
 								  		'DUPLICATE' => 'Duplicar',
+								  		'PASS' => 'Cambiar contraseña',
+								  		'ACCESS' => 'Acceso a empresas',
 											],
 
 		'placeholders' 	=> 	[
@@ -151,6 +155,9 @@
 											'NAME' => 'Nombre',
 											'OPENED' => 'Abierto',
 											'PASSWORD' => 'Contraseña',
+											'PASS_NEW' => 'Nueva contraseña',
+											'PASS_CONFIRM' => 'Confirmar contraseña',
+											'PASS_CURRENT' => 'Contraseña actual',
 											'PERMISSION' => 'Permiso',
 											'PRIVILEGE' => 'Privilegio',
 											'RFC' => 'RFC',
@@ -178,7 +185,6 @@
 											'IS_PART' => 'Socio',
 											'WAREHOUSE' => 'Almacén',
 											'WEB' => 'Web',
-
 										]
 
 	];

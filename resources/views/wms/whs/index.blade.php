@@ -38,6 +38,11 @@
 						<?php
 								$oRegistry = $whs;
 								$iRegistryId = $whs->id_whs;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

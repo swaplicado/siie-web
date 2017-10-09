@@ -113,6 +113,15 @@ return [
             'unique' => 'El código ya está en uso.',
             'required' => 'El campo código es obligatorio.',
         ],
+        'current_password' => [
+            'required' => 'El campo contraseña actual es obligatorio',
+        ],
+        'password' => [
+            'required' => 'El campo nueva contraseña es obligatorio',
+        ],
+        'password_confirmation' => [
+            'required' => 'Debe confirmar la nueva contraseña',
+        ],
 
     ],
 

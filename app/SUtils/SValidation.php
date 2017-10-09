@@ -35,6 +35,7 @@ class SValidation {
           }
           break;
       case \Config::get('scsys.OPERATION.DEL'): #delete
+      case \Config::get('scsys.OPERATION.SUPER'): #super
           if ($oUserPermission->privilege_id == \Config::get('scsys.PRIVILEGES.MANAGER')) {
             $sRender = 'visible';
           }

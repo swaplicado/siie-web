@@ -21,7 +21,7 @@
 					@yield('create')
 				</div>
 				<div class="col-md-6">
-					@include('templates.list.search')
+					@include('templates.list.filter')
 				</div>
 			</div>
 			<div class="row">

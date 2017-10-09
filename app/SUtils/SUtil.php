@@ -25,7 +25,7 @@ class SUtil {
   public static function getTheUserPermission($iPermissionType, $iPermissionCode)
   {
     \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "");
-    
+
       if (\Auth::check()) {
         if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
         {
@@ -113,6 +113,26 @@ class SUtil {
       }
 
       return $lUserCompany;
+  }
+
+  /**
+   * Return true if the user has permission to access to the company.
+   *
+   * @param  User  $oUser
+   * @param  int  $iIdCompany Company id
+   * @return true or false
+   */
+  public static function canAccessToCompany($oUser, $iIdCompany)
+  {
+      foreach ($oUser->userCompanies as $access)
+      {
+        if ($access->company_id == $iIdCompany)
+        {
+          return true;
+        }
+      }
+
+      return false;
   }
 
   /**

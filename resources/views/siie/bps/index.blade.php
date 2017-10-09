@@ -4,6 +4,7 @@
 	@include('templates.menu.menumodules')
 @endsection
 @section('addfilters')
+	@include('templates.list.search')
 	<span class="input-group-btn">
 		{!! Form::select('filterBp', [
 										 \Config::get('scsiie.ATT.ALL') => trans('userinterface.labels.ALL'),

@@ -40,6 +40,9 @@
                 <li>
                   <a href="{{ route('admin.companies.index') }}">{{ trans('userinterface.COMPANIES') }}</a>
                 </li>
+                <li>
+                  <a href="{{ route('admin.usraccess.index') }}">{{ trans('userinterface.USER_COMPANIES') }}</a>
+                </li>
             </ul>
           </li>
         </ul>

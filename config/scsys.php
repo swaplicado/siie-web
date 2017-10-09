@@ -22,9 +22,12 @@ return [
                     'EDITOR' => '4',
                     'MANAGER' => '5'],
 
-  'OPERATION' => ['CREATE' => '0',
+  'OPERATION' => [
+                  'CREATE' => '0',
                   'EDIT' => '1',
-                  'DEL' => '2'],
+                  'DEL' => '2',
+                  'SUPER' => '3',
+                ],
 
   'STATUS' => [
                 'ACTIVE' => '0',
@@ -35,5 +38,13 @@ return [
 
   'FILTER' => ['DELETED' => '1',
                 'ACTIVES' => '2',
-                'ALL' => '3']
+                'ALL' => '3'],
+
+  'OPTIONS' => [
+                'EDIT' => '001',
+                'DESTROY' => '002',
+                'ACTIVATE' => '003',
+                'COPY' => '004',
+                'MOD_PASS' => '005',
+              ],
 ];

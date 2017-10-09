@@ -27,7 +27,6 @@
 
 @section('content')
 
-
 		<div class="form-group">
 			{!! Form::label('username', trans('userinterface.labels.NAME').'*') !!}
 			{!! Form::text('username',

@@ -60,6 +60,14 @@ Route::group(['middleware' => ['auth']], function() {
   			'uses' => 'SUsersController@Destroy',
   			'as' => 'admin.users.destroy'
   		]);
+  		Route::get('users/{id}/changepass',[
+  			'uses' => 'SUsersController@ChangePass',
+  			'as' => 'admin.users.changepass'
+  		]);
+  		Route::put('users/{id}/updatepass',[
+  			'uses' => 'SUsersController@UpdatePass',
+  			'as' => 'admin.users.updatepass'
+  		]);
 
   		Route::resource('privileges','SSYS\SPrivilegesController');
   		Route::get('privileges/{id}/activate', [
@@ -100,6 +108,8 @@ Route::group(['middleware' => ['auth']], function() {
   			'uses' => 'SSYS\SCompaniesController@Activate',
   			'as' => 'admin.companies.activate'
   		]);
+
+      Route::resource('usraccess','SSYS\SUserCompaniesController');
     });
 
 	});

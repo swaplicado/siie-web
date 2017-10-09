@@ -4,6 +4,10 @@
 	@include('templates.menu.menu')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_PRIVILEGES'))
 
 @section('content')
@@ -32,6 +36,11 @@
 						<?php
 								$oRegistry = $privilege;
 								$iRegistryId = $privilege->id_privilege;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

@@ -36,6 +36,11 @@
 						<?php
 								$oRegistry = $location;
 								$iRegistryId = $location->id_location;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

@@ -14,4 +14,9 @@ return [
       'ACCG_YEAR'  => 'Ejercicios',
       'PERIODS'  => 'Periodos',
       'BPS'  => 'Asociados de negocios',
+
+      'ACCESS' => [
+            'PERMITTED' => 'Permitido',
+            'RESTRICTED' => 'Restringido'
+      ],
 ];

@@ -7,7 +7,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 @extends('templates.basic')
 
 @section('head')
-
   <link rel="stylesheet" type="text/css" href="{{ asset('css/error.css') }}">
 @endsection
 <body>
@@ -15,7 +14,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <div class="wrap">
    	<div class="logo">
    			<p>@yield('text', 'lorem')</p>
-   			<!--<img src="{{ asset('images/errors/404_error.jpg') }}"/>-->
          <h2>ERROR</h2>
          <h1>@yield('code', '00')</h1>
    			<div class="sub">
@@ -23,8 +21,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
    			</div>
    	</div>
     </div>
-
-
    	<div class="footer">
    	 Design by-<a href="http://w3layouts.com">W3Layouts</a>
    	</div>

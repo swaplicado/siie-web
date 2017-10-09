@@ -7,6 +7,9 @@
 		'REG_DELETED' => '¡Se ha borrado de forma exitosa!',
 		'REG_EDITED' => '¡Se ha editado de forma exitosa!',
 		'REG_ACTIVATED' => '¡Se ha activado de forma exitosa!',
+		'PASS_CHANGED' => '¡La contraseña ha sido cambiada de forma exitosa!',
+
+		'PASS_ERROR' => 'La contraseña actual no es correcta',
 
 		'options' =>	['MSG_YES' => 'Sí',
 						 'MSG_NO' => 'No'],

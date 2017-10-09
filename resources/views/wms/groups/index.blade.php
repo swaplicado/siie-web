@@ -34,6 +34,11 @@
 						<?php
 								$oRegistry = $group;
 								$iRegistryId = $group->id_group;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>
