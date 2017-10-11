@@ -28,9 +28,9 @@
 @section('content')
 
 		<div class="form-group">
-			{!! Form::label('id_year', trans('userinterface.labels.YEAR').'*') !!}
-			{!! Form::number('id_year',
-				isset($year) ? $year->id_year : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.YEAR'), 'required']) !!}
+			{!! Form::label('year', trans('userinterface.labels.YEAR').'*') !!}
+			{!! Form::number('year',
+				isset($year) ? $year->year : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.YEAR'), 'required']) !!}
 		</div>
 
 		<div class="form-group">

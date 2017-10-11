@@ -3,7 +3,7 @@
 use App\Http\Requests\Request;
 use App\SWMS\SWarehouse;
 use App\SWMS\SWhsType;
-use App\SSIIE\SBranch;
+use App\SERP\SBranch;
 
 class SWhsRequest extends Request
 {

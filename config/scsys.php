@@ -6,15 +6,18 @@ return [
   'UNDEFINED' => '0',
 
   'MODULES'   =>  [
-                  'SIIE' => '5',
-                  'MMS' => '1',
-                  'QMS' => '2',
-                  'WMS' => '3',
-                  'TMS' => '4',
+                  'ERP' => '1',
+                  'MMS' => '2',
+                  'QMS' => '3',
+                  'WMS' => '4',
+                  'TMS' => '5',
                 ],
 
-  'TP_USER' => ['ADMIN' => '1',
-                  'DEFAULT' => '2'],
+  'TP_USER' => [
+                  'STANDART' => '1',
+                  'MANAGER' => '2',
+                  'ADMIN' => '3',
+                ],
 
 	'PRIVILEGES' => ['NA' => '1',
                     'READER' => '2',

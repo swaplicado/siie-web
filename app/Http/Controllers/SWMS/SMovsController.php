@@ -12,7 +12,7 @@ use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\SWMS\SWarehouse;
 use App\SWMS\SWhsType;
-use App\SSIIE\SBranch;
+use App\SERP\SBranch;
 
 class SMovsController extends Controller
 {

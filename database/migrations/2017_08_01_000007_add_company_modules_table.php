@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class AddCompanyModulesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('sysu_company_modules', function (blueprint $table) {
+        	$table->increments('id_company_module');
+        	$table->integer('company_id')->unsigned();
+        	$table->integer('module_id')->unsigned();
+
+        	$table->unique(['company_id', 'module_id']);
+        	$table->foreign('company_id')->references('id_company')->on('sysu_companies')->onDelete('cascade');
+        	$table->foreign('module_id')->references('id_module')->on('syss_modules')->onDelete('cascade');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('sysu_company_modules');
+    }
+}

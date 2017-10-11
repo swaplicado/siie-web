@@ -147,24 +147,6 @@ Route::group(['middleware' => ['auth']], function() {
   		Route::resource('wms','SWMS\SWmsController');
 
       /*
-      * Units
-      **/
-
-      Route::resource('units','SWMS\SUnitsController');
-      Route::get('units/{id}/destroy',[
-        'uses' => 'SWMS\SUnitsController@Destroy',
-        'as' => 'wms.units.destroy'
-      ]);
-      Route::get('units/{id}/activate', [
-        'uses' => 'SWMS\SUnitsController@Activate',
-        'as' => 'wms.units.activate'
-      ]);
-      Route::get('units/{id}/copy', [
-        'uses' => 'SWMS\SUnitsController@Copy',
-        'as' => 'wms.units.copy'
-      ]);
-
-      /*
       * Warehouses
       **/
       Route::resource('whs','SWMS\SWarehousesController');
@@ -198,39 +180,6 @@ Route::group(['middleware' => ['auth']], function() {
         'as' => 'wms.locs.copy'
       ]);
 
-      /*
-      * Families
-      **/
-      Route::resource('families','SWMS\SFamiliesController');
-      Route::get('families/{id}/destroy',[
-        'uses' => 'SWMS\SFamiliesController@Destroy',
-        'as' => 'wms.families.destroy'
-      ]);
-      Route::get('families/{id}/activate', [
-        'uses' => 'SWMS\SFamiliesController@Activate',
-        'as' => 'wms.families.activate'
-      ]);
-      Route::get('families/{id}/copy', [
-        'uses' => 'SWMS\SFamiliesController@Copy',
-        'as' => 'wms.families.copy'
-      ]);
-
-      /*
-      * Groups
-      **/
-      Route::resource('groups','SWMS\SGroupsController');
-      Route::get('groups/{id}/destroy',[
-        'uses' => 'SWMS\SGroupsController@Destroy',
-        'as' => 'wms.groups.destroy'
-      ]);
-      Route::get('groups/{id}/activate', [
-        'uses' => 'SWMS\SGroupsController@Activate',
-        'as' => 'wms.groups.activate'
-      ]);
-      Route::get('groups/{id}/copy', [
-        'uses' => 'SWMS\SGroupsController@Copy',
-        'as' => 'wms.groups.copy'
-      ]);
   });
 
 
@@ -246,71 +195,116 @@ Route::group(['middleware' => ['auth']], function() {
 
       Route::get('/home',[
   			'as' => 'siie.home',
-  			'uses' => 'SSIIE\SSIIEController@Home'
+  			'uses' => 'SERP\SERPController@Home'
   		]);
-      Route::resource('central','SSIIE\SSiieController');
+      Route::resource('central','SERP\SSiieController');
 
-      Route::resource('companies','SSIIE\SSiieCompaniesController');
+      Route::resource('companies','SERP\SSiieCompaniesController');
       Route::get('companies/{id}/destroy',[
-        'uses' => 'SSIIE\SSiieCompaniesController@Destroy',
+        'uses' => 'SERP\SSiieCompaniesController@Destroy',
         'as' => 'siie.companies.destroy'
       ]);
       Route::get('companies/{id}/activate', [
-        'uses' => 'SSIIE\SSiieCompaniesController@Activate',
+        'uses' => 'SERP\SSiieCompaniesController@Activate',
         'as' => 'siie.companies.activate'
       ]);
 
-      Route::resource('branches','SSIIE\SBranchesController');
+      Route::resource('branches','SERP\SBranchesController');
       Route::get('branches/{id}/destroy',[
-        'uses' => 'SSIIE\SBranchesController@Destroy',
+        'uses' => 'SERP\SBranchesController@Destroy',
         'as' => 'siie.branches.destroy'
       ]);
       Route::get('branches/{id}/activate', [
-        'uses' => 'SSIIE\SBranchesController@Activate',
+        'uses' => 'SERP\SBranchesController@Activate',
         'as' => 'siie.branches.activate'
       ]);
 
-      Route::resource('years','SSIIE\SYearsController');
+      Route::resource('years','SERP\SYearsController');
       Route::get('years/{id}/destroy',[
-        'uses' => 'SSIIE\SYearsController@Destroy',
+        'uses' => 'SERP\SYearsController@Destroy',
         'as' => 'siie.years.destroy'
       ]);
       Route::get('years/{id}/activate', [
-        'uses' => 'SSIIE\SYearsController@Activate',
+        'uses' => 'SERP\SYearsController@Activate',
         'as' => 'siie.years.activate'
       ]);
 
-      Route::get('months/{year}/edit/{month}',[
-        'uses' => 'SSIIE\SMonthsController@edit',
-        'as' => 'siie.months.edit'
-      ]);
-      Route::get('months/{year}/update/{month}',[
-        'uses' => 'SSIIE\SMonthsController@edit',
-        'as' => 'siie.months.update'
-      ]);
+      Route::resource('months','SERP\SMonthsController');
       Route::get('months/{year}/index',[
-        'uses' => 'SSIIE\SMonthsController@index',
+        'uses' => 'SERP\SMonthsController@index',
         'as' => 'siie.months.index'
       ]);
-      Route::put('months/{year}/update',[
-        'uses' => 'SSIIE\SMonthsController@Update',
-        'as' => 'siie.months.update'
-      ]);
 
-      Route::resource('bps','SSIIE\SBussPartnersController');
+      Route::resource('bps','SERP\SPartnersController');
       Route::get('bps/{id}/destroy',[
-        'uses' => 'SSIIE\SBussPartnersController@Destroy',
+        'uses' => 'SERP\SPartnersController@Destroy',
         'as' => 'siie.bps.destroy'
       ]);
       Route::get('bps/{id}/activate', [
-        'uses' => 'SSIIE\SBussPartnersController@Activate',
+        'uses' => 'SERP\SPartnersController@Activate',
         'as' => 'siie.bps.activate'
       ]);
       Route::get('bps/{id}/copy', [
-  			'uses' => 'SSIIE\SBussPartnersController@Copy',
+  			'uses' => 'SERP\SPartnersController@Copy',
   			'as' => 'siie.bps.copy'
   		]);
 
+      /*
+      * Units
+      **/
+
+      Route::resource('units','SERP\SUnitsController');
+      Route::get('units/{id}/destroy',[
+        'uses' => 'SERP\SUnitsController@Destroy',
+        'as' => 'siie.units.destroy'
+      ]);
+      Route::get('units/{id}/activate', [
+        'uses' => 'SERP\SUnitsController@Activate',
+        'as' => 'siie.units.activate'
+      ]);
+      Route::get('units/{id}/copy', [
+        'uses' => 'SERP\SUnitsController@Copy',
+        'as' => 'siie.units.copy'
+      ]);
+
+      /*
+      * Families
+      **/
+      Route::resource('families','SERP\SFamiliesController');
+      Route::get('families/{id}/destroy',[
+        'uses' => 'SERP\SFamiliesController@Destroy',
+        'as' => 'siie.families.destroy'
+      ]);
+      Route::get('families/{id}/activate', [
+        'uses' => 'SERP\SFamiliesController@Activate',
+        'as' => 'siie.families.activate'
+      ]);
+      Route::get('families/{id}/copy', [
+        'uses' => 'SERP\SFamiliesController@Copy',
+        'as' => 'siie.families.copy'
+      ]);
+
+      /*
+      * Groups
+      **/
+      Route::resource('groups','SERP\SGroupsController');
+      Route::get('groups/{id}/destroy',[
+        'uses' => 'SERP\SGroupsController@Destroy',
+        'as' => 'siie.groups.destroy'
+      ]);
+      Route::get('groups/{id}/activate', [
+        'uses' => 'SERP\SGroupsController@Activate',
+        'as' => 'siie.groups.activate'
+      ]);
+      Route::get('groups/{id}/copy', [
+        'uses' => 'SERP\SGroupsController@Copy',
+        'as' => 'siie.groups.copy'
+      ]);
+
+      /*
+      * Genders
+      **/
+      Route::resource('genders','SERP\SGendersController');
     });
 
 	});

@@ -15,7 +15,7 @@
 		</div>
 		<div class="panel-body">
 			<section>
-				<h1 style="text-align = center;">SIIE WEB 1.0</h1>
+				<h1 style="text-align = center;">ERP WEB 1.0</h1>
 
 				<a class="btn btn-primary" href="{{ route('auth.login') }}">Entrar</a>
 			</section>

@@ -5,10 +5,10 @@
 return [
       'MODULE'  => 'Módulo Central',
 
-      'SIIE'  => 'SIIE',
-      'SIIE_'  => 'SIIE WEB 1.0',
+      'ERP'  => 'ERP',
+      'ERP_'  => 'ERP WEB 1.0',
       'CATALOGUES'  => 'Catálogos',
-      'SIIE_COMPANIES'  => 'Datos de la empresa',
+      'ERP_COMPANIES'  => 'Datos de la empresa',
       'BRANCHES'  => 'Sucursales',
       'ACG_YEAR_PER'  => 'Ejercicios y períodos',
       'ACCG_YEAR'  => 'Ejercicios',
@@ -19,4 +19,15 @@ return [
             'PERMITTED' => 'Permitido',
             'RESTRICTED' => 'Restringido'
       ],
+
+
+      'UNITS' => 'Unidades',
+
+      'ITEMS' => 'Materiales y Productos',
+          'GENDERS' => 'Géneros',
+          'GROUPS' => 'Grupos',
+          'FAMILIES' => 'Familias',
+          'CONVERTIONS' => 'Conversiones',
+          'MATERIALS' => 'Materiales',
+          'PRODUCTS' => 'Productos',
 ];

@@ -28,8 +28,8 @@
 @section('content')
 
 		<div class="form-group">
-			{!! Form::label('bp_name', trans('userinterface.labels.BP').'*') !!}
-			{!! Form::text('bp_name',
+			{!! Form::label('name', trans('userinterface.labels.BP').'*') !!}
+			{!! Form::text('name',
 				isset($bpartner) ? $bpartner->bp_name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.BP'), 'required']) !!}
 		</div>
 
@@ -46,21 +46,15 @@
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('id_fiscal', trans('userinterface.labels.RFC').'*') !!}
-			{!! Form::text('id_fiscal',
-				isset($bpartner) ? $bpartner->id_fiscal : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.RFC'), 'required']) !!}
+			{!! Form::label('fiscal_id', trans('userinterface.labels.RFC').'*') !!}
+			{!! Form::text('fiscal_id',
+				isset($bpartner) ? $bpartner->fiscal_id : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.RFC'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('curp', trans('userinterface.labels.CURP')) !!}
-			{!! Form::text('curp',
-				isset($bpartner) ? $bpartner->curp : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.CURP')]) !!}
-		</div>
-
-		<div class="form-group">
-			{!! Form::label('web', trans('userinterface.labels.WEB')) !!}
-			{!! Form::text('web',
-				isset($bpartner) ? $bpartner->web : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WEB')]) !!}
+			{!! Form::label('person_id', trans('userinterface.labels.CURP')) !!}
+			{!! Form::text('person_id',
+				isset($bpartner) ? $bpartner->person_id : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.CURP')]) !!}
 		</div>
 
 		<div class="form-group">
@@ -92,50 +86,10 @@
 				</div>
 				<div class="col-md-1">
 					<div class="row">
-						{!! Form::label('is_creditor', trans('userinterface.labels.IS_CRED')) !!}
+						{!! Form::label('is_related_party', trans('userinterface.labels.IS_PART')) !!}
 					</div>
 					<div class="row">
-						{!! Form::checkbox('is_creditor', 1, isset($bpartner) ? $bpartner->is_creditor : false) !!}
-					</div>
-				</div>
-				<div class="col-md-1">
-					<div class="row">
-						{!! Form::label('is_debtor', trans('userinterface.labels.IS_DEBT')) !!}
-					</div>
-					<div class="row">
-						{!! Form::checkbox('is_debtor', 1, isset($bpartner) ? $bpartner->is_debtor : false) !!}
-					</div>
-				</div>
-				<div class="col-md-1">
-					<div class="row">
-						{!! Form::label('is_bank', trans('userinterface.labels.IS_BANK')) !!}
-					</div>
-					<div class="row">
-						{!! Form::checkbox('is_bank', 1, isset($bpartner) ? $bpartner->is_bank : false) !!}
-					</div>
-				</div>
-				<div class="col-md-1">
-					<div class="row">
-						{!! Form::label('is_employee', trans('userinterface.labels.IS_EMPL')) !!}
-					</div>
-					<div class="row">
-						{!! Form::checkbox('is_employee', 1, isset($bpartner) ? $bpartner->is_employee : false) !!}
-					</div>
-				</div>
-				<div class="col-md-1">
-					<div class="row">
-						{!! Form::label('is_agt_sales', trans('userinterface.labels.IS_AGTS')) !!}
-					</div>
-					<div class="row">
-						{!! Form::checkbox('is_agt_sales', 1, isset($bpartner) ? $bpartner->is_agt_sales : false) !!}
-					</div>
-				</div>
-				<div class="col-md-1">
-					<div class="row">
-						{!! Form::label('is_partner', trans('userinterface.labels.IS_PART')) !!}
-					</div>
-					<div class="row">
-						{!! Form::checkbox('is_partner', 1, isset($bpartner) ? $bpartner->is_partner : false) !!}
+						{!! Form::checkbox('is_related_party', 1, isset($bpartner) ? $bpartner->is_related_party : false) !!}
 					</div>
 				</div>
 			</div>

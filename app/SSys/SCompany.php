@@ -6,8 +6,8 @@ class SCompany extends Model {
 
     protected $connection = 'ssystem';
     protected $primaryKey = 'id_company';
-    protected $table = "sys_companies";
-    protected $fillable = ['id_company', 'name', 'database_name', 'host', 'port', 'database_user', 'password', 'default_schema'];
+    protected $table = "sysu_companies";
+    protected $fillable = ['id_company', 'name', 'database_name', 'dbms_host', 'dbms_port', 'user_name', 'user_password'];
 
     public function userCompany()
     {
@@ -21,7 +21,7 @@ class SCompany extends Model {
 
     public function company()
     {
-      return $this->hasOne('App\SSIIE\SSiieCompany');
+      return $this->hasOne('App\SERP\SSiieCompany');
     }
 
     public function userCreation()

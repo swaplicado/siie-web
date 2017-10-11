@@ -21,9 +21,9 @@
 @section('content')
 
 		<div class="form-group">
-			{!! Form::label('id_month', trans('userinterface.labels.MONTH').'*') !!}
-			{!! Form::number('id_month',
-				isset($month) ? $month->id_month : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.MONTH'), 'required']) !!}
+			{!! Form::label('month', trans('userinterface.labels.MONTH').'*') !!}
+			{!! Form::number('month',
+				isset($month) ? $month->month : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.MONTH'), 'required']) !!}
 		</div>
 
 		<div class="form-group">

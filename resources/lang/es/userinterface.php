@@ -4,8 +4,8 @@
 
 	return [
 
-		'SYS' => 'SIIE',
-		'SYSTEM' => 'SIIE WEB 1.0',
+		'SYS' => 'ERP',
+		'SYSTEM' => 'ERP WEB 1.0',
 		'WELCOME_START' => 'Bienvenido, ingrese datos',
 		'HOME' => 'Inicio',
 		'HELP' => 'Ayuda',
@@ -161,7 +161,7 @@
 											'PERMISSION' => 'Permiso',
 											'PRIVILEGE' => 'Privilegio',
 											'RFC' => 'RFC',
-											'SIIE_ID' => 'Cve SIIE',
+											'ERP_ID' => 'Cve ERP',
 											'STATUS' => 'Estatus',
 											'TYPE' => 'Tipo',
 											'USER' => 'Usuario',

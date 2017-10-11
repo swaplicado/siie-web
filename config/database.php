@@ -78,10 +78,10 @@ return [
 
         'siie' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST_SIIE', 'localhost'),
-            'database'  => env('DB_DATABASE_SIIE', 'forge'),
-            'username'  => env('DB_USERNAME_SIIE', 'forge'),
-            'password'  => env('DB_PASSWORD_SIIE', ''),
+            'host'      => env('DB_HOST_ERP', 'localhost'),
+            'database'  => env('DB_DATABASE_ERP', 'forge'),
+            'username'  => env('DB_USERNAME_ERP', 'forge'),
+            'password'  => env('DB_PASSWORD_ERP', ''),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',

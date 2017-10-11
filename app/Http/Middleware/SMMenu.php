@@ -12,7 +12,7 @@ class SMMenu
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
      * @param  int $iModule can be:
-     *          \Config::get('scsys.MODULES.SIIE')
+     *          \Config::get('scsys.MODULES.ERP')
      *          \Config::get('scsys.MODULES.MMS')
      *          \Config::get('scsys.MODULES.QMS')
      *          \Config::get('scsys.MODULES.WMS')
@@ -22,16 +22,23 @@ class SMMenu
     public function handle($request, Closure $next, $iModule)
     {
       switch ($iModule) {
-        case \Config::get('scsys.MODULES.SIIE'):
+        case \Config::get('scsys.MODULES.ERP'):
           \Menu::make('sMenu', function($menu) {
               $menu->add('Home', ['route' => 'mms.home']);
-              $menu->add(trans('siie.SIIE'), '')->nickname(trans('siie.SIIE'));
-              $menu->get(trans('siie.SIIE'))->add(trans('siie.SIIE_COMPANIES'), ['route' => 'siie.companies.index']);
-              $menu->get(trans('siie.SIIE'))->add(trans('siie.BRANCHES'), ['route' => 'siie.branches.index']);
-              $menu->get(trans('siie.SIIE'))->add(trans('siie.ACG_YEAR_PER'), ['route' => 'siie.years.index']);
-              $menu->get(trans('siie.SIIE'))->add(trans('siie.BPS'), ['route' => 'siie.bps.index']);
+              $menu->add(trans('siie.ERP'), '')->nickname(trans('siie.ERP'));
+              $menu->get(trans('siie.ERP'))->add(trans('siie.ERP_COMPANIES'), ['route' => 'siie.companies.index']);
+              $menu->get(trans('siie.ERP'))->add(trans('siie.BRANCHES'), ['route' => 'siie.branches.index']);
+              $menu->get(trans('siie.ERP'))->add(trans('siie.ACG_YEAR_PER'), ['route' => 'siie.years.index']);
+              $menu->get(trans('siie.ERP'))->add(trans('siie.BPS'), ['route' => 'siie.bps.index']);
               $menu->add(trans('siie.CATALOGUES'), '')->nickname(trans('siie.CATALOGUES'));
-              $menu->get(trans('siie.CATALOGUES'))->add(trans('wms.UNITS'), ['route' => 'wms.units.index']);
+              $menu->add(trans('siie.ITEMS'), 'what-we-do')->nickname(trans('siie.ITEMS'));
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.MATERIALS'), 'what-we-do');
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.PRODUCTS'), 'what-we-do');
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.GENDERS'), ['route' => 'siie.genders.index']);
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.GROUPS'), ['route' => 'siie.groups.index']);
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.FAMILIES'), ['route' => 'siie.families.index']);
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.UNITS'), ['route' => 'siie.units.index']);
+              $menu->get(trans('siie.ITEMS'))->add(trans('siie.CONVERTIONS'), 'what-we-do');
           });
 
           break;
@@ -72,14 +79,6 @@ class SMMenu
               $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.PALLETS'), 'what-we-do');
               $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.LOTS'), 'what-we-do');
               $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.BAR_CODES'), 'what-we-do');
-              $menu->add(trans('wms.ITEMS'), 'what-we-do')->nickname(trans('wms.ITEMS'));
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.MATERIALS'), 'what-we-do');
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.PRODUCTS'), 'what-we-do');
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.GENDERS'), 'what-we-do');
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.GROUPS'), ['route' => 'wms.groups.index']);
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.FAMILIES'), ['route' => 'wms.families.index']);
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.UNITS'), ['route' => 'wms.units.index']);
-              $menu->get(trans('wms.ITEMS'))->add(trans('wms.CONVERTIONS'), 'what-we-do');
               $menu->add(trans('wms.INVENTORY'), 'what-we-do');
               $menu->add(trans('wms.REPORTS'), 'what-we-do');
 

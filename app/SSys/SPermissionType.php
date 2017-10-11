@@ -11,7 +11,7 @@ class SPermissionType extends Model {
 
     public function permissions()
     {
-      return $this->hasMany('App\SSIIE\SPermission');
+      return $this->hasMany('App\SERP\SPermission');
     }
 
     public function scopeSearch($query, $name, $iFilter)

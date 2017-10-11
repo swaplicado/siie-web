@@ -37,7 +37,7 @@
 			<th data-field="id" data-sortable="true">{{ trans('userinterface.labels.BP') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.RFC') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.CURP') }}</th>
-			<th data-sortable="true">{{ trans('userinterface.labels.SIIE_ID') }}</th>
+			<th data-sortable="true">{{ trans('userinterface.labels.ERP_ID') }}</th>
 			<th>ATT</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
@@ -45,10 +45,10 @@
 		<tbody>
 			@foreach($bps as $bpartner)
 				<tr>
-					<td>{{ $bpartner->bp_name }}</td>
-					<td>{{ $bpartner->id_fiscal }}</td>
-					<td>{{ $bpartner->curp }}</td>
-					<td>{{ $bpartner->siie_id }}</td>
+					<td>{{ $bpartner->name }}</td>
+					<td>{{ $bpartner->fiscal_id }}</td>
+					<td>{{ $bpartner->person_id }}</td>
+					<td>{{ $bpartner->external_id }}</td>
 					<td>
 						@if ($bpartner->is_company)
 								<span class="label label-success">{{ trans('userinterface.labels.IS_COMP') }}</span>
@@ -59,22 +59,7 @@
 						@if ($bpartner->is_customer)
 								<span class="label label-primary">{{ trans('userinterface.labels.IS_CUST') }}</span>
 						@endif
-						@if ($bpartner->is_creditor)
-								<span class="label label-warning">{{ trans('userinterface.labels.IS_CRED') }}</span>
-						@endif
-						@if ($bpartner->is_debtor)
-								<span class="label label-danger">{{ trans('userinterface.labels.IS_DEBT') }}</span>
-						@endif
-						@if ($bpartner->is_bank)
-								<span class="label label-default">{{ trans('userinterface.labels.IS_BANK') }}</span>
-						@endif
-						@if ($bpartner->is_employee)
-								<span class="label label-primary">{{ trans('userinterface.labels.IS_EMPL') }}</span>
-						@endif
-						@if ($bpartner->is_agt_sales)
-								<span class="label label-info">{{ trans('userinterface.labels.IS_AGTS') }}</span>
-						@endif
-						@if ($bpartner->is_partner)
+						@if ($bpartner->is_related_party)
 								<span class="label label-info">{{ trans('userinterface.labels.IS_PART') }}</span>
 						@endif
 					</td>
@@ -89,6 +74,12 @@
 						<?php
 								$oRegistry = $bpartner;
 								$iRegistryId = $bpartner->id_bp;
+								$loptions = [
+									\Config::get('scsys.OPTIONS.EDIT'),
+									\Config::get('scsys.OPTIONS.DESTROY'),
+									\Config::get('scsys.OPTIONS.ACTIVATE'),
+									\Config::get('scsys.OPTIONS.DUPLICATE'),
+								];
 						?>
 						@include('templates.list.options')
 					</td>

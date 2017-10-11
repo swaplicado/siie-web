@@ -11,20 +11,11 @@ return [
           'PALLETS' => 'Tarimas',
           'LOTS' => 'Lotes',
           'BAR_CODES' => 'Códigos de barras',
-          'UNITS' => 'Unidades',
 
       'CONFIG' => 'Configuración',
           'CONFIG' => 'Configuración',
           'CONFIG' => 'Configuración',
 
-
-      'ITEMS' => 'Materiales y Productos',
-          'GENDERS' => 'Géneros',
-          'GROUPS' => 'Grupos',
-          'FAMILIES' => 'Familias',
-          'CONVERTIONS' => 'Conversiones',
-          'MATERIALS' => 'Materiales',
-          'PRODUCTS' => 'Productos',
 
       'INVENTORY' => 'Inventarios',
           'LOT_STK' => 'Existencias por lote',

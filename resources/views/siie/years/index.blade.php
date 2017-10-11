@@ -42,7 +42,6 @@
 					<td>
 						<?php
 								$oRegistry = $year;
-								$sRoute = 'siie.years';
 								$iRegistryId = $year->id_year;
 								$loptions = [
 									\Config::get('scsys.OPTIONS.EDIT'),

@@ -28,7 +28,7 @@ class SWarehouse extends Model {
 
   public function branch()
   {
-    return $this->belongsTo('App\SSIIE\SBranch', 'branch_id');
+    return $this->belongsTo('App\SERP\SBranch', 'branch_id');
   }
 
   public function userCreation()
