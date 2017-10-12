@@ -195,7 +195,7 @@ Route::group(['middleware' => ['auth']], function() {
 
       Route::get('/home',[
   			'as' => 'siie.home',
-  			'uses' => 'SERP\SERPController@Home'
+  			'uses' => 'SERP\SSiieController@Home'
   		]);
       Route::resource('central','SERP\SSiieController');
 
@@ -305,6 +305,10 @@ Route::group(['middleware' => ['auth']], function() {
       * Genders
       **/
       Route::resource('genders','SERP\SGendersController');
+      Route::get('genders/{id}', [
+      	'uses' => 'SERP\SGendersController@children',
+      	'as' => 'siie.genders'
+      ]);
     });
 
 	});

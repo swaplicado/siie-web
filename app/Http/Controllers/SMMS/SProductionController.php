@@ -16,7 +16,7 @@ class SProductionController extends Controller
     public function __construct()
     {
        $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.MODULE').','.\Config::get('scperm.MODULES.MMS'));
-       $oMenu = new SMenu(\Config::get('scperm.MODULES.MMS'), 'navbar-blue');
+       $oMenu = new SMenu(\Config::get('scsys.MODULES.MMS'), 'navbar-blue');
        session(['menu' => $oMenu]);
 
        $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));

@@ -23,7 +23,7 @@ class SWarehousesController extends Controller
     {
        $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.WAREHOUSES'));
 
-       $oMenu = new SMenu(\Config::get('scperm.MODULES.WMS'), 'navbar-green');
+       $oMenu = new SMenu(\Config::get('scsys.MODULES.WMS'), 'navbar-green');
        session(['menu' => $oMenu]);
        $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
 

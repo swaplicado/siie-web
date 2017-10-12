@@ -8,7 +8,7 @@ class SItemClass extends Model {
   protected $primaryKey = 'id_class';
   protected $table = 'erps_item_classes';
 
-  public static function getTable()
+  public function getTable()
   {
     return $this->table;
   }

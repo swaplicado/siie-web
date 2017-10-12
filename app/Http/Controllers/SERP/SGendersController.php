@@ -5,13 +5,15 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\SERP\SGroupRequest;
+use App\Http\Requests\SERP\SGenderRequest;
 use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\SERP\SItemGender;
 use App\SERP\SItemGroup;
+use App\SERP\SItemClass;
+use App\SERP\SItemType;
 
 class SGendersController extends Controller
 {
@@ -63,9 +65,13 @@ class SGendersController extends Controller
         if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
           {
             $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
+            $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
+            $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
 
             return view('siie.genders.createEdit')
-                        ->with('groups', $lGroups);
+                                    ->with('groups', $lGroups)
+                                    ->with('classes', $lClasses)
+                                    ->with('types', $lItemTypes);
           }
           else
           {
@@ -79,19 +85,18 @@ class SGendersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SGroupRequest $request)
+    public function store(SGenderRequest $request)
     {
-      $group = new SItemGroup($request->all());
+      $gender = new SItemGender($request->all());
 
-      $group->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-      $group->updated_by_id = \Auth::user()->id;
-      $group->created_by_id = \Auth::user()->id;
-
-      $group->save();
+      $gender->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+      $gender->updated_by_id = \Auth::user()->id;
+      $gender->created_by_id = \Auth::user()->id;
+      $gender->save();
 
       Flash::success(trans('messages.REG_CREATED'))->important();
 
-      return redirect()->route('siie.groups.index');
+      return redirect()->route('siie.genders.index');
     }
 
     /**
@@ -113,15 +118,19 @@ class SGendersController extends Controller
      */
     public function edit($id)
     {
-        $group = SItemGroup::find($id);
+        $gender = SItemGender::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $group->created_by_id))
+        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $gender->created_by_id))
         {
-            $lFamilies = SItemFamily::orderBy('name', 'ASC')->lists('name', 'id_item_family');
+            $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
+            $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
+            $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
 
-            return view('siie.groups.createEdit')
-                                  ->with('families', $lFamilies)
-                                    ->with('group', $group);
+            return view('siie.genders.createEdit')
+                                    ->with('groups', $lGroups)
+                                    ->with('classes', $lClasses)
+                                    ->with('types', $lItemTypes)
+                                    ->with('gender', $gender);
         }
         else
         {
@@ -138,14 +147,14 @@ class SGendersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $group = SItemGroup::find($id);
-        $group->fill($request->all());
-        $group->updated_by_id = \Auth::user()->id;
-        $group->save();
+        $gender = SItemGender::find($id);
+        $gender->fill($request->all());
+        $gender->updated_by_id = \Auth::user()->id;
+        $gender->save();
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('siie.groups.index');
+        return redirect()->route('siie.genders.index');
     }
 
     /**
@@ -156,28 +165,28 @@ class SGendersController extends Controller
      */
     public function copy(Request $request, $id)
     {
-        $group = SItemGroup::find($id);
+        $gender = SItemGender::find($id);
 
-        $groupCopy = clone $group;
-        $groupCopy->id_group = 0;
+        $genderCopy = clone $gender;
+        $genderCopy->id_item_gender = 0;
 
-        return view('siie.groups.createEdit')->with('group', $groupCopy)
+        return view('siie.genders.createEdit')->with('group', $genderCopy)
                                               ->with('bIsCopy', true);
     }
 
     public function activate(Request $request, $id)
     {
-        $group = SItemGroup::find($id);
+        $gender = SItemGender::find($id);
 
-        $group->fill($request->all());
-        $group->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-        $group->updated_by_id = \Auth::user()->id;
+        $gender->fill($request->all());
+        $gender->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $gender->updated_by_id = \Auth::user()->id;
 
-        $group->save();
+        $gender->save();
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
-        return redirect()->route('siie.groups.index');
+        return redirect()->route('siie.genders.index');
     }
 
     /**
@@ -190,20 +199,29 @@ class SGendersController extends Controller
     {
         if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
         {
-          $group = SItemGroup::find($id);
-          $group->fill($request->all());
-          $group->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $group->updated_by_id = \Auth::user()->id;
+          $gender = SItemGender::find($id);
+          $gender->fill($request->all());
+          $gender->is_deleted = \Config::get('scsys.STATUS.DEL');
+          $gender->updated_by_id = \Auth::user()->id;
 
-          $group->save();
+          $gender->save();
           #$user->delete();
 
           Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('siie.groups.index');
+          return redirect()->route('siie.genders.index');
         }
         else
         {
           return redirect()->route('notauthorized');
         }
+    }
+
+    public function children(Request $request, $id)
+    {
+      if ($request->ajax())
+      {
+        $types = SItemType::getTypes($id);
+        return response()->json($types);
+      }
     }
 }

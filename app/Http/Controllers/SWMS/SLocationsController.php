@@ -21,7 +21,7 @@ class SLocationsController extends Controller
     {
        $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.LOCATIONS'));
 
-       $oMenu = new SMenu(\Config::get('scperm.MODULES.WMS'), 'navbar-green');
+       $oMenu = new SMenu(\Config::get('scsys.MODULES.WMS'), 'navbar-green');
        session(['menu' => $oMenu]);
        $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
 
@@ -80,7 +80,7 @@ class SLocationsController extends Controller
     public function store(Request $request)
     {
       $location = new SLocation($request->all());
-      
+
       $location->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
       $location->updated_by_id = \Auth::user()->id;
       $location->created_by_id = \Auth::user()->id;

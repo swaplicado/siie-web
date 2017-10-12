@@ -17,7 +17,7 @@ class SQualityController extends Controller
     {
        $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.MODULE').','.\Config::get('scperm.MODULES.QMS'));
 
-       $oMenu = new SMenu(\Config::get('scperm.MODULES.QMS'), 'navbar-orange');
+       $oMenu = new SMenu(\Config::get('scsys.MODULES.QMS'), 'navbar-orange');
        session(['menu' => $oMenu]);
        $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
     }

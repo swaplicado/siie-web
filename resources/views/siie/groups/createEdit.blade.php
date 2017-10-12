@@ -16,12 +16,12 @@
 				$sRoute = 'siie.groups.update';
 			}
 	?>
-	@section('title', trans('userinterface.titles.EDIT_FAMILY'))
+	@section('title', trans('userinterface.titles.EDIT_GROUP'))
 @else
 	<?php
 		$sRoute='siie.groups.store';
 	?>
-	@section('title', trans('userinterface.titles.CREATE_FAMILY'))
+	@section('title', trans('userinterface.titles.CREATE_GROUP'))
 @endif
 	<?php $sRoute2 = 'siie.groups.index' ?>
 

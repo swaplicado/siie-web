@@ -21,24 +21,24 @@ class SItemGender extends Model {
                           'is_lot',
                           'is_bulk',
                           'is_deleted',
-                          'group_id',
+                          'item_group_id',
                           'item_class_id',
                           'item_type_id',
                         ];
 
   public function group()
   {
-    return $this->belongsTo('App\SERP\SItemGroup');
+    return $this->belongsTo('App\SERP\SItemGroup', 'item_group_id');
   }
 
   public function class()
   {
-    return $this->belongsTo('App\SERP\SItemClass');
+    return $this->belongsTo('App\SERP\SItemClass', 'item_class_id');
   }
 
   public function type()
   {
-    return $this->belongsTo('App\SERP\SItemType');
+    return $this->belongsTo('App\SERP\SItemType', 'item_type_id');
   }
 
   public function scopeSearch($query, $name, $iFilter)

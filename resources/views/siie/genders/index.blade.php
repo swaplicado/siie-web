@@ -4,7 +4,7 @@
 	@include('templates.menu.menumodules')
 @endsection
 
-@section('title', trans('userinterface.titles.LIST_GROUPS'))
+@section('title', trans('userinterface.titles.LIST_GENDERS'))
 
 @section('content')
 	<?php $sRoute="siie.genders"?>
@@ -15,6 +15,8 @@
 		<thead>
 			<th>{{ trans('userinterface.labels.GENDER') }}</th>
 			<th>{{ trans('userinterface.labels.GROUP') }}</th>
+			<th>{{ trans('userinterface.labels.CLASS') }}</th>
+			<th>{{ trans('userinterface.labels.TYPE') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 		</thead>
@@ -23,6 +25,8 @@
 				<tr>
 					<td>{{ $gender->name }}</td>
 					<td>{{ $gender->group->name }}</td>
+					<td>{{ $gender->class->name }}</td>
+					<td>{{ $gender->type->name }}</td>
 					<td>
 						@if (! $gender->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
