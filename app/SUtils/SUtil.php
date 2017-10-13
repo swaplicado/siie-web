@@ -3,9 +3,9 @@
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
-use App\SSYS\SUserPermission;
-use App\SSYS\SUserCompany;
-use App\SSYS\SCompany;
+use App\SYS\SUserPermission;
+use App\SYS\SUserCompany;
+use App\SYS\SCompany;
 
 class SUtil {
 
@@ -20,7 +20,7 @@ class SUtil {
    *
    * @param  int  $identifier
    * @param  int  $id_user
-   * @return App\SSYS\UserPermission
+   * @return App\SYS\UserPermission
    */
   public static function getTheUserPermission($iPermissionType, $iPermissionCode)
   {
@@ -58,7 +58,7 @@ class SUtil {
    *
    * @param  int  $identifier
    * @param  int  $id_user
-   * @return App\SSYS\UserPermission
+   * @return App\SYS\UserPermission
    */
   public static function getTheUserPermissionDB($id_user, $identifier)
   {
@@ -85,7 +85,7 @@ class SUtil {
    * Return a list of UserCompany objects corresponding to the user.
    *
    * @param  int  $iUserId
-   * @return list of App\SSYS\UserCompany
+   * @return list of App\SYS\UserCompany
    */
   public static function getUserCompany($oUser)
   {
@@ -144,7 +144,7 @@ class SUtil {
    * @param  int  $sUser
    * @param  int  $sPassword
    *
-   * @return list of App\SSYS\UserCompany
+   * @return list of App\SYS\UserCompany
    */
   public static function reconnectDataBase($sConnectionName, $bDefault, $sHost, $sDataBase, $sUser, $sPassword)
   {
