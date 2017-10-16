@@ -12,6 +12,7 @@ use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\ERP\SItemFamily;
 use App\ERP\SItemGroup;
+use App\SUtils\SProcess;
 
 class SGroupsController extends Controller
 {
@@ -20,15 +21,9 @@ class SGroupsController extends Controller
 
     public function __construct()
     {
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.ITM_GRP'));
+      $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ITEM_CONFIG'), \Config::get('scsys.MODULES.ERP'));
 
-       $oMenu = new SMenu(\Config::get('scsys.MODULES.ERP'), 'navbar-green');
-       session(['menu' => $oMenu]);
-       $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
-
-       $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.ITM_GRP'));
-
-       $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+      $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
 
 
@@ -46,7 +41,7 @@ class SGroupsController extends Controller
       foreach ($lGroups as $group) {
         $group->family;
       }
-      
+
       return view('siie.groups.index')
           ->with('groups', $lGroups)
           ->with('actualUserPermission', $this->oCurrentUserPermission)

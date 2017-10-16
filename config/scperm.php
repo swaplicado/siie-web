@@ -42,4 +42,18 @@ return [
                   'ITEM_UNIT' => '019',
                   'BARCODES' => '020',
                 ],
+
+  'PERMISSION' => [
+                  'ADMINISTRATOR' => '001',
+                  'CENTRAL_CONFIG' => '002',
+                  'ITEM_CONFIG' => '003',
+                  'STK_MOVS' => '004',
+                  'CONTAINERS' => '005',
+
+                  'ERP' =>  '101',
+                  'MMS' =>  '102',
+                  'QMS' =>  '103',
+                  'WMS' =>  '104',
+                  'TMS' =>  '105',
+                ],
 ];

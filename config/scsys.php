@@ -5,6 +5,14 @@ return [
 
   'UNDEFINED' => '0',
 
+  'MOD_NAVS' =>   [
+                    'ERP' => 'navbar-siie',
+                    'MMS' => 'navbar-blue',
+                    'QMS' => 'navbar-orange',
+                    'WMS' => 'navbar-green',
+                    'TMS' => 'navbar-blue-light',
+                  ],
+
   'MODULES'   =>  [
                   'ERP' => '1',
                   'MMS' => '2',

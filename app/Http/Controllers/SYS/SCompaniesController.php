@@ -15,6 +15,7 @@ class SCompaniesController extends Controller
       {
          $this->middleware('mdadmin');
          $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+         $this->oCurrentUserPermission = NULL;
       }
 
     /**

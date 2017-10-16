@@ -22,7 +22,7 @@ class SUtil {
    * @param  int  $id_user
    * @return App\SYS\UserPermission
    */
-  public static function getTheUserPermission($iPermissionType, $iPermissionCode)
+  public static function getTheUserPermission($sPermissionCode)
   {
     \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "");
 
@@ -30,7 +30,7 @@ class SUtil {
         if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
         {
             $userPermission = new SUserPermission();
-            $userPermission->id_usr_per = 0;
+            $userPermission->id_user_permission = 0;
             $userPermission->privilege_id = \Config::get('scsys.PRIVILEGES.MANAGER');
             $userPermission->user_id = \Auth::user()->id;
 
@@ -39,13 +39,10 @@ class SUtil {
 
         foreach (\Auth::user()->userPermission as $oUserPermission)
         {
-          if ($oUserPermission->permission->type_permission_id == $iPermissionType)
-          {
-              if ($oUserPermission->permission->code == $iPermissionCode)
-              {
-                  return $oUserPermission;
-              }
-          }
+            if ($oUserPermission->permission->code == $sPermissionCode)
+            {
+                return $oUserPermission;
+            }
         }
       }
 

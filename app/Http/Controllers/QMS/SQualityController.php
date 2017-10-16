@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\SUtils\SProcess;
 
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
@@ -15,11 +16,7 @@ class SQualityController extends Controller
 
     public function __construct()
     {
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.MODULE').','.\Config::get('scperm.MODULES.QMS'));
-
-       $oMenu = new SMenu(\Config::get('scsys.MODULES.QMS'), 'navbar-orange');
-       session(['menu' => $oMenu]);
-       $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
+       SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS'), \Config::get('scsys.MODULES.QMS'));
     }
 
     /**

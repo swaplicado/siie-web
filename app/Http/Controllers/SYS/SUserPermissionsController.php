@@ -18,12 +18,9 @@ class SUserPermissionsController extends Controller
 
   public function __construct()
   {
-       $this->middleware('mdadmin');
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.ASSIGNAMENTS'));
-
-       $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.ASSIGNAMENTS'));
-
-       $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+      $this->middleware('mdadmin');
+      $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+      $this->oCurrentUserPermission = NULL;
   }
 
     /**
@@ -34,7 +31,7 @@ class SUserPermissionsController extends Controller
     public function index(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $userPermissions = SUserPermission::orderBy('id_usr_per', 'ASC')->paginate(4);
+        $userPermissions = SUserPermission::orderBy('id_user_permission', 'ASC')->paginate(4);
 
         $userPermissions->each(function($userPermissions) {
           $userPermissions->user;
@@ -55,21 +52,15 @@ class SUserPermissionsController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-        {
-          $users = User::orderBy('username', 'ASC')->lists('username', 'id');
-          $permissions = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
-          $privileges = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+        $users = User::orderBy('username', 'ASC')->lists('username', 'id');
+        $permissions = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
+        $privileges = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
 
-          return view('admin.userPermissions.createEdit')
-                      ->with('users', $users)
-                      ->with('permissions', $permissions)
-                      ->with('privileges', $privileges);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+        return view('admin.userPermissions.createEdit')
+                    ->with('users', $users)
+                    ->with('permissions', $permissions)
+                    ->with('privileges', $privileges);
+
     }
 
     /**
@@ -108,28 +99,21 @@ class SUserPermissionsController extends Controller
      */
     public function edit($id)
     {
-      $userPermission = SUserPermission::find($id);
+        $userPermission = SUserPermission::find($id);
 
-      if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $userPermission->created_by_id))
-      {
-          $userPermission->user;
-          $userPermission->permission;
-          $userPermission->privilege;
+        $userPermission->user;
+        $userPermission->permission;
+        $userPermission->privilege;
 
-          $users = User::orderBy('username', 'ASC')->lists('username', 'id');
-          $permissions = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
-          $privileges = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+        $users = User::orderBy('username', 'ASC')->lists('username', 'id');
+        $permissions = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
+        $privileges = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
 
-          return view('admin.userPermissions.createEdit')
-            ->with('userPermission', $userPermission)
-            ->with('users', $users)
-            ->with('permissions', $permissions)
-            ->with('privileges', $privileges);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        return view('admin.userPermissions.createEdit')
+          ->with('userPermission', $userPermission)
+          ->with('users', $users)
+          ->with('permissions', $permissions)
+          ->with('privileges', $privileges);
     }
 
     /**
@@ -141,27 +125,34 @@ class SUserPermissionsController extends Controller
      */
     public function update(Request $request, $id)
     {
-      $userPermission = SUserPermission::find($id);
-      $userPermission->fill($request->all());
-      $userPermission->save();
+        $userPermission = SUserPermission::find($id);
+        $userPermission->fill($request->all());
+        $userPermission->save();
 
-      Flash::success(trans('messages.REG_EDITED'));
+        Flash::success(trans('messages.REG_EDITED'));
 
-      return redirect()->route('admin.userPermissions.index');
+        return redirect()->route('admin.userPermissions.index');
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function activate(Request $request, $id)
     {
-      $userPermission = SUserPermission::find($id);
+        $userPermission = SUserPermission::find($id);
 
-      $userPermission->fill($request->all());
-      $userPermission->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $userPermission->fill($request->all());
+        $userPermission->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
 
-      $userPermission->save();
+        $userPermission->save();
 
-      Flash::success(trans('messages.REG_ACTIVATED'))->important();
+        Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
-      return redirect()->route('admin.userPermissions.index');
+        return redirect()->route('admin.userPermissions.index');
     }
 
     /**
@@ -172,22 +163,15 @@ class SUserPermissionsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-      if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-            $userPermission = SUserPermission::find($id);
+        $userPermission = SUserPermission::find($id);
 
-            $userPermission->fill($request->all());
-            $userPermission->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $userPermission->fill($request->all());
+        $userPermission->is_deleted = \Config::get('scsys.STATUS.DEL');
 
-            $userPermission->save();
-            #$userPermission->delete();
-            Flash::error(trans('messages.REG_DELETED'))->important();
+        $userPermission->save();
+        #$userPermission->delete();
+        Flash::error(trans('messages.REG_DELETED'))->important();
 
-            return redirect()->route('admin.userPermissions.index');
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        return redirect()->route('admin.userPermissions.index');
     }
 }

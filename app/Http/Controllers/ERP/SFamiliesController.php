@@ -10,6 +10,7 @@ use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\ERP\SItemFamily;
+use App\SUtils\SProcess;
 
 class SFamiliesController extends Controller
 {
@@ -18,13 +19,7 @@ class SFamiliesController extends Controller
 
     public function __construct()
     {
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.ITM_FAM'));
-
-       $oMenu = new SMenu(\Config::get('scsys.MODULES.ERP'), 'navbar-green');
-       session(['menu' => $oMenu]);
-       $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
-
-       $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.ITM_FAM'));
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ITEM_CONFIG'), \Config::get('scsys.MODULES.ERP'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }

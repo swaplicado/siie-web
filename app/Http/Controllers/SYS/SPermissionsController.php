@@ -16,11 +16,9 @@ class SPermissionsController extends Controller
 
       public function __construct()
       {
-           $this->middleware('mdadmin');
-           $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.PERMISSIONS'));
-           $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.PERMISSIONS'));
-
-           $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+          $this->middleware('mdadmin');
+          $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+          $this->oCurrentUserPermission = NULL;
       }
 
     /**

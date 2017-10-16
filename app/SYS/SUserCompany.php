@@ -7,6 +7,7 @@ class SUserCompany extends Model
   protected $connection = 'ssystem';
   protected $primaryKey = 'id_user_access';
   protected $table = "user_access";
+  public $timestamps = false;
   protected $fillable = ['id_user_access','user_id','company_id'];
 
   public function user()

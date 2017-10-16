@@ -79,6 +79,34 @@ class SValidation {
   }
 
   /**
+   * Determines whether the session user has the permission or not.
+   *
+   * @param  int  $iPermissionCode code assigned to permission. \Config.scperm
+   *
+   * @return true or false
+   */
+   public static function hasPermission($sPermissionCode)
+   {
+       if (\Auth::check())
+       {   
+         if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+         {
+             return true;
+         }
+
+         foreach (\Auth::user()->userPermission as $oUserPermission)
+         {
+           if ($oUserPermission->permission->code == $sPermissionCode)
+           {
+               return true;
+           }
+         }
+       }
+
+       return false;
+   }
+
+  /**
    * Determines whether the session user has the received permission or not.
    *
    * @param  int  $iPermissionType integer value from \Config.scperm.TP_PERMISSION
@@ -86,7 +114,7 @@ class SValidation {
    *
    * @return true or false
    */
-   public static function hasPermission($iPermissionType, $iPermissionCode)
+   public static function hasPermissionByType($iPermissionType, $iPermissionCode)
    {
        if (\Auth::check()) {
          if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))

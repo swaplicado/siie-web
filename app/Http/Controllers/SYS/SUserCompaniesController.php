@@ -19,11 +19,9 @@ class SUserCompaniesController extends Controller
 
     public function __construct()
     {
-       $this->middleware('mdadmin');
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.ACCESS'));
-       $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Auth::user()->id, \Config::get('scperm.VIEW_CODE.ACCESS'));
-
-       $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+        $this->middleware('mdadmin');
+        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+        $this->oCurrentUserPermission = NULL;
     }
 
     /**
@@ -92,7 +90,6 @@ class SUserCompaniesController extends Controller
             $userCompany = new SUserCompany();
             $userCompany->user_id = $id;
             $userCompany->company_id = $company->id_company;
-            $userCompany->created_by_id = \Auth::user()->id;
             $userCompany->save();
           }
         }

@@ -18,13 +18,7 @@ class SUnitsController extends Controller
 
     public function __construct()
     {
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.UNITS'));
-
-       $oMenu = new SMenu(\Config::get('scsys.MODULES.ERP'), 'navbar-green');
-       session(['menu' => $oMenu]);
-       $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
-
-       $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.UNITS'));
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ITEM_CONFIG'), \Config::get('scsys.MODULES.ERP'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }

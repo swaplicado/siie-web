@@ -10,6 +10,7 @@ use App\ERP\SPartner;
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
+use App\SUtils\SProcess;
 
 class SBranchesController extends Controller {
 
@@ -19,13 +20,7 @@ class SBranchesController extends Controller {
 
     public function __construct()
     {
-         $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('scperm.VIEW_CODE.BRANCHES'));
-
-         $oMenu = new SMenu(\Config::get('scperm.MODULES.ERP'), 'navbar-siie');
-         session(['menu' => $oMenu]);
-         $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
-
-         $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.BRANCHES'));
+         $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CENTRAL_CONFIG'), \Config::get('scsys.MODULES.ERP'));
 
          $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }

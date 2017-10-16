@@ -14,9 +14,9 @@ class SMPermission
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next, $iPermissionType, $iPermissionCode)
+    public function handle($request, Closure $next, $iPermissionCode)
     {
-        if (SValidation::hasPermission($iPermissionType, $iPermissionCode))
+        if (SValidation::hasPermission($iPermissionCode))
         {
           return $next($request);
         }

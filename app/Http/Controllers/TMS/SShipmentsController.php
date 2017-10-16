@@ -15,11 +15,7 @@ class SShipmentsController extends Controller
 
     public function __construct()
     {
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.MODULE').','.\Config::get('scperm.MODULES.TMS'));
-
-       $oMenu = new SMenu(\Config::get('scsys.MODULES.TMS'), 'navbar-blue-light');
-       session(['menu' => $oMenu]);
-       $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
+       SProcess::constructor($this, \Config::get('scperm.PERMISSION.TMS'), \Config::get('scsys.MODULES.TMS'));
     }
 
     /**

@@ -26,7 +26,6 @@ class SMMenu
           \Menu::make('sMenu', function($menu) {
               $menu->add('Home', ['route' => 'mms.home']);
               $menu->add(trans('siie.ERP'), '')->nickname(trans('siie.ERP'));
-              $menu->get(trans('siie.ERP'))->add(trans('siie.ERP_COMPANIES'), ['route' => 'siie.companies.index']);
               $menu->get(trans('siie.ERP'))->add(trans('siie.BRANCHES'), ['route' => 'siie.branches.index']);
               $menu->get(trans('siie.ERP'))->add(trans('siie.ACG_YEAR_PER'), ['route' => 'siie.years.index']);
               $menu->get(trans('siie.ERP'))->add(trans('siie.BPS'), ['route' => 'siie.bps.index']);
@@ -79,7 +78,8 @@ class SMMenu
               $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.PALLETS'), 'what-we-do');
               $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.LOTS'), 'what-we-do');
               $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.BAR_CODES'), 'what-we-do');
-              $menu->add(trans('wms.INVENTORY'), 'what-we-do');
+              $menu->add(trans('wms.MOV_STK'), ['route' => 'wms.movs.index']);
+              $menu->add(trans('wms.INVENTORY'), ['route' => 'wms.movs.index']);
               $menu->add(trans('wms.REPORTS'), 'what-we-do');
 
           });

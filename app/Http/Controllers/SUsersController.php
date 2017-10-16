@@ -19,12 +19,7 @@ class SUsersController extends Controller
 
     public function __construct()
     {
-         $this->middleware('mdadmin');
-         $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.VIEW').','.\Config::get('sperm.VIEW_CODE.USERS'));
-
-         $this->oCurrentUserPermission = SUtil::getTheUserPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.USERS'));
-
-         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ADMINISTRATOR'), \Config::get('scsys.MODULES.ERP'));
     }
 
     /**

@@ -5,14 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 class SUserPermission extends Model
 {
   protected $connection = 'ssystem';
-  protected $primaryKey = 'id_usr_per';
-  protected $table = "sys_user_permissions";
+  protected $primaryKey = 'id_user_permission';
+  protected $table = 'user_permissions';
   public $timestamps = false;
-  protected $fillable = ['id_usr_per','user_id','permission_id','privilege_id'];
+  protected $fillable = ['id_usr_per','user_id','permission_id', 'permission_type_id', 'company_id_opt','privilege_id'];
 
   public function user()
   {
-      return $this->belongsTo('App\User');
+      return $this->belongsTo('App\User', 'user_id');
   }
 
   public function privilege()
@@ -22,7 +22,7 @@ class SUserPermission extends Model
 
   public function permission()
   {
-      return $this->belongsTo('App\SYS\SPermission');
+      return $this->belongsTo('App\SYS\SPermission', 'permission_id');
   }
 
   public function scopeSearch($query, $permission_id, $user_id)

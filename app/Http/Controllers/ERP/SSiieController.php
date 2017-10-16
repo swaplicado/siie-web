@@ -10,17 +10,14 @@ use App\ERP\SMonth;
 use App\SUtils\SUtil;
 use App\SUtils\SValidation;
 use App\SUtils\SMenu;
+use App\SUtils\SProcess;
 
 class SSiieController extends Controller
 {
 
     public function __construct()
     {
-       $this->middleware('mdpermission:'.\Config::get('scperm.TP_PERMISSION.MODULE').','.\Config::get('scperm.MODULES.ERP'));
-
-       $oMenu = new SMenu(\Config::get('scperm.MODULES.ERP'), 'navbar-siie');
-       session(['menu' => $oMenu]);
-       $this->middleware('mdmenu:'.(session()->has('menu') ? session('menu')->getMenu() : \Config::get('scsys.UNDEFINED')));
+       SProcess::constructor($this, \Config::get('scperm.PERMISSION.ERP'), \Config::get('scsys.MODULES.ERP'));
     }
 
     /**

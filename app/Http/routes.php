@@ -47,6 +47,10 @@ Route::group(['middleware' => ['auth']], function() {
 		]);
 
   Route::group(['prefix' => 'admin'], function () {
+
+      /*
+      * Users
+      **/
   		Route::resource('users','SUsersController');
   		Route::get('users/{id}/activate', [
   			'uses' => 'SUsersController@Activate',
@@ -69,6 +73,10 @@ Route::group(['middleware' => ['auth']], function() {
   			'as' => 'admin.users.updatepass'
   		]);
 
+      /*
+      * privileges
+      **/
+
   		Route::resource('privileges','SYS\SPrivilegesController');
   		Route::get('privileges/{id}/activate', [
   			'uses' => 'SYS\SPrivilegesController@Activate',
@@ -79,6 +87,9 @@ Route::group(['middleware' => ['auth']], function() {
   			'as' => 'admin.privileges.destroy'
   		]);
 
+      /*
+      * Permissions
+      **/
   		Route::resource('permissions','SYS\SPermissionsController');
   		Route::get('permissions/{id}/activate', [
   			'uses' => 'SYS\SPermissionsController@Activate',
@@ -89,6 +100,10 @@ Route::group(['middleware' => ['auth']], function() {
   			'as' => 'admin.permissions.destroy'
   		]);
 
+      /*
+      * userPermissions
+      **/
+
   		Route::resource('userPermissions','SYS\SUserPermissionsController');
   		Route::get('userPermissions/{id}/activate', [
   			'uses' => 'SYS\SUserPermissionsController@Activate',
@@ -98,6 +113,10 @@ Route::group(['middleware' => ['auth']], function() {
   			'uses' => 'SYS\SUserPermissionsController@Destroy',
   			'as' => 'admin.userPermissions.destroy'
   		]);
+
+      /*
+      * Companies
+      **/
 
       Route::resource('companies','SYS\SCompaniesController');
       Route::get('companies/{id}/destroy',[
@@ -180,6 +199,11 @@ Route::group(['middleware' => ['auth']], function() {
         'as' => 'wms.locs.copy'
       ]);
 
+      /*
+      * Iventory movements
+      **/
+      Route::resource('movs','WMS\SMovsController');
+
   });
 
 
@@ -199,15 +223,9 @@ Route::group(['middleware' => ['auth']], function() {
   		]);
       Route::resource('central','ERP\SSiieController');
 
-      Route::resource('companies','ERP\SSiieCompaniesController');
-      Route::get('companies/{id}/destroy',[
-        'uses' => 'ERP\SSiieCompaniesController@Destroy',
-        'as' => 'siie.companies.destroy'
-      ]);
-      Route::get('companies/{id}/activate', [
-        'uses' => 'ERP\SSiieCompaniesController@Activate',
-        'as' => 'siie.companies.activate'
-      ]);
+      /*
+      * branches
+      **/
 
       Route::resource('branches','ERP\SBranchesController');
       Route::get('branches/{id}/destroy',[
@@ -219,6 +237,9 @@ Route::group(['middleware' => ['auth']], function() {
         'as' => 'siie.branches.activate'
       ]);
 
+      /*
+      * Years and months
+      **/
       Route::resource('years','ERP\SYearsController');
       Route::get('years/{id}/destroy',[
         'uses' => 'ERP\SYearsController@Destroy',
@@ -234,6 +255,10 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'ERP\SMonthsController@index',
         'as' => 'siie.months.index'
       ]);
+
+      /*
+      * Partners
+      **/
 
       Route::resource('bps','ERP\SPartnersController');
       Route::get('bps/{id}/destroy',[
