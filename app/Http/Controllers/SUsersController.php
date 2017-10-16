@@ -19,7 +19,9 @@ class SUsersController extends Controller
 
     public function __construct()
     {
-       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ADMINISTRATOR'), \Config::get('scsys.MODULES.ERP'));
+      $this->middleware('mdadmin');
+      $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+      $this->oCurrentUserPermission = NULL;
     }
 
     /**

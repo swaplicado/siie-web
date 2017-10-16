@@ -11,6 +11,7 @@ use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\WMS\SWarehouse;
 use App\WMS\SLocation;
+use App\SUtils\SProcess;
 
 class SLocationsController extends Controller
 {
