@@ -53,17 +53,15 @@ class SLocationsController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('wms.locs.createEdit')
-                        ->with('warehouses', $lWarehouses);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+        $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+
+        return view('wms.locs.createEdit')
+                      ->with('warehouses', $lWarehouses);
     }
 
     /**
@@ -108,18 +106,16 @@ class SLocationsController extends Controller
     {
         $location = SLocation::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $location->created_by_id))
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $location->created_by_id)))
         {
-          $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('wms.locs.createEdit')
-                      ->with('location', $location)
-                      ->with('warehouses', $lWarehouses);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+
+        return view('wms.locs.createEdit')
+                    ->with('location', $location)
+                    ->with('warehouses', $lWarehouses);
     }
 
     /**
@@ -149,6 +145,11 @@ class SLocationsController extends Controller
      */
     public function copy(Request $request, $id)
     {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         $location = SLocation::find($id);
 
         $locationCopy = clone $location;
@@ -164,6 +165,11 @@ class SLocationsController extends Controller
     public function activate(Request $request, $id)
     {
         $location = SLocation::find($id);
+
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $location->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
 
         $location->fill($request->all());
         $location->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -184,22 +190,20 @@ class SLocationsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          $location = SLocation::find($id);
-          $location->fill($request->all());
-          $location->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $location->updated_by_id = \Auth::user()->id;
-
-          $location->save();
-          #$user->delete();
-
-          Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('wms.locs.index');
-        }
-        else
+        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
+
+        $location = SLocation::find($id);
+        $location->fill($request->all());
+        $location->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $location->updated_by_id = \Auth::user()->id;
+
+        $location->save();
+        #$user->delete();
+
+        Flash::error(trans('messages.REG_DELETED'))->important();
+        return redirect()->route('wms.locs.index');
     }
 }

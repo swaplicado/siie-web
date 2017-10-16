@@ -52,17 +52,15 @@ class SUnitsController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          $unitsEq = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('siie.units.createEdit')
-                            ->with('unitseq', $unitsEq);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+        $unitsEq = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+
+        return view('siie.units.createEdit')
+                          ->with('unitseq', $unitsEq);
     }
 
     /**
@@ -107,17 +105,15 @@ class SUnitsController extends Controller
     {
         $unit = SUnit::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $unit->created_by_id))
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $unit->created_by_id)))
         {
-            $unitsEq = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+          return redirect()->route('notauthorized');
+        }
 
-            return view('siie.units.createEdit')->with('unit', $unit)
-                                            ->with('unitseq', $unitsEq);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        $unitsEq = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+
+        return view('siie.units.createEdit')->with('unit', $unit)
+                                        ->with('unitseq', $unitsEq);
     }
 
     /**
@@ -149,6 +145,11 @@ class SUnitsController extends Controller
     {
         $unit = SUnit::find($id);
 
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         $unitCopy = clone $unit;
         $unitCopy->id_bp = 0;
         $unitsEq = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
@@ -161,6 +162,11 @@ class SUnitsController extends Controller
     public function activate(Request $request, $id)
     {
         $unit = SUnit::find($id);
+
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $unit->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
 
         $unit->fill($request->all());
         $unit->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -181,22 +187,20 @@ class SUnitsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          $unit = SUnit::find($id);
-          $unit->fill($request->all());
-          $unit->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $unit->updated_by_id = \Auth::user()->id;
-
-          $unit->save();
-          #$user->delete();
-
-          Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('siie.units.index');
-        }
-        else
+        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
+        
+        $unit = SUnit::find($id);
+        $unit->fill($request->all());
+        $unit->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $unit->updated_by_id = \Auth::user()->id;
+
+        $unit->save();
+        #$user->delete();
+
+        Flash::error(trans('messages.REG_DELETED'))->important();
+        return redirect()->route('siie.units.index');
     }
 }

@@ -52,17 +52,15 @@ class SBranchesController extends Controller {
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          $companies = SPartner::orderBy('name', 'ASC')->lists('name', 'id_partner');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('siie.branches.createEdit')
-                        ->with('companies', $companies);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+        $companies = SPartner::orderBy('name', 'ASC')->lists('name', 'id_partner');
+
+        return view('siie.branches.createEdit')
+                      ->with('companies', $companies);
     }
 
     /**
@@ -110,8 +108,13 @@ class SBranchesController extends Controller {
     {
         $branch = SBranch::find($id);
 
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $branch->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         return view('siie.branches.createEdit')->with('branch', $branch)
-                                      ->with('iFilter', $this->iFilter);
+                                                ->with('iFilter', $this->iFilter);
     }
 
     /**
@@ -138,6 +141,11 @@ class SBranchesController extends Controller {
      {
          $branch = SBranch::find($id);
 
+         if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $branch->created_by_id)))
+         {
+           return redirect()->route('notauthorized');
+         }
+
          $branch->fill($request->all());
          $branch->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
          $branch->updated_by_id = \Auth::user()->id;
@@ -157,6 +165,11 @@ class SBranchesController extends Controller {
      */
      public function destroy(Request $request, $id)
      {
+         if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
+         {
+           return redirect()->route('notauthorized');
+         }
+
          $branch = SBranch::find($id);
          $branch->fill($request->all());
          $branch->is_deleted = \Config::get('scsys.STATUS.DEL');

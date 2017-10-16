@@ -55,17 +55,15 @@ class SGroupsController extends Controller
      */
     public function create()
     {
-        if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-          {
-            $lFamilies = SItemFamily::orderBy('name', 'ASC')->lists('name', 'id_item_family');
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
 
-            return view('siie.groups.createEdit')
-                        ->with('families', $lFamilies);
-          }
-          else
-          {
-             return redirect()->route('notauthorized');
-          }
+        $lFamilies = SItemFamily::orderBy('name', 'ASC')->lists('name', 'id_item_family');
+
+        return view('siie.groups.createEdit')
+                    ->with('families', $lFamilies);
     }
 
     /**
@@ -110,18 +108,17 @@ class SGroupsController extends Controller
     {
         $group = SItemGroup::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $group->created_by_id))
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $group->created_by_id)))
         {
-            $lFamilies = SItemFamily::orderBy('name', 'ASC')->lists('name', 'id_item_family');
+          return redirect()->route('notauthorized');
+        }
 
-            return view('siie.groups.createEdit')
-                                  ->with('families', $lFamilies)
-                                    ->with('group', $group);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        $lFamilies = SItemFamily::orderBy('name', 'ASC')->lists('name', 'id_item_family');
+
+        return view('siie.groups.createEdit')
+                              ->with('families', $lFamilies)
+                                ->with('group', $group);
+
     }
 
     /**
@@ -151,6 +148,11 @@ class SGroupsController extends Controller
      */
     public function copy(Request $request, $id)
     {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         $group = SItemGroup::find($id);
 
         $groupCopy = clone $group;
@@ -163,6 +165,11 @@ class SGroupsController extends Controller
     public function activate(Request $request, $id)
     {
         $group = SItemGroup::find($id);
+
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $group->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
 
         $group->fill($request->all());
         $group->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -183,22 +190,20 @@ class SGroupsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          $group = SItemGroup::find($id);
-          $group->fill($request->all());
-          $group->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $group->updated_by_id = \Auth::user()->id;
+      if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
+      {
+        return redirect()->route('notauthorized');
+      }
 
-          $group->save();
-          #$user->delete();
+      $group = SItemGroup::find($id);
+      $group->fill($request->all());
+      $group->is_deleted = \Config::get('scsys.STATUS.DEL');
+      $group->updated_by_id = \Auth::user()->id;
 
-          Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('siie.groups.index');
-        }
-        else
-        {
-          return redirect()->route('notauthorized');
-        }
+      $group->save();
+      #$user->delete();
+
+      Flash::error(trans('messages.REG_DELETED'))->important();
+      return redirect()->route('siie.groups.index');
     }
 }

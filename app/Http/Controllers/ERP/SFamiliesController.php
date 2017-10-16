@@ -49,14 +49,12 @@ class SFamiliesController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          return view('siie.families.createEdit');
+          return redirect()->route('notauthorized');
         }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+
+        return view('siie.families.createEdit');
     }
 
     /**
@@ -101,14 +99,12 @@ class SFamiliesController extends Controller
     {
         $family = SItemFamily::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $family->created_by_id))
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $family->created_by_id)))
         {
-            return view('siie.families.createEdit')->with('family', $family);
+          return redirect()->route('notauthorized');
         }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+
+        return view('siie.families.createEdit')->with('family', $family);
     }
 
     /**
@@ -138,6 +134,11 @@ class SFamiliesController extends Controller
      */
     public function copy(Request $request, $id)
     {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         $family = SItemFamily::find($id);
 
         $familyCopy = clone $family;
@@ -150,6 +151,11 @@ class SFamiliesController extends Controller
     public function activate(Request $request, $id)
     {
         $family = SItemFamily::find($id);
+
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $family->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
 
         $family->fill($request->all());
         $family->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -170,22 +176,21 @@ class SFamiliesController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          $family = SItemFamily::find($id);
-          $family->fill($request->all());
-          $family->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $family->updated_by_id = \Auth::user()->id;
-
-          $family->save();
-          #$user->delete();
-
-          Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('siie.families.index');
-        }
-        else
+        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
+
+        $family = SItemFamily::find($id);
+        $family->fill($request->all());
+        $family->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $family->updated_by_id = \Auth::user()->id;
+
+        $family->save();
+        #$user->delete();
+
+        Flash::error(trans('messages.REG_DELETED'))->important();
+
+        return redirect()->route('siie.families.index');
     }
 }

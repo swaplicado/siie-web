@@ -55,19 +55,17 @@ class SWarehousesController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
-          $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('wms.whs.createEdit')
-                        ->with('branches', $lBranches)
-                        ->with('types', $lTypes);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+
+        return view('wms.whs.createEdit')
+                      ->with('branches', $lBranches)
+                      ->with('types', $lTypes);
     }
 
     /**
@@ -113,20 +111,18 @@ class SWarehousesController extends Controller
     {
         $whs = SWarehouse::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $whs->created_by_id))
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $whs->created_by_id)))
         {
-          $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
-          $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('wms.whs.createEdit')
-                      ->with('whs', $whs)
-                      ->with('branches', $lBranches)
-                      ->with('types', $lTypes);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+
+        return view('wms.whs.createEdit')
+                    ->with('whs', $whs)
+                    ->with('branches', $lBranches)
+                    ->with('types', $lTypes);
     }
 
     /**
@@ -156,6 +152,11 @@ class SWarehousesController extends Controller
      */
     public function copy(Request $request, $id)
     {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+        
         $whs = SWarehouse::find($id);
 
         $whsCopy = clone $whs;
@@ -173,6 +174,11 @@ class SWarehousesController extends Controller
     public function activate(Request $request, $id)
     {
         $whs = SWarehouse::find($id);
+
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $whs->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
 
         $whs->fill($request->all());
         $whs->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -193,22 +199,20 @@ class SWarehousesController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          $whs = SWarehouse::find($id);
-          $whs->fill($request->all());
-          $whs->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $whs->updated_by_id = \Auth::user()->id;
-
-          $whs->save();
-          #$user->delete();
-
-          Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('wms.whs.index');
-        }
-        else
+        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
+
+        $whs = SWarehouse::find($id);
+        $whs->fill($request->all());
+        $whs->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $whs->updated_by_id = \Auth::user()->id;
+
+        $whs->save();
+        #$user->delete();
+
+        Flash::error(trans('messages.REG_DELETED'))->important();
+        return redirect()->route('wms.whs.index');
     }
 }

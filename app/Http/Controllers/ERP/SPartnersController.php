@@ -52,14 +52,12 @@ class SPartnersController extends Controller {
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          return view('siie.bps.createEdit');
+          return redirect()->route('notauthorized');
         }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+
+        return view('siie.bps.createEdit');
     }
 
     /**
@@ -104,6 +102,11 @@ class SPartnersController extends Controller {
     {
         $bpartner = SPartner::find($id);
 
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $bpartner->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         return view('siie.bps.createEdit')->with('bpartner', $bpartner)
                                       ->with('iFilter', $this->iFilter);
     }
@@ -135,6 +138,11 @@ class SPartnersController extends Controller {
       */
      public function copy(Request $request, $id)
      {
+         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+         {
+           return redirect()->route('notauthorized');
+         }
+
          $bpartner = SPartner::find($id);
 
          $bpartnerCopy = clone $bpartner;
@@ -148,6 +156,11 @@ class SPartnersController extends Controller {
      public function activate(Request $request, $id)
      {
          $bpartner = SPartner::find($id);
+
+         if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $bpartner->created_by_id)))
+         {
+           return redirect()->route('notauthorized');
+         }
 
          $bpartner->fill($request->all());
          $bpartner->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -168,6 +181,11 @@ class SPartnersController extends Controller {
      */
      public function destroy(Request $request, $id)
      {
+         if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
+         {
+           return redirect()->route('notauthorized');
+         }
+
          $bpartner = SPartner::find($id);
          $bpartner->fill($request->all());
          $bpartner->is_deleted = \Config::get('scsys.STATUS.DEL');

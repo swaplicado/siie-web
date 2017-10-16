@@ -57,21 +57,19 @@ class SGendersController extends Controller
      */
     public function create()
     {
-        if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-          {
-            $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
-            $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
-            $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
 
-            return view('siie.genders.createEdit')
-                                    ->with('groups', $lGroups)
-                                    ->with('classes', $lClasses)
-                                    ->with('types', $lItemTypes);
-          }
-          else
-          {
-             return redirect()->route('notauthorized');
-          }
+        $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
+        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
+        $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
+
+        return view('siie.genders.createEdit')
+                                ->with('groups', $lGroups)
+                                ->with('classes', $lClasses)
+                                ->with('types', $lItemTypes);
     }
 
     /**
@@ -115,22 +113,20 @@ class SGendersController extends Controller
     {
         $gender = SItemGender::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $gender->created_by_id))
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $gender->created_by_id)))
         {
-            $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
-            $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
-            $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
+          return redirect()->route('notauthorized');
+        }
 
-            return view('siie.genders.createEdit')
-                                    ->with('groups', $lGroups)
-                                    ->with('classes', $lClasses)
-                                    ->with('types', $lItemTypes)
-                                    ->with('gender', $gender);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
+        $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
+        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
+        $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
+
+        return view('siie.genders.createEdit')
+                                ->with('groups', $lGroups)
+                                ->with('classes', $lClasses)
+                                ->with('types', $lItemTypes)
+                                ->with('gender', $gender);
     }
 
     /**
@@ -160,6 +156,11 @@ class SGendersController extends Controller
      */
     public function copy(Request $request, $id)
     {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         $gender = SItemGender::find($id);
 
         $genderCopy = clone $gender;
@@ -172,6 +173,11 @@ class SGendersController extends Controller
     public function activate(Request $request, $id)
     {
         $gender = SItemGender::find($id);
+
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $gender->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
 
         $gender->fill($request->all());
         $gender->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -192,23 +198,21 @@ class SGendersController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          $gender = SItemGender::find($id);
-          $gender->fill($request->all());
-          $gender->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $gender->updated_by_id = \Auth::user()->id;
-
-          $gender->save();
-          #$user->delete();
-
-          Flash::error(trans('messages.REG_DELETED'))->important();
-          return redirect()->route('siie.genders.index');
-        }
-        else
+        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
+
+        $gender = SItemGender::find($id);
+        $gender->fill($request->all());
+        $gender->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $gender->updated_by_id = \Auth::user()->id;
+
+        $gender->save();
+        #$user->delete();
+
+        Flash::error(trans('messages.REG_DELETED'))->important();
+        return redirect()->route('siie.genders.index');
     }
 
     public function children(Request $request, $id)

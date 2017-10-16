@@ -50,10 +50,15 @@ class SMonthsController extends Controller
      */
     public function edit($id)
     {
-      $oMonth = SMonth::find($id);
+        $oMonth = SMonth::find($id);
 
-      return view('siie.months.createEdit')->with('month', $oMonth)
-                                      ->with('iFilter', $this->iFilter);
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $oMonth->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
+
+        return view('siie.months.createEdit')->with('month', $oMonth)
+                                        ->with('iFilter', $this->iFilter);
     }
 
     /**

@@ -47,14 +47,13 @@ class SYearsController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          return view('siie.years.createEdit');
+          return redirect()->route('notauthorized');
         }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+
+        return view('siie.years.createEdit');
+
     }
 
     /**
@@ -123,9 +122,14 @@ class SYearsController extends Controller
      */
     public function edit($id)
     {
-      $oYear = SYear::find($id);
+        $oYear = SYear::find($id);
 
-      return view('siie.years.createEdit')->with('year', $oYear)
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $oYear->created_by_id)))
+        {
+          return redirect()->route('notauthorized');
+        }
+
+        return view('siie.years.createEdit')->with('year', $oYear)
                                       ->with('iFilter', $this->iFilter);
     }
 
@@ -138,30 +142,35 @@ class SYearsController extends Controller
      */
      public function update(Request $request, $id)
      {
-       $oYear = SYear::find($id);
-       $oYear->fill($request->all());
-       $oYear->updated_by_id = \Auth::user()->id;
+         $oYear = SYear::find($id);
+         $oYear->fill($request->all());
+         $oYear->updated_by_id = \Auth::user()->id;
 
-       $oYear->save();
+         $oYear->save();
 
-       Flash::warning(trans('messages.REG_EDITED'))->important();
+         Flash::warning(trans('messages.REG_EDITED'))->important();
 
-       return redirect()->route('siie.years.index');
+         return redirect()->route('siie.years.index');
      }
 
      public function activate(Request $request, $id)
      {
-       $oYear = SYear::find($id);
+         $oYear = SYear::find($id);
 
-       $oYear->fill($request->all());
-       $oYear->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-       $oYear->updated_by_id = \Auth::user()->id;
+         if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $oYear->created_by_id)))
+         {
+           return redirect()->route('notauthorized');
+         }
 
-       $oYear->save();
+         $oYear->fill($request->all());
+         $oYear->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+         $oYear->updated_by_id = \Auth::user()->id;
 
-       Flash::success(trans('messages.REG_ACTIVATED'))->important();
+         $oYear->save();
 
-       return redirect()->route('siie.years.index');
+         Flash::success(trans('messages.REG_ACTIVATED'))->important();
+
+         return redirect()->route('siie.years.index');
      }
 
     /**
@@ -172,16 +181,21 @@ class SYearsController extends Controller
      */
      public function destroy(Request $request, $id)
      {
-       $oYear = SYear::find($id);
-       $oYear->fill($request->all());
-       $oYear->is_deleted = \Config::get('scsys.STATUS.DEL');
-       $oYear->updated_by_id = \Auth::user()->id;
+         if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
+         {
+           return redirect()->route('notauthorized');
+         }
+         
+         $oYear = SYear::find($id);
+         $oYear->fill($request->all());
+         $oYear->is_deleted = \Config::get('scsys.STATUS.DEL');
+         $oYear->updated_by_id = \Auth::user()->id;
 
-       $oYear->save();
-       #$user->delete();
+         $oYear->save();
+         #$user->delete();
 
-       Flash::error(trans('messages.REG_DELETED'))->important();
+         Flash::error(trans('messages.REG_DELETED'))->important();
 
-       return redirect()->route('siie.years.index');
+         return redirect()->route('siie.years.index');
      }
 }
