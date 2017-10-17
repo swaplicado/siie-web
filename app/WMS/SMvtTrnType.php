@@ -2,25 +2,15 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class SWhsType extends Model {
+class SMvtTrnType extends Model {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_type';
-  protected $table = 'wmss_whs_types';
-
-  public function getTable()
-  {
-    return $this->table;
-  }
+  protected $table = 'wmss_mvt_trn_types';
 
   protected $fillable = [
                           'code',
                           'name',
                           'is_deleted',
                         ];
-
-  public function warehouses()
-  {
-    return $this->hasMany('App\WMS\SWarehouse');
-  }
 }

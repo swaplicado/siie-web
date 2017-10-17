@@ -2,16 +2,11 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class SWhsType extends Model {
+class SMvtClass extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_type';
-  protected $table = 'wmss_whs_types';
-
-  public function getTable()
-  {
-    return $this->table;
-  }
+  protected $primaryKey = 'id_class';
+  protected $table = 'wmss_mvt_classes';
 
   protected $fillable = [
                           'code',
@@ -19,8 +14,8 @@ class SWhsType extends Model {
                           'is_deleted',
                         ];
 
-  public function warehouses()
+  public function mvtTypes()
   {
-    return $this->hasMany('App\WMS\SWarehouse');
+    return $this->hasMany('App\WMS\SMvtTypes');
   }
 }
