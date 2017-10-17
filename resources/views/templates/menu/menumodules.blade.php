@@ -18,9 +18,7 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <!-- Collect the nav links, forms, and other content for toggling -->
-  			<ul class="nav navbar-nav">
-  				@include(config('laravel-menu.views.bootstrap-items'), array('items' => $sMenu->roots()))
-  			</ul>
+  			{!! Menu::main() !!}
         @include('templates.menu.userul')
         @include('templates.menu.navmodules')
     </div><!-- /.container-fluid -->

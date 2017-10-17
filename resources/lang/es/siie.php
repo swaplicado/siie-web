@@ -6,8 +6,10 @@ return [
       'MODULE'  => 'Módulo Central',
 
       'ERP'  => 'ERP',
+      'HOME'  => 'Inicio',
       'ERP_'  => 'ERP WEB 1.0',
       'CATALOGUES'  => 'Catálogos',
+      'CONFIGURATION'  => 'Configuración',
       'ERP_COMPANIES'  => 'Datos de la empresa',
       'BRANCHES'  => 'Sucursales',
       'ACG_YEAR_PER'  => 'Ejercicios y períodos',

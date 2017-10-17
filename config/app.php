@@ -151,8 +151,8 @@ return [
         Cviebrock\EloquentSluggable\ServiceProvider::class,
 
         Laracasts\Flash\FlashServiceProvider::class,
-        'Lavary\Menu\ServiceProvider',
         Styde\Html\HtmlServiceProvider::class,
+        Spatie\Menu\Laravel\MenuServiceProvider::class,
 
     ],
 
@@ -205,8 +205,8 @@ return [
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,
         'Flash'     => Laracasts\Flash\Flash::class,
-        'Menu'      => 'Lavary\Menu\Facade',
-        'Access' => Styde\Html\Facades\Access::class,
+        'Access'    => Styde\Html\Facades\Access::class,
+        'Menu'      => Spatie\Menu\Laravel\MenuFacade::class,
 
     ],
 

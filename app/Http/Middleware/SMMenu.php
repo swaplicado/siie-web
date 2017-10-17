@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Spatie\Menu\Laravel\Link;
 
 class SMMenu
 {
@@ -23,77 +24,131 @@ class SMMenu
     {
       switch ($iModule) {
         case \Config::get('scsys.MODULES.ERP'):
-          \Menu::make('sMenu', function($menu) {
-              $menu->add('Home', ['route' => 'mms.home']);
-              $menu->add(trans('siie.ERP'), '')->nickname(trans('siie.ERP'));
-              $menu->get(trans('siie.ERP'))->add(trans('siie.BRANCHES'), ['route' => 'siie.branches.index']);
-              $menu->get(trans('siie.ERP'))->add(trans('siie.ACG_YEAR_PER'), ['route' => 'siie.years.index']);
-              $menu->get(trans('siie.ERP'))->add(trans('siie.BPS'), ['route' => 'siie.bps.index']);
-              $menu->add(trans('siie.CATALOGUES'), '')->nickname(trans('siie.CATALOGUES'));
-              $menu->add(trans('siie.ITEMS'), 'what-we-do')->nickname(trans('siie.ITEMS'));
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.MATERIALS'), 'what-we-do');
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.PRODUCTS'), 'what-we-do');
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.GENDERS'), ['route' => 'siie.genders.index']);
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.GROUPS'), ['route' => 'siie.groups.index']);
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.FAMILIES'), ['route' => 'siie.families.index']);
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.UNITS'), ['route' => 'siie.units.index']);
-              $menu->get(trans('siie.ITEMS'))->add(trans('siie.CONVERTIONS'), 'what-we-do');
+          \Menu::macro('main', function () {
+            return \Menu::new()
+              ->addClass('nav navbar-nav')
+              ->link('', '')
+              ->route('siie.home', trans('siie.HOME'))
+              ->submenu(
+                  Link::to('#', trans('siie.CONFIGURATION').'<span class="caret"></span>')
+                      ->addClass('dropdown-toggle')
+                      ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+                  \Menu::new()
+                      ->addClass('dropdown-menu')
+                      ->route('siie.branches.index', trans('siie.BRANCHES'))
+                      ->route('siie.branches.index', trans('siie.ACG_YEAR_PER'))
+                      ->html('', ['role' => 'separator', 'class' => 'divider'])
+                      ->route('siie.bps.index', trans('siie.BPS'))
+              )
+              ->submenu(
+                  Link::to('#', trans('siie.CATALOGUES').'<span class="caret"></span>')
+                      ->addClass('dropdown-toggle')
+                      ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+                  \Menu::new()
+                      ->addClass('dropdown-menu')
+                      ->route('siie.bps.index', trans('siie.MATERIALS'))
+                      ->route('siie.bps.index', trans('siie.PRODUCTS'))
+                      ->route('siie.genders.index', trans('siie.GENDERS'))
+                      ->route('siie.groups.index', trans('siie.GROUPS'))
+                      ->route('siie.families.index', trans('siie.FAMILIES'))
+                      ->route('siie.units.index', trans('siie.UNITS'))
+                      ->route('siie.units.index', trans('siie.CONVERTIONS'))
+                      ->html('', ['role' => 'separator', 'class' => 'divider'])
+              )
+              ->wrap('div.collapse.navbar-collapse')
+              ->setActiveFromRequest();
           });
 
           break;
 
         case \Config::get('scsys.MODULES.MMS'):
-          \Menu::make('sMenu', function($menu) {
-              $menu->add(' ');
-              $menu->add('Home', ['route' => 'mms.home']);
-              $menu->add('About',    'about');
-              $menu->add('Services', 'services');
-              $menu->add('Contact',  'contact');
-              $menu->add(trans('wms.REPORTS'), 'what-we-do');
+          \Menu::macro('main', function () {
+            return \Menu::new()
+              ->addClass('nav navbar-nav')
+              ->link('', '')
+              ->route('mms.home', trans('mms.MODULE'))
+              ->link('/two', 'Two')
+              ->submenu(
+                  Link::to('#', 'Dropdown <span class="caret"></span>')
+                      ->addClass('dropdown-toggle')
+                      ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+                  \Menu::new()
+                      ->addClass('dropdown-menu')
+                      ->link('#', 'Action')
+                      ->link('#', 'Another action')
+                      ->html('', ['role' => 'separator', 'class' => 'divider'])
+              )
+              ->wrap('div.collapse.navbar-collapse')
+              ->setActiveFromRequest();
           });
           break;
 
         case \Config::get('scsys.MODULES.QMS'):
-          \Menu::make('sMenu', function($menu) {
-              $menu->add(' ');
-              $menu->add('Home', ['route' => 'qms.home']);
-              $menu->add('About',    'about');
-              $menu->add('Services', 'services');
-              $menu->add('Contact',  'contact');
-              $menu->add(trans('wms.REPORTS'), 'what-we-do');
-
+          \Menu::macro('main', function () {
+            return \Menu::new()
+              ->addClass('nav navbar-nav')
+              ->link('', '')
+              ->route('qms.home', trans('mms.MODULE'))
+              ->link('/two', 'Two')
+              ->submenu(
+                  Link::to('#', 'Dropdown <span class="caret"></span>')
+                      ->addClass('dropdown-toggle')
+                      ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+                  \Menu::new()
+                      ->addClass('dropdown-menu')
+                      ->link('#', 'Action')
+                      ->link('#', 'Another action')
+                      ->html('', ['role' => 'separator', 'class' => 'divider'])
+              )
+              ->wrap('div.collapse.navbar-collapse')
+              ->setActiveFromRequest();
           });
           break;
 
         case \Config::get('scsys.MODULES.WMS'):
-          \Menu::make('sMenu', function($menu) {
-              $menu->add(' ');
-              $menu->add(trans('userinterface.HOME'), ['route' => 'wms.home']);
-              $menu->add(trans('wms.CONFIG'), 'what-we-do')->nickname(trans('wms.CONFIG'));
-              $menu->get(trans('wms.CONFIG'))->add(trans('wms.CONFIG'), 'what-we-do');
-              $menu->get(trans('wms.CONFIG'))->add(trans('wms.CONFIG'), 'what-we-do');
-              $menu->add(trans('wms.CATALOGUES'), 'what-we-do')->nickname(trans('wms.CATALOGUES'));
-              $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.WAREHOUSES'), ['route' => 'wms.whs.index']);
-              $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.LOCATIONS'), ['route' => 'wms.locs.index']);
-              $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.PALLETS'), 'what-we-do');
-              $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.LOTS'), 'what-we-do');
-              $menu->get(trans('wms.CATALOGUES'))->add(trans('wms.BAR_CODES'), 'what-we-do');
-              $menu->add(trans('wms.MOV_STK'), ['route' => 'wms.movs.index']);
-              $menu->add(trans('wms.INVENTORY'), ['route' => 'wms.movs.index']);
-              $menu->add(trans('wms.REPORTS'), 'what-we-do');
-
+          \Menu::macro('main', function () {
+            return \Menu::new()
+              ->addClass('nav navbar-nav')
+              ->link('', '')
+              ->route('wms.home', trans('wms.MODULE'))
+              ->submenu(
+                  Link::to('#', trans('wms.CATALOGUES').'<span class="caret"></span>')
+                      ->addClass('dropdown-toggle')
+                      ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+                  \Menu::new()
+                      ->addClass('dropdown-menu')
+                      ->route('wms.whs.index', trans('wms.WAREHOUSES'))
+                      ->route('wms.locs.index', trans('wms.LOCATIONS'))
+                      ->html('', ['role' => 'separator', 'class' => 'divider'])
+                      ->link('#', trans('wms.PALLETS'))
+                      ->link('#', trans('wms.LOTS'))
+                      ->link('#', trans('wms.BAR_CODES'))
+              )
+              ->route('wms.movs.index', trans('wms.MOV_STK'))
+              ->wrap('div.collapse.navbar-collapse')
+              ->setActiveFromRequest();
           });
           break;
 
         case \Config::get('scsys.MODULES.TMS'):
-          \Menu::make('sMenu', function($menu) {
-              $menu->add(' ');
-              $menu->add('Home', ['route' => 'tms.home']);
-              $menu->add('About',    'about');
-              $menu->add('Services', 'services');
-              $menu->add('Contact',  'contact');
-              $menu->add(trans('wms.REPORTS'), 'what-we-do');
-
+          \Menu::macro('main', function () {
+            return \Menu::new()
+              ->addClass('nav navbar-nav')
+              ->link('', '')
+              ->route('tms.home', trans('mms.MODULE'))
+              ->link('/two', 'Two')
+              ->submenu(
+                  Link::to('#', 'Dropdown <span class="caret"></span>')
+                      ->addClass('dropdown-toggle')
+                      ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+                  \Menu::new()
+                      ->addClass('dropdown-menu')
+                      ->link('#', 'Action')
+                      ->link('#', 'Another action')
+                      ->html('', ['role' => 'separator', 'class' => 'divider'])
+              )
+              ->wrap('div.collapse.navbar-collapse')
+              ->setActiveFromRequest();
           });
           break;
 
