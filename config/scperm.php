@@ -47,8 +47,8 @@ return [
                   'ADMINISTRATOR' => '001',
                   'CENTRAL_CONFIG' => '002',
                   'ITEM_CONFIG' => '003',
-                  'STK_MOVS' => '004',
-                  'CONTAINERS' => '005',
+                  'CONTAINERS' => '004',
+                  'STK_MOVS' => '005',
 
                   'ERP' =>  '101',
                   'MMS' =>  '102',

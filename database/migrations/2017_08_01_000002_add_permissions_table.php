@@ -37,25 +37,11 @@ class AddPermissionsTable extends Migration
         });
 
         DB::table('syss_permissions')->insert([
-        	['id_permission' => '1','code' => '001','name' => 'Módulo Producción', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '2','code' => '002','name' => 'Módulo Calidad', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '3','code' => '003','name' => 'Módulo Almacenes', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '4','code' => '004','name' => 'Módulo Embarques', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '5','code' => '005','name' => 'Módulo Central', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '6','code' => '007','name' => 'siie_empresas', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '7','code' => '008','name' => 'Sucursales', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '8','code' => '009','name' => 'Periodos', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '9','code' => '010','name' => 'Ejercicios', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '10','code' => '011','name' => 'Asociados de negocios', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '11','code' => '012','name' => 'Unidades', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '12','code' => '013','name' => 'Almacenes', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '13','code' => '014','name' => 'Ubicaciones', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '14','code' => '015','name' => 'Familias', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '15','code' => '016','name' => 'Grupos', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '16','code' => '017','name' => 'Géneros', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '17','code' => '018','name' => 'ítems', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '18','code' => '019','name' => 'IÍtem-unidad', 'is_deleted' => '0','module_id' => '4'],
-        	['id_permission' => '19','code' => '020','name' => 'Códigos de barras', 'is_deleted' => '0','module_id' => '4'],
+        	['id_permission' => '1','code' => '001','name' => 'Administrador', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '2','code' => '002','name' => 'Configuración central', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '3','code' => '003','name' => 'Configuración de ítems', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '4','code' => '004','name' => 'Contenedores', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '5','code' => '005','name' => 'Movimientos de inventario', 'is_deleted' => '0','module_id' => '1'],
         ]);
 
     }

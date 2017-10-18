@@ -54,20 +54,12 @@ class SUserCompaniesController extends Controller
      */
     public function edit($id)
     {
-          $user = User::find($id);
+        $user = User::find($id);
+        $companies = SCompany::orderBy('name', 'ASC')->get();
 
-          if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $userCompany->created_by_id))
-          {
-              $companies = SCompany::orderBy('name', 'ASC')->get();
-
-              return view('admin.usrcompanies.createEdit')
-                                              ->with('user', $user)
-                                              ->with('companies', $companies);
-          }
-          else
-          {
-              return redirect()->route('notauthorized');
-          }
+        return view('admin.usrcompanies.createEdit')
+                                            ->with('user', $user)
+                                            ->with('companies', $companies);
     }
 
     /**
