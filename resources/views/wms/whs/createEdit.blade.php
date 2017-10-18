@@ -38,8 +38,8 @@
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('whs_type_id_opt', trans('userinterface.labels.TYPE')) !!}
-			{!! Form::select('whs_type_id_opt', $types, isset($whs) ?  $whs->whs_type_id_opt : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WHS_TYPE')]) !!}
+			{!! Form::label('whs_type_id', trans('userinterface.labels.TYPE')) !!}
+			{!! Form::select('whs_type_id', $types, isset($whs) ?  $whs->whs_type_id : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WHS_TYPE')]) !!}
 		</div>
 
 @endsection

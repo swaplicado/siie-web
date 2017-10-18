@@ -12,7 +12,6 @@ use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\WMS\SWarehouse;
 use App\WMS\SWhsType;
-use App\ERP\SBranch;
 use App\SUtils\SProcess;
 
 class SWarehousesController extends Controller
@@ -61,7 +60,7 @@ class SWarehousesController extends Controller
         }
 
         $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
-        $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+        $lBranches = SUtil::companyBranchesArray();
 
         return view('wms.whs.createEdit')
                       ->with('branches', $lBranches)
@@ -81,7 +80,6 @@ class SWarehousesController extends Controller
       $whs->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
       $whs->updated_by_id = \Auth::user()->id;
       $whs->created_by_id = \Auth::user()->id;
-      $whs->whs_type_id_opt = $whs->whs_type_id_opt == '' ? NULL : $whs->whs_type_id_opt;
 
       $whs->save();
 
@@ -117,7 +115,7 @@ class SWarehousesController extends Controller
         }
 
         $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
-        $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+        $lBranches = SUtil::companyBranchesArray();
 
         return view('wms.whs.createEdit')
                     ->with('whs', $whs)
@@ -156,14 +154,14 @@ class SWarehousesController extends Controller
         {
           return redirect()->route('notauthorized');
         }
-        
+
         $whs = SWarehouse::find($id);
 
         $whsCopy = clone $whs;
         $whsCopy->id_whs = 0;
 
         $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
-        $lBranches = SBranch::orderBy('name', 'ASC')->lists('name', 'id_branch');
+        $lBranches = SUtil::companyBranchesArray();
 
         return view('wms.whs.createEdit')->with('whs', $whsCopy)
                                         ->with('branches', $lBranches)

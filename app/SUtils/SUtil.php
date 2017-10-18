@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\SYS\SUserPermission;
 use App\SYS\SUserCompany;
 use App\SYS\SCompany;
+use App\ERP\SBranch;
 
 class SUtil {
 
@@ -171,6 +172,14 @@ class SUtil {
       }
 
       \DB::reconnect($sConnectionName);
+  }
+
+  public static function companyBranchesArray()
+  {      
+      return SBranch::where('partner_id', session()->has('partner') ? session('partner')->id_partner : 0)
+                  ->where('is_deleted', false)
+                  ->orderBy('name', 'ASC')
+                  ->lists('name', 'id_branch');
   }
 
 }

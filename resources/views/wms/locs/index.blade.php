@@ -4,6 +4,10 @@
 	@include('templates.menu.menumodules')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_LOCATIONS'))
 
 @section('content')

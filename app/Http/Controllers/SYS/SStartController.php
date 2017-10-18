@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
 use App\SYS\SCompany;
+use App\SYS\SConfiguration;
+use App\ERP\SPartner;
 use App\SYS\SUserCompany;
 
 class SStartController extends Controller
@@ -37,8 +39,10 @@ class SStartController extends Controller
     {
         $iCompanyId =  $_COOKIE['iCompanyId'];
         $oCompany = SCompany::find($iCompanyId);
+        $oConfiguration = SConfiguration::find(1);
 
         session(['company' => $oCompany]);
+        session(['configuration' => $oConfiguration]);
 
         $sConnection = 'siie';
         $bDefault = true;
@@ -48,6 +52,9 @@ class SStartController extends Controller
         $sPassword = $oCompany->password;
 
         SUtil::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
+
+        $oPartner = SPartner::find($oConfiguration->partner_id);
+        session(['partner' => $oPartner]);
 
         return SStartController::selectModule();
     }

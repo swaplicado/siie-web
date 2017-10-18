@@ -4,6 +4,10 @@
 	@include('templates.menu.menumodules')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_WAREHOUSES'))
 
 @section('content')
@@ -25,7 +29,7 @@
 				<tr>
 					<td>{{ $whs->code }}</td>
 					<td>{{ $whs->name }}</td>
-					<td>{{ $whs->whs_type_id_opt != NULL ? $whs->whsType->name : '' }}</td>
+					<td>{{ $whs->whsType->name }}</td>
 					<td>{{ $whs->branch->name }}</td>
 					<td>
 						@if (! $whs->is_deleted)

@@ -15,6 +15,7 @@ class AddConfigurationsTable extends Migration
         Schema::create('sys_configuration', function (blueprint $table) {
         	$table->increments('id_configuration');
         	$table->char('version', 25);
+          $table->integer('partner_id')->unsigned();
         	$table->timestamps();
         });
 

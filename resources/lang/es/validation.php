@@ -109,6 +109,9 @@ return [
         'branch_id' => [
             'required' => 'El campo sucursal es obligatorio.',
         ],
+        'name' => [
+            'required' => 'El campo nombre es obligatorio.',
+        ],
         'code' => [
             'unique' => 'El código ya está en uso.',
             'required' => 'El campo código es obligatorio.',
