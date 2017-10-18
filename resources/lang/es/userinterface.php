@@ -83,6 +83,7 @@
 								  		'DUPLICATE' => 'Duplicar',
 								  		'PASS' => 'Cambiar contraseña',
 								  		'ACCESS' => 'Acceso a empresas',
+								  		'BRANCH' => 'Crear sucursal',
 											],
 
 		'placeholders' 	=> 	[
@@ -127,7 +128,8 @@
 
 		'tooltips'     	=>   [
 											'EDIT' => 'Editar',
-							 				'DELETE' => 'Eliminar'
+							 				'DELETE' => 'Eliminar',
+							 				'BRANCH' => 'Crear sucursal',
 											],
 
 		'labels'			 	=>  [
@@ -158,6 +160,7 @@
 											'FAMILY' =>	'Familia',
 											'GENDER' =>	'Género',
 											'GROUP' =>	'Nombre Grupo',
+											'HEAD_QUARTERS' =>	'Matriz',
 											'INACTIVE' => 'Inactivo',
 											'INACTIVES' => 'Inactivos',
 											'LAST_NAME' => 'Apellidos',

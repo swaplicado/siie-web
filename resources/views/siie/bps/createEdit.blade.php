@@ -30,7 +30,7 @@
 		<div class="form-group">
 			{!! Form::label('name', trans('userinterface.labels.BP').'*') !!}
 			{!! Form::text('name',
-				isset($bpartner) ? $bpartner->bp_name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.BP'), 'required']) !!}
+				isset($bpartner) ? $bpartner->name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.BP'), 'required']) !!}
 		</div>
 
 		<div class="form-group">

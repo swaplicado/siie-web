@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\ERP;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\ERP\SBranchRequest;
 
 use Laracasts\Flash\Flash;
 use App\Http\Requests;
@@ -17,6 +18,7 @@ class SBranchesController extends Controller {
     private $oCurrentUserPermission;
     private $iFilter;
     private $sClassNav;
+    private $iAuxBP;
 
     public function __construct()
     {
@@ -50,17 +52,18 @@ class SBranchesController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($iBpId)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
 
-        $companies = SPartner::orderBy('name', 'ASC')->lists('name', 'id_partner');
+        $partner = SPartner::find($iBpId);
+        $this->iAuxBP = $iBpId;
 
         return view('siie.branches.createEdit')
-                      ->with('companies', $companies);
+                      ->with('partner', $partner);
     }
 
     /**
@@ -69,14 +72,12 @@ class SBranchesController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SBranchRequest $request)
     {
-        $company = SPartner::find(1);
-
         $branch = new SBranch($request->all());
 
         $branch->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-        $branch->partner_id = $company->id_partner;
+        $branch->partner_id = $request['partner_id'];
         $branch->updated_by_id = \Auth::user()->id;
         $branch->created_by_id = \Auth::user()->id;
 
@@ -107,6 +108,7 @@ class SBranchesController extends Controller {
     public function edit($id)
     {
         $branch = SBranch::find($id);
+        $partner = $branch->partner;
 
         if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $branch->created_by_id)))
         {
@@ -114,6 +116,7 @@ class SBranchesController extends Controller {
         }
 
         return view('siie.branches.createEdit')->with('branch', $branch)
+                                                ->with('partner', $partner)
                                                 ->with('iFilter', $this->iFilter);
     }
 
@@ -129,6 +132,7 @@ class SBranchesController extends Controller {
          $branch = SBranch::find($id);
          $branch->fill($request->all());
          $branch->updated_by_id = \Auth::user()->id;
+         $branch->is_headquarters = $request['is_headquarters'];
          $branch->save();
 
          Flash::warning(trans('messages.REG_EDITED'))->important();

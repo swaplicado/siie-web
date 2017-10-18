@@ -11,11 +11,6 @@
 										 \Config::get('scsiie.ATT.IS_COMP') => trans('userinterface.labels.IS_COMP'),
 										 \Config::get('scsiie.ATT.IS_SUPP') => trans('userinterface.labels.IS_SUPP'),
 										 \Config::get('scsiie.ATT.IS_CUST') => trans('userinterface.labels.IS_CUST'),
-										 \Config::get('scsiie.ATT.IS_CRED') => trans('userinterface.labels.IS_CRED'),
-										 \Config::get('scsiie.ATT.IS_DEBT') => trans('userinterface.labels.IS_DEBT'),
-										 \Config::get('scsiie.ATT.IS_DEBT') => trans('userinterface.labels.IS_DEBT'),
-										 \Config::get('scsiie.ATT.IS_EMPL') => trans('userinterface.labels.IS_EMPL'),
-										 \Config::get('scsiie.ATT.IS_AGTS') => trans('userinterface.labels.IS_AGTS'),
 										 \Config::get('scsiie.ATT.IS_PART') => trans('userinterface.labels.IS_PART'),
 											],
 											$iFilterBp, ['class' => 'form-control', 'required']) !!}
@@ -73,12 +68,14 @@
 					<td>
 						<?php
 								$oRegistry = $bpartner;
-								$iRegistryId = $bpartner->id_bp;
+								$iRegistryId = $bpartner->id_partner;
 								$loptions = [
 									\Config::get('scsys.OPTIONS.EDIT'),
 									\Config::get('scsys.OPTIONS.DESTROY'),
 									\Config::get('scsys.OPTIONS.ACTIVATE'),
 									\Config::get('scsys.OPTIONS.DUPLICATE'),
+									\Config::get('scsys.OPTIONS.COPY'),
+									\Config::get('scsys.OPTIONS.NEW_BRANCH'),
 								];
 						?>
 						@include('templates.list.options')

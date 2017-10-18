@@ -6,7 +6,7 @@ class SWarehouse extends Model {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_whs';
-  protected $table = "wms_warehouses";
+  protected $table = 'wmsu_whs';
 
   public function getTable()
   {
@@ -18,12 +18,12 @@ class SWarehouse extends Model {
                           'name',
                           'is_deleted',
                           'branch_id',
-                          'whs_type_id_opt',
+                          'whs_type_id',
                         ];
 
   public function whsType()
   {
-    return $this->belongsTo('App\WMS\SWhsType', 'whs_type_id_opt');
+    return $this->belongsTo('App\WMS\SWhsType', 'whs_type_id');
   }
 
   public function branch()

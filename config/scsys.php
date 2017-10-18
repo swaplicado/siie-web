@@ -57,5 +57,6 @@ return [
                 'ACTIVATE' => '003',
                 'COPY' => '004',
                 'MOD_PASS' => '005',
+                'NEW_BRANCH' => '006',
               ],
 ];

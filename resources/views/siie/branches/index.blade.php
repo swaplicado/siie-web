@@ -7,22 +7,31 @@
 @section('title', trans('userinterface.titles.LIST_BRANCHES'))
 
 @section('content')
-	<?php $sRoute="siie.branches"?>
-	@section('create')
-		@include('templates.form.create')
-	@endsection
+
+	<?php $sRoute='siie.branches' ?>
+
 	<table data-toggle="table" class="table table-striped">
 		<thead>
+			<th>{{ trans('userinterface.labels.BP') }}</th>
 			<th>{{ trans('userinterface.labels.CODE') }}</th>
 			<th>{{ trans('userinterface.labels.NAME') }}</th>
+			<th>{{ trans('userinterface.labels.BRANCH') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 		</thead>
 		<tbody>
 			@foreach($branches as $branch)
 				<tr>
+					<td>{{ $branch->partner->name }}</td>
 					<td>{{ $branch->code }}</td>
 					<td>{{ $branch->name }}</td>
+					<td>
+						@if ($branch->is_headquarters)
+								<span class="label label-success">{{ trans('userinterface.labels.HEAD_QUARTERS') }}</span>
+						@else
+								<span class="label label-default">{{ $branch->name }}</span>
+						@endif
+					</td>
 					<td>
 						@if (! $branch->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
@@ -33,7 +42,6 @@
 					<td>
 						<?php
 								$oRegistry = $branch;
-								$sRoute = 'siie.branches';
 								$iRegistryId = $branch->id_branch;
 								$loptions = [
 									\Config::get('scsys.OPTIONS.EDIT'),

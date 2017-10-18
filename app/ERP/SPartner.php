@@ -56,23 +56,23 @@ class SPartner extends Model {
         case \Config::get('scsiie.ATT.IS_CUST'):
           $sAtt = 'is_customer';
           break;
-        case \Config::get('scsiie.ATT.IS_CRED'):
-          $sAtt = 'is_creditor';
-          break;
-        case \Config::get('scsiie.ATT.IS_DEBT'):
-          $sAtt = 'is_debtor';
-          break;
-        case \Config::get('scsiie.ATT.IS_BANK'):
-          $sAtt = 'is_bank';
-          break;
-        case \Config::get('scsiie.ATT.IS_EMPL'):
-          $sAtt = 'is_employee';
-          break;
-        case \Config::get('scsiie.ATT.IS_AGTS'):
-          $sAtt = 'is_agt_sales';
-          break;
+        // case \Config::get('scsiie.ATT.IS_CRED'):
+        //   $sAtt = 'is_creditor';
+        //   break;
+        // case \Config::get('scsiie.ATT.IS_DEBT'):
+        //   $sAtt = 'is_debtor';
+        //   break;
+        // case \Config::get('scsiie.ATT.IS_BANK'):
+        //   $sAtt = 'is_bank';
+        //   break;
+        // case \Config::get('scsiie.ATT.IS_EMPL'):
+        //   $sAtt = 'is_employee';
+        //   break;
+        // case \Config::get('scsiie.ATT.IS_AGTS'):
+        //   $sAtt = 'is_agt_sales';
+        //   break;
         case \Config::get('scsiie.ATT.IS_PART'):
-          $sAtt = 'is_partner';
+          $sAtt = 'is_related_party';
           break;
         default:
           $bAtt = false;

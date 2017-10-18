@@ -36,6 +36,9 @@
 					App\SUtils\SValidation::isRenderedB(\Config::get('scsys.OPERATION.SUPER'), $actualUserPermission, $v_created_by))
 				@include('templates.list.usraccess')
 			@endif
+			@if (in_array(\Config::get('scsys.OPTIONS.NEW_BRANCH'), $loptions))
+				@include('templates.list.branch')
+			@endif
 		</ul>
 	@endif
 </div>

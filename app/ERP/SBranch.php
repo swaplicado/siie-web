@@ -24,6 +24,11 @@ class SBranch extends Model {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  public function partner()
+  {
+    return $this->belongsTo('App\ERP\SPartner', 'partner_id');
+  }
+
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

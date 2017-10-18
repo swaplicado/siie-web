@@ -6,7 +6,7 @@ class SLocation extends Model {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_location';
-  protected $table = 'wms_warehouse_locations';
+  protected $table = 'wmsu_whs_locations';
 
   protected $fillable = [
                           'code',

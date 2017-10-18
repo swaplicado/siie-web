@@ -236,6 +236,10 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'ERP\SBranchesController@Activate',
         'as' => 'siie.branches.activate'
       ]);
+      Route::get('branches/{id}/create', [
+        'uses' => 'ERP\SBranchesController@create',
+        'as' => 'siie.branches.create'
+      ]);
 
       /*
       * Years and months
