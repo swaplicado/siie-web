@@ -3,8 +3,6 @@
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
-use App\SUtils\SConfiguration;
-
 class SProcess {
 
   public static function constructor($obj, $sPermissionCode, $iModule)
