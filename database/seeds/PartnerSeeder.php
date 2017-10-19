@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use App\SUtils\SConnectionUtils;
 
 class PartnerSeeder extends Seeder
 {
@@ -12,7 +13,7 @@ class PartnerSeeder extends Seeder
      */
     public function run()
     {
-        \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "siie_cartro");
+        SConnectionUtils::reconnectCompany('siie_cartro');
         factory(App\ERP\SPartner::class, 50)->create();
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use App\Database\OTF;
 use App\Database\Config;
-use App\SUtils\SUtil;
+use App\SUtils\SConnectionUtils;
 
 class ErpAddBpbAddTable extends Migration {
     private $lDatabases;
@@ -34,7 +34,7 @@ class ErpAddBpbAddTable extends Migration {
     {
         foreach ($this->lDatabases as $base) {
           $this->sDataBase = $base;
-          SUtil::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+          SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->create('erpu_branch_addresses', function (blueprint $table) {
           	$table->increments('id_branch_address');
@@ -76,7 +76,7 @@ class ErpAddBpbAddTable extends Migration {
     {
         foreach ($this->lDatabases as $base) {
           $this->sDataBase = $base;
-          SUtil::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+          SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->drop('erpu_branch_addresses');
         }

@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use App\Database\OTF;
 use App\Database\Config;
-use App\SUtils\SUtil;
+use App\SUtils\SConnectionUtils;
 
 class ErpAddSitemTables extends Migration {
     private $lDatabases;
@@ -34,7 +34,7 @@ class ErpAddSitemTables extends Migration {
     {
         foreach ($this->lDatabases as $base) {
           $this->sDataBase = $base;
-          SUtil::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+          SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->create('erps_item_link_types', function (blueprint $table) {
           	$table->increments('id_item_link_type');
@@ -101,7 +101,7 @@ class ErpAddSitemTables extends Migration {
     {
         foreach ($this->lDatabases as $base) {
           $this->sDataBase = $base;
-          SUtil::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+          SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->drop('erps_item_types');
           Schema::connection($this->sConnection)->drop('erps_item_classes');

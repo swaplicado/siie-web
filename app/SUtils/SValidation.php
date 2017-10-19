@@ -88,7 +88,7 @@ class SValidation {
    public static function hasPermission($sPermissionCode)
    {
        if (\Auth::check())
-       {   
+       {
          if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
          {
              return true;
@@ -181,6 +181,26 @@ class SValidation {
   public static function canDestroy($iPrivilegeId)
   {
       return \Config::get('scsys.PRIVILEGES.MANAGER') == $iPrivilegeId;
+  }
+
+  /**
+   * Return true if the user has permission to access to the company.
+   *
+   * @param  User  $oUser
+   * @param  int  $iIdCompany Company id
+   * @return true or false
+   */
+  public static function canAccessToCompany($oUser, $iIdCompany)
+  {
+      foreach ($oUser->userCompanies as $access)
+      {
+        if ($access->company_id == $iIdCompany)
+        {
+          return true;
+        }
+      }
+
+      return false;
   }
 
 }

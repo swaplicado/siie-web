@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use App\Database\OTF;
 use App\Database\Config;
-use App\SUtils\SUtil;
+use App\SUtils\SConnectionUtils;
 
 class ErpAddItemsTable extends Migration {
     private $lDatabases;
@@ -34,7 +34,7 @@ class ErpAddItemsTable extends Migration {
     {
         foreach ($this->lDatabases as $base) {
           $this->sDataBase = $base;
-          SUtil::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+          SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->create('erpu_items', function (blueprint $table) {
           	$table->increments('id_item');
@@ -72,7 +72,7 @@ class ErpAddItemsTable extends Migration {
     {
         foreach ($this->lDatabases as $base) {
           $this->sDataBase = $base;
-          SUtil::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+          SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->drop('erpu_items');
         }

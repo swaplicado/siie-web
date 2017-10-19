@@ -11,20 +11,21 @@ function disable(btn) {
 /*
 * Comboboxes with dependency
 */
-$('#itm_class').change(function(e) {
-		var classid = e.target.value;
-		$.get('/genders/' + classid +  '', function(data) {
-      console.log(data);
-			$('#children').empty();
-			$.each(data, function(key, value) {
-				var option = $("<option></option>")
-	                  .attr("value", key)
-	                  .text(value);
+$('#country_id').on('change', function(e) {
+    var parent = e.target.value;
+    //ajax
+    $.get('create/children?parent=' + parent, function(data) {
+        //success data
+        $('#country_state_id').empty();
+        $.each(data, function(index, subcatObj) {
+          var option = $("<option></option>")
+  	                  .attr(subcatObj, index)
+  	                  .text(subcatObj.name);
 
-				$('#itm_type').append(option);
-			});
-		});
-	});
+  				$('#country_state_id').append(option);
+        });
+    });
+});
 
   /*
   * Change <a> label with keypad

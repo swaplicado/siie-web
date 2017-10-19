@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
+use App\SUtils\SConnectionUtils;
 use App\SYS\SCompany;
 use App\SYS\SConfiguration;
 use App\ERP\SPartner;
@@ -51,7 +52,7 @@ class SStartController extends Controller
         $sUser = $oCompany->database_user;
         $sPassword = $oCompany->password;
 
-        SUtil::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
+        SConnectionUtils::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
 
         $oPartner = SPartner::find($oConfiguration->partner_id);
         session(['partner' => $oPartner]);

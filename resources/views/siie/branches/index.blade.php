@@ -4,6 +4,10 @@
 	@include('templates.menu.menumodules')
 @endsection
 
+@section('addfilters')
+	@include('templates.list.search')
+@endsection
+
 @section('title', trans('userinterface.titles.LIST_BRANCHES'))
 
 @section('content')
@@ -47,6 +51,7 @@
 									\Config::get('scsys.OPTIONS.EDIT'),
 									\Config::get('scsys.OPTIONS.DESTROY'),
 									\Config::get('scsys.OPTIONS.ACTIVATE'),
+									\Config::get('scsys.OPTIONS.ADDRESS'),
 								];
 						?>
 						@include('templates.list.options')

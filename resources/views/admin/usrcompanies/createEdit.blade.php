@@ -42,7 +42,7 @@
 							{!! Form::label($company->name) !!}
 						</div>
 						<div class="row">
-							{!! Form::checkbox($company->id_company, 1, App\SUtils\SUtil::canAccessToCompany($user, $company->id_company)) !!}
+							{!! Form::checkbox($company->id_company, 1, App\SUtils\SValidation::canAccessToCompany($user, $company->id_company)) !!}
 						</div>
 					</div>
 				@endforeach

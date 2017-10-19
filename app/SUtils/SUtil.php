@@ -25,7 +25,7 @@ class SUtil {
    */
   public static function getTheUserPermission($sPermissionCode)
   {
-    \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "");
+    SConnectionUtils::reconnectCompany();
 
       if (\Auth::check()) {
         if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
@@ -113,69 +113,8 @@ class SUtil {
       return $lUserCompany;
   }
 
-  /**
-   * Return true if the user has permission to access to the company.
-   *
-   * @param  User  $oUser
-   * @param  int  $iIdCompany Company id
-   * @return true or false
-   */
-  public static function canAccessToCompany($oUser, $iIdCompany)
-  {
-      foreach ($oUser->userCompanies as $access)
-      {
-        if ($access->company_id == $iIdCompany)
-        {
-          return true;
-        }
-      }
-
-      return false;
-  }
-
-  /**
-   * make the reconnection to database.
-   *
-   * @param  int  $sConnectionName
-   * @param  int  $sHost
-   * @param  int  $sDataBase
-   * @param  int  $sUser
-   * @param  int  $sPassword
-   *
-   * @return list of App\SYS\UserCompany
-   */
-  public static function reconnectDataBase($sConnectionName, $bDefault, $sHost, $sDataBase, $sUser, $sPassword)
-  {
-      if ($sHost != NULL)
-      {
-        \Config::set('database.connections.'.$sConnectionName.'.host', $sHost);
-      }
-
-      if ($sDataBase != NULL)
-      {
-        \Config::set('database.connections.'.$sConnectionName.'.database', $sDataBase);
-      }
-
-      if ($sUser != NULL)
-      {
-        \Config::set('database.connections.'.$sConnectionName.'.username', $sUser);
-      }
-
-      if ($sPassword != NULL)
-      {
-        \Config::set('database.connections.'.$sConnectionName.'.password', $sPassword);
-      }
-
-      if ($bDefault)
-      {
-          \Config::set('database.default', $sConnectionName);
-      }
-
-      \DB::reconnect($sConnectionName);
-  }
-
   public static function companyBranchesArray()
-  {      
+  {
       return SBranch::where('partner_id', session()->has('partner') ? session('partner')->id_partner : 0)
                   ->where('is_deleted', false)
                   ->orderBy('name', 'ASC')

@@ -39,6 +39,9 @@
 			@if (in_array(\Config::get('scsys.OPTIONS.NEW_BRANCH'), $loptions))
 				@include('templates.list.branch')
 			@endif
+			@if (in_array(\Config::get('scsys.OPTIONS.ADDRESS'), $loptions))
+				@include('templates.list.address')
+			@endif
 		</ul>
 	@endif
 </div>

@@ -242,6 +242,28 @@ Route::group(['middleware' => ['auth']], function() {
       ]);
 
       /*
+      * address
+      **/
+
+      Route::resource('address','ERP\SAddressController');
+      Route::get('siie/address/{id?}', [
+        'as' => 'siie.address.index',
+    		'uses' => 'ERP\SAddressController@Index'
+    		]);
+      Route::get('address/{id}/destroy',[
+        'uses' => 'ERP\SAddressController@Destroy',
+        'as' => 'siie.address.destroy'
+      ]);
+      Route::get('address/{id}/activate', [
+        'uses' => 'ERP\SAddressController@Activate',
+        'as' => 'siie.address.activate'
+      ]);
+      Route::get('/address/create/children', [
+      	'uses' => 'ERP\SAddressController@children',
+      	'as' => 'siie.address.create.children'
+      ]);
+
+      /*
       * Years and months
       **/
       Route::resource('years','ERP\SYearsController');

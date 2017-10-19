@@ -58,5 +58,6 @@ return [
                 'COPY' => '004',
                 'MOD_PASS' => '005',
                 'NEW_BRANCH' => '006',
+                'ADDRESS' => '007',
               ],
 ];

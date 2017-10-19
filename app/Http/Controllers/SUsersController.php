@@ -47,16 +47,9 @@ class SUsersController extends Controller
      */
     public function create()
     {
-        if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-          {
-            $types = SUserType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $types = SUserType::orderBy('name', 'ASC')->lists('name', 'id_user_type');
 
-            return view('admin.users.createEdit')->with('types', $types);
-          }
-          else
-          {
-             return redirect()->route('notauthorized');
-          }
+        return view('admin.users.createEdit')->with('types', $types);
     }
 
     /**
@@ -97,19 +90,12 @@ class SUsersController extends Controller
      */
     public function edit($id)
     {
-      $user = User::find($id);
+        $user = User::find($id);
 
-      if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $user->created_by_id))
-      {
-          $types = SUserType::orderBy('name', 'ASC')->lists('name', 'id_type');
-          return view('admin.users.createEdit')->with('user', $user)
-                                          ->with('iFilter', $this->iFilter)
-                                          ->with('types', $types);
-      }
-      else
-      {
-          return redirect()->route('notauthorized');
-      }
+        $types = SUserType::orderBy('name', 'ASC')->lists('name', 'id_user_type');
+        return view('admin.users.createEdit')->with('user', $user)
+                                        ->with('iFilter', $this->iFilter)
+                                        ->with('types', $types);
     }
 
     /**
@@ -207,8 +193,6 @@ class SUsersController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-      if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-      {
         $user = User::find($id);
         $user->fill($request->all());
         $user->is_deleted = \Config::get('scsys.STATUS.DEL');
@@ -219,11 +203,6 @@ class SUsersController extends Controller
 
         Flash::error(trans('messages.REG_DELETED'))->important();
         return redirect()->route('admin.users.index');
-      }
-      else
-      {
-        return redirect()->route('notauthorized');
-      }
     }
 
     /**

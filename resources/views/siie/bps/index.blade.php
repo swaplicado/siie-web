@@ -3,6 +3,7 @@
 @section('menu')
 	@include('templates.menu.menumodules')
 @endsection
+
 @section('addfilters')
 	@include('templates.list.search')
 	<span class="input-group-btn">
