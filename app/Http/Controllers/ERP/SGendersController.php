@@ -64,12 +64,10 @@ class SGendersController extends Controller
 
         $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
         $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
-        $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
 
         return view('siie.genders.createEdit')
                                 ->with('groups', $lGroups)
-                                ->with('classes', $lClasses)
-                                ->with('types', $lItemTypes);
+                                ->with('classes', $lClasses);
     }
 
     /**
@@ -78,13 +76,14 @@ class SGendersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SGenderRequest $request)
+    public function store(Request $request)
     {
       $gender = new SItemGender($request->all());
 
       $gender->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
       $gender->updated_by_id = \Auth::user()->id;
       $gender->created_by_id = \Auth::user()->id;
+
       $gender->save();
 
       Flash::success(trans('messages.REG_CREATED'))->important();
@@ -120,12 +119,12 @@ class SGendersController extends Controller
 
         $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
         $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
-        $lItemTypes = SItemType::orderBy('name', 'ASC')->lists('name', 'id_item_type');
+        $lItemTypes = SItemType::where('is_deleted', '=', false)->where('class_id', $gender->item_class_id)->orderBy('name', 'ASC')->get();
 
         return view('siie.genders.createEdit')
                                 ->with('groups', $lGroups)
                                 ->with('classes', $lClasses)
-                                ->with('types', $lItemTypes)
+                                ->with('itemTypes', $lItemTypes)
                                 ->with('gender', $gender);
     }
 
@@ -215,12 +214,8 @@ class SGendersController extends Controller
         return redirect()->route('siie.genders.index');
     }
 
-    public function children(Request $request, $id)
+    public function children(Request $request)
     {
-      if ($request->ajax())
-      {
-        $types = SItemType::getTypes($id);
-        return response()->json($types);
-      }
+      return SItemType::where('class_id', '=', $request->parent)->get();
     }
 }

@@ -98,7 +98,11 @@
 				<div class="form-group">
 	       {!! Form::label('state', trans('userinterface.labels.STATE')) !!}
 	       <select class="form-control" name="country_state_id" id="country_state_id">
-	           <option value="">First Select Category</option>
+					 @if (isset($domicile))
+						 <option value="{{ $domicile->country_state_id }}">{{ $domicile->state->name }}</option>
+					 @else
+							 <option value="">{{ trans('userinterface.placeholders.STATE') }}</option>
+					 @endif
 	       </select>
 			</div>
 
@@ -109,7 +113,4 @@
 
 			</div>
 		</div>
-
-
-
 @endsection

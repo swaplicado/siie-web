@@ -8,16 +8,18 @@ class SState extends Model {
   protected $primaryKey = 'id_state';
   protected $table = 'erps_country_states';
 
-  protected $fillable = ['id_state',
+  protected $fillable = [
+                          'id_state',
                           'code',
                           'abbreviation',
                           'name',
-                          'state',
-                          'is_deleted'];
+                          'is_deleted',
+                          'country_id'
+                        ];
 
-  public function states()
+  public function country()
   {
-    return $this->belongsTo('App\ERP\SCountry');
+    return $this->belongsTo('App\ERP\SCountry',  'country_id');
   }
 
   public function userCreation()

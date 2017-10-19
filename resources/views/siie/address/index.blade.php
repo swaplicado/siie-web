@@ -38,8 +38,8 @@
 					<td>{{ $domicile->num_ext }}</td>
 					<td>{{ $domicile->neighborhood }}</td>
 					<td>{{ $domicile->locality }}</td>
-					<td>{{ $domicile->state }}</td>
-					<td>{{ $domicile->county }}</td>
+					<td>{{ $domicile->state->name }}</td>
+					<td>{{ $domicile->country->name }}</td>
 					<td>{{ $domicile->branch->name }}</td>
 					<td>
 						@if (! $domicile->is_deleted)

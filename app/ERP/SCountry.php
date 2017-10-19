@@ -8,12 +8,14 @@ class SCountry extends Model {
   protected $primaryKey = 'id_country';
   protected $table = 'erps_countries';
 
-  protected $fillable = ['id_country',
+  protected $fillable = [
+                          'id_country',
                           'key',
                           'abbreviation',
                           'name',
                           'cty_lan',
-                          'is_deleted'];
+                          'is_deleted'
+                        ];
 
   public function states()
   {

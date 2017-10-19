@@ -7,6 +7,7 @@ class SAddress extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_branch_address';
   protected $table = 'erpu_branch_addresses';
+
   protected $fillable = [
                           'id_branch_address',
                           'name',
@@ -29,7 +30,17 @@ class SAddress extends Model {
 
   public function branch()
   {
-    return $this->belongsTo('App\ERP\SBranch');
+    return $this->belongsTo('App\ERP\SBranch', 'branch_id');
+  }
+
+  public function country()
+  {
+    return $this->belongsTo('App\ERP\SCountry', 'country_id');
+  }
+
+  public function state()
+  {
+    return $this->belongsTo('App\ERP\SState', 'country_state_id');
   }
 
   public function scopeSearch($query, $name, $iFilter, $iBranchId)

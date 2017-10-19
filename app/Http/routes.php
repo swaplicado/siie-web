@@ -262,6 +262,10 @@ Route::group(['middleware' => ['auth']], function() {
       	'uses' => 'ERP\SAddressController@children',
       	'as' => 'siie.address.create.children'
       ]);
+      Route::get('/address/{id?}/edit/children', [
+      	'uses' => 'ERP\SAddressController@children',
+      	'as' => 'siie.address.edit.children'
+      ]);
 
       /*
       * Years and months
@@ -356,9 +360,13 @@ Route::group(['middleware' => ['auth']], function() {
       * Genders
       **/
       Route::resource('genders','ERP\SGendersController');
-      Route::get('genders/{id}', [
+      Route::get('/genders/create/children', [
       	'uses' => 'ERP\SGendersController@children',
-      	'as' => 'siie.genders'
+      	'as' => 'siie.genders.create.children'
+      ]);
+      Route::get('/genders/{id?}/edit/children', [
+      	'uses' => 'ERP\SGendersController@children',
+      	'as' => 'siie.genders.edit.children'
       ]);
     });
 

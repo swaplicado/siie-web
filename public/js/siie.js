@@ -18,11 +18,50 @@ $('#country_id').on('change', function(e) {
         //success data
         $('#country_state_id').empty();
         $.each(data, function(index, subcatObj) {
-          var option = $("<option></option>")
+          var option = $("<option value=" + subcatObj.id_state + "></option>")
   	                  .attr(subcatObj, index)
   	                  .text(subcatObj.name);
 
   				$('#country_state_id').append(option);
+        });
+    });
+    $.get('./edit/children?parent=' + parent, function(data) {
+        //success data
+        $('#country_state_id').empty();
+        $.each(data, function(index, subcatObj) {
+          var option = $("<option value=" + subcatObj.id_state + "></option>")
+  	                  .attr(subcatObj, index)
+  	                  .text(subcatObj.name);
+
+  				$('#country_state_id').append(option);
+        });
+    });
+});
+
+$('#item_class_id').on('change', function(e) {
+    var parent = e.target.value;
+    //ajax
+    $.get('create/children?parent=' + parent, function(data) {
+        //success data
+        // console.log(data);
+        $('#item_type_id').empty();
+        $.each(data, function(index, subcatObj) {
+          var option = $("<option value=" + subcatObj.id_item_type + "></option>")
+  	                  .attr(subcatObj, index)
+  	                  .text(subcatObj.name);
+
+  				$('#item_type_id').append(option);
+        });
+    });
+    $.get('./edit/children?parent=' + parent, function(data) {
+        //success data
+        $('#item_type_id').empty();
+        $.each(data, function(index, subcatObj) {
+          var option = $("<option value=" + subcatObj.id_item_type + "></option>")
+  	                  .attr(subcatObj, index)
+  	                  .text(subcatObj.name);
+
+  				$('#item_type_id').append(option);
         });
     });
 });

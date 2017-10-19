@@ -46,7 +46,6 @@ class ErpAddBpbAddTable extends Migration {
           	$table->char('reference', 100);
           	$table->char('locality', 100);
           	$table->char('county', 100);
-          	$table->char('state', 100);
           	$table->char('zip_code', 15);
           	$table->integer('external_id');
           	$table->boolean('is_main');

@@ -44,13 +44,18 @@
 	  <div class="col-md-6">
 			<div class="form-group">
 				{!! Form::label('item_class_id', trans('userinterface.labels.CLASS')) !!}
-				{!! Form::select('item_class_id', $classes, isset($gender) ?  $gender->item_class_id : null, ['id' => 'itm_class', 'class'=>'form-control',
+				{!! Form::select('item_class_id', $classes, isset($gender) ?  $gender->item_class_id : null, ['class'=>'form-control',
 											'placeholder' => trans('userinterface.placeholders.SELECT_CLASS'), 'required']) !!}
 			</div>
-
 			<div class="form-group">
-				{!! Form::label('item_type_id', trans('userinterface.labels.TYPE')) !!}
-				{!! Form::select('item_type_id', ['placeholder' => trans('userinterface.placeholders.SELECT_TYPE')], null, ['class'=>'form-control', 'id' => 'itm_type']) !!}
+				{!! Form::label('item_type', trans('userinterface.labels.TYPE')) !!}
+				<select class="form-control" name="item_type_id" id="item_type_id" value="{{ isset($gender) ?  $gender->item_type_id : null }}">
+					@if (isset($gender))
+						<option value="{{ $gender->item_type_id }}">{{ $gender->type->name }}</option>
+					@else
+							<option value="">{{ trans('userinterface.placeholders.STATE') }}</option>
+					@endif
+				</select>
 			</div>
 		</div>
 	</div>

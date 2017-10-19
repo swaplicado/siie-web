@@ -78,7 +78,6 @@ class SAddressController extends Controller
       $domicile->updated_by_id = \Auth::user()->id;
       $domicile->created_by_id = \Auth::user()->id;
 
-      dd($domicile);
       $domicile->save();
 
       Flash::success(trans('messages.REG_CREATED'))->important();
@@ -112,7 +111,12 @@ class SAddressController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        return view('siie.address.createEdit')->with('domicile', $domicile);
+        $lCountries = SCountry::where('is_deleted', '=', false)->orderBy('name', 'ASC')->lists('name', 'id_country');
+        $lStates = SState::where('is_deleted', '=', false)->where('country_id', $domicile->country_id)->orderBy('name', 'ASC')->get();
+
+        return view('siie.address.createEdit')->with('domicile', $domicile)
+                                              ->with('states', $lStates)
+                                              ->with('countries', $lCountries);
     }
 
     /**
@@ -205,12 +209,6 @@ class SAddressController extends Controller
     public function children(Request $request)
     {
     	 return SState::where('country_id', '=', $request->parent)->get();
-      // $cat_id = $request['country_id'];
-      //  $subcategories = SState::where('country_id', '=', $cat_id)
-      //                 ->orderBy('name', 'asc')
-      //                 ->get();
-      //
-        // return Response::json($subcategories);
     }
 
 }
