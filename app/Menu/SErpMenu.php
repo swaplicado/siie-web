@@ -28,9 +28,15 @@ class SErpMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
-                ->route('siie.bps.index', trans('siie.MATERIALS'))
-                ->route('siie.bps.index', trans('siie.PRODUCTS'))
-                ->route('siie.genders.index', trans('siie.GENDERS'))
+                ->route('siie.items.index', trans('siie.MATERIALS'), [\Config::get('scsiie.ITEM_CLS.MATERIAL')])
+                ->route('siie.items.index', trans('siie.PRODUCTS'), [\Config::get('scsiie.ITEM_CLS.PRODUCT')])
+                ->route('siie.items.index', trans('siie.SPENDING'), [\Config::get('scsiie.ITEM_CLS.SPENDING')])
+                ->submenu(trans('siie.GENDERS'),
+                    \Menu::new()
+                        ->route('siie.genders.index', trans('siie.MATERIALS'), [\Config::get('scsiie.ITEM_CLS.MATERIAL')])
+                        ->route('siie.genders.index', trans('siie.PRODUCTS'), [\Config::get('scsiie.ITEM_CLS.PRODUCT')])
+                        ->route('siie.genders.index', trans('siie.SPENDING'), [\Config::get('scsiie.ITEM_CLS.SPENDING')])
+                )
                 ->route('siie.groups.index', trans('siie.GROUPS'))
                 ->route('siie.families.index', trans('siie.FAMILIES'))
                 ->route('siie.units.index', trans('siie.UNITS'))

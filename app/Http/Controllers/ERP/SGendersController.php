@@ -34,11 +34,11 @@ class SGendersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $iClassId = 0)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lGenders = SItemGender::Search($request->name, $this->iFilter)->orderBy('name', 'ASC')->paginate(20);
+      $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC')->paginate(20);
 
       foreach ($lGenders as $gender) {
         $gender->group;

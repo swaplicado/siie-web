@@ -32,4 +32,5 @@ return [
           'CONVERTIONS' => 'Conversiones',
           'MATERIALS' => 'Materiales',
           'PRODUCTS' => 'Productos',
+          'SPENDING' => 'Gastos',
 ];

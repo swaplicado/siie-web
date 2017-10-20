@@ -17,4 +17,10 @@ return [
                 'ALL' => '10',
 
               ],
+
+  'ITEM_CLS' => [
+                    'MATERIAL' => '1',
+                    'PRODUCT' => '2',
+                    'SPENDING' => '3',
+                  ],
 ];

@@ -41,25 +41,29 @@ class SItemGender extends Model {
     return $this->belongsTo('App\ERP\SItemType', 'item_type_id');
   }
 
-  public function scopeSearch($query, $name, $iFilter)
+  public function scopeSearch($query, $name, $iFilter, $iClassId)
   {
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
+                        ->where('item_class_id', $iClassId)
                         ->where('name', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
+                          ->where('item_class_id', $iClassId)
                           ->where('name', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.ALL'):
-            return $query->where('name', 'LIKE', "%".$name."%");
+            return $query->where('name', 'LIKE', "%".$name."%")
+                            ->where('item_class_id', $iClassId);
           break;
 
         default:
-            return $query->where('name', 'LIKE', "%".$name."%");
+            return $query->where('name', 'LIKE', "%".$name."%")
+                          ->where('item_class_id', $iClassId);
           break;
       }
   }
