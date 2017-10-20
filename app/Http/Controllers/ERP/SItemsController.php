@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Http\Requests\ERP\SGenderRequest;
+use App\Http\Requests\ERP\SItemRequest;
 use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
@@ -36,7 +37,7 @@ class SItemsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $iClassId)
+    public function index(Request $request, $iClassId = 1)
     {
         session(['classIdAux' => $iClassId]);
 
@@ -49,7 +50,7 @@ class SItemsController extends Controller
           case \Config::get('scsiie.ITEM_CLS.MATERIAL'):
             $sTitle = trans('userinterface.titles.LIST_MATERIALS');
             break;
-          case \Config::get('scsiie.ITEM_CLS.PRODUCTS'):
+          case \Config::get('scsiie.ITEM_CLS.PRODUCT'):
             $sTitle = trans('userinterface.titles.LIST_PRODUCTS');
             break;
           case \Config::get('scsiie.ITEM_CLS.SPENDING'):
@@ -82,7 +83,7 @@ class SItemsController extends Controller
 
         $itemClass = session('classIdAux');
 
-        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'item_class_id');
+        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
         $lUnits = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
         $sTitle = '';
@@ -115,7 +116,7 @@ class SItemsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SItemRequest $request)
     {
         $item = new SItem($request->all());
 
@@ -123,12 +124,11 @@ class SItemsController extends Controller
         $item->updated_by_id = \Auth::user()->id;
         $item->created_by_id = \Auth::user()->id;
 
-        dd($item);
         $item->save();
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 
-        return redirect()->route('siie.items.index');
+        return redirect()->route('siie.items.index', session('classIdAux'));
     }
 
     /**
@@ -157,11 +157,11 @@ class SItemsController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
-        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
-        $lItemTypes = SItemType::where('is_deleted', '=', false)->where('class_id', $item->item_class_id)->orderBy('name', 'ASC')->get();
+        $itemClass = session('classIdAux');
 
-        $itemClass = \Cookie::get('classIdAux');
+        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'item_class_id');
+        $lUnits = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+
         $sTitle = '';
 
         switch ($itemClass) {
@@ -195,7 +195,7 @@ class SItemsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(SItemRequest $request, $id)
     {
         $item = SItem::find($id);
         $item->fill($request->all());
@@ -204,7 +204,7 @@ class SItemsController extends Controller
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('siie.items.index');
+        return redirect()->route('siie.items.index', session('classIdAux'));
     }
 
     /**
@@ -246,7 +246,7 @@ class SItemsController extends Controller
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
-        return redirect()->route('siie.items.index');
+        return redirect()->route('siie.items.index', session('classIdAux'));
     }
 
     /**
@@ -271,7 +271,7 @@ class SItemsController extends Controller
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();
-        return redirect()->route('siie.items.index');
+        return redirect()->route('siie.items.index', session('classIdAux'));
     }
 
     public function children(Request $request)

@@ -65,11 +65,6 @@
 			<div class="form-group">
 				{!! Form::label('is_bulk', trans('userinterface.labels.IS_BULK')) !!}
 				{!! Form::checkbox('is_bulk', 1, isset($item) ? $item->is_bulk : false) !!}
-				{!! Form::hidden('length', $item->length, array('id' => 'length')) !!}
-				{!! Form::hidden('surface', $item->surface, array('id' => 'surface')) !!}
-				{!! Form::hidden('volume', $item->volume, array('id' => 'volume')) !!}
-				{!! Form::hidden('mass', $item->mass, array('id' => 'mass')) !!}
-				{!! Form::hidden('external_id', $item->external_id, array('id' => 'external_id')) !!}
 			</div>
 
 		</div>

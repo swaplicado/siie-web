@@ -37,10 +37,10 @@ class SItem extends Model {
   {
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
-          return $query->join('erps_item_types', 'erpu_items.id_item', '=', 'erps_item_types.id_item_type')
-                      ->where('erps_item_types.id_item_type', $idType)
-                      ->where('erps_item_types.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                      ->where('erps_item_types.name', 'LIKE', "%".$name."%")
+          return $query->join('erpu_item_genders', 'erpu_items.gender_id', '=', 'erpu_item_genders.id_item_gender')
+                      ->where('erpu_item_genders.item_class_id', $idType)
+                      ->where('erpu_item_genders.is_deleted', '=', \Config::get('scsys.STATUS.ACTIVE'))
+                      ->where('erpu_items.name', 'LIKE', "%".$name."%")
                       ->select('erpu_items.*');
           break;
 

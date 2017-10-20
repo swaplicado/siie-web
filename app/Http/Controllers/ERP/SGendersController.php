@@ -36,6 +36,7 @@ class SGendersController extends Controller
      */
     public function index(Request $request, $iClassId = 0)
     {
+      session(['classIdAux' => $iClassId]);
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
       $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC')->paginate(20);
@@ -62,8 +63,10 @@ class SGendersController extends Controller
           return redirect()->route('notauthorized');
         }
 
+        $itemClass = session('classIdAux');
+
         $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
-        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
+        $lClasses = SItemClass::where('id_class', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_class');
 
         return view('siie.genders.createEdit')
                                 ->with('groups', $lGroups)
@@ -88,7 +91,7 @@ class SGendersController extends Controller
 
       Flash::success(trans('messages.REG_CREATED'))->important();
 
-      return redirect()->route('siie.genders.index');
+      return redirect()->route('siie.genders.index', session('classIdAux'));
     }
 
     /**
@@ -144,7 +147,7 @@ class SGendersController extends Controller
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('siie.genders.index');
+        return redirect()->route('siie.genders.index', session('classIdAux'));
     }
 
     /**
@@ -186,7 +189,7 @@ class SGendersController extends Controller
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
-        return redirect()->route('siie.genders.index');
+        return redirect()->route('siie.genders.index', session('classIdAux'));
     }
 
     /**
@@ -211,7 +214,7 @@ class SGendersController extends Controller
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();
-        return redirect()->route('siie.genders.index');
+        return redirect()->route('siie.genders.index', session('classIdAux'));
     }
 
     public function children(Request $request)
