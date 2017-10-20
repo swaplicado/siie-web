@@ -19,6 +19,10 @@ class AddConfigurationsTable extends Migration
         	$table->timestamps();
         });
 
+        DB::table('sys_configuration')->insert([
+        	['id_configuration' => '1','version' => '1.0','partner_id' => '1', 'is_deleted' => '0'],
+        ]);
+
     }
 
     /**

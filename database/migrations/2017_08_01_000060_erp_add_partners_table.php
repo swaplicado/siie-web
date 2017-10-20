@@ -56,6 +56,11 @@ class ErpAddPartnersTable extends Migration {
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('erpu_partners')->insert([
+          	['id_partner' => '1','name' => 'Cartro SA de CV','last_name' => ' ','first_name' => ' ','fiscal_id' => 'CARTRO12345','person_id' => 'CARTRO12345','external_id' => '0','is_company' => '1','is_customer' => '0','is_supplier' => '0','is_related_party' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_partner' => '2','name' => 'Aceites Especiales TH','last_name' => ' ','first_name' => ' ','fiscal_id' => 'AETH123445','person_id' => 'AETH7864654','external_id' => '0','is_company' => '1','is_customer' => '0','is_supplier' => '0','is_related_party' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
         }
     }
 
