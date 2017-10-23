@@ -1,10 +1,8 @@
-<?php
-
-namespace App\Http\Requests;
+<?php namespace App\Http\Requests\ERP;
 
 use App\Http\Requests\Request;
 
-class UserRequest extends Request
+class SAddressRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +22,12 @@ class UserRequest extends Request
     public function rules()
     {
         return [
-            'username' => 'min:4|max:120|required',
-            'email' => 'min:4|max:120|unique:users|required',
-            'password' => 'min:4|max:120|required',
-            'user_type_id' => 'required',
+            'name' => 'required',
+            'street' => 'required',
+            'num_ext' => 'required',
+            'zip_code' => 'required',
+            'country_id' => 'required',
+            'country_state_id' => 'required',
         ];
     }
 }

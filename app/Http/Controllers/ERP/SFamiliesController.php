@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Requests\ERP\SFamilyRequest;
 use App\Http\Controllers\Controller;
 
 use Laracasts\Flash\Flash;
@@ -63,7 +64,7 @@ class SFamiliesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SFamilyRequest $request)
     {
       $family = new SItemFamily($request->all());
 

@@ -104,7 +104,7 @@
 
 				<div class="form-group">
 	       {!! Form::label('state', trans('userinterface.labels.STATE')) !!}
-	       <select class="form-control select-one" name="country_state_id" id="country_state_id">
+	       <select class='form-control' name="country_state_id" id="country_state_id">
 					 @if (isset($domicile))
 						 <option value="{{ $domicile->country_state_id }}">{{ $domicile->state->name }}</option>
 					 @else

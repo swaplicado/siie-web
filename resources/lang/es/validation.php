@@ -125,6 +125,42 @@ return [
         'password_confirmation' => [
             'required' => 'Debe confirmar la nueva contraseña',
         ],
+        'user_type_id' => [
+            'required' => 'El campo tipo de usuario es obligatorio',
+        ],
+        'fiscal_id' => [
+            'required' => 'El campo RFC es obligatorio',
+        ],
+        'street' => [
+            'required' => 'El campo calle es obligatorio',
+        ],
+        'num_ext' => [
+            'required' => 'El campo número exterior es obligatorio',
+        ],
+        'zip_code' => [
+            'required' => 'El campo código postal es obligatorio',
+        ],
+        'country_id' => [
+            'required' => 'El campo país es obligatorio',
+        ],
+        'country_state_id' => [
+            'required' => 'El campo estado es obligatorio',
+        ],
+        'item_family_id' => [
+            'required' => 'El campo familia es obligatorio',
+        ],
+        'gender_id' => [
+            'required' => 'El campo género es obligatorio',
+        ],
+        'unit_id' => [
+            'required' => 'El campo unidad es obligatorio',
+        ],
+        'whs_type_id' => [
+            'required' => 'El campo tipo de almacén es obligatorio',
+        ],
+        'whs_id' => [
+            'required' => 'El campo almacén es obligatorio',
+        ],
 
     ],
 

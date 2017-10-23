@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Requests\ERP\SAddressRequest;
 use App\Http\Controllers\Controller;
 
 use Laracasts\Flash\Flash;
@@ -35,7 +36,14 @@ class SAddressController extends Controller
     public function index(Request $request, $iBranchId = NULL)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        session(['branchIdAux' => $iBranchId]);
+        if ($iBranchId != NULL)
+        {
+            session(['branchIdAux' => $iBranchId]);
+        }
+        else
+        {
+            $iBranchId = session('branchIdAux');
+        }
 
         $lAddress = SAddress::Search($request->name, $this->iFilter, $iBranchId)->orderBy('name', 'ASC')->paginate(20);
 
@@ -69,7 +77,7 @@ class SAddressController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SAddressRequest $request)
     {
       $domicile = new SAddress($request->all());
 

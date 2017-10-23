@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 
 use Laracasts\Flash\Flash;
 use App\Http\Requests;
+use App\Http\Requests\ERP\SBpRequest;
 use App\Http\Controllers\Controller;
 use App\ERP\SPartner;
 use App\SUtils\SValidation;
@@ -66,7 +67,7 @@ class SPartnersController extends Controller {
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(SBpRequest $request)
     {
         $bpartner = new SPartner($request->all());
 

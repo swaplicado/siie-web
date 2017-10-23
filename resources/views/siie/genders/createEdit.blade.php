@@ -40,7 +40,7 @@
 			<div class="form-group">
 				{!! Form::label('item_group_id', trans('userinterface.labels.GROUP')) !!}
 				{!! Form::select('item_group_id', $groups, isset($gender) ?  $gender->item_group_id : null , ['class'=>'form-control select-one',
-					'placeholder' => trans('userinterface.placeholders.SELECT_GROUP'), 'required']) !!}
+																															'placeholder' => trans('userinterface.placeholders.SELECT_GROUP'), 'required']) !!}
 			</div>
 		</div>
 
@@ -49,12 +49,12 @@
 			<div class="form-group">
 				{!! Form::label('item_class_id', trans('userinterface.labels.CLASS')) !!}
 				{!! Form::select('item_class_id', $classes, isset($gender) ?  $gender->item_class_id : null, ['class'=>'form-control select-one',
-											'placeholder' => trans('userinterface.placeholders.SELECT_CLASS'), 'required']) !!}
+																																'placeholder' => trans('userinterface.placeholders.SELECT_CLASS'), 'required']) !!}
 			</div>
 
 			<div class="form-group">
 				{!! Form::label('item_type', trans('userinterface.labels.TYPE')) !!}
-				<select class="form-control select-one" name="item_type_id" id="item_type_id" value="{{ isset($gender) ?  $gender->item_type_id : null }}">
+				<select class='form-control' name="item_type_id" id="item_type_id" value="{{ isset($gender) ?  $gender->item_type_id : null }}">
 					@if (isset($gender))
 						<option value="{{ $gender->item_type_id }}">{{ $gender->type->name }}</option>
 					@else
