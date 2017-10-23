@@ -5,6 +5,12 @@ return [
 
   'UNDEFINED' => '0',
 
+  'AREA' => [
+                  'STANDARD' => '1',
+                  'MANAGER' => '2',
+                  'ADMIN' => '3',
+                ],
+
   'MOD_NAVS' =>   [
                     'ERP' => 'navbar-siie',
                     'MMS' => 'navbar-blue',
@@ -22,7 +28,7 @@ return [
                 ],
 
   'TP_USER' => [
-                  'STANDART' => '1',
+                  'STANDARD' => '1',
                   'MANAGER' => '2',
                   'ADMIN' => '3',
                 ],

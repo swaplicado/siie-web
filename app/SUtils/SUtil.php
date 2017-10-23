@@ -28,7 +28,7 @@ class SUtil {
     SConnectionUtils::reconnectCompany();
 
       if (\Auth::check()) {
-        if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+        if (\Auth::user()->user_type_id == SValidation::getUserTypeByArea())
         {
             $userPermission = new SUserPermission();
             $userPermission->id_user_permission = 0;
@@ -62,7 +62,7 @@ class SUtil {
   {
       \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : "");
 
-      if (\Auth::check() && \Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+      if (\Auth::check() && \Auth::user()->user_type_id == SValidation::getUserTypeByArea())
       {
           $userPermission = new SUserPermission();
           $userPermission->id_usr_per = 0;
@@ -89,7 +89,7 @@ class SUtil {
   {
       $lUserCompany = array();
 
-      if ($oUser->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+      if ($oUser->user_type_id == SValidation::getUserTypeByArea())
       {
         $lCompanies = SCompany::where('is_deleted', 0)->paginate(10);
 

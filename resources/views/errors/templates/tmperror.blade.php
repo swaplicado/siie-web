@@ -15,10 +15,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
    	<div class="logo">
    			<p>@yield('text', 'lorem')</p>
          <h2>ERROR</h2>
+         <div class="sub">
+             @yield('back')
+    			</div>
          <h1>@yield('code', '00')</h1>
-   			<div class="sub">
-   			  <!--<p><a href="#">Back </a></p>-->
-   			</div>
+
    	</div>
     </div>
    	<div class="footer">

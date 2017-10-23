@@ -191,7 +191,7 @@ class SUnitsController extends Controller
         {
           return redirect()->route('notauthorized');
         }
-        
+
         $unit = SUnit::find($id);
         $unit->fill($request->all());
         $unit->is_deleted = \Config::get('scsys.STATUS.DEL');

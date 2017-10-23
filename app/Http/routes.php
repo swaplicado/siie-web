@@ -23,6 +23,10 @@ Route::get('/notauthorized', ['as' => 'notauthorized',
 function () {
     return view('errors.401');
 }]);
+Route::get('/notauthorized', ['as' => 'notauthorizedsys',
+function () {
+    return view('errors.401_1');
+}]);
 
 Route::group(['middleware' => ['auth']], function() {
 
@@ -46,7 +50,7 @@ Route::group(['middleware' => ['auth']], function() {
 			'uses' => 'SPlantillaController@index'
 		]);
 
-  Route::group(['prefix' => 'admin'], function () {
+  Route::group(['prefix' => 'admin', 'middleware' => ['mdadmin']], function () {
 
       /*
       * Users
@@ -137,6 +141,8 @@ Route::group(['middleware' => ['auth']], function() {
 
 	Route::group(['middleware' => ['mdcompany']], function() {
 
+	Route::group(['middleware' => ['mdstandard']], function() { //** standard middleware
+
 		Route::get('/modules',[
 			'as' => 'start.selmod',
 			'uses' => 'SYS\SStartController@SelectModule'
@@ -214,8 +220,10 @@ Route::group(['middleware' => ['auth']], function() {
 		]);
 		Route::resource('tms','TMS\SShipmentsController');
 
+  }); //** standard middleware
+
 //****************************************/ Siie /*************************
-    Route::group(['prefix' => 'siie'], function () {
+    Route::group(['prefix' => 'siie', 'middleware' => ['mdmanager']], function () {
 
       Route::get('/home',[
   			'as' => 'siie.home',

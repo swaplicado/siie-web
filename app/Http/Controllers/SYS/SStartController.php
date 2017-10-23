@@ -29,6 +29,10 @@ class SStartController extends Controller
     {
         $lUserCompany = SUtil::getUserCompany(\Auth::user());
 
+        if (sizeof($lUserCompany) < 1) {
+         return redirect()->route('notauthorizedsys');
+        }
+
         return view('start.select')
                             ->with('lUserCompany', $lUserCompany);
     }

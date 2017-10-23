@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
-class SMAdmin
+class SMStandard
 {
     /**
      * Handle an incoming request.
@@ -16,15 +16,7 @@ class SMAdmin
      */
     public function handle($request, Closure $next)
     {
-        session(['area' => \Config::get('scsys.AREA.ADMIN')]);
-
-        if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN')) {
-          return $next($request);
-        }
-        else
-        {
-          return redirect()->route('notauthorized');
-        }
-
+        session(['area' => \Config::get('scsys.AREA.STANDARD')]);
+        return $next($request);
     }
 }

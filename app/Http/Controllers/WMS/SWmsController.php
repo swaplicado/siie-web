@@ -16,7 +16,7 @@ class SWmsController extends Controller
 
     public function __construct()
     {
-       SProcess::constructor($this, \Config::get('scperm.PERMISSION.CONTAINERS'), \Config::get('scsys.MODULES.WMS'));
+       SProcess::constructor($this, \Config::get('scperm.PERMISSION.WMS'), \Config::get('scsys.MODULES.WMS'));
     }
 
     /**

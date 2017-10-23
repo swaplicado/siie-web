@@ -16,7 +16,7 @@ class SValidation {
 
     $sRender = 'hidden';
 
-    if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN')) {
+    if (\Auth::user()->user_type_id == SValidation::getUserTypeByArea()) {
       return 'visible';
     }
 
@@ -89,7 +89,7 @@ class SValidation {
    {
        if (\Auth::check())
        {
-         if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+         if (\Auth::user()->user_type_id == SValidation::getUserTypeByArea())
          {
              return true;
          }
@@ -117,7 +117,7 @@ class SValidation {
    public static function hasPermissionByType($iPermissionType, $iPermissionCode)
    {
        if (\Auth::check()) {
-         if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.ADMIN'))
+         if (\Auth::user()->user_type_id == SValidation::getUserTypeByArea())
          {
              return true;
          }
@@ -201,6 +201,24 @@ class SValidation {
       }
 
       return false;
+  }
+
+  public static function getUserTypeByArea()
+  {
+    // dd('area: '.session('area'));
+      switch (session('area')) {
+        case \Config::get('scsys.AREA.STANDARD'):
+        case \Config::get('scsys.AREA.MANAGER'):
+          return \Config::get('scsys.TP_USER.MANAGER');
+          break;
+        case \Config::get('scsys.AREA.ADMIN'):
+          return \Config::get('scsys.TP_USER.ADMIN');
+          break;
+
+        default:
+          return 0;
+          break;
+      }
   }
 
 }

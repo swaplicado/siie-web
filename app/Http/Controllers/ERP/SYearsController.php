@@ -185,7 +185,7 @@ class SYearsController extends Controller
          {
            return redirect()->route('notauthorized');
          }
-         
+
          $oYear = SYear::find($id);
          $oYear->fill($request->all());
          $oYear->is_deleted = \Config::get('scsys.STATUS.DEL');
