@@ -43,14 +43,8 @@ class SPrivilegesController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-        {
           return view('admin.privileges.createEdit');
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+
     }
 
     /**
@@ -90,16 +84,9 @@ class SPrivilegesController extends Controller
     {
         $privilege = SPrivilege::find($id);
 
-        if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $privilege->created_by))
-        {
           return view('admin.privileges.createEdit')
                                               ->with('privilege', $privilege)
                                               ->with('iFilter', $this->iFilter);
-        }
-        else
-        {
-            return redirect()->route('notauthorized');
-        }
     }
 
     /**
@@ -121,16 +108,16 @@ class SPrivilegesController extends Controller
 
     public function activate(Request $request, $id)
     {
-      $privilege = SPrivilege::find($id);
+        $privilege = SPrivilege::find($id);
 
-      $privilege->fill($request->all());
-      $privilege->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $privilege->fill($request->all());
+        $privilege->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
 
-      $privilege->save();
+        $privilege->save();
 
-      Flash::success(trans('messages.REG_ACTIVATED'))->important();
+        Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
-      return redirect()->route('admin.privileges.index');
+        return redirect()->route('admin.privileges.index');
     }
 
     /**
@@ -141,8 +128,6 @@ class SPrivilegesController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-      if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-      {
         $privilege = SPrivilege::find($id);
 
         $privilege->fill($request->all());
@@ -153,10 +138,5 @@ class SPrivilegesController extends Controller
         Flash::error(trans('messages.REG_DELETED'))->important();
 
         return redirect()->route('admin.privileges.index');
-      }
-      else
-      {
-        return redirect()->route('notauthorized');
-      }
     }
 }

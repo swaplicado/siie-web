@@ -2,6 +2,8 @@
 
 use App\Http\Requests\Request;
 use App\ERP\SItem;
+use App\ERP\SItemGender;
+use App\ERP\SUnit;
 
 class SItemRequest extends Request
 {
@@ -23,12 +25,14 @@ class SItemRequest extends Request
     public function rules()
     {
         $item = new SItem();
+        $gender = new SItemGender();
+        $unit = new SUnit();
 
         return [
             'code' => 'required|unique:siie.'.$item->getTable(),
             'name' => 'required',
-            'gender_id' => 'required|exists:siie.erpu_item_genders,id_item_gender',
-            'unit_id' => 'required|exists:siie.erpu_units,id_unit',
+            'gender_id' => 'required|exists:siie.'.$gender->getTable().',id_item_gender',
+            'unit_id' => 'required|exists:siie.'.$unit->getTable().',id_unit',
         ];
     }
 }

@@ -30,20 +30,23 @@
 		<div class="form-group">
 			{!! Form::label('partnername', trans('userinterface.labels.BP')) !!}
 			{!! Form::text('partnername',
-				isset($partner) ? $partner->name : null , ['class'=>'form-control', 'required', 'readonly']) !!}
+				isset($partner) ? $partner->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																										'required', 'readonly']) !!}
 			{!! Form::hidden('partner_id', $partner->id_partner) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('code', trans('userinterface.labels.CODE').'*') !!}
 			{!! Form::text('code',
-				isset($branch) ? $branch->code : null , ['class'=>'form-control', 'required', 'placeholder' => trans('userinterface.placeholders.CODE')]) !!}
+				isset($branch) ? $branch->code : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																								'required', 'placeholder' => trans('userinterface.placeholders.CODE')]) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('name', trans('userinterface.labels.BRANCH').'*') !!}
 			{!! Form::text('name',
-				isset($branch) ? $branch->name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.BRANCH'), 'required']) !!}
+				isset($branch) ? $branch->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																									'placeholder' => trans('userinterface.placeholders.BRANCH'), 'required']) !!}
 		</div>
 
 		<div class="form-group">

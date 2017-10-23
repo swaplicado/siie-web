@@ -6,6 +6,7 @@
 <!--
 <script src="{{ asset('bootstrap-table/bootstrap-table.js') }}"></script>
 -->
+<script src="{{ asset('js/chosen-selects.js')}}"></script>
 <script src="{{ asset('bootstrap/js/bootstrap.min.js')}}"></script>
 <script src="{{ asset('trumbowyg/dist/trumbowyg.min.js') }}"></script>
 <script src="{{ asset('bootstrap/js/bootstrap-confirmation.js') }}"></script>

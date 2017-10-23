@@ -181,10 +181,9 @@ class SItemsController extends Controller
         }
 
         return view('siie.items.createEdit')
-                                ->with('groups', $lGroups)
-                                ->with('classes', $lClasses)
-                                ->with('itemTypes', $lItemTypes)
                                 ->with('title', $sTitle)
+                                ->with('genders', $lGenders)
+                                ->with('units', $lUnits)
                                 ->with('item', $item);
     }
 

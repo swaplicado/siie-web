@@ -30,18 +30,20 @@
 		<div class="form-group">
 			{!! Form::label('code', trans('userinterface.labels.CODE').'*') !!}
 			{!! Form::text('code',
-				isset($location) ? $location->code : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.CODE'), 'required']) !!}
+				isset($location) ? $location->code : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+				 																						'placeholder' => trans('userinterface.placeholders.CODE'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('name', trans('userinterface.labels.LOCATION').'*') !!}
 			{!! Form::text('name',
-				isset($location) ? $location->name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.LOCATION'), 'required']) !!}
+				isset($location) ? $location->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+				 																							'placeholder' => trans('userinterface.placeholders.LOCATION'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('whs_id', trans('userinterface.labels.WAREHOUSE')) !!}
-			{!! Form::select('whs_id', $warehouses, isset($location) ?  $location->whs_id : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE'), 'required']) !!}
+			{!! Form::select('whs_id', $warehouses, isset($location) ?  $location->whs_id : null , ['class'=>'form-control select-one', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE'), 'required']) !!}
 		</div>
 
 @endsection

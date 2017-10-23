@@ -33,13 +33,15 @@
 				<div class="form-group">
 					{!! Form::label('name', trans('userinterface.labels.ADDRESS').'*') !!}
 					{!! Form::text('name',
-						isset($domicile) ? $domicile->name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.ADDRESS'), 'required' => 'required']) !!}
+						isset($domicile) ? $domicile->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																													'placeholder' => trans('userinterface.placeholders.ADDRESS'), 'required' => 'required']) !!}
 				</div>
 
 				<div class="form-group">
 					{!! Form::label('street', trans('userinterface.labels.STREET')) !!}
 					{!! Form::text('street',
-						isset($domicile) ? $domicile->street : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.STREET')]) !!}
+						isset($domicile) ? $domicile->street : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																														'placeholder' => trans('userinterface.placeholders.STREET')]) !!}
 				</div>
 
 				<div class="form-group">
@@ -60,25 +62,29 @@
 				<div class="form-group">
 					{!! Form::label('neighborhood', trans('userinterface.labels.NEIGHBORHOOD')) !!}
 					{!! Form::text('neighborhood',
-						isset($domicile) ? $domicile->neighborhood : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.NEIGHBORHOOD')]) !!}
+						isset($domicile) ? $domicile->neighborhood : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																																	'placeholder' => trans('userinterface.placeholders.NEIGHBORHOOD')]) !!}
 				</div>
 
 				<div class="form-group">
 					{!! Form::label('reference', trans('userinterface.labels.REFERENCE')) !!}
 					{!! Form::text('reference',
-						isset($domicile) ? $domicile->reference : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.REFERENCE')]) !!}
+						isset($domicile) ? $domicile->reference : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																																'placeholder' => trans('userinterface.placeholders.REFERENCE')]) !!}
 				</div>
 
 				<div class="form-group">
 					{!! Form::label('locality', trans('userinterface.labels.LOCALITY')) !!}
 					{!! Form::text('locality',
-						isset($domicile) ? $domicile->locality : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.LOCALITY')]) !!}
+						isset($domicile) ? $domicile->locality : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																															'placeholder' => trans('userinterface.placeholders.LOCALITY')]) !!}
 				</div>
 
 				<div class="form-group">
 					{!! Form::label('county', trans('userinterface.labels.COUNTY')) !!}
 					{!! Form::text('county',
-						isset($domicile) ? $domicile->county : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.COUNTY')]) !!}
+						isset($domicile) ? $domicile->county : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																															'placeholder' => trans('userinterface.placeholders.COUNTY')]) !!}
 				</div>
 
 			</div>
@@ -87,17 +93,18 @@
 				<div class="form-group">
 					{!! Form::label('zip_code', trans('userinterface.labels.ZIP_CODE').'*') !!}
 					{!! Form::text('zip_code',
-						isset($domicile) ? $domicile->zip_code : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.ZIP_CODE'), 'required']) !!}
+						isset($domicile) ? $domicile->zip_code : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																														'placeholder' => trans('userinterface.placeholders.ZIP_CODE'), 'required']) !!}
 				</div>
 
 				<div class="form-group">
 					{!! Form::label('country_id', trans('userinterface.labels.COUNTRY')) !!}
-					{!! Form::select('country_id', $countries, isset($domicile) ?  $domicile->country_id : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.COUNTRY'), 'required']) !!}
+					{!! Form::select('country_id', $countries, isset($domicile) ?  $domicile->country_id : null , ['class'=>'form-control select-one', 'placeholder' => trans('userinterface.placeholders.COUNTRY'), 'required']) !!}
 				</div>
 
 				<div class="form-group">
 	       {!! Form::label('state', trans('userinterface.labels.STATE')) !!}
-	       <select class="form-control" name="country_state_id" id="country_state_id">
+	       <select class="form-control select-one" name="country_state_id" id="country_state_id">
 					 @if (isset($domicile))
 						 <option value="{{ $domicile->country_state_id }}">{{ $domicile->state->name }}</option>
 					 @else

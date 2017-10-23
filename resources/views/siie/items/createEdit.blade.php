@@ -33,18 +33,20 @@
 			<div class="form-group">
 				{!! Form::label('code', trans('userinterface.labels.CODE').'*') !!}
 				{!! Form::text('code',
-					isset($item) ? $item->code : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.CODE'), 'required']) !!}
+					isset($item) ? $item->code : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																																				'placeholder' => trans('userinterface.placeholders.CODE'), 'required']) !!}
 			</div>
 
 			<div class="form-group">
 				{!! Form::label('name', trans('userinterface.labels.NAME').'*') !!}
 				{!! Form::text('name',
-					isset($item) ? $item->name : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.NAME'), 'required']) !!}
+					isset($item) ? $item->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																																				'placeholder' => trans('userinterface.placeholders.NAME'), 'required']) !!}
 			</div>
 
 			<div class="form-group">
 				{!! Form::label('unit_id', trans('userinterface.labels.UNIT')) !!}
-				{!! Form::select('unit_id', $units, isset($item) ?  $item->unit_id : null, ['class'=>'form-control',
+				{!! Form::select('unit_id', $units, isset($item) ?  $item->unit_id : null, ['class'=>'form-control select-one',
 											'placeholder' => trans('userinterface.placeholders.SELECT_UNIT'), 'required']) !!}
 			</div>
 
@@ -53,7 +55,7 @@
 
 			<div class="form-group">
 				{!! Form::label('gender_id', trans('userinterface.labels.GENDER')) !!}
-				{!! Form::select('gender_id', $genders, isset($item) ?  $item->gender_id : null, ['class'=>'form-control',
+				{!! Form::select('gender_id', $genders, isset($item) ?  $item->gender_id : null, ['class'=>'form-control select-one',
 											'placeholder' => trans('userinterface.placeholders.SELECT_GENDER'), 'required']) !!}
 			</div>
 
@@ -69,6 +71,5 @@
 
 		</div>
 	</div>
-
 
 @endsection

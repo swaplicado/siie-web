@@ -47,7 +47,7 @@
 
 		<div class="form-group">
 			{!! Form::label('user_type_id', trans('userinterface.labels.TYPE').'*') !!}
-			{!! Form::select('user_type_id', $types, isset($user) ? $user->user_type_id : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.SELECT_TYPE'), 'required']) !!}
+			{!! Form::select('user_type_id', $types, isset($user) ? $user->user_type_id : null , ['class'=>'form-control select-one', 'placeholder' => trans('userinterface.placeholders.SELECT_TYPE'), 'required']) !!}
 		</div>
 
 
