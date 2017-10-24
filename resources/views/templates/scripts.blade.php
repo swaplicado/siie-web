@@ -11,4 +11,5 @@
 <script src="{{ asset('trumbowyg/dist/trumbowyg.min.js') }}"></script>
 <script src="{{ asset('bootstrap/js/bootstrap-confirmation.js') }}"></script>
 <script src="{{ asset('bootstrap/js/confirmation-js.js') }}"></script>
+{{-- <script src="{{ asset('bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script> --}}
 <script src="{{ asset('list-group/listgroup.js') }}"></script>
