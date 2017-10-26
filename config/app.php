@@ -153,6 +153,7 @@ return [
         Laracasts\Flash\FlashServiceProvider::class,
         Styde\Html\HtmlServiceProvider::class,
         Spatie\Menu\Laravel\MenuServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
     ],
 
@@ -207,6 +208,7 @@ return [
         'Flash'     => Laracasts\Flash\Flash::class,
         'Access'    => Styde\Html\Facades\Access::class,
         'Menu'      => Spatie\Menu\Laravel\MenuFacade::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
     ],
 

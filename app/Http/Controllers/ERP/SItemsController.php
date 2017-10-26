@@ -155,6 +155,7 @@ class SItemsController extends Controller
     public function edit($id)
     {
         $item = SItem::find($id);
+        \Debugbar::info($item);
 
         if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $item->created_by_id)))
         {
