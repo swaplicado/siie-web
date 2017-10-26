@@ -38,7 +38,7 @@ class WmsAddWhsTable extends Migration {
 
           Schema::connection($this->sConnection)->create('wmsu_whs', function (blueprint $table) {
           	$table->increments('id_whs');
-          	$table->char('code', 10)->unique();
+          	$table->char('code', 50)->unique();
           	$table->char('name', 100);
           	$table->boolean('is_deleted');
           	$table->integer('branch_id')->unsigned();
@@ -47,11 +47,15 @@ class WmsAddWhsTable extends Migration {
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
 
-            $table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
-          	$table->foreign('whs_type_id')->references('id_type')->on('wmss_whs_types')->onDelete('cascade');
+          	$table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
+          	$table->foreign('whs_type_id')->references('id_whs_type')->on('wmss_whs_types')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('wmsu_whs')->insert([
+            ['id_whs' => '1','code' => 'NA','name' => 'N/A','is_deleted' => '0','branch_id' => '1','whs_type_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
 
         }
     }

@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class WmsAddContainerItemsTable extends Migration {
+class WmsAddPalletsTable extends Migration {
     private $lDatabases;
     private $sConnection;
     private $sDataBase;
@@ -36,22 +36,25 @@ class WmsAddContainerItemsTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->create('wmsu_container_items', function (blueprint $table) {
-          	$table->increments('id_container_item');
+          Schema::connection($this->sConnection)->create('wms_pallets', function (blueprint $table) {
+          	$table->increments('id_pallet');
+          	$table->char('pallet', 50);
           	$table->boolean('is_deleted');
-          	$table->integer('container_type_id')->unsigned();
-          	$table->integer('container_id')->unsigned();
-          	$table->integer('item_link_type_id')->unsigned();
-          	$table->integer('item_link_id')->unsigned();
+          	$table->integer('item_id')->unsigned();
+          	$table->integer('unit_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
 
-          	$table->foreign('container_type_id')->references('id_container_type')->on('wmss_container_types')->onDelete('cascade');
-          	$table->foreign('item_link_type_id')->references('id_item_link_type')->on('erps_item_link_types')->onDelete('cascade');
+          	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
+          	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('wms_pallets')->insert([
+          	['id_pallet' => '1','pallet' => 'N/A','is_deleted' => '0','item_id' => '1','unit_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
         }
     }
 
@@ -66,7 +69,7 @@ class WmsAddContainerItemsTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('wmsu_container_items');
+          Schema::connection($this->sConnection)->drop('wms_pallets');
         }
     }
 }

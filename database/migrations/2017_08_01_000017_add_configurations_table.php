@@ -20,7 +20,7 @@ class AddConfigurationsTable extends Migration
         });
 
         DB::table('sys_configuration')->insert([
-        	['id_configuration' => '1','version' => '1.0','partner_id' => '1', 'is_deleted' => '0'],
+        	['id_configuration' => '1','version' => '1.0','partner_id' => '1'],
         ]);
 
     }

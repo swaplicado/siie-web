@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class WmsAddContainerItemsTable extends Migration {
+class WmsAddWhsTypesTable extends Migration {
     private $lDatabases;
     private $sConnection;
     private $sDataBase;
@@ -36,22 +36,20 @@ class WmsAddContainerItemsTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->create('wmsu_container_items', function (blueprint $table) {
-          	$table->increments('id_container_item');
+          Schema::connection($this->sConnection)->create('wmss_whs_types', function (blueprint $table) {
+          	$table->increments('id_whs_type');
+          	$table->char('name', 100);
           	$table->boolean('is_deleted');
-          	$table->integer('container_type_id')->unsigned();
-          	$table->integer('container_id')->unsigned();
-          	$table->integer('item_link_type_id')->unsigned();
-          	$table->integer('item_link_id')->unsigned();
-          	$table->integer('created_by_id')->unsigned();
-          	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
-
-          	$table->foreign('container_type_id')->references('id_container_type')->on('wmss_container_types')->onDelete('cascade');
-          	$table->foreign('item_link_type_id')->references('id_item_link_type')->on('erps_item_link_types')->onDelete('cascade');
-          	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
-          	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('wmss_whs_types')->insert([
+          	['id_whs_type' => '1','name' => 'N/A','is_deleted' => '0'],
+          	['id_whs_type' => '2','name' => 'MATERIALES','is_deleted' => '0'],
+          	['id_whs_type' => '3','name' => 'PRODUCCIÓN','is_deleted' => '0'],
+          	['id_whs_type' => '4','name' => 'PRODUCTOS','is_deleted' => '0'],
+          ]);
+
         }
     }
 
@@ -66,7 +64,7 @@ class WmsAddContainerItemsTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('wmsu_container_items');
+          Schema::connection($this->sConnection)->drop('wmss_whs_types');
         }
     }
 }

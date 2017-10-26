@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class WmsAddWhsTypesTable extends Migration {
+class WmsAddLotsTable extends Migration {
     private $lDatabases;
     private $sConnection;
     private $sDataBase;
@@ -36,20 +36,26 @@ class WmsAddWhsTypesTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->create('wmss_whs_types', function (blueprint $table) {
-          	$table->increments('id_type');
-          	$table->char('code', 5)->unique();
-          	$table->char('name', 50);
+          Schema::connection($this->sConnection)->create('wms_lots', function (blueprint $table) {
+          	$table->increments('id_lot');
+          	$table->char('lot', 50);
+          	$table->date('dt_expiry');
           	$table->boolean('is_deleted');
+          	$table->integer('item_id')->unsigned();
+          	$table->integer('unit_id')->unsigned();
+          	$table->integer('created_by_id')->unsigned();
+          	$table->integer('updated_by_id')->unsigned();
+          	$table->timestamps();
+
+          	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
+          	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
+          	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+          	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
-          DB::connection($this->sConnection)->table('wmss_whs_types')->insert([
-          	['id_type' => '1','code' => 'NA','name' => 'N/A','is_deleted' => '0'],
-          	['id_type' => '2','code' => 'MA','name' => 'MATERIALES','is_deleted' => '0'],
-          	['id_type' => '3','code' => 'PC','name' => 'PRODUCCIÓN','is_deleted' => '0'],
-          	['id_type' => '4','code' => 'PS','name' => 'PRODUCTOS','is_deleted' => '0'],
+          DB::connection($this->sConnection)->table('wms_lots')->insert([
+          	['id_lot' => '1','lot' => 'NA','dt_expiry' => '2017-01-01', 'is_deleted' => '0','item_id' => '1','unit_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
-
         }
     }
 
@@ -64,7 +70,7 @@ class WmsAddWhsTypesTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('wmss_whs_types');
+          Schema::connection($this->sConnection)->drop('wms_lots');
         }
     }
 }

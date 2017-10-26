@@ -49,6 +49,10 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
+          DB::connection($this->sConnection)->table('erpu_item_families')->insert([
+          	['id_item_family' => '1','name' => 'N/A','external_id' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
+
           Schema::connection($this->sConnection)->create('erpu_item_groups', function (blueprint $table) {
           	$table->increments('id_item_group');
           	$table->char('name', 100);
@@ -63,6 +67,10 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('erpu_item_groups')->insert([
+          	['id_item_group' => '1','name' => 'N/A','external_id' => '0', 'is_deleted' => '0','item_family_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
 
           Schema::connection($this->sConnection)->create('erpu_item_genders', function (blueprint $table) {
           	$table->increments('id_item_gender');
@@ -87,11 +95,17 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           	$table->timestamps();
 
           	$table->foreign('item_group_id')->references('id_item_group')->on('erpu_item_groups')->onDelete('cascade');
-          	$table->foreign('item_class_id')->references('id_class')->on('erps_item_classes')->onDelete('cascade');
+          	$table->foreign('item_class_id')->references('id_item_class')->on('erps_item_classes')->onDelete('cascade');
           	$table->foreign('item_type_id')->references('id_item_type')->on('erps_item_types')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('erpu_item_genders')->insert([	
+          	['id_item_gender' => '1','name' => 'N/A','external_id' => '0','is_length' => '0','is_length_var' => '0','is_surface' => '0',
+            'is_surface_var' => '0','is_volume' => '0','is_volume_var' => '0','is_mass' => '0','is_mass_var' => '0','is_lot' => '0','is_bulk' => '0',
+            'item_group_id' => '1','item_class_id' => '1','item_type_id' => '1', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
 
         }
     }

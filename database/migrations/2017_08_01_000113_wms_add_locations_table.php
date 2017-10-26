@@ -37,8 +37,8 @@ class WmsAddLocationsTable extends Migration {
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->create('wmsu_whs_locations', function (blueprint $table) {
-          	$table->increments('id_location');
-          	$table->char('code', 10)->unique();
+          	$table->increments('id_whs_location');
+          	$table->char('code', 50)->unique();
           	$table->char('name', 100);
           	$table->boolean('is_deleted');
           	$table->integer('whs_id')->unsigned();
@@ -51,6 +51,9 @@ class WmsAddLocationsTable extends Migration {
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
+          DB::connection($this->sConnection)->table('wmsu_whs_locations')->insert([
+            ['id_whs_location' => '1','code' => 'NA','name' => 'N/A','is_deleted' => '0','whs_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
         }
     }
 

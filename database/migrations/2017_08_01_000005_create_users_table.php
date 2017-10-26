@@ -32,7 +32,8 @@ class CreateUsersTable extends Migration
         });
 
         DB::table('users')->insert([
-        	['id' => '1','username' => 'admin','email' => 'admin@mail.com','password' => '$2y$10$JTOe0SbUINktfiI2iYEOEOSkmQN73gBThnKmB5JqLOt/37V8obTHm','user_type_id' => '3', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+        	['id' => '1','username' => 'N/A','email' => 'mail@mail.com','password' => '$2y$10$JTOe0SbUINktfiI2iYEOEOSkmQN73gBThnKmB5JqLOt/37V8obTHm','user_type_id' => '1', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+        	['id' => '2','username' => 'admin','email' => 'admin@mail.com','password' => '$2y$10$JTOe0SbUINktfiI2iYEOEOSkmQN73gBThnKmB5JqLOt/37V8obTHm','user_type_id' => '3', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
         ]);
     }
 

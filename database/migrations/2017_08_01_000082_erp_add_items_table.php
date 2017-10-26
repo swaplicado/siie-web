@@ -48,18 +48,23 @@ class ErpAddItemsTable extends Migration {
           	$table->boolean('is_lot');
           	$table->boolean('is_bulk');
           	$table->boolean('is_deleted');
-          	$table->integer('gender_id')->unsigned();
+          	$table->integer('item_gender_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
 
-          	$table->foreign('gender_id')->references('id_item_gender')->on('erpu_item_genders')->onDelete('cascade');
+          	$table->foreign('item_gender_id')->references('id_item_gender')->on('erpu_item_genders')->onDelete('cascade');
           	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
+          DB::connection($this->sConnection)->table('erpu_items')->insert([
+          	['id_item' => '1','code' => 'N/A','name' => 'N/A','length' => '0','surface' => '0','volume' => '0',
+            'mass' => '0','is_lot' => '0','is_bulk' => '0','item_gender_id' => '1','unit_id' => '1',
+            'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
         }
     }
 

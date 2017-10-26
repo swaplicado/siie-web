@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class WmsAddContainerTypesTable extends Migration {
+class ErpAddCurrenciesTable extends Migration {
     private $lDatabases;
     private $sConnection;
     private $sDataBase;
@@ -36,17 +36,17 @@ class WmsAddContainerTypesTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->create('wmss_container_types', function (blueprint $table) {
-          	$table->increments('id_type');
-          	$table->char('name', 50);
+          Schema::connection($this->sConnection)->create('erps_currencies', function (blueprint $table) {
+            $table->increments('id_currency');
+          	$table->char('code', 10)->unique();
+          	$table->char('name', 100);
           	$table->boolean('is_deleted');
+          	$table->timestamps();
           });
 
-          DB::connection($this->sConnection)->table('wmss_container_types')->insert([
-          	['id_type' => '1','name' => 'UBICACIÓN','is_deleted' => '0'],
-          	['id_type' => '2','name' => 'ALMACÉN','is_deleted' => '0'],
-          	['id_type' => '3','name' => 'SUCURSAL','is_deleted' => '0'],
-          ]);
+          DB::connection($this->sConnection)->table('erps_currencies')->insert([
+          	['id_currency' => '1','code' => 'N/A','name' => 'N/A', 'is_deleted' => '0'],
+          ]);	
 
         }
     }
@@ -62,7 +62,7 @@ class WmsAddContainerTypesTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('wmss_container_types');
+          Schema::connection($this->sConnection)->drop('erps_currencies');
         }
     }
 }

@@ -38,6 +38,7 @@ class ErpAddPartnersTable extends Migration {
 
           Schema::connection($this->sConnection)->create('erpu_partners', function (blueprint $table) {
           	$table->increments('id_partner');
+            $table->char('code', 50)->unique();
           	$table->char('name', 200);
           	$table->char('last_name', 100);
           	$table->char('first_name', 100);
@@ -58,8 +59,8 @@ class ErpAddPartnersTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('erpu_partners')->insert([
-          	['id_partner' => '1','name' => 'Cartro SA de CV','last_name' => ' ','first_name' => ' ','fiscal_id' => 'CARTRO12345','person_id' => 'CARTRO12345','external_id' => '0','is_company' => '1','is_customer' => '0','is_supplier' => '0','is_related_party' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_partner' => '2','name' => 'Aceites Especiales TH','last_name' => ' ','first_name' => ' ','fiscal_id' => 'AETH123445','person_id' => 'AETH7864654','external_id' => '0','is_company' => '1','is_customer' => '0','is_supplier' => '0','is_related_party' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_partner' => '1','code' => 'Cartro SA de CV','name' => 'Cartro SA de CV','last_name' => ' ','first_name' => ' ','fiscal_id' => 'CARTRO12345','person_id' => 'CARTRO12345','external_id' => '0','is_company' => '1','is_customer' => '0','is_supplier' => '0','is_related_party' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_partner' => '2','code' => 'Aceites Especiales TH','name' => 'Aceites Especiales TH','last_name' => ' ','first_name' => ' ','fiscal_id' => 'AETH123445','person_id' => 'AETH7864654','external_id' => '0','is_company' => '1','is_customer' => '0','is_supplier' => '0','is_related_party' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }

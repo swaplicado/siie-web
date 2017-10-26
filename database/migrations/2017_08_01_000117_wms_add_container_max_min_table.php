@@ -36,18 +36,19 @@ class WmsAddContainerMaxMinTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->create('wms_container_max_min', function (blueprint $table) {
-          	$table->increments('id_configuration');
-          	$table->integer('id_container_type')->unsigned();
-          	$table->integer('id_container')->unsigned();
-          	$table->integer('item_id')->unsigned();
-          	$table->decimal('min', 23,8);
+          Schema::connection($this->sConnection)->create('wmsu_container_max_min', function (blueprint $table) {
+          	$table->increments('id_container_max_min');
           	$table->decimal('max', 23,8);
+          	$table->decimal('min', 23,8);
+          	$table->boolean('is_deleted');
+          	$table->integer('container_type_id')->unsigned();
+          	$table->integer('container_id')->unsigned();
+          	$table->integer('item_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
 
-          	$table->foreign('id_container_type')->references('id_type')->on('wmss_container_types')->onDelete('cascade');
+          	$table->foreign('container_type_id')->references('id_container_type')->on('wmss_container_types')->onDelete('cascade');
           	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
@@ -66,7 +67,7 @@ class WmsAddContainerMaxMinTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('wms_container_max_min');
+          Schema::connection($this->sConnection)->drop('wmsu_container_max_min');
         }
     }
 }
