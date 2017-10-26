@@ -10,10 +10,9 @@ class SCountry extends Model {
 
   protected $fillable = [
                           'id_country',
-                          'key',
-                          'abbreviation',
                           'name',
-                          'cty_lan',
+                          'abbreviation',
+                          'country_lan',
                           'is_deleted'
                         ];
 

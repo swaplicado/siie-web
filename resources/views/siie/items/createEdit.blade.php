@@ -54,8 +54,8 @@
 	  <div class="col-md-6">
 
 			<div class="form-group">
-				{!! Form::label('gender_id', trans('userinterface.labels.GENDER')) !!}
-				{!! Form::select('gender_id', $genders, isset($item) ?  $item->gender_id : null, ['class'=>'form-control select-one',
+				{!! Form::label('item_gender_id', trans('userinterface.labels.GENDER')) !!}
+				{!! Form::select('item_gender_id', $genders, isset($item) ?  $item->item_gender_id : null, ['class'=>'form-control select-one',
 											'placeholder' => trans('userinterface.placeholders.SELECT_GENDER'), 'required']) !!}
 			</div>
 

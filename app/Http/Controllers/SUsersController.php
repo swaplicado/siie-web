@@ -177,7 +177,7 @@ class SUsersController extends Controller
 
         $userCopy = clone $user;
         $userCopy->id = 0;
-        $types = SUserType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $types = SUserType::orderBy('name', 'ASC')->lists('name', 'id_user_type');
 
         return view('admin.users.createEdit')->with('user', $userCopy)
                                       ->with('iFilter', $this->iFilter)

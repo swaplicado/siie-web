@@ -89,7 +89,7 @@ class SUtil {
   {
       $lUserCompany = array();
 
-      if ($oUser->user_type_id == SValidation::getUserTypeByArea())
+      if (session('utils')->isSuperUser(\Auth::user()))
       {
         $lCompanies = SCompany::where('is_deleted', 0)->paginate(10);
 

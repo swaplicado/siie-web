@@ -2,6 +2,7 @@
 
 use App\Http\Requests\Request;
 use App\WMS\SWarehouse;
+use App\WMS\SLocation;
 
 class SLocRequest extends Request
 {
@@ -23,9 +24,10 @@ class SLocRequest extends Request
     public function rules()
     {
       $whs = new SWarehouse();
+      $location = new SLocation();
 
         return [
-            'code' => 'required|unique:siie.'.$whs->getTable(),
+            'code' => 'required|unique:siie.'.$location->getTable(),
             'name' => 'required',
             'whs_id' => 'required|exists:siie.'.$whs->getTable().',id_whs',
           ];

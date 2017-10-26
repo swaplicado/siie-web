@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class SWhsType extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_type';
+  protected $primaryKey = 'id_whs_type';
   protected $table = 'wmss_whs_types';
 
   public function getTable()
@@ -14,7 +14,6 @@ class SWhsType extends Model {
   }
 
   protected $fillable = [
-                          'code',
                           'name',
                           'is_deleted',
                         ];

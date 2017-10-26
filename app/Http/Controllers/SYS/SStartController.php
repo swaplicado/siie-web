@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
+use App\SUtils\SSessionUtils;
 use App\SUtils\SConnectionUtils;
 use App\SYS\SCompany;
 use App\SYS\SConfiguration;
@@ -27,9 +28,14 @@ class SStartController extends Controller
      */
     public function index()
     {
-        $lUserCompany = SUtil::getUserCompany(\Auth::user());
+      $oUtils = new SSessionUtils();
+      session(['utils' => $oUtils]);
 
-        if (sizeof($lUserCompany) < 1) {
+      $lUserCompany = SUtil::getUserCompany(\Auth::user());
+
+
+
+        if (sizeof($lUserCompany) < 1 && ! session('utils')->isSuperUser(\Auth::user())) {
          return redirect()->route('notauthorizedsys');
         }
 

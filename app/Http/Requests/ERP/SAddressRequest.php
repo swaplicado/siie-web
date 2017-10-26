@@ -27,7 +27,7 @@ class SAddressRequest extends Request
             'num_ext' => 'required',
             'zip_code' => 'required',
             'country_id' => 'required',
-            'country_state_id' => 'required',
+            'state_id' => 'required',
         ];
     }
 }

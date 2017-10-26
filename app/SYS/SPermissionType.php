@@ -5,9 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 class SPermissionType extends Model {
 
     protected $connection = 'ssystem';
-    protected $primaryKey = 'id_type';
+    protected $primaryKey = 'id_permission_type';
     protected $table = "syss_permission_types";
-    protected $fillable = ['id_type', 'name'];
+    protected $fillable = ['id_permission_type', 'name'];
 
     public function permissions()
     {

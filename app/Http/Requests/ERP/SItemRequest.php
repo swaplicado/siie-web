@@ -31,7 +31,7 @@ class SItemRequest extends Request
         return [
             'code' => 'required|unique:siie.'.$item->getTable(),
             'name' => 'required',
-            'gender_id' => 'required|exists:siie.'.$gender->getTable().',id_item_gender',
+            'item_gender_id' => 'required|exists:siie.'.$gender->getTable().',id_item_gender',
             'unit_id' => 'required|exists:siie.'.$unit->getTable().',id_unit',
         ];
     }

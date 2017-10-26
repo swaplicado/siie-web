@@ -59,7 +59,7 @@ class SWarehousesController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_whs_type');
         $lBranches = SUtil::companyBranchesArray();
 
         return view('wms.whs.createEdit')
@@ -114,7 +114,7 @@ class SWarehousesController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_whs_type');
         $lBranches = SUtil::companyBranchesArray();
 
         return view('wms.whs.createEdit')
@@ -160,7 +160,7 @@ class SWarehousesController extends Controller
         $whsCopy = clone $whs;
         $whsCopy->id_whs = 0;
 
-        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_whs_type');
         $lBranches = SUtil::companyBranchesArray();
 
         return view('wms.whs.createEdit')->with('whs', $whsCopy)

@@ -10,9 +10,9 @@ class SItemType extends Model {
 
   protected $fillable = [
                           'name',
-                          'id_type',
+                          'id_item_type',
                           'is_deleted',
-                          'class_id',
+                          'item_class_id',
                         ];
 
   public function class()
@@ -22,7 +22,7 @@ class SItemType extends Model {
 
   public function classTypes($idClass)
   {
-    return SItemType::where('class_id', '=', $idClass)->get();
+    return SItemType::where('item_class_id', '=', $idClass)->get();
   }
 
 }

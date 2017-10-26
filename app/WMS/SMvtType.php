@@ -5,14 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 class SMvtType extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_whs_type';
+  protected $primaryKey = 'id_mvt_type';
   protected $table = 'wmss_mvt_types';
 
   protected $fillable = [
                           'code',
                           'name',
                           'is_deleted',
-                          'class_id',
+                          'mvt_class_id',
                         ];
 
   public function mvtClass()

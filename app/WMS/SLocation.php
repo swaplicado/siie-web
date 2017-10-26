@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class SLocation extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_location';
+  protected $primaryKey = 'id_whs_location';
   protected $table = 'wmsu_whs_locations';
 
   protected $fillable = [
@@ -14,6 +14,11 @@ class SLocation extends Model {
                           'is_deleted',
                           'whs_id',
                         ];
+
+  public function getTable()
+  {
+    return $this->table;
+  }
 
   public function warehouse()
   {

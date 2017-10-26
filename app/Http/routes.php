@@ -19,13 +19,14 @@ function () {
     return view('errors.404');
 }]);
 
+Route::get('/notauthorizedsystem', ['as' => 'notauthorizedsys',
+function () {
+    return view('errors.401_1');
+}]);
+
 Route::get('/notauthorized', ['as' => 'notauthorized',
 function () {
     return view('errors.401');
-}]);
-Route::get('/notauthorized', ['as' => 'notauthorizedsys',
-function () {
-    return view('errors.401_1');
 }]);
 
 Route::group(['middleware' => ['auth']], function() {
@@ -367,10 +368,22 @@ Route::group(['middleware' => ['auth']], function() {
       /*
       * Genders
       **/
-      Route::resource('genders','ERP\SGendersController');
+      Route::resource('genders','ERP\SGendersController', ['except' => ['index']]);
       Route::get('siie/genders/{id?}', [
         'uses' => 'ERP\SGendersController@index',
         'as' => 'siie.genders.index'
+      ]);
+      Route::get('genders/{id}/destroy',[
+        'uses' => 'ERP\SGendersController@Destroy',
+        'as' => 'siie.genders.destroy'
+      ]);
+      Route::get('genders/{id}/activate', [
+        'uses' => 'ERP\SGendersController@Activate',
+        'as' => 'siie.genders.activate'
+      ]);
+      Route::get('genders/{id}/copy', [
+        'uses' => 'ERP\SGendersController@Copy',
+        'as' => 'siie.genders.copy'
       ]);
       Route::get('/genders/create/children', [
       	'uses' => 'ERP\SGendersController@children',
@@ -388,6 +401,18 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('siie/items/{id?}', [
         'as' => 'siie.items.index',
         'uses' => 'ERP\SItemsController@Index'
+      ]);
+      Route::get('items/{id}/destroy',[
+        'uses' => 'ERP\SItemsController@Destroy',
+        'as' => 'siie.items.destroy'
+      ]);
+      Route::get('items/{id}/activate', [
+        'uses' => 'ERP\SItemsController@Activate',
+        'as' => 'siie.items.activate'
+      ]);
+      Route::get('items/{id}/copy', [
+        'uses' => 'ERP\SItemsController@Copy',
+        'as' => 'siie.items.copy'
       ]);
     });
 

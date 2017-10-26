@@ -16,24 +16,24 @@ $('#country_id').on('change', function(e) {
     //ajax
     $.get('create/children?parent=' + parent, function(data) {
         //success data
-        $('#country_state_id').empty();
+        $('#state_id').empty();
         $.each(data, function(index, subcatObj) {
           var option = $("<option value=" + subcatObj.id_state + "></option>")
   	                  .attr(subcatObj, index)
   	                  .text(subcatObj.name);
 
-  				$('#country_state_id').append(option);
+  				$('#state_id').append(option);
         });
     });
     $.get('./edit/children?parent=' + parent, function(data) {
         //success data
-        $('#country_state_id').empty();
+        $('#state_id').empty();
         $.each(data, function(index, subcatObj) {
           var option = $("<option value=" + subcatObj.id_state + "></option>")
   	                  .attr(subcatObj, index)
   	                  .text(subcatObj.name);
 
-  				$('#country_state_id').append(option);
+  				$('#state_id').append(option);
         });
     });
 });

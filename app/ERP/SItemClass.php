@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class SItemClass extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_class';
+  protected $primaryKey = 'id_item_class';
   protected $table = 'erps_item_classes';
 
   public function getTable()

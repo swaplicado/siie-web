@@ -39,7 +39,7 @@
 					<td>
 						<?php
 								$oRegistry = $location;
-								$iRegistryId = $location->id_location;
+								$iRegistryId = $location->id_whs_location;
 								$loptions = [
 									\Config::get('scsys.OPTIONS.EDIT'),
 									\Config::get('scsys.OPTIONS.DESTROY'),

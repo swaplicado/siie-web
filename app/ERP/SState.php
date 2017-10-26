@@ -11,8 +11,9 @@ class SState extends Model {
   protected $fillable = [
                           'id_state',
                           'code',
-                          'abbreviation',
                           'name',
+                          'abbreviation',
+                          'state_lan',
                           'is_deleted',
                           'country_id'
                         ];

@@ -18,7 +18,7 @@ $factory->define(User::class, function(Generator $faker){
 		'username' => $faker->username,
 		'email' => $faker->email,
 		'password' => bcrypt('1234'),
-		'user_type_id' => '2',
+		'user_type_id' => '1',
 		'is_deleted' => 0,
 		'created_by_id' => 1,
 		'updated_by_id' => 1
@@ -29,6 +29,7 @@ $factory->define(User::class, function(Generator $faker){
 $factory->define(SPartner::class, function(Generator $faker){
 	$array = [
 		'name' => $faker->name,
+		'code' => $faker->randomNumber($nbDigits = 3, $strict = false),
 		'last_name' => $faker->lastName,
 		'first_name' => $faker->firstName(null),
 		'fiscal_id' => '245646876545',

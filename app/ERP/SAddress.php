@@ -25,7 +25,7 @@ class SAddress extends Model {
                           'is_deleted',
                           'branch_id',
                           'country_id',
-                          'country_state_id',
+                          'state_id',
                           ];
 
   public function branch()
@@ -40,7 +40,7 @@ class SAddress extends Model {
 
   public function state()
   {
-    return $this->belongsTo('App\ERP\SState', 'country_state_id');
+    return $this->belongsTo('App\ERP\SState', 'state_id');
   }
 
   public function scopeSearch($query, $name, $iFilter, $iBranchId)

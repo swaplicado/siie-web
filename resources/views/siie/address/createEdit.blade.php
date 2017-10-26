@@ -104,9 +104,9 @@
 
 				<div class="form-group">
 	       {!! Form::label('state', trans('userinterface.labels.STATE')) !!}
-	       <select class='form-control' name="country_state_id" id="country_state_id">
+	       <select class='form-control' name="state_id" id="state_id">
 					 @if (isset($domicile))
-						 <option value="{{ $domicile->country_state_id }}">{{ $domicile->state->name }}</option>
+						 <option value="{{ $domicile->state_id }}">{{ $domicile->state->name }}</option>
 					 @else
 							 <option value="">{{ trans('userinterface.placeholders.STATE') }}</option>
 					 @endif

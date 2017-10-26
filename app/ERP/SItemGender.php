@@ -26,6 +26,10 @@ class SItemGender extends Model {
                           'item_type_id',
                         ];
 
+  public function items()
+  {
+    return $this->hasMany('App\ERP\SItem', 'id_item');
+  }
   public function group()
   {
     return $this->belongsTo('App\ERP\SItemGroup', 'item_group_id');

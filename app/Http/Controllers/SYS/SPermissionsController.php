@@ -46,7 +46,7 @@ class SPermissionsController extends Controller
     {
         if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
           {
-              $lPermissionTypes = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_type');
+              $lPermissionTypes = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
 
               return view('admin.permissions.createEdit')->with('types', $lPermissionTypes);
           }
@@ -92,7 +92,7 @@ class SPermissionsController extends Controller
     public function edit($id)
     {
         $permission = SPermission::find($id);
-        $lPermissionTypes = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_type');
+        $lPermissionTypes = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
 
         if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $permission->created_by_id))
         {

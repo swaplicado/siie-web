@@ -23,9 +23,9 @@ class SGendersController extends Controller
 
     public function __construct()
     {
-      $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ITEM_CONFIG'), \Config::get('scsys.MODULES.ERP'));
+        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ITEM_CONFIG'), \Config::get('scsys.MODULES.ERP'));
 
-      $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
 
 
@@ -36,19 +36,24 @@ class SGendersController extends Controller
      */
     public function index(Request $request, $iClassId = 0)
     {
-      session(['classIdAux' => $iClassId]);
-      $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+        if ($iClassId == 0)
+        {
+            $iClassId = (session()->has('classIdAux') ? session('classIdAux') : 1);
+        }
 
-      $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC')->paginate(20);
+        session(['classIdAux' => $iClassId]);
+        $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      foreach ($lGenders as $gender) {
-        $gender->group;
-      }
+        $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC')->paginate(20);
 
-      return view('siie.genders.index')
-          ->with('genders', $lGenders)
-          ->with('actualUserPermission', $this->oCurrentUserPermission)
-          ->with('iFilter', $this->iFilter);
+        foreach ($lGenders as $gender) {
+          $gender->group;
+        }
+
+        return view('siie.genders.index')
+            ->with('genders', $lGenders)
+            ->with('actualUserPermission', $this->oCurrentUserPermission)
+            ->with('iFilter', $this->iFilter);
     }
 
     /**
@@ -58,19 +63,19 @@ class SGendersController extends Controller
      */
     public function create()
     {
-        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-        {
-          return redirect()->route('notauthorized');
-        }
+          if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+          {
+            return redirect()->route('notauthorized');
+          }
 
-        $itemClass = session('classIdAux');
+          $itemClass = session('classIdAux');
 
-        $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
-        $lClasses = SItemClass::where('id_class', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_class');
+          $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
+          $lClasses = SItemClass::where('id_item_class', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_item_class');
 
-        return view('siie.genders.createEdit')
-                                ->with('groups', $lGroups)
-                                ->with('classes', $lClasses);
+          return view('siie.genders.createEdit')
+                                  ->with('groups', $lGroups)
+                                  ->with('classes', $lClasses);
     }
 
     /**
@@ -81,17 +86,17 @@ class SGendersController extends Controller
      */
     public function store(Request $request)
     {
-      $gender = new SItemGender($request->all());
+        $gender = new SItemGender($request->all());
 
-      $gender->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-      $gender->updated_by_id = \Auth::user()->id;
-      $gender->created_by_id = \Auth::user()->id;
+        $gender->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $gender->updated_by_id = \Auth::user()->id;
+        $gender->created_by_id = \Auth::user()->id;
 
-      $gender->save();
+        $gender->save();
 
-      Flash::success(trans('messages.REG_CREATED'))->important();
+        Flash::success(trans('messages.REG_CREATED'))->important();
 
-      return redirect()->route('siie.genders.index', session('classIdAux'));
+        return redirect()->route('siie.genders.index', session('classIdAux'));
     }
 
     /**
@@ -121,8 +126,8 @@ class SGendersController extends Controller
         }
 
         $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
-        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_class');
-        $lItemTypes = SItemType::where('is_deleted', '=', false)->where('class_id', $gender->item_class_id)->orderBy('name', 'ASC')->get();
+        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_item_class');
+        $lItemTypes = SItemType::where('is_deleted', '=', false)->where('item_class_id', $gender->item_class_id)->orderBy('name', 'ASC')->get();
 
         return view('siie.genders.createEdit')
                                 ->with('groups', $lGroups)
@@ -168,8 +173,16 @@ class SGendersController extends Controller
         $genderCopy = clone $gender;
         $genderCopy->id_item_gender = 0;
 
-        return view('siie.genders.createEdit')->with('group', $genderCopy)
-                                              ->with('bIsCopy', true);
+        $lGroups = SItemGroup::orderBy('name', 'ASC')->lists('name', 'id_item_group');
+        $lClasses = SItemClass::orderBy('name', 'ASC')->lists('name', 'id_item_class');
+        $lItemTypes = SItemType::where('is_deleted', '=', false)->where('item_class_id', $gender->item_class_id)->orderBy('name', 'ASC')->get();
+
+        return view('siie.genders.createEdit')
+                                ->with('groups', $lGroups)
+                                ->with('classes', $lClasses)
+                                ->with('itemTypes', $lItemTypes)
+                                ->with('gender', $genderCopy)
+                                ->with('bIsCopy', true);
     }
 
     public function activate(Request $request, $id)
@@ -214,11 +227,12 @@ class SGendersController extends Controller
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();
+
         return redirect()->route('siie.genders.index', session('classIdAux'));
     }
 
     public function children(Request $request)
     {
-      return SItemType::where('class_id', '=', $request->parent)->get();
+      return SItemType::where('item_class_id', '=', $request->parent)->get();
     }
 }

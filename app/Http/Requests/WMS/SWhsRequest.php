@@ -32,7 +32,7 @@ class SWhsRequest extends Request
             'code' => 'required|unique:siie.'.$whs->getTable(),
             'name' => 'required',
             'branch_id' => 'required|exists:siie.'.$branch->getTable().',id_branch',
-            'whs_type_id' => 'required|exists:siie.'.$whstype->getTable().',id_type',
+            'whs_type_id' => 'required|exists:siie.'.$whstype->getTable().',id_whs_type',
         ];
     }
 }

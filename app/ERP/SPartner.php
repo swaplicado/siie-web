@@ -10,6 +10,7 @@ class SPartner extends Model {
 
   protected $fillable = [
                           'id_partner',
+                          'code',
                           'name',
                           'last_name',
                           'first_name',

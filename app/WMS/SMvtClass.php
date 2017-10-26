@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class SMvtClass extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_class';
+  protected $primaryKey = 'id_mvt_class';
   protected $table = 'wmss_mvt_classes';
 
   protected $fillable = [

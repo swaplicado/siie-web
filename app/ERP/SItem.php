@@ -19,13 +19,13 @@ class SItem extends Model {
                           'is_lot',
                           'is_bulk',
                           'is_deleted',
-                          'gender_id',
+                          'item_gender_id',
                           'unit_id',
                         ];
 
   public function gender()
   {
-    return $this->belongsTo('App\ERP\SItemGender');
+    return $this->belongsTo('App\ERP\SItemGender', 'item_gender_id');
   }
 
   public function unit()
@@ -33,28 +33,38 @@ class SItem extends Model {
     return $this->belongsTo('App\ERP\SUnit');
   }
 
-  public function scopeSearch($query, $name, $iFilter, $idType)
+  public function scopeSearch($query, $name, $iFilter, $idClass)
   {
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
-          return $query->join('erpu_item_genders', 'erpu_items.gender_id', '=', 'erpu_item_genders.id_item_gender')
-                      ->where('erpu_item_genders.item_class_id', $idType)
-                      ->where('erpu_item_genders.is_deleted', '=', \Config::get('scsys.STATUS.ACTIVE'))
+          return $query->join('erpu_item_genders', 'erpu_items.item_gender_id', '=', 'erpu_item_genders.id_item_gender')
+                      ->where('erpu_item_genders.item_class_id', $idClass)
+                      ->where('erpu_items.is_deleted', '=', \Config::get('scsys.STATUS.ACTIVE'))
                       ->where('erpu_items.name', 'LIKE', "%".$name."%")
                       ->select('erpu_items.*');
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
-          return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                        ->where('name', 'LIKE', "%".$name."%");
+        return $query->join('erpu_item_genders', 'erpu_items.item_gender_id', '=', 'erpu_item_genders.id_item_gender')
+                    ->where('erpu_item_genders.item_class_id', $idClass)
+                    ->where('erpu_items.is_deleted', '=', \Config::get('scsys.STATUS.DEL'))
+                    ->where('erpu_items.name', 'LIKE', "%".$name."%")
+                    ->select('erpu_items.*');
           break;
 
         case \Config::get('scsys.FILTER.ALL'):
-          return $query->where('name', 'LIKE', "%".$name."%");
+        return $query->join('erpu_item_genders', 'erpu_items.item_gender_id', '=', 'erpu_item_genders.id_item_gender')
+                    ->where('erpu_item_genders.item_class_id', $idClass)
+                    ->where('erpu_items.name', 'LIKE', "%".$name."%")
+                    ->select('erpu_items.*');
           break;
 
         default:
-          return $query->where('name', 'LIKE', "%".$name."%");
+        return $query->join('erpu_item_genders', 'erpu_items.item_gender_id', '=', 'erpu_item_genders.id_item_gender')
+                    ->where('erpu_item_genders.item_class_id', $idClass)
+                    ->where('erpu_items.is_deleted', '=', \Config::get('scsys.STATUS.ACTIVE'))
+                    ->where('erpu_items.name', 'LIKE', "%".$name."%")
+                    ->select('erpu_items.*');
           break;
       }
   }

@@ -154,7 +154,7 @@ class SLocationsController extends Controller
         $location = SLocation::find($id);
 
         $locationCopy = clone $location;
-        $locationCopy->id_location = 0;
+        $locationCopy->id_whs_location = 0;
 
         $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
 

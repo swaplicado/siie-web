@@ -62,6 +62,7 @@
 									\Config::get('scsys.OPTIONS.EDIT'),
 									\Config::get('scsys.OPTIONS.DESTROY'),
 									\Config::get('scsys.OPTIONS.ACTIVATE'),
+									\Config::get('scsys.OPTIONS.COPY'),
 								];
 						?>
 						@include('templates.list.options')

@@ -7,7 +7,7 @@ class SBranch extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_branch';
   protected $table = 'erpu_branches';
-  protected $fillable = ['id_branch', 'code', 'name', 'external_id', 'is_headquarters'];
+  protected $fillable = ['id_branch', 'code', 'name', 'external_id', 'is_headquarters', 'is_deleted'];
 
   public function company()
   {

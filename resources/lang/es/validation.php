@@ -143,13 +143,13 @@ return [
         'country_id' => [
             'required' => 'El campo país es obligatorio',
         ],
-        'country_state_id' => [
+        'state_id' => [
             'required' => 'El campo estado es obligatorio',
         ],
         'item_family_id' => [
             'required' => 'El campo familia es obligatorio',
         ],
-        'gender_id' => [
+        'item_gender_id' => [
             'required' => 'El campo género es obligatorio',
         ],
         'unit_id' => [

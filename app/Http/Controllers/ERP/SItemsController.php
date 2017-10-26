@@ -37,8 +37,12 @@ class SItemsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $iClassId = 1)
+    public function index(Request $request, $iClassId = 0)
     {
+        if ($iClassId == 0)
+        {
+            $iClassId = (session()->has('classIdAux') ? session('classIdAux') : 1);
+        }
         session(['classIdAux' => $iClassId]);
 
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
