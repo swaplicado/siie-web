@@ -31,6 +31,11 @@ class SWarehouse extends Model {
     return $this->belongsTo('App\ERP\SBranch', 'branch_id');
   }
 
+  public function locations()
+  {
+    return $this->hasMany('App\ERP\SLocation');
+  }
+
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');

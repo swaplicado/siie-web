@@ -11,15 +11,15 @@ class SUnit extends Model {
   protected $fillable = [
                           'code',
                           'name',
-                          'unit_base_equivalence_opt',
-                          'cfd_unit_id',
+                          'base_unit_equivalence_opt',
+                          'external_id',
                           'is_deleted',
-                          'unit_base_id_opt',
+                          'base_unit_id_opt',
                         ];
 
   public function equivalence()
   {
-    return $this->belongsTo('App\ERP\SUnit', 'unit_base_id_opt');
+    return $this->belongsTo('App\ERP\SUnit', 'base_unit_id_opt');
   }
 
   public function userCreation()

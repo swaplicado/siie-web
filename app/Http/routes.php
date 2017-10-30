@@ -210,6 +210,10 @@ Route::group(['middleware' => ['auth']], function() {
       * Iventory movements
       **/
       Route::resource('movs','WMS\SMovsController');
+      Route::get('/movs/children', [
+      	'uses' => 'WMS\SMovsController@children',
+      	'as' => 'wms.movs.children'
+      ]);
 
   });
 

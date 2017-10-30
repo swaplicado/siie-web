@@ -28,6 +28,17 @@ return [
           'REPORT_STK' => 'Reporte de existencias',
           'REPORT_INV' => 'Reporte de inventarios',
 
+      'labels'  => [
+                      'CODE' => 'Código',
+                      'MAT_PROD' => 'Material/producto',
+                      'UNIT' => 'Unidad',
+                      'LOCATION' => 'Ubicación',
+                      'LOT' => 'Lote',
+                      'PALLET' => 'Tarima',
+                      'PRICE' => 'Precio',
+                      'QTY' => 'Cantidad',
+                    ],
+
       'QRY_INVENTORY' =>  'Consulta de inventarios',
       'QRY_INVENTORY_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
 

@@ -8,6 +8,7 @@
 		'EDIT' => 'Editar',
 		'CANCEL' => 'Cancelar',
 		'ACCESS' => 'Acceder',
+		'ADD' => 'Agregar',
 
 
     ];

@@ -19,6 +19,7 @@
 		'USER_COMPANIES' => 'Acceso a empresas',
 		'PERMISSIONS' => 'Permisos',
 		'CATALOGUES' => 'Catálogos',
+		'TOTAL' => 'TOTAL',
 
 		'administration' =>	[
 													'MSG_YES' => 'Sí',
@@ -81,6 +82,7 @@
 											'EDIT_SPENDING' => 'Editar gasto',
 											'SELECT_COMPANY' => 'Seleccione empresa:',
 											'SELECT_MODULE' => 'Seleccione Módulo',
+											'WHS_MOVS' => 'Movimientos de inventario',
 											],
 
 		'buttons'      	=>  [
@@ -198,6 +200,12 @@
 											'NEIGHBORHOOD' => 'Colonia',
 											'NUM_EXT' => '#',
 											'NUM_INT' => '# Int.',
+											'MVT_TYPE' => 'Tipo de movimiento',
+											'MVT_FOLIO' => 'Folio de movimiento',
+											'MVT_DATE' => 'Fecha de movimiento',
+											'MVT_WHS_SRC' => 'Almacén origen',
+											'MVT_WHS_DEST' => 'Almacén destino',
+											'WHS_ITM' => 'Producto o material',
 											'OPENED' => 'Abierto',
 											'PASSWORD' => 'Contraseña',
 											'PASS_NEW' => 'Nueva contraseña',
