@@ -53,12 +53,12 @@ class WmsAddComponentBarcodesTable extends Migration
         });
 
         DB::table('wms_componet_barcodes')->insert([
-          ['id_component' => '1','name' => 'id_lot','digits' => '6', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
-          ['id_component' => '2','name' => 'text_lot','digits' => '15', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
-          ['id_component' => '3','name' => 'id_item','digits' => '4', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
-          ['id_component' => '4','name' => 'id_unit','digits' => '3', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
-          ['id_component' => '5','name' => 'id_pallet','digits' => '9', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
-          ['id_component' => '6','name' => 'text_pallet','digits' => '16', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '1','name' => 'id_lot','digits' => '6','type_barcode' => 'Item', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '2','name' => 'text_lot','digits' => '15', 'type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '3','name' => 'id_item','digits' => '4', 'type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '4','name' => 'id_unit','digits' => '3', 'type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '5','name' => 'id_pallet','digits' => '9', 'type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '6','name' => 'text_pallet','digits' => '16', 'type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
         ]);
       }
     }
