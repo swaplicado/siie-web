@@ -22,7 +22,7 @@ class SWmsMenu {
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->link('#', trans('wms.PALLETS'))
                 ->link('#', trans('wms.LOTS'))
-                ->link('#', trans('wms.BAR_CODES'))
+                ->route('wms.codes.start', trans('wms.BAR_CODES'))
         )
         ->route('wms.movs.index', trans('wms.MOV_STK'))
         ->wrap('div.collapse.navbar-collapse')

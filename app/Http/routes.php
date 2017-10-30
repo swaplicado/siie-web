@@ -219,7 +219,11 @@ Route::group(['middleware' => ['auth']], function() {
       * Barcodes
       **/
 
-      Route::get('/codes/start', 'WMS\SCodesController@start');
+      // Route::get('/codes/start', 'WMS\SCodesController@start');
+      Route::get('/codes/start',[
+        'uses' => 'WMS\SCodesController@start',
+        'as'   => 'wms.codes.start'
+      ]);
 
       Route::get('/codes/findProductName','WMS\SCodesController@findProductName');
 
