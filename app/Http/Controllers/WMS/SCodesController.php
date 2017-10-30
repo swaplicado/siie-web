@@ -72,7 +72,7 @@ class SCodesController extends Controller
     public function generate(Request $request){
       if($request->etiqueta==0){
         $dataBarcode = SComponetBarcode::select('digits','id_component')
-                                        ->where('type_bacode','Tarima')
+                                        ->where('type_barcode','Tarima')
                                         ->get()->lists('digits','id_component');
 
         $dataLot = SPallet::find($request->productos);
@@ -88,7 +88,7 @@ class SCodesController extends Controller
       }
       if($request->etiqueta==1){
         $dataBarcode = SComponetBarcode::select('digits','id_component')
-                                        ->where('type_bacode','Item')
+                                        ->where('type_barcode','Item')
                                         ->get()->lists('digits','id_component');
 
         $dataLot = SwmsLot::find($request->productos);

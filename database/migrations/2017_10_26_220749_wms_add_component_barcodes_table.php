@@ -51,6 +51,15 @@ class WmsAddComponentBarcodesTable extends Migration
       	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
       	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
         });
+
+        DB::table('wms_componet_barcodes')->insert([
+          ['id_component' => '1','name' => 'id_lot','digits' => '6', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '2','name' => 'text_lot','digits' => '15', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '3','name' => 'id_item','digits' => '4', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '4','name' => 'id_unit','digits' => '3', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '5','name' => 'id_pallet','digits' => '9', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '6','name' => 'text_pallet','digits' => '16', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+        ]);
       }
     }
 
