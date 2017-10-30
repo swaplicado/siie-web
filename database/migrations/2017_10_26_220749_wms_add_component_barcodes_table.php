@@ -52,7 +52,7 @@ class WmsAddComponentBarcodesTable extends Migration
       	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
         });
 
-        DB::table('wms_componet_barcodes')->insert([
+        DB::connection($this->sConnection)->table('wms_componet_barcodes')->insert([
           ['id_component' => '1','name' => 'id_lot','digits' => '6','type_barcode' => 'Item', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
           ['id_component' => '2','name' => 'text_lot','digits' => '15', 'type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
           ['id_component' => '3','name' => 'id_item','digits' => '4', 'type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
