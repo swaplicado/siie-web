@@ -25,13 +25,17 @@
             <div class="col-md-12">
               @yield('content')
             </div>
-            
+
           </section>
         </div>
       </div>
     </div>
 
     </div>
+    @include('templates.scripts')
+
+  	@yield('js')
+
   </body>
   <footer>
     @yield('footer')

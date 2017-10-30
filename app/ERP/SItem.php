@@ -33,6 +33,16 @@ class SItem extends Model {
     return $this->belongsTo('App\ERP\SUnit');
   }
 
+  public function lot()
+  {
+    return $this->hasmany('App\WMS\SWmsLot');
+  }
+
+  public function pallet()
+  {
+    return $this->hasmany('App\WMS\SPallet');
+  }
+  
   public function scopeSearch($query, $name, $iFilter, $idClass)
   {
       switch ($iFilter) {

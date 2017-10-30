@@ -34,3 +34,4 @@ class SMenu
       $this->sClassNav = $class;
     }
 }
+?>

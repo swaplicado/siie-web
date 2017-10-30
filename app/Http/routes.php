@@ -215,6 +215,36 @@ Route::group(['middleware' => ['auth']], function() {
       	'as' => 'wms.movs.children'
       ]);
 
+      /*
+      * Barcodes
+      **/
+
+      Route::get('/codes/start', 'WMS\SCodesController@start');
+
+      Route::get('/codes/findProductName','WMS\SCodesController@findProductName');
+
+      Route::post('/codes/generate', [
+        'uses' => 'WMS\SCodesController@generate',
+        'as' => 'wms.codes.generate'
+      ]);
+
+      /*
+      * Lots
+      **/
+      Route::resource('lots','WMS\SWmsLotsController');
+      Route::get('lots/{id}/destroy',[
+        'uses' => 'WMS\SWmsLotsController@Destroy',
+        'as'   => 'wms.lots.destroy'
+      ]);
+      Route::get('lots/{id}/active',[
+        'uses' => 'WMS\SWmsLotsController@Activate',
+        'as'   => 'wms.lots.activate'
+      ]);
+      Route::get('lots/{id}/copy', [
+        'uses' => 'WMS\SWmsLotsController@Copy',
+        'as'   => 'wms.lots.copy'
+      ]);
+
   });
 
 
