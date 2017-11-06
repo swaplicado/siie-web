@@ -22,6 +22,16 @@ class SUnit extends Model {
     return $this->belongsTo('App\ERP\SUnit', 'base_unit_id_opt');
   }
 
+  public function lot()
+  {
+    return $this->hasmany('App\WMS\SWmLot');
+  }
+
+  public function pallet()
+  {
+    return $this->hasmany('App\WMS\SPallet');
+  }
+
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');

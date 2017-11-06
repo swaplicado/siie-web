@@ -1,4 +1,5 @@
-<?php namespace App\Http\Controllers\WMS;
+<?php
+namespace App\Http\Controllers\WMS;
 
 use Illuminate\Http\Request;
 

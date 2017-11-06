@@ -154,6 +154,8 @@ return [
         Styde\Html\HtmlServiceProvider::class,
         Spatie\Menu\Laravel\MenuServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Milon\Barcode\BarcodeServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -209,6 +211,10 @@ return [
         'Access'    => Styde\Html\Facades\Access::class,
         'Menu'      => Spatie\Menu\Laravel\MenuFacade::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
+        'Access'    => Styde\Html\Facades\Access::class,
+        'DNS1D'     => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D'     => Milon\Barcode\Facades\DNS2DFacade::class,
+        'PDF'       => Barryvdh\DomPDF\Facade::class,
 
     ],
 

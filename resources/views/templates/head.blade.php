@@ -11,7 +11,11 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
 	{{-- <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-toggle/css/bootstrap-toggle.min.css') }}"> --}}
 	<link rel="stylesheet" type="text/css" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{asset('datePicker/css/bootstrap-datepicker3.css')}}">
+  <link rel="stylesheet" href="{{asset('datePicker/css/bootstrap-datepicker.standalone.css')}}">
+
 <!--
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table.css') }}">
 -->
+
 </head>

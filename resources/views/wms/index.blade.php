@@ -14,7 +14,7 @@
     <?php echo createBlock(asset('images/wms/movss.gif'), "#", trans('wms.DOC_RETURNS'), "success3", trans('wms.DOC_RETURNS_T'));?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/wms/barcode.gif'), "#", trans('wms.LBL_GENERATION'), "success3", trans('wms.LBL_GENERATION_T'));?>
+    <?php echo createBlock(asset('images/wms/barcode.gif'), "codes/start", trans('wms.LBL_GENERATION'), "success3", trans('wms.LBL_GENERATION_T'));?>
     <?php echo createBlock(asset('images/wms/reports.gif'), "#", trans('wms.REPORTS'), "success3", trans('wms.REPORTS_T'));?>
   </div>
 

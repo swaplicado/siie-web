@@ -13,3 +13,5 @@
 <script src="{{ asset('bootstrap/js/confirmation-js.js') }}"></script>
 {{-- <script src="{{ asset('bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script> --}}
 <script src="{{ asset('list-group/listgroup.js') }}"></script>
+<script src="{{asset('datePicker/js/bootstrap-datepicker.js')}}"></script>
+<script src="{{asset('datePicker/locales/bootstrap-datepicker.es.min.js')}}"></script>
