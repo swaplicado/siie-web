@@ -37,8 +37,8 @@
 
 						<div class="col-md-3">
 
-							{!! Form::text('name',
-					    	isset($lots) ? $lots->name : null , ['required','class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.NAME')]) !!}
+							{!! Form::text('lot',
+					    	isset($lots) ? $lots->lot : null , ['required','class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.NAME')]) !!}
 
 						</div>
 
