@@ -31,4 +31,14 @@
     {
       return 'ssystem';
     }
+
+    /**
+     * Return the connection of the company database.
+     *
+     * @return String name of connection
+     */
+    public static function getConnCompany()
+    {
+      return 'siie';
+    }
   }

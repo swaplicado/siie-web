@@ -13,13 +13,13 @@ return [
     'MVT_TP_IN_CON' => '5', // conversion
     'MVT_TP_IN_PRO' => '6', // production
     'MVT_TP_IN_EXP' => '7', // expenses
-    'MVT_TP_OUT_SAL' => '1',
-    'MVT_TP_OUT_PUR' => '2',
-    'MVT_TP_OUT_ADJ' => '3',
-    'MVT_TP_OUT_TRA' => '4',
-    'MVT_TP_OUT_CON' => '5',
-    'MVT_TP_OUT_PRO' => '6',
-    'MVT_TP_OUT_EXP' => '7',
+    'MVT_TP_OUT_SAL' => '8',
+    'MVT_TP_OUT_PUR' => '9',
+    'MVT_TP_OUT_ADJ' => '10',
+    'MVT_TP_OUT_TRA' => '11',
+    'MVT_TP_OUT_CON' => '12',
+    'MVT_TP_OUT_PRO' => '13',
+    'MVT_TP_OUT_EXP' => '14',
 
     // applies only for sales and purchases
     'MVT_SPT_TP_STK_RET' => '1', // supply (surtido) and return

@@ -10,7 +10,7 @@ class SConfiguration {
   public static function getModuleNav($iModule)
   {
     $sNav = '';
-    
+
     switch ($iModule) {
       case \Config::get('scsys.MODULES.ERP'):
         $sNav = \Config::get('scsys.MOD_NAVS.ERP');
@@ -40,5 +40,5 @@ class SConfiguration {
 
     return $sNav;
   }
-
+  
 }

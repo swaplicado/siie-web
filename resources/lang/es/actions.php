@@ -9,6 +9,8 @@
 		'CANCEL' => 'Cancelar',
 		'ACCESS' => 'Acceder',
 		'ADD' => 'Agregar',
+		'FREEZE' => 'Congelar',
+		'CLOSE' => 'Cerrar',
 
 
     ];

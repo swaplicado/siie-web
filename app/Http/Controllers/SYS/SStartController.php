@@ -10,6 +10,8 @@ use App\SUtils\SSessionUtils;
 use App\SUtils\SConnectionUtils;
 use App\SYS\SCompany;
 use App\SYS\SConfiguration;
+use App\ERP\SErpConfiguration;
+use App\Database\Config;
 use App\ERP\SPartner;
 use App\SYS\SUserCompany;
 
@@ -28,14 +30,15 @@ class SStartController extends Controller
      */
     public function index()
     {
-      $oUtils = new SSessionUtils();
-      session(['utils' => $oUtils]);
+        $oUtils = new SSessionUtils();
+        $oDbConfig = new Config();
 
-      $lUserCompany = SUtil::getUserCompany(\Auth::user());
+        session(['session_utils' => $oUtils]);
+        session(['db_configuration' => $oDbConfig]);
 
+        $lUserCompany = SUtil::getUserCompany(\Auth::user());
 
-
-        if (sizeof($lUserCompany) < 1 && ! session('utils')->isSuperUser(\Auth::user())) {
+        if (sizeof($lUserCompany) < 1 && ! session('session_utils')->isSuperUser(\Auth::user())) {
          return redirect()->route('notauthorizedsys');
         }
 
@@ -64,7 +67,8 @@ class SStartController extends Controller
 
         SConnectionUtils::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
 
-        $oPartner = SPartner::find($oConfiguration->partner_id);
+        $oErpConfigurationPartner = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PARTNER_ID'));
+        $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         session(['partner' => $oPartner]);
 
         return SStartController::selectModule();

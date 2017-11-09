@@ -89,7 +89,7 @@ class SUtil {
   {
       $lUserCompany = array();
 
-      if (session('utils')->isSuperUser(\Auth::user()))
+      if (session('session_utils')->isSuperUser(\Auth::user()))
       {
         $lCompanies = SCompany::where('is_deleted', 0)->paginate(10);
 

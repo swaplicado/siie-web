@@ -7,6 +7,8 @@ class SMovementRow extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_mvt_row';
   protected $table = 'wms_mvt_rows';
+  public $timestamps = false;
+  protected $auxLots = array();
 
   protected $fillable = [
                           'id_mvt_row',
@@ -47,6 +49,16 @@ class SMovementRow extends Model {
   public function pallet()
   {
     return $this->belongsTo('App\WMS\SPallet', 'pallet_id');
+  }
+
+  public function setAuxLots($value = array())
+  {
+     $this->auxLots = $value;
+  }
+
+  public function getAuxLots()
+  {
+     return $this->auxLots;
   }
 
 }

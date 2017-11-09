@@ -3,6 +3,11 @@
 
 return [
 
+  'CONFIGURATION' => [
+                  'PARTNER_ID' => '1',
+                  'DECIMALS' => '2',
+                ],
+
   'ATT' => [
 
                 'IS_COMP' => '1',

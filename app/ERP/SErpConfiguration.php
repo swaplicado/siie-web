@@ -2,11 +2,11 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class SCurrency extends Model {
+class SErpConfiguration extends Model {
 
   protected $connection = 'siie';
-  protected $primaryKey = 'id_currency';
-  protected $table = 'erps_currencies';
+  protected $primaryKey = 'id_configuration';
+  protected $table = 'erp_configuration';
 
   public function getTable()
   {
@@ -16,6 +16,9 @@ class SCurrency extends Model {
   protected $fillable = [
                           'code',
                           'name',
+                          'val_int',
+                          'val_text',
+                          'val_dec',
                           'is_deleted',
                         ];
 

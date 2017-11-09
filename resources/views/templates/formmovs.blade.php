@@ -32,8 +32,6 @@
     </div>
 
     </div>
-    @include('templates.scriptsmovs')
-
     @yield('js')
   </body>
   <footer>

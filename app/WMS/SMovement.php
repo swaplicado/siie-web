@@ -48,6 +48,11 @@ class SMovement extends Model {
 
   public function whs()
   {
-    return $this->belongsTo('App\ERP\SWarehouse', 'whs_id');
+    return $this->belongsTo('App\WMS\SWarehouse', 'whs_id');
+  }
+
+  public function branch()
+  {
+    return $this->belongsTo('App\ERP\SBranch', 'branch_id');
   }
 }

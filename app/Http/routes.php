@@ -209,11 +209,24 @@ Route::group(['middleware' => ['auth']], function() {
       /*
       * Iventory movements
       **/
-      Route::resource('movs','WMS\SMovsController');
-      Route::get('/movs/children', [
-      	'uses' => 'WMS\SMovsController@children',
-      	'as' => 'wms.movs.children'
+      Route::resource('movs','WMS\SMovsController', ['except' => ['create']]);
+      Route::get('/movs/{id?}/create', [
+      	'uses' => 'WMS\SMovsController@create',
+      	'as' => 'wms.movs.create'
       ]);
+      Route::get('/movs/{id?}/create/children', [
+      	'uses' => 'WMS\SMovsController@children',
+      	'as' => 'wms.movs.create.children'
+      ]);
+      Route::post('/movs/{id?}/create/storetable', [
+      	'uses' => 'WMS\SMovsController@getTable',
+      	'as' => 'wms.movs.create.storetable'
+      ]);
+
+      /*
+      * Iventory movements
+      **/
+      Route::resource('stock','WMS\SStockController');
 
       /*
       * Barcodes
