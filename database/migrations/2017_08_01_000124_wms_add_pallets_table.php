@@ -42,6 +42,7 @@ class WmsAddPalletsTable extends Migration {
           	$table->boolean('is_deleted');
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
+            $table->decimal('quantity', 23,8);
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
@@ -53,7 +54,7 @@ class WmsAddPalletsTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('wms_pallets')->insert([
-          	['id_pallet' => '1','pallet' => 'N/A','is_deleted' => '0','item_id' => '1','unit_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_pallet' => '1','pallet' => 'N/A','is_deleted' => '0','item_id' => '1','unit_id' => '1','quantity' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }
