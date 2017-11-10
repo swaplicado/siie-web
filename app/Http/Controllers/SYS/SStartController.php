@@ -33,12 +33,12 @@ class SStartController extends Controller
         $oUtils = new SSessionUtils();
         $oDbConfig = new Config();
 
-        session(['session_utils' => $oUtils]);
+        session(['utils' => $oUtils]);
         session(['db_configuration' => $oDbConfig]);
 
         $lUserCompany = SUtil::getUserCompany(\Auth::user());
 
-        if (sizeof($lUserCompany) < 1 && ! session('session_utils')->isSuperUser(\Auth::user())) {
+        if (sizeof($lUserCompany) < 1 && ! session('utils')->isSuperUser(\Auth::user())) {
          return redirect()->route('notauthorizedsys');
         }
 
@@ -53,10 +53,10 @@ class SStartController extends Controller
     {
         $iCompanyId =  $_COOKIE['iCompanyId'];
         $oCompany = SCompany::find($iCompanyId);
-        $oConfiguration = SConfiguration::find(1);
+        // $oConfiguration = SConfiguration::find(1);
 
         session(['company' => $oCompany]);
-        session(['configuration' => $oConfiguration]);
+        // session(['configuration' => $oConfiguration]);
 
         $sConnection = 'siie';
         $bDefault = true;
@@ -68,8 +68,13 @@ class SStartController extends Controller
         SConnectionUtils::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
 
         $oErpConfigurationPartner = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PARTNER_ID'));
+        $oDecAmount = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_AMT'));
+        $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
+
         session(['partner' => $oPartner]);
+        session(['decimals_amt' => $oDecAmount->val_int]);
+        session(['decimals_qty' => $oDecQuantity->val_int]);
 
         return SStartController::selectModule();
     }

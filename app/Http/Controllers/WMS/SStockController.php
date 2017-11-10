@@ -31,17 +31,50 @@ class SStockController extends Controller
      *
      * @return \Illuminate\Http\Request
      */
-    public function index(Request $request)
+    public function index(Request $request, $iStockType = 1)
     {
-      // DB::table('despachos')
-      //       ->join('productos', 'despachos.id_producto', '=', 'productos.id')
-      //       ->where('despachos.id_cliente', '=', $id)
-      //        ->whereBetween('despachos.fecha', array($fechain,$fechater))
-      //       ->select('productos.nombre',DB::raw('sum(despachos.cantidad) as cantidad'),DB::raw('sum(total) as total'))
-      //       ->groupBy('despachos.id_producto')
-      //       ->get();
+      $select = 'sum(ws.input) as inputs,
+                         sum(ws.output) as outputs,
+                         (sum(ws.input) - sum(ws.output)) as stock,
+                         ei.code as item_code,
+                         ei.name as item,
+                         eu.code as unit';
 
-      // session('db_configuration')->getConnCompany().'
+      switch ($iStockType) {
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_ITEM'):
+          $groupBy = 'ws.item_id';
+          $orderBy1 = 'ws.item_id';
+          $orderBy2 = 'ws.item_id';
+          break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
+          $select = $select.', '.'wp.pallet as pallet';
+          $groupBy = ['ws.pallet_id','ws.item_id'];
+          $orderBy1 = 'ws.pallet_id';
+          $orderBy2 = 'ws.item_id';
+          break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'):
+          $select = $select.', '.'wl.lot as lot_';
+          $groupBy = ['ws.lot_id','ws.item_id'];
+          $orderBy1 = 'ws.lot_id';
+          $orderBy2 = 'ws.item_id';
+          break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
+          $select = $select.', '.'wwl.name as location';
+          $groupBy = ['ws.location_id','ws.item_id'];
+          $orderBy1 = 'ws.location_id';
+          $orderBy2 = 'ws.item_id';
+          break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE'):
+          $select = $select.', '.'ww.name as warehouse';
+          $groupBy = ['ws.whs_id','ws.item_id'];
+          $orderBy1 = 'ws.whs_id';
+          $orderBy2 = 'ws.item_id';
+          break;
+
+        default:
+          # code...
+          break;
+      }
 
       $stock = \DB::connection(session('db_configuration')->getConnCompany())
                     ->table('wms_stock as ws')
@@ -51,22 +84,15 @@ class SStockController extends Controller
                     ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
                     ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
                     ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
-                    ->select(\DB::raw('sum(ws.input) as inputs,
-                                       sum(ws.output) as outputs,
-                                       (sum(ws.input) - sum(ws.output)) as stock,
-                                       ei.name as item,
-                                       eu.code as unit,
-                                       wp.pallet as pallet,
-                                       wl.lot as lot_,
-                                       wwl.name as location,
-                                       ww.name as warehouse
-                                       '))
-                    ->groupBy('ws.item_id', 'ws.pallet_id', 'ws.lot_id', 'ws.location_id', 'ws.whs_id')
-                    ->orderBy('ws.item_id', 'ws.pallet_id', 'ws.lot_id', 'ws.location_id', 'ws.whs_id')
+                    ->select(\DB::raw($select))
+                    ->groupBy($groupBy)
+                    ->orderBy($orderBy1)
+                    ->orderBy($orderBy2)
                     ->where('ws.is_deleted', false)
                     ->get();
 
       return view('wms.stock.stock')
+                        ->with('iStockType', $iStockType)
                         ->with('data', $stock);
     }
 

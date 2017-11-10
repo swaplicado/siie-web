@@ -5,7 +5,8 @@ return [
 
   'CONFIGURATION' => [
                   'PARTNER_ID' => '1',
-                  'DECIMALS' => '2',
+                  'DECIMALS_AMT' => '2',
+                  'DECIMALS_QTY' => '3',
                 ],
 
   'ATT' => [
@@ -27,5 +28,10 @@ return [
                     'MATERIAL' => '1',
                     'PRODUCT' => '2',
                     'SPENDING' => '3',
+                  ],
+
+  'FRMT' =>       [
+                    'AMT' => '1',
+                    'QTY' => '2',
                   ],
 ];

@@ -26,6 +26,9 @@ return [
           'MOV_STK' => 'Movimientos de inventario',
           'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
+          'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
+          'WHS_MOVS' => 'Movimientos de inventario',
+          'RECONFIG_PALLETS' => 'Reconfiguración de tarimas',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',

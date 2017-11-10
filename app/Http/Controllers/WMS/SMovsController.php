@@ -50,7 +50,23 @@ class SMovsController extends Controller
      */
     public function index(Request $request)
     {
+        $lMovRows = SMovementRow::Search($request->date, $this->iFilter)->orderBy('item_id', 'ASC')->paginate(20);
 
+        foreach ($lMovRows as $row) {
+            $row->movement->branch;
+            $row->movement->whs;
+            $row->movement->mvtType;
+            $row->movement->trnType;
+            $row->movement->adjType;
+            $row->movement->mfgType;
+            $row->movement->expType;
+            $row->lotRows;
+            $row->item->unit;
+        }
+        // \Debugbar::info($lMovRows);
+        // dd($lMovRows);
+        return view('wms.movs.index')
+                    ->with('rows', $lMovRows);
     }
 
     /**
@@ -193,8 +209,8 @@ class SMovsController extends Controller
           //  $oMvtRow->mvt_id = 1;
            $oMvtRow->item_id = $row['id_item'];
            $oMvtRow->unit_id = $row['id_unit'];
-           $oMvtRow->pallet_id = 1;
-           $oMvtRow->location_id = 1;
+           $oMvtRow->pallet_id = $row['id_pallet'];
+           $oMvtRow->location_id = $row['id_location'];
            $oMvtRow->doc_order_row_id =1;
            $oMvtRow->doc_invoice_row_id = 1;
            $oMvtRow->doc_debit_note_row_id = 1;
@@ -263,8 +279,7 @@ class SMovsController extends Controller
           }
        });
 
-        // return redirect()->route('wms.home');
-        return view('wms.index');
+        return redirect()->route('wms.home');
     }
 
     public function children(Request $request)

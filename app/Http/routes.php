@@ -224,9 +224,12 @@ Route::group(['middleware' => ['auth']], function() {
       ]);
 
       /*
-      * Iventory movements
+      * Stock
       **/
-      Route::resource('stock','WMS\SStockController');
+      Route::get('/stock/{id}', [
+      	'uses' => 'WMS\SStockController@index',
+      	'as' => 'wms.stock.index'
+      ]);
 
       /*
       * Barcodes

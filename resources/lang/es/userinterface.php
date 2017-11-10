@@ -87,6 +87,7 @@
 											'SELECT_MODULE' => 'Seleccione Módulo',
 											'WHS_MOVS' => 'Movimientos de inventario',
 											'WHS_STOCK' => 'Existencias',
+											'WHS_MOVEMENTS' => 'Movimientos de inventario',
 											'GENERATION_BARCODE' => 'Generación de Codigos de barras'
 											],
 

@@ -55,4 +55,30 @@ class SMovement extends Model {
   {
     return $this->belongsTo('App\ERP\SBranch', 'branch_id');
   }
+
+  public function mvtType()
+  {
+    return $this->belongsTo('App\WMS\SMvtType', 'mvt_whs_type_id');
+  }
+
+  public function trnType()
+  {
+    return $this->belongsTo('App\WMS\SMvtTrnType', 'mvt_trn_type_id');
+  }
+
+  public function adjType()
+  {
+    return $this->belongsTo('App\WMS\SMvtAdjType', 'mvt_adj_type_id');
+  }
+
+  public function mfgType()
+  {
+    return $this->belongsTo('App\WMS\SMvtMfgType', 'mvt_mfg_type_id');
+  }
+
+  public function expType()
+  {
+    return $this->belongsTo('App\WMS\SMvtExpType', 'mvt_exp_type_id');
+  }
+
 }

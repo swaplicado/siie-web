@@ -50,4 +50,13 @@ return [
     'MVT_EXP_TP_PUR' => '1', // purchases
     'MVT_EXP_TP_PRO' => '2', // production
 
+    'STOCK_TYPE'  =>  [
+                        'STK_BY_ITEM' => '1',
+                        'STK_BY_PALLET' => '2',
+                        'STK_BY_LOT' => '3',
+                        'STK_BY_LOCATION' => '4',
+                        'STK_BY_WAREHOUSE' => '5',
+                      ],
+
+    'RECONFIG_PALLETS'  =>  '100',
 ];

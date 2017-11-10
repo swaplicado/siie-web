@@ -33,7 +33,7 @@ class SMovementRow extends Model {
 
   public function movement()
   {
-    return $this->belongsTo('App\WMS\SMovement', 'id_mvt', 'mvt_id');
+    return $this->belongsTo('App\WMS\SMovement', 'mvt_id', 'id_mvt');
   }
 
   public function lotRows()
@@ -59,6 +59,27 @@ class SMovementRow extends Model {
   public function getAuxLots()
   {
      return $this->auxLots;
+  }
+
+  public function scopeSearch($query, $name, $iFilter)
+  {
+      switch ($iFilter) {
+        case \Config::get('scsys.FILTER.ACTIVES'):
+            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+          break;
+
+        case \Config::get('scsys.FILTER.DELETED'):
+            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+          break;
+
+        case \Config::get('scsys.FILTER.ALL'):
+            return $query;
+          break;
+
+        default:
+            return $query;
+          break;
+      }
   }
 
 }
