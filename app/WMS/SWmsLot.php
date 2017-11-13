@@ -16,7 +16,7 @@ class SWmsLot extends Model {
   }
 
   protected $fillable = [
-                          'name',
+                          'lot',
                           'dt_expiry',
                           'item_id',
                           'unit_id',
@@ -47,20 +47,20 @@ class SWmsLot extends Model {
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                        ->where('name', 'LIKE', "%".$name."%");
+                        ->where('lot', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                          ->where('name', 'LIKE', "%".$name."%");
+                          ->where('lot', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.ALL'):
-            return $query->where('name', 'LIKE', "%".$name."%");
+            return $query->where('lot', 'LIKE', "%".$name."%");
           break;
 
         default:
-            return $query->where('name', 'LIKE', "%".$name."%");
+            return $query->where('lot', 'LIKE', "%".$name."%");
           break;
       }
   }
