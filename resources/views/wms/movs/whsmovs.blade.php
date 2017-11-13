@@ -159,7 +159,7 @@
 		var palletsjs = <?php echo json_encode($pallets); ?>;
 		var bInput = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
 
-		var globalData = new GlobalData(lotsjs, locationsjs, palletsjs, bInput);
+		// var globalData = new GlobalData(lotsjs, locationsjs, palletsjs, bInput);
 
 		// var totals=[0,0,0];
 		/*
