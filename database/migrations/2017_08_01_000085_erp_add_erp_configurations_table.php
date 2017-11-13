@@ -49,10 +49,13 @@ class ErpAddErpConfigurationsTable extends Migration {
           	$table->timestamps();
           });
 
+
           DB::connection($this->sConnection)->table('erp_configuration')->insert([
-          	['id_configuration' => '1','code' => '001','name' => 'id partner empresa','val_int' => '1','val_text' => ' ','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '2','code' => '002','name' => 'num decimales','val_int' => '3','val_text' => ' ','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '1','code' => '001','name' => 'PARTNER_ID','val_int' => '1','val_text' => ' ','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '2','code' => '002','name' => 'DECIMALES MONTOS','val_int' => '3','val_text' => ' ','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '3','code' => '003','name' => 'DECIMALES CANTIDAD','val_int' => '5','val_text' => '','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
+
 
         }
     }
