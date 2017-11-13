@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SUtil;
+use Laracasts\Flash\Flash;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\ERP\SBranch;
@@ -75,14 +76,14 @@ class SCodesController extends Controller
                                         ->where('type_barcode','Tarima')
                                         ->get()->lists('digits','id_component');
 
-        $dataLot = SPallet::find($request->productos);
-        $dataLot->item;
-        $dataLot->unit;
+        $data = SPallet::find($request->productos);
+        $data->item;
+        $data->unit;
 
-        $barcode = SBarcode::generatePalletBarcode($dataBarcode,$dataLot);
+        $barcode = SBarcode::generatePalletBarcode($dataBarcode,$data);
 
         view()->share('barcode',$barcode);
-        view()->share('dataLot',$dataLot);
+        view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf_1');
         return $pdf->download('etiqueta.pdf');
       }
@@ -91,19 +92,45 @@ class SCodesController extends Controller
                                         ->where('type_barcode','Item')
                                         ->get()->lists('digits','id_component');
 
-        $dataLot = SwmsLot::find($request->productos);
-        $dataLot->item;
-        $dataLot->unit;
+        $data = SwmsLot::find($request->productos);
+        $data->item;
+        $data->unit;
 
-        $barcode = SBarcode::generateItemBarcode($dataBarcode,$dataLot);
+        $barcode = SBarcode::generateItemBarcode($dataBarcode,$data);
 
         view()->share('barcode',$barcode);
-        view()->share('dataLot',$dataLot);
+        view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf');
         return $pdf->download('etiqueta.pdf');
       }
 
 
+    }
+
+    public function decode(Request $request){
+
+
+
+      $data = SBarcode::decodeBarcode($request->codigo);
+      if($data == null)
+      {
+        Flash::error('No existe el producto');
+        return redirect()->route('wms.codes.consult');
+      }
+      $data->item;
+      $data->unit;
+      $type = substr($request->codigo, 0 , 1 );
+
+
+        return view('wms.codes.info')
+                  ->with('info',$data)
+                  ->with('type',$type);
+
+    }
+
+    public function consultBarcode(){
+
+        return view('wms.codes.consult');
     }
 
 }
