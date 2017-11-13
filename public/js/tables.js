@@ -6,24 +6,6 @@ var table = [];
 var bandera = 0;
 
 /*
-* Calls the method to add row when the button is clicked
-* Row of movement
-*/
-$('#tButton').on('click', function(e) {
-    addRow(e);
-});
-
-/*
-* Calls the method to add row when the enter key is pressed
-* Row of movement
-*/
-function addRowByEnter(e) {
-  if (e.keyCode == 13) {
-        addRow(e);
-    }
-}
-
-/*
 * Add a new row based in the code and quantity that the user writes in the
 * fields, in the view of movs
 * Row of movement
@@ -31,11 +13,6 @@ function addRowByEnter(e) {
 function addRow(e) {
   var item = document.getElementById("item").value; // gets the code of code bar
   var qty = document.getElementById("quantity").value; // gets the quantity
-
-  if (item == '') {
-    alert('Debe ingresar un código');
-    return false;
-  }
 
   var whs = 0;
   if (bInput) {
@@ -47,6 +24,7 @@ function addRow(e) {
 
   if (whs == 0) {
     alert('Debe elegir un almacén');
+    document.getElementById("item").value = '';
     return false;
   }
   else {
@@ -56,6 +34,14 @@ function addRow(e) {
     else {
       document.getElementById('whs_src').setAttribute("readonly", "readonly");
     }
+  }
+
+  if (item == '') {
+    alert('Debe ingresar un código');
+    return false;
+  }
+  else {
+    document.getElementById("item").value = '';
   }
 
   const DOWN = 0;
@@ -74,13 +60,17 @@ function addRow(e) {
   const PALL_ID = 13;
 
   var parent = e.target.value;
+  var idLot = 0;
   //ajax
   $.get('./create/children?parent=' + item, function(data) { // executes the method children of controller
       $('.dataTables_empty').remove(); // remove the row with the class: dataTables_empty
-
-      $.each(data, function(index, dataObject) {
+      var found = false;
+      $.each(data, function(index, oMovementRow) {
+        found = true;
+        idLot = oMovementRow.aux_lot_id;
         var idRow = movement.identifier; // gets the identifier of current row
         movement.addRow(); // indicates that a new row was added
+        var rowQuantity = oMovementRow.quantity > 0 ? oMovementRow.quantity : qty;
 
         var tblBody = document.getElementById("lbody"); // gets the body of table by id
 
@@ -88,7 +78,6 @@ function addRow(e) {
         var firstLoc = 0;
         var options = "";
         for (var iLoc = 0; iLoc < locationsjs.length; iLoc++) {
-          console.log(locationsjs[iLoc].whs_id);
           if (locationsjs[iLoc].whs_id == whs) {
               if (!bLocSet) {
                 firstLoc = locationsjs[iLoc].id_whs_location;
@@ -99,10 +88,10 @@ function addRow(e) {
         }
 
         var bPallSet = false;
-        var firstPall = 0;
+        var firstPall = 1;
         var optionsPall = "";
         for (var iPall = 0; iPall < palletsjs.length; iPall++) {
-          if (palletsjs[iPall].item_id == dataObject.id_item && palletsjs[iPall].unit_id == dataObject.unit.id_unit) {
+          if ((palletsjs[iPall].item_id == oMovementRow.item_id && palletsjs[iPall].unit_id == oMovementRow.unit_id) || palletsjs[iPall].id_pallet == 1) {
               if (!bPallSet) {
                 firstPall = palletsjs[iPall].id_pallet;
               }
@@ -113,17 +102,17 @@ function addRow(e) {
 
         var values = [ //this is the array of values for the row
                     idRow,
-                    dataObject.code,
-                    dataObject.name,
-                    dataObject.unit.code,
+                    oMovementRow.item.code,
+                    oMovementRow.item.name,
+                    oMovementRow.unit.code,
                     "",
                     "  Lotes",
                     "",
                     parseFloat(0.0).toFixed(8),
-                    parseFloat(qty).toFixed(8),
+                    parseFloat(rowQuantity).toFixed(8),
                     "",
-                    parseInt(dataObject.id_item),
-                    parseInt(dataObject.unit.id_unit),
+                    parseInt(oMovementRow.item_id),
+                    parseInt(oMovementRow.unit_id),
                     firstLoc,
                     firstPall
                   ];
@@ -193,7 +182,26 @@ function addRow(e) {
         }
 
         tblBody.appendChild(oTr);
+
+        if (idLot != 0) { // if the code was of lot the lot id is send to add a lot row
+          console.log("to add lotrow lot: " + idLot + " itm " + oMovementRow.item_id + " u " + oMovementRow.unit_id);
+          $('#lotsbody').empty();
+          console.log("readed " + idRow);
+
+          if(idRow in datas.lotTables) {
+            console.log(datas.lotTables[idRow]);
+            for (var i = 0; i < datas.lotTables[idRow].length; i++) {
+              $('#lotsbody').append(datas.lotTables[idRow][i]);
+            }
+          }
+          validateLots();
+          addLotRow(idLot, 0, qty, oMovementRow.item_id, oMovementRow.unit_id, idRow);
+        }
       });
+
+      if (! found) {
+        alert("No se encontraron resultados");
+      }
     });
 }
 
@@ -245,33 +253,43 @@ $(document).on('click', 'button.buttlots', function () {
 * This method calls the method to add row of lot in modal window
 */
 $(document).on('click', 'button.addbutton', function () {
-    addLotRow();
+    addLotRow(0, 0, 0);
     return false;
 });
 
 /*
 * This method add a row in modal window
 */
-function addLotRow() {
+function addLotRow(iIdLot, dPrice, dQuantity, iIdItem, iIdUnit, iParentId) {
     var tbloBody = document.getElementById("lotsbody"); // gets the body of table by id
 
     var oTr = document.createElement("tr");
     idCurrentLot = lotsCounter;
+    idUnit = iIdUnit == 0 ? idUnit : iIdUnit;
+    idItem = iIdItem == 0 ? idItem : iIdItem;
+    idParentTr = iParentId == 0 ? idParentTr : iParentId;
+
     oTr.setAttribute("id", "trLot" + idCurrentLot);
 
     var options = "";
     var itemLots = [];
-    var firstLot = 0;
+    var firstLot = 1;
     var bLotSet = false;
+    console.log("antes lotes");
     for (var iLot = 0; iLot < lotsjs.length; iLot++) {
+      console.log("en lotes: " + idItem + " u: " + idUnit);
         if (lotsjs[iLot].item_id == idItem && lotsjs[iLot].unit_id == idUnit) {
             if (! bLotSet) {
               firstLot = lotsjs[iLot].id_lot;
             }
-            options += "<option value=" + lotsjs[iLot].id_lot + ">" + lotsjs[iLot].lot + " / " + lotsjs[iLot].dt_expiry + "</option>";
+            if (iIdLot != 0) {}
+            options += "<option " + (iIdLot != 0 && iIdLot == lotsjs[iLot].id_lot ? "selected" : "") + " value=" + lotsjs[iLot].id_lot + ">" + lotsjs[iLot].lot + " / " + lotsjs[iLot].dt_expiry + "</option>";
             bLotSet = true;
         }
     }
+
+    var lot = iIdLot != 0 ? iIdLot : firstLot;
+    var quantity = dQuantity != 0 ? dQuantity : 1;
 
     const LOT = 0;
     const QTY = 1;
@@ -283,12 +301,12 @@ function addLotRow() {
 
     var valuesRow = [
                 "",
-                parseFloat(1).toFixed(8),
-                parseFloat(1).toFixed(8),
-                parseFloat(0).toFixed(8),
+                parseFloat(quantity).toFixed(8),
+                parseFloat(dPrice).toFixed(8),
+                parseFloat(quantity * dPrice).toFixed(8),
                 "",
                 idParentTr,
-                firstLot
+                lot
               ];
 
     for (var iTd = 0; iTd < valuesRow.length; iTd++) {
@@ -319,7 +337,7 @@ function addLotRow() {
       }
       else {
         oTr.setAttribute("align", "center");
-        oTd.innerHTML = "<select onChange='setLot(this.value, this)' class='form-control'>" + options + "</select>";
+        oTd.innerHTML = "<select onChange='setLot(this.value, this)' value=" + lot + " class='form-control'>" + options + "</select>";
     }
 
     oTr.appendChild(oTd);
@@ -328,6 +346,8 @@ function addLotRow() {
     tbloBody.appendChild(oTr);
     lotsCounter++;
     validateLots();
+    console.log("before push");
+    pushLotRow(iParentId);
 }
 
 
@@ -335,14 +355,19 @@ function addLotRow() {
 * Calls the method to save table when the button close of modal window is clicked
 */
 $('#closeModal').on('click', function(e) {
+  pushLotRow(0);
+});
+
+function pushLotRow(parent) {
   var tableObj = document.getElementById('lotsTable');
   tableTrs = [];
+  console.log("push " + idParentTr);
   $("tbody#lotsbody tr").each(function() {
     tableTrs.push($(this));
   });
 
   datas.addRow(idParentTr, $('#lotsTable').tableToJSON(), tableTrs);
-});
+}
 
 function setLot(value, obj) {
   $(obj).closest('tr').children('td.lot_value').html(value);

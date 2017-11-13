@@ -9,6 +9,7 @@ class SMovementRow extends Model {
   protected $table = 'wms_mvt_rows';
   public $timestamps = false;
   protected $auxLots = array();
+  public $iLotId = 0;
 
   protected $fillable = [
                           'id_mvt_row',
@@ -28,7 +29,8 @@ class SMovementRow extends Model {
                           'doc_order_row_id',
                           'doc_invoice_row_id',
                           'doc_debit_note_row_id',
-                          'doc_credit_note_row_id'
+                          'doc_credit_note_row_id',
+                          'aux_lot_id'
                         ];
 
   public function movement()
@@ -46,6 +48,11 @@ class SMovementRow extends Model {
     return $this->belongsTo('App\ERP\SItem', 'item_id');
   }
 
+  public function unit()
+  {
+    return $this->belongsTo('App\ERP\SUnit', 'unit_id');
+  }
+
   public function pallet()
   {
     return $this->belongsTo('App\WMS\SPallet', 'pallet_id');
@@ -59,6 +66,16 @@ class SMovementRow extends Model {
   public function getAuxLots()
   {
      return $this->auxLots;
+  }
+
+  public function setLotId($value = '0')
+  {
+    $this->iLotId = $value;
+  }
+
+  public function getLotId()
+  {
+    return $this->iLotId;
   }
 
   public function scopeSearch($query, $name, $iFilter)

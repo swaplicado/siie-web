@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
+use App\SBarcode\SBarcode;
 
 use App\Http\Requests\WMS\SWhsRequest;
 use Laracasts\Flash\Flash;
@@ -284,12 +285,56 @@ class SMovsController extends Controller
 
     public function children(Request $request)
     {
-        $item = SItem::find($request->parent);
-        $item->unit->code;
+      $rows = array();
 
-        $arra = array();
-        $arra[0] = $item;
+      try
+      {
+          \Debugbar::info($request->parent);
+          $obj = SBarcode::decodeBarcode($request->parent);
+          if ($obj == NULL)
+          {
+            $items = SItem::where('is_deleted', false)->where('code', $request->parent)->get();
 
-        return $arra;
+            foreach ($items as $item) {
+                $row = $this->createMovement($item->id_item, $item->unit_id, 0);
+                array_push($rows, $row);
+            }
+          }
+          elseif ($obj instanceof SPallet)
+          {
+              $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
+              array_push($rows, $row);
+          }
+          elseif ($obj instanceof SWmsLot)
+          {
+              $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
+              $row->aux_lot_id = $obj->id_lot;
+              \Debugbar::error("lote");
+
+              array_push($rows, $row);
+          }
+      }
+      catch (Exception $e)
+      {
+        \Debugbar::error($e);
+      }
+      finally
+      {
+        return $rows;
+      }
+
+
+    }
+
+    public function createMovement($iItemId = '0', $iUnitId = '0', $dQuantity = '0')
+    {
+        $movRow = new SMovementRow();
+        $movRow->item_id = $iItemId;
+        $movRow->unit_id = $iUnitId;
+        $movRow->item;
+        $movRow->unit;
+        $movRow->quantity = $dQuantity;
+
+        return $movRow;
     }
 }

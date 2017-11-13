@@ -209,7 +209,14 @@ Route::group(['middleware' => ['auth']], function() {
       /*
       * Iventory movements
       **/
-      Route::resource('movs','WMS\SMovsController', ['except' => ['create']]);
+      Route::get('/movs/view', [
+      	'uses' => 'WMS\SMovsController@index',
+      	'as' => 'wms.movs.index'
+      ]);
+      Route::post('/movs', [
+      	'uses' => 'WMS\SMovsController@store',
+      	'as' => 'wms.movs.store'
+      ]);
       Route::get('/movs/{id?}/create', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'

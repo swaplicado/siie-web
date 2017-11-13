@@ -128,7 +128,6 @@ use Laracasts\Flash\Flash;
       $Unit = SBarcode::remove($numUnit,$idUnit);
 
       $answer = SWmsLot::find($Lot);
-      dd($answer);
       if($answer != null){
 
           if($answer->item_id == $Item && $answer->unit_id == $Unit)
@@ -187,4 +186,3 @@ use Laracasts\Flash\Flash;
   }
 
 }
-?>

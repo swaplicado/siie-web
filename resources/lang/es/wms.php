@@ -23,7 +23,7 @@ return [
           'PALL_STK' => 'Existencias por tarima',
           'LOC_STK' => 'Existencias por ubicación',
           'WHS_STK' => 'Existencias por Almacén',
-          'MOV_STK' => 'Movimientos de inventario',
+          'MOV_STK' => 'Operaciones',
           'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
           'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',

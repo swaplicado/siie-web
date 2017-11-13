@@ -159,7 +159,9 @@
 		var palletsjs = <?php echo json_encode($pallets); ?>;
 		var bInput = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
 
-		var totals=[0,0,0];
+		var globalData = new GlobalData(lotsjs, locationsjs, palletsjs, bInput);
+
+		// var totals=[0,0,0];
 		/*
 		* This function puts a row of totals in the table
 		*/
@@ -208,7 +210,7 @@
 						});
 
 						var tableMov = $('#example').tableToJSON(); // the table is passed to JSON format
-						serverData = new ServerData(datas.lotRows, tableMov);
+						var serverData = new ServerData(datas.lotRows, tableMov);
 						setData(serverData); //the table is sends to the server
 
 						fre.innerHTML = "Descongelar";
