@@ -159,7 +159,7 @@
 		var palletsjs = <?php echo json_encode($pallets); ?>;
 		var bInput = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
 
-		// var globalData = new GlobalData(lotsjs, locationsjs, palletsjs, bInput);
+		var globalData = new GlobalData(lotsjs, locationsjs, palletsjs, bInput);
 
 		// var totals=[0,0,0];
 		/*
@@ -195,10 +195,8 @@
 			var qty = document.getElementById("quantity"); // quantity field
 			var sBut = document.getElementById("saveButton"); // save button
 
-			var tableMov = $('#example').tableToJSON(); // the table is passed to JSON format
-
 			if (fre.firstChild.data == "Congelar") {
-				if (validateMovement(tableMov)) {
+				if (validateMovement(movement)) {
 						but.disabled = true;
 						item.disabled = true;
 						qty.disabled = true;
@@ -209,9 +207,8 @@
 						  $("button.buttlots").attr("disabled", true);
 						});
 
-						var tableMov = $('#example').tableToJSON(); // the table is passed to JSON format
-						var serverData = new ServerData(datas.lotRows, tableMov);
-						setData(serverData); //the table is sends to the server
+						console.log(movement);
+						setData(movement); //the table is sends to the server
 
 						fre.innerHTML = "Descongelar";
 				}

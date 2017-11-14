@@ -30,7 +30,8 @@ class SMovementRow extends Model {
                           'doc_invoice_row_id',
                           'doc_debit_note_row_id',
                           'doc_credit_note_row_id',
-                          'aux_lot_id'
+                          'aux_lot_id',
+                          'aux_lots',
                         ];
 
   public function movement()

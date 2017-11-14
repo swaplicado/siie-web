@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
 use App\SBarcode\SBarcode;
+use App\SCore\SStockManagment;
 
 use App\Http\Requests\WMS\SWhsRequest;
 use Laracasts\Flash\Flash;
@@ -203,32 +204,28 @@ class SMovsController extends Controller
         $movement->updated_by_id = \Auth::user()->id;
 
         $movementRows = array();
-        foreach (session('data')['movementTable'] as $row) {
+        foreach (session('data')['rows'] as $row) {
            $oMvtRow = new SMovementRow();
-           $oMvtRow->quantity = $row['qty'];
-           $oMvtRow->amount_unit = $row['price'];
+           $oMvtRow->quantity = $row['dQuantity'];
+           $oMvtRow->amount_unit = $row['dPrice'];
           //  $oMvtRow->mvt_id = 1;
-           $oMvtRow->item_id = $row['id_item'];
-           $oMvtRow->unit_id = $row['id_unit'];
-           $oMvtRow->pallet_id = $row['id_pallet'];
-           $oMvtRow->location_id = $row['id_location'];
+           $oMvtRow->item_id = $row['iItemId'];
+           $oMvtRow->unit_id = $row['iUnitId'];
+           $oMvtRow->pallet_id = $row['iPalletId'];
+           $oMvtRow->location_id = $row['iLocationId'];
            $oMvtRow->doc_order_row_id =1;
            $oMvtRow->doc_invoice_row_id = 1;
            $oMvtRow->doc_debit_note_row_id = 1;
            $oMvtRow->doc_credit_note_row_id = 1;
 
            $movLotRows = array();
-           foreach (session('data')['lotTables'] as $table) {
-             foreach ($table as $lotRow) {
-               if ($lotRow['id_parent'] == $row['id_tr']) {
-                 $oMovLotRow = new SMovementRowLot();
-                 $oMovLotRow->quantity = $lotRow['qty'];
-                 $oMovLotRow->amount_unit = $lotRow['price'];
-                 $oMovLotRow->lot_id = $lotRow['lot_value'];
+           foreach ($row['lotRows'] as $lotRow) {
+               $oMovLotRow = new SMovementRowLot();
+               $oMovLotRow->quantity = $lotRow['dQuantity'];
+               $oMovLotRow->amount_unit = $lotRow['dPrice'];
+               $oMovLotRow->lot_id = $lotRow['iLotId'];
 
-                 array_push($movLotRows, $oMovLotRow);
-               }
-             }
+               array_push($movLotRows, $oMovLotRow);
            }
 
            $oMvtRow->setAuxLots($movLotRows);
@@ -289,7 +286,7 @@ class SMovsController extends Controller
 
       try
       {
-          \Debugbar::info($request->parent);
+          \Debugbar::info("param: ".$request->parent);
           $obj = SBarcode::decodeBarcode($request->parent);
           if ($obj == NULL)
           {
@@ -303,6 +300,20 @@ class SMovsController extends Controller
           elseif ($obj instanceof SPallet)
           {
               $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
+              $row->pallet_id = $obj->id_pallet;
+              $result = SStockManagment::getLotsOfPallet($row->pallet_id);
+              $row->auxLots = $this->createLotRows($result);
+
+              $qty = 0;
+              $amnt = 0;
+              foreach ($row->auxLots as $lot) {
+                $qty += $lot->quantity;
+                $amnt += $lot->amount;
+              }
+              $row->quantity = $qty;
+              $row->amount = $amnt;
+              $row->amount_unit = $amnt/$qty;
+
               array_push($rows, $row);
           }
           elseif ($obj instanceof SWmsLot)
@@ -322,8 +333,6 @@ class SMovsController extends Controller
       {
         return $rows;
       }
-
-
     }
 
     public function createMovement($iItemId = '0', $iUnitId = '0', $dQuantity = '0')
@@ -334,7 +343,24 @@ class SMovsController extends Controller
         $movRow->item;
         $movRow->unit;
         $movRow->quantity = $dQuantity;
+        $movRow->pallet_id = 1;
 
         return $movRow;
+    }
+
+    public function createLotRows($result = [])
+    {
+       $lotRows = array();
+       foreach ($result as $row) {
+          $mrl = new SMovementRowLot();
+          $mrl->lot_id = $row->lot_id;
+          $mrl->quantity = $row->stock;
+          $mrl->amount_unit = $row->cost_unit;
+          $mrl->amount = $mrl->quantity * $mrl->amount_unit;
+
+          array_push($lotRows, $mrl);
+       }
+
+       return $lotRows;
     }
 }

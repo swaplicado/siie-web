@@ -10,7 +10,7 @@
       </div>
       <br />
       <div class="col-md-4">
-        <button type="button" class="addbutton btn btn-success">{{ trans('wms.buttons.ADD_LOT') }}</button>
+        <button type="button" onclick="addRowAux()" class="btn btn-success">{{ trans('wms.buttons.ADD_LOT') }}</button>
       </div>
       <div class="col-md-4">
         <label for="disabledTextInput">{{ trans('wms.labels.QTY_FOR_COMPLETE') }}</label>

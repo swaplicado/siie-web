@@ -165,7 +165,7 @@ use Laracasts\Flash\Flash;
       $Unit = SBarcode::remove($numUnit,$idUnit);
 
       $answer = SPallet::find($Pallet);
-      dd($answer);
+      
       if($answer != null){
 
         if($answer->item_id == $Item && $answer->unit_id == $Unit)

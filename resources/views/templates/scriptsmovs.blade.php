@@ -5,6 +5,9 @@
 <script src="{{ asset('bootstrap/js/bootstrap.min.js')}}"></script>
 <script src="{{ asset('trumbowyg/dist/trumbowyg.min.js') }}"></script>
 {{-- <script src="{{ asset('datatables/datatables.min.js') }}"></script> --}}
-<script src="{{ asset('js/Movements.js')}}"></script>
-<script src="{{ asset('js/tables.js')}}"></script>
-<script src="{{ asset('tabletojson/jquery.tabletojson.min.js')}}"></script>
+<script src="{{ asset('js/movements/Movements.js')}}"></script>
+<script src="{{ asset('js/movements/movementrows.js')}}"></script>
+<script src="{{ asset('js/movements/lotrows.js')}}"></script>
+{{-- <script src="{{ asset('js/movements/tables.js')}}"></script> --}}
+<script src="{{ asset('js/movements/validations.js')}}"></script>
+{{-- <script src="{{ asset('tabletojson/jquery.tabletojson.min.js')}}"></script> --}}
