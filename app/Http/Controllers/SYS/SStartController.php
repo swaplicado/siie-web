@@ -71,6 +71,7 @@ class SStartController extends Controller
         $oErpConfigurationPartner = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PARTNER_ID'));
         $oDecAmount = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_AMT'));
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
+        $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oStock = new SStockManagment();
@@ -78,6 +79,7 @@ class SStartController extends Controller
         session(['partner' => $oPartner]);
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
+        session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['stock' => $oStock]);
 
         return SStartController::selectModule();

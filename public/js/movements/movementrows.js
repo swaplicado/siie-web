@@ -31,18 +31,22 @@ function addRow(e) {
   var dInputQuantity = parseFloat(document.getElementById("quantity").value); // gets the quantity
 
   var iWhsId = 0;
+  var whsStock = 0;
   if (globalData.bIsInputMov) {
     iWhsId = document.getElementById("whs_des").value;
   }
   else {
     iWhsId = document.getElementById("whs_src").value;
+    whsStock = iWhsId;
   }
 
   //ajax
-  $.get('./create/children?parent=' + sItemCode, function(data) { // executes the method children of controller
+  $.get('./create/children?parent=' + sItemCode + '&whs=' + whsStock + '&idCls=' + globalData.iMvtClass,
+   function(data) { // executes the method children of controller
       // data is the "data" that the controller returns
       $('.dataTables_empty').remove(); // remove the row with the class: dataTables_empty
       var bItemFound = false;
+      console.log(data);
 
       $.each(data, function(index, oMovementRow) { // iterate each of the movements
         bItemFound = true;
@@ -55,7 +59,7 @@ function addRow(e) {
           idLot = oMovementRow.aux_lot_id;
           console.log(oMovementRow);
         }
-        else if (oMovementRow.pallet_id > 0) {
+        else if (oMovementRow.pallet_id > 1) {
           iMovType = globalData.IS_PALLET;
           console.log(oMovementRow);
         }
@@ -63,16 +67,18 @@ function addRow(e) {
           iMovType = globalData.IS_ITEM;
         }
 
-        var ojsMovRow = new SMovementRow();
+        var ojsMovRow = new SMovementRow(movement.rowIdentifier);
 
         ojsMovRow.iItemId = oMovementRow.item_id;
         ojsMovRow.iUnitId = oMovementRow.unit_id;
-        ojsMovRow.bAuxIsLot = oMovementRow.item.is_lot;
-        ojsMovRow.bAuxIsBulk = oMovementRow.item.is_bulk;
-        ojsMovRow.sAuxItemCode = oMovementRow.item.code;
+        ojsMovRow.iPalletId = oMovementRow.pallet_id;
+        ojsMovRow.iLocationId = oMovementRow.location_id;
+        ojsMovRow.oAuxItem = oMovementRow.item;
+        ojsMovRow.oAuxUnit = oMovementRow.unit;
+        ojsMovRow.aStock = oMovementRow.aux_stock;
 
         // If the definition of the platform has an assigned amount, this is set, if the user's input is not set
-        ojsMovRow.dQuantity = oMovementRow.quantity > 0 ? parseFloat(oMovementRow.quantity) * dInputQuantity: dInputQuantity;
+        ojsMovRow.dQuantity = oMovementRow.quantity > 0 ? parseFloat(oMovementRow.quantity) * dInputQuantity : dInputQuantity;
         ojsMovRow.dPrice = oMovementRow.amount_unit >= 0 ? parseFloat(oMovementRow.amount_unit) : 0;
 
         // checks if the pallet was selected before
@@ -80,7 +86,7 @@ function addRow(e) {
             if (element.iItemId == oMovementRow.item_id && element.iUnitId == oMovementRow.unit_id
                 && element.iPalletId == oMovementRow.pallet_id) {
                 bFound = true;
-                iRowId = element.identifier;
+                iRowId = element.iIdRow;
                 // break;
             }
         });
@@ -88,15 +94,15 @@ function addRow(e) {
         var rowTrId = 0;
         // if pallet was selected previously
         if (bFound) {
-          movement.rows[iRowId].dQuantity += ojsMovRow.dQuantity;
-          updateRowTr(iRowId, movement.rows[iRowId].dQuantity);
+          movement.getRow(iRowId).dQuantity += ojsMovRow.dQuantity;
+          updateRowTr(iRowId, movement.getRow(iRowId).dQuantity);
 
           rowTrId = iRowId;
         }
         else {
           var idRow = movement.rowIdentifier; // gets the identifier of current row
 
-          addRowTr(idRow, ojsMovRow, oMovementRow, iWhsId, iMovType);
+          addRowTr(idRow, ojsMovRow, iWhsId, iMovType);
 
           rowTrId = movement.rowIdentifier;
           movement.addRow(ojsMovRow);
@@ -110,65 +116,64 @@ function addRow(e) {
         }
         else if (iMovType == globalData.IS_PALLET) {
           // if the movement row is of a pallet, add the lots with stock in pallet
-          oMovementRow.auxLots.forEach(function(lot) {
-              addOrUpdateLotRow(rowTrId, lot.lot_id, lot.quantity, lot.amount_unit);
+          oMovementRow.aux_lots.forEach(function(lot) {
+              addOrUpdateLotRow(rowTrId, parseInt(lot.lot_id), parseFloat(lot.quantity), parseFloat(lot.amount_unit));
           });
         }
       });
 
-      // if (! bItemFound) {
-      //   alert("No se encontraron resultados");
-      // }
+      if (! bItemFound) {
+        alert("No se encontraron resultados");
+      }
     });
 }
 
 /*
 * Add a new Row on HTML table
 */
-function addRowTr(identifier, jsRow, movRow, iWhsId, iMovType) {
+function addRowTr(identifier, jsRow, iWhsId, iMovType) {
       // Pallets select
       var bPallSet = false;
       var iDefaultPallet = 1;
       var optionsPall = "";
 
       globalData.lPallets.forEach(function(element) {
-        if ((element.item_id == movRow.item_id && element.unit_id == movRow.unit_id) ||
+        if ((element.item_id == jsRow.iItemId && element.unit_id == jsRow.iUnitId) ||
                 element.id_pallet == 1) {
             if (!bPallSet) {
               iDefaultPallet = element.id_pallet;
             }
             bPallSet = true;
             optionsPall += "<option value=" + element.id_pallet +
-                              " " + (iMovType == globalData.IS_PALLET && movRow.pallet_id == element.id_pallet ? "selected" : "") + ">" +
+                              " " + (iMovType == globalData.IS_PALLET && jsRow.iPalletId == element.id_pallet ? "selected" : "") + ">" +
                                   element.pallet +
                             "</option>";
         }
       });
-      jsRow.iPalletId = iMovType == globalData.IS_PALLET ? movRow.pallet_id : iDefaultPallet;
+      jsRow.iPalletId = iMovType == globalData.IS_PALLET ? jsRow.iPalletId : iDefaultPallet;
 
-      //Locations
+      //Locations select
       var bLocSet = false;
-      var iDefaultLocation = 0;
+      var iDefaultLocation = 1;
       var locationOptions = "";
 
       globalData.lLocations.forEach(function(element) {
-          if (element.whs_id == iWhsId || element.id_whs_location == 1) {
-              if (!bLocSet) {
+          var isDefault = false;
+          if (element.whs_id == iWhsId) {
+              if (element.is_default) {
                 iDefaultLocation = element.id_whs_location;
+                isDefault = true;
               }
-              bLocSet = true;
               locationOptions += "<option " +
-                                      "value=" + element.id_whs_location + ">" +
+                                      "value=" + element.id_whs_location +
+                                      (isDefault ? " selected" : "") + ">" +
                                       element.code + " - " + element.name +
                                   "</option>";
           }
       });
 
-      if (globalData.bIsInputMov || ( !globalData.bIsInputMov && movRow.location_id <= 0)) {
+      if (globalData.bIsInputMov || ( !globalData.bIsInputMov && jsRow.iLocationId <= 0)) {
         jsRow.iLocationId = iDefaultLocation;
-      }
-      else {
-        jsRow.iLocationId = movRow.location_id;
       }
 
     const FIRST = 0;
@@ -181,21 +186,22 @@ function addRowTr(identifier, jsRow, movRow, iWhsId, iMovType) {
     const PRICE = 7;
     const QUANTITY = 8;
     const DEL = 9;
-    const ITEM_ID = 10;
-    const UNIT_ID = 11;
-    const LOC_ID = 12;
-    const PALL_ID = 13;
+    const STOCK = 14;
+    // const ITEM_ID = 10;
+    // const UNIT_ID = 11;
+    // const LOC_ID = 12;
+    // const PALL_ID = 13;
 
     var values = [ //this is the array of values for the row
                 identifier,
-                movRow.item.code,
-                movRow.item.name,
-                movRow.unit.code,
+                jsRow.oAuxItem.code,
+                jsRow.oAuxItem.name,
+                jsRow.oAuxUnit.code,
                 "",
                 "  Lotes",
                 "",
-                parseFloat(jsRow.dPrice).toFixed(2),
-                parseFloat(jsRow.dQuantity).toFixed(5),
+                parseFloat(jsRow.dPrice).toFixed(globalData.DEC_AMT),
+                parseFloat(jsRow.dQuantity).toFixed(globalData.DEC_QTY),
                 "",
                 parseInt(jsRow.iItemId),
                 parseInt(jsRow.iUnitId),
@@ -223,67 +229,81 @@ function addRowTr(identifier, jsRow, movRow, iWhsId, iMovType) {
 
     var oTdLOCATION = document.createElement("td");
     oTdLOCATION.setAttribute("align", "center");
-    oTdLOCATION.innerHTML = "<select onChange='setLoc(this.value, this)' class='form-control'>" + locationOptions + "</select>";
-
-    var oTdLOTS = document.createElement("td");
-    oTdLOTS.innerHTML = "<button type='button' class='buttlots btn btn-info btn-xs' data-toggle='modal' data-target='#myModal' title='Agregar lote'>" +
-    "<i class='glyphicon glyphicon-list-alt'></i>" +
-    "</button>";
+    oTdLOCATION.innerHTML = "<select " + (!globalData.LOCATION_ENABLED ? "disabled='true'" : "") +
+                            " onChange='setLoc(this.value, this)' class='form-control'>" +
+                                        locationOptions +
+                            "</select>";
 
     var oTdPALLETS = document.createElement("td");
     oTdPALLETS.setAttribute("align", "center");
-    oTdPALLETS.innerHTML = "<select onChange='setPall(this.value, this)' class='form-control'>" + optionsPall + "</select>";
+    oTdPALLETS.innerHTML = "<select onChange='setPall(this.value, this)' class='selPallet form-control'>" + optionsPall + "</select>";
 
     var oTdPRICE = document.createElement("td");
     oTdPRICE.appendChild(document.createTextNode(values[PRICE]));
     oTdPRICE.setAttribute("align", "right");
-    oTdPRICE.setAttribute("contenteditable", "true");
+    if (iMovType != globalData.IS_PALLET && globalData.iMvtType != globalData.MVT_TP_IN_TRA && globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+      oTdPRICE.setAttribute("contenteditable", "true");
+    }
 
     var oTdQUANTITY = document.createElement("td");
     oTdQUANTITY.appendChild(document.createTextNode(values[QUANTITY]));
     oTdQUANTITY.setAttribute("class", "summ clsqty");
     oTdQUANTITY.setAttribute("align", "right");
-    oTdQUANTITY.setAttribute("contenteditable", "true");
+    if (iMovType != globalData.IS_PALLET && globalData.iMvtType != globalData.MVT_TP_IN_TRA && globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+      oTdPRICE.setAttribute("contenteditable", "true");
+    }
 
-    var oTdDEL = document.createElement("td");
-    oTdDEL.innerHTML = "<button type='button' class='removebutton btn btn-danger btn-xs' title='Quitar renglón'>" +
-    "<li class='glyphicon glyphicon-remove'></li>"
+    var oTdLOTS = document.createElement("td");
+    oTdLOTS.innerHTML = "<button type='button' class='buttlots btn btn-info btn-md'" +
+                  "data-toggle='modal' data-target='#myModal' title='Agregar lote' " + (!jsRow.oAuxItem.is_lot ? "disabled" : "") + ">" +
+    "<i class='glyphicon glyphicon-list-alt'></i>" +
     "</button>";
 
-    var oTdITEM_ID = document.createElement("td");
-    oTdITEM_ID.appendChild(document.createTextNode(values[ITEM_ID]));
-    oTdITEM_ID.setAttribute("style", "display:none;");
-    oTdITEM_ID.setAttribute("class", "id_item");
+    var oTdSTOCK = document.createElement("td");
+    oTdSTOCK.innerHTML = "<button type='button' onClick='viewStock(this)' class='butstk btn btn-success btn-md' data-toggle='modal' data-target='#myStock' title='Ver existencias'>" +
+    "<i class='glyphicon glyphicon-info-sign'></i>" +
+    "</button>";
 
-    var oTdUNIT_ID = document.createElement("td");
-    oTdUNIT_ID.appendChild(document.createTextNode(values[UNIT_ID]));
-    oTdUNIT_ID.setAttribute("style", "display:none;");
-    oTdUNIT_ID.setAttribute("class", "id_unit");
-
-    var oTdLOC_ID = document.createElement("td");
-    oTdLOC_ID.appendChild(document.createTextNode(values[LOC_ID]));
-    oTdLOC_ID.setAttribute("style", "display:none;");
-    oTdLOC_ID.setAttribute("class", "id_loc");
-
-    var oTdPALL_ID = document.createElement("td");
-    oTdPALL_ID.appendChild(document.createTextNode(values[PALL_ID]));
-    oTdPALL_ID.setAttribute("style", "display:none;");
-    oTdPALL_ID.setAttribute("class", "id_pall");
+    var oTdDEL = document.createElement("td");
+    oTdDEL.innerHTML = "<button type='button' class='removebutton btn btn-danger btn-md' title='Quitar renglón'>" +
+    "<li class='glyphicon glyphicon-remove'></li>"
+    "</button>";
+    //
+    // var oTdITEM_ID = document.createElement("td");
+    // oTdITEM_ID.appendChild(document.createTextNode(values[ITEM_ID]));
+    // oTdITEM_ID.setAttribute("style", "display:none;");
+    // oTdITEM_ID.setAttribute("class", "id_item");
+    //
+    // var oTdUNIT_ID = document.createElement("td");
+    // oTdUNIT_ID.appendChild(document.createTextNode(values[UNIT_ID]));
+    // oTdUNIT_ID.setAttribute("style", "display:none;");
+    // oTdUNIT_ID.setAttribute("class", "id_unit");
+    //
+    // var oTdLOC_ID = document.createElement("td");
+    // oTdLOC_ID.appendChild(document.createTextNode(values[LOC_ID]));
+    // oTdLOC_ID.setAttribute("style", "display:none;");
+    // oTdLOC_ID.setAttribute("class", "id_loc");
+    //
+    // var oTdPALL_ID = document.createElement("td");
+    // oTdPALL_ID.appendChild(document.createTextNode(values[PALL_ID]));
+    // oTdPALL_ID.setAttribute("style", "display:none;");
+    // oTdPALL_ID.setAttribute("class", "id_pall");
 
     oTr.appendChild(oTdFIRST);
     oTr.appendChild(oTdITEM_CODE);
     oTr.appendChild(oTdITEM_NAME);
     oTr.appendChild(oTdUNIT_CODE);
     oTr.appendChild(oTdLOCATION);
-    oTr.appendChild(oTdLOTS);
     oTr.appendChild(oTdPALLETS);
     oTr.appendChild(oTdPRICE);
     oTr.appendChild(oTdQUANTITY);
+    oTr.appendChild(oTdLOTS);
+    oTr.appendChild(oTdSTOCK);
     oTr.appendChild(oTdDEL);
-    oTr.appendChild(oTdITEM_ID);
-    oTr.appendChild(oTdUNIT_ID);
-    oTr.appendChild(oTdLOC_ID);
-    oTr.appendChild(oTdPALL_ID);
+    // oTr.appendChild(oTdITEM_ID);
+    // oTr.appendChild(oTdUNIT_ID);
+    // oTr.appendChild(oTdLOC_ID);
+    // oTr.appendChild(oTdPALL_ID);
 
     tblBody.appendChild(oTr);
 }
@@ -292,7 +312,8 @@ function addRowTr(identifier, jsRow, movRow, iWhsId, iMovType) {
 * Update the values of row when the item already exists
 */
 function updateRowTr(idRow, quantity) {
-  document.getElementById(idRow).children[8].innerHTML = quantity.toFixed(8);
+  document.getElementById(idRow).children[7].innerHTML = parseFloat(quantity).toFixed(globalData.DEC_QTY);
+  movement.getRow(idRow).dQuantity = parseFloat(quantity);
 }
 
 /*
@@ -300,19 +321,72 @@ function updateRowTr(idRow, quantity) {
 * the button should have the removebutton class
 */
 $(document).on('click', 'button.removebutton', function () {
-    // datas.lotRows.splice($(this).closest('tr').attr('id'), 1);
-    // datas.lotTables.splice($(this).closest('tr').attr('id'), 1);
     movement.removeRow($(this).closest('tr').attr('id'));
     $(this).closest('tr').remove();
     return false;
 });
 
+/**
+ * [setLoc Set the value to property location of row when the combo is changed]
+ * @param {[type]} value [id of location]
+ * @param {[type]} obj   [the JS object]
+ */
 function setLoc(value, obj) {
-  $(obj).closest('tr').children('td.id_loc').html(value);
-  movement.rows[$(obj).closest('tr').attr('id')].iLocationId = value;
+  // $(obj).closest('tr').children('td.id_loc').html(value);
+  movement.updateLocation($(obj).closest('tr').attr('id'), value);
 }
 
+/**
+ * [setPall description]
+ * @param {[type]} value [description]
+ * @param {[type]} obj   [description]
+ */
 function setPall(value, obj) {
-  $(obj).closest('tr').children('td.id_pall').html(value);
-  movement.rows[$(obj).closest('tr').attr('id')].iPalletId = value;
+  // $(obj).closest('tr').children('td.id_pall').html(value);
+  movement.updatePallet($(obj).closest('tr').attr('id'), value);
+}
+
+/**
+ * [Vue object to show stock in whs movements view]
+ * @type {Vue}
+ */
+vm = new Vue({
+  el: '#app',
+  data: {
+    stock : {
+      unit: 'NA',
+      released: 0,
+      segregated: 0,
+      available: 0
+    }
+  }
+})
+
+/**
+ * [viewStock set the values of stock to html table]
+ */
+function viewStock(obj) {
+    idRow = $(obj).closest('tr').attr('id');
+    var sUnit = '';
+    var dReleased = 0;
+    var dSegregated = 0;
+    var dAvailable = 0;
+
+    if (movement.getRow(idRow)) {
+        sUnit = movement.getRow(idRow).oAuxUnit.code;
+        dReleased = parseFloat(movement.getRow(idRow).aStock[2]).toFixed(globalData.DEC_QTY);
+        dSegregated = parseFloat(movement.getRow(idRow).aStock[1]).toFixed(globalData.DEC_QTY);
+        dAvailable = parseFloat(movement.getRow(idRow).aStock[0]).toFixed(globalData.DEC_QTY);
+    }
+    else {
+        sUnit = '';
+        dReleased = 0;
+        dSegregated = 0;
+        dAvailable = 0;
+    }
+
+    Vue.set(vm.stock, 'unit', sUnit);
+    Vue.set(vm.stock, 'released', dReleased);
+    Vue.set(vm.stock, 'segregated', dSegregated);
+    Vue.set(vm.stock, 'available', dAvailable);
 }

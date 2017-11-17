@@ -3,10 +3,15 @@
 */
 function validateMovement(oMovement) {
 
+  if (oMovement.rows.length == 0) {
+    alert("No ha agregado movimientos.");
+    return false;
+  }
+
   var valid = true;
   oMovement.rows.forEach(function(row) {
-      if (row.bAuxIsLot && row.lotRows.length == 0) {
-          alert("El código " + row.sAuxItemCode + " no tiene lotes asignados.");
+      if (row.oAuxItem.is_lot && row.lotRows.length == 0) {
+          alert("El renglón " + row.oAuxItem.name + " no tiene lotes asignados.");
           valid = false;
           return false;
       }
@@ -15,18 +20,26 @@ function validateMovement(oMovement) {
       row.lotRows.forEach(function(lotRow) {
           qtySum += lotRow.dQuantity;
 
-          if (row.bAuxIsLot && lotRow.iLotId <= 0) {
+          if (row.oAuxItem.is_lot && lotRow.iLotId <= 0) {
             alert("El código " + row.sAuxItemCode + " no tiene un lote asignado.");
             valid = false;
             return false;
           }
       });
 
-      if (valid && qtySum != row.dQuantity) {
-        alert("La cantidad del código " + row.sAuxItemCode + " no coincide con lo asignado.");
-        valid = false;
-        return false;
-      }
+      // if (valid && qtySum != row.dQuantity) {
+      //   alert("La cantidad del código " + row.oAuxItem.name + " no coincide con lo asignado.");
+      //   valid = false;
+      //   return false;
+      // }
+
+      // if (valid) {
+      //   if (!globalData.bIsInputMov && row.aStock[0] < row.dQuantity) {
+      //       alert("No hay suficientes existencias en el almacén para realizar el movimiento");
+      //       valid = false;
+      //       return false;
+      //   }
+      // }
   });
 
   return valid;
@@ -40,7 +53,7 @@ function validateInput() {
     var dInputQuantity = document.getElementById("quantity").value; // gets the quantity
 
     var iWhsId = 0;
-    if (bInput) {
+    if (globalData.bIsInputMov) {
       iWhsId = document.getElementById("whs_des").value;
     }
     else {
@@ -75,4 +88,61 @@ function validateInput() {
     }
 
     return true;
+}
+
+/*
+* Validate sum of quantity in modal window
+* and enable or disable the close button
+*/
+function validateLots() {
+  var total = 0.0;
+  var column = 1;
+  var columnLot = 6;
+  var bCeros = false;
+  var bLots = false;
+
+  // In this way using eq we select the second row, since the first one is 0
+  $("#lotsbody tr").find('td:eq(' + column + ')').each(function () {
+
+   //get the value from cell
+    valor = $(this).html();
+    if (valor <= 0) {
+      bCeros = true;
+    }
+
+   //parse and sum
+    total += parseFloat(valor)
+  })
+
+  $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
+
+   //get the value from cell
+    valor = $(this).html();
+    if (valor == 0 || valor == '') {
+      bLots = true;
+    }
+  })
+
+  btnClose = document.getElementById('closeModal');
+
+  var dQuantity = document.getElementById('qtyComplete').value;
+  // Valid if the amount to complete is correct and enable and disable the button
+  if (bCeros) {
+    btnClose.disabled = true;
+    alert("No puede haber renglones con cantidad menor o igual a cero");
+    return false;
+  }
+  if (bLots) {
+    btnClose.disabled = true;
+    alert("No puede haber renglones sin lote");
+    return false;
+  }
+
+  btnClose.disabled = false;
+  // if (dQuantity == total) {
+  //   btnClose.disabled = false;
+  // }
+  // else {
+  //   btnClose.disabled = true;
+  // }
 }

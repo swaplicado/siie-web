@@ -1,17 +1,18 @@
 var idParentTr = 0;
+var vue = '';
 /*
 * This method prepare the data to process in modal window
 */
 $(document).on('click', 'button.buttlots', function () {
     idParentTr = $(this).closest('tr').attr('id');
 
-    document.getElementById("qtyComplete").value = parseFloat(movement.rows[idParentTr].dQuantity).toFixed(8);
+    document.getElementById("qtyComplete").value = parseFloat(movement.getRow(idParentTr).dQuantity).toFixed(globalData.DEC_QTY);
 
     $('#lotsbody').empty();
     console.log("readed " + idParentTr);
 
-    if(idParentTr in movement.rows) {
-      movement.rows[idParentTr].lotRows.forEach(function(lotRow) {
+    if(movement.getRow(idParentTr)) {
+      movement.getRow(idParentTr).lotRows.forEach(function(lotRow) {
           $('#lotsbody').append(createLotRow(lotRow.identifier, lotRow.iLotId, lotRow.dQuantity, lotRow.dPrice));
       });
     }
@@ -39,7 +40,7 @@ function createLotRow(id, lotId, quantity, price) {
     var bLotSet = false;
 
     globalData.lLots.forEach(function(oLot) {
-      if (oLot.item_id == movement.rows[idParentTr].iItemId && oLot.unit_id == movement.rows[idParentTr].iUnitId) {
+      if (oLot.item_id == movement.getRow(idParentTr).iItemId && oLot.unit_id == movement.getRow(idParentTr).iUnitId) {
           if (! bLotSet) {
             firstLot = oLot.id_lot;
           }
@@ -64,9 +65,9 @@ function createLotRow(id, lotId, quantity, price) {
 
     var valuesRow = [
                 "",
-                parseFloat(quantity).toFixed(5),
-                parseFloat(price).toFixed(2),
-                parseFloat(quantity * price).toFixed(2),
+                parseFloat(quantity).toFixed(globalData.DEC_QTY),
+                parseFloat(price).toFixed(globalData.DEC_AMT),
+                parseFloat(quantity * price).toFixed(globalData.DEC_AMT),
                 "",
                 id,
                 iDefaultLot
@@ -126,7 +127,7 @@ $(document).on('click', 'button.removeLotbutton', function () {
     var id = $(this).closest('tr').attr('id').substring(1, $(this).closest('tr').attr('id').length);
 
     $(this).closest('tr').remove();
-    movement.rows[idParentTr].removeLotRow(id);
+    movement.getRow(idParentTr).removeLotRow(id);
     console.log("removed " + id);
     validateLots();
     return false;
@@ -136,14 +137,23 @@ $(document).on('click', 'button.removeLotbutton', function () {
 * Set value of lot when is changed on html table
 */
 function setLot(value, obj) {
+  var id = $(obj).closest('tr').attr('id').substring(1, $(obj).closest('tr').attr('id').length);
   $(obj).closest('tr').children('td.lot_value').html(value);
+  movement.getRow(idParentTr).updateLot(id, parseInt(value));
 }
 
 /*
 * Calls the method to save table when the button close of modal window is clicked
 */
 $('#closeModal').on('click', function(e) {
-  pushLotTableRows(idParentTr);
+    pushLotTableRows(idParentTr);
+
+    var qty = 0;
+    movement.getRow(idParentTr).lotRows.forEach(function(row) {
+      qty += row.dQuantity;
+    });
+
+    updateRowTr(idParentTr, qty);
 });
 
 /*
@@ -159,72 +169,16 @@ function pushLotTableRows(parent) {
   const LOT_VALUE = 6;
 
   var tableObj = document.getElementById('lotsTable');
-  console.log("push " + idParentTr);
+  console.log("push " + parent);
 
-  movement.rows[idParentTr].lotRows = [];
+  movement.getRow(idParentTr).lotRows = [];
   $('#lotsbody tr').each(function(index, element) {
-    var dQuantity = $(element).find("td").eq(QTY).html();
-    var dPrice = $(element).find("td").eq(PRICE).html();
-    var dLotId = $(element).find("td").eq(LOT_VALUE).html();
+    var dQuantity = parseFloat($(element).find("td").eq(QTY).html());
+    var dPrice = parseFloat($(element).find("td").eq(PRICE).html());
+    var dLotId = parseInt($(element).find("td").eq(LOT_VALUE).html());
 
-    addRowOfLot(idParentTr, dLotId, dQuantity, dPrice);
+    addOrUpdateLotRow(parent, dLotId, dQuantity, dPrice);
   });
-}
-
-
-/*
-* Validate sum of quantity in modal window
-* and enable or disable the close button
-*/
-function validateLots() {
-  var total = 0.0;
-  var column = 1;
-  var columnLot = 6;
-  var bCeros = false;
-  var bLots = false;
-
-  // In this way using eq we select the second row, since the first one is 0
-  $("#lotsbody tr").find('td:eq(' + column + ')').each(function () {
-
-   //get the value from cell
-    valor = $(this).html();
-    if (valor <= 0) {
-      bCeros = true;
-    }
-
-   //parse and sum
-    total += parseFloat(valor)
-  })
-
-  $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
-
-   //get the value from cell
-    valor = $(this).html();
-    if (valor == 0 || valor == '') {
-      bLots = true;
-    }
-  })
-
-  btnClose = document.getElementById('closeModal');
-
-  var dQuantity = document.getElementById('qtyComplete').value;
-  // Valid if the amount to complete is correct and enable and disable the button
-  if (bCeros) {
-    btnClose.disabled = true;
-    alert("No puede haber renglones con cantidad menor o igual a cero");
-    return false;
-  }
-  if (bLots) {
-    btnClose.disabled = true;
-    alert("No puede haber renglones sin lote");
-    return false;
-  }
-  if (dQuantity == total) {
-    btnClose.disabled = false;
-  }
-  else {
-    btnClose.disabled = true;
-  }
 }
 
 /*
@@ -232,7 +186,7 @@ function validateLots() {
 */
 function addOrUpdateLotRow(idParent, idLot, quantity, price) {
     var bLotExists = false;
-    movement.rows[idParent].lotRows.forEach(function(lotR) {
+    movement.getRow(idParentTr).lotRows.forEach(function(lotR) {
         if (lotR.iLotId == idLot) {
             lotR.dQuantity += quantity;
             bLotExists = true;
@@ -249,6 +203,6 @@ function addOrUpdateLotRow(idParent, idLot, quantity, price) {
 * Add a new lotRow on the new position
 */
 function addRowOfLot(parent, lot, qty, price) {
-    var lotRow = new SLotRow(movement.rows[parent].identifier, lot, qty, price);
-    movement.rows[parent].addLotRow(lotRow);
+    var lotRow = new SLotRow(movement.getRow(parent).identifier, lot, qty, price);
+    movement.getRow(parent).addLotRow(lotRow);
 }

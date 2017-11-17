@@ -9,7 +9,8 @@ class SMovementRow extends Model {
   protected $table = 'wms_mvt_rows';
   public $timestamps = false;
   protected $auxLots = array();
-  public $iLotId = 0;
+  public $iAuxLotId = 0;
+  public $aAuxStock = [];
 
   protected $fillable = [
                           'id_mvt_row',
@@ -32,6 +33,7 @@ class SMovementRow extends Model {
                           'doc_credit_note_row_id',
                           'aux_lot_id',
                           'aux_lots',
+                          'aux_stock',
                         ];
 
   public function movement()
@@ -71,12 +73,22 @@ class SMovementRow extends Model {
 
   public function setLotId($value = '0')
   {
-    $this->iLotId = $value;
+    $this->iAuxLotId = $value;
   }
 
   public function getLotId()
   {
-    return $this->iLotId;
+    return $this->iAuxLotId;
+  }
+
+  public function setStockAux($value = [])
+  {
+    $this->aAuxStock = $value;
+  }
+
+  public function getStockAux()
+  {
+    return $this->aAuxStock;
   }
 
   public function scopeSearch($query, $name, $iFilter)

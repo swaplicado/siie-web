@@ -21,6 +21,7 @@
 		<table id="table_id" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
+								<th>Fecha</th>
 		            <th>Clave</th>
 		            <th>Item</th>
 								<th>Entradas</th>
@@ -35,6 +36,8 @@
 		    <tbody>
 					@foreach ($rows as $row)
 						<tr>
+								<td>{{ \Carbon\Carbon::parse($row->movement->dt_date)->format('d-m-Y') }}</td>
+								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 		            <td>{{ $row->item->code }}</td>
 		            <td>{{ $row->item->name }}</td>
 								@if ($row->movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
@@ -56,6 +59,8 @@
 									<td>{{ $row->movement->mfgType->name }}</td>
 								@elseif($row->movement->mvt_exp_type_id != 1)
 									<td>{{ $row->movement->expType->name }}</td>
+								@else
+									<td>N/A</td>
 								@endif
 		        </tr>
 					@endforeach

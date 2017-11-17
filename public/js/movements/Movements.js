@@ -1,13 +1,3 @@
-function GlobalData (lots, locations, pallets, isInput) {
-  this.lLots = lots;
-  this.lPallets = pallets;
-  this.lLocations = locations;
-  this.bIsInputMov = isInput;
-  this.IS_ITEM = 1;
-  this.IS_LOT = 2;
-  this.IS_PALLET = 3;
-}
-
 /*
 * Movement
 */
@@ -21,15 +11,37 @@ class SMovement {
       return this.idRow;
     }
 
+    getRow(id) {
+      id = parseInt(id);
+      var mRow = null;
+
+      this.rows.forEach(function(element) {
+          if (element.iIdRow == id) {
+              mRow = element;
+              return true;
+          }
+      });
+
+      return mRow;
+    }
+
     addRow(row) {
       this.rows[this.idRow] = row;
       this.idRow++;
     }
 
     removeRow(ident) {
-      if (ident in this.rows) {
-        this.rows.splice(ident, 1);
-      }
+      this.rows = this.rows.filter(function( obj ) {
+          return obj.iIdRow != ident;
+      });
+    }
+
+    updateLocation(idRow, idLoc) {
+      this.getRow(idRow).iLocationId = parseInt(idLoc);
+    }
+
+    updatePallet(idRow, idPallet) {
+      this.getRow(idRow).iPalletId = parseInt(idPallet);
     }
 }
 
@@ -37,7 +49,8 @@ class SMovement {
 * Rows of movement
 */
 class SMovementRow {
-    constructor() {
+    constructor(idRow) {
+      this.iIdRow = idRow;
       this.idLotRow = 0;
       this.iItemId = 0;
       this.iUnitId = 0;
@@ -45,15 +58,29 @@ class SMovementRow {
       this.iLocationId = 0;
       this.dQuantity = 0;
       this.dPrice = 0;
-      this.bAuxIsLot = false;
-      this.bAuxIsBulk = false;
-      this.sAuxItemCode = '';
+      this.oAuxItem = '';
+      this.oAuxUnit = '';
 
       this.lotRows = [];
+      this.aStock = [];
     }
 
     get identifier() {
       return this.idLotRow
+    }
+
+    getLotRow(id) {
+      var lRow = null;
+      id = parseInt(id);
+
+      this.lotRows.forEach(function(element) {
+          if (element.id == id) {
+              lRow = element;
+              return true;
+          }
+      });
+
+      return lRow;
     }
 
     addLotRow(lotRow) {
@@ -62,9 +89,15 @@ class SMovementRow {
     }
 
     removeLotRow(ident) {
-      if (ident in this.lotRows) {
-        this.lotRows.splice(ident, 1);
-      }
+      this.lotRows = this.lotRows.filter(function( obj ) {
+          return obj.iIdRow !== ident;
+      });
+    }
+
+    updateLot(id, idLot) {
+      id = parseInt(id);
+      idLot = parseInt(idLot);
+      this.getLotRow(id).iLotId = idLot;
     }
 }
 
@@ -84,13 +117,26 @@ class SLotRow {
     }
 }
 
+/**
+ * [setMovement description]
+ * @param {[type]} obj [description]
+ */
+function setMovement(obj) {
+   var mov = new SMovement();
+   mov.idRow = obj.idRow;
+   mov.rows = obj.rows;
+
+   return mov;
+}
+
 /*
 * This method sends the data of table to the server when
 * the button of freeze is pressed
 */
 function setData(data) {
     // var table = $('#example').tableToJSON();
-
+    console.log(data);
+    localStorage.setItem('movement', JSON.stringify(data));
     var data = { value : data };
       $.ajax({
         type: "POST",

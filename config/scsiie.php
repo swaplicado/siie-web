@@ -7,6 +7,7 @@ return [
                   'PARTNER_ID' => '1',
                   'DECIMALS_AMT' => '2',
                   'DECIMALS_QTY' => '3',
+                  'LOC_ENABLED' => '4',
                 ],
 
   'ATT' => [

@@ -40,9 +40,10 @@ class ErpAddErpConfigurationsTable extends Migration {
           	$table->increments('id_configuration');
           	$table->char('code', 10)->unique();
           	$table->char('name', 200);
+          	$table->boolean('val_boolean');
           	$table->integer('val_int');
           	$table->char('val_text', 50);
-          	$table->decimal('val_dec', 10,10);
+          	$table->decimal('val_decimal', 10,10);
           	$table->boolean('is_deleted');
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
@@ -51,11 +52,11 @@ class ErpAddErpConfigurationsTable extends Migration {
 
 
           DB::connection($this->sConnection)->table('erp_configuration')->insert([
-          	['id_configuration' => '1','code' => '001','name' => 'PARTNER_ID','val_int' => '1','val_text' => ' ','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '2','code' => '002','name' => 'DECIMALES MONTOS','val_int' => '3','val_text' => ' ','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '3','code' => '003','name' => 'DECIMALES CANTIDAD','val_int' => '5','val_text' => '','val_dec' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '1','code' => '001','name' => 'PARTNER_ID','val_boolean' => '0','val_int' => '1','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '2','code' => '002','name' => 'DECIMALES MONTOS','val_boolean' => '0','val_int' => '3','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '3','code' => '003','name' => 'DECIMALES CANTIDAD','val_boolean' => '0','val_int' => '5','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_configuration' => '4','code' => '004','name' => 'HABILITAR UBICACIONES','val_boolean' => '0','val_int' => '0','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
-
 
         }
     }

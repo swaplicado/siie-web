@@ -203,6 +203,10 @@ class SValidation {
       return false;
   }
 
+  /**
+   * [getUserTypeByArea description]
+   * @return [type] [description]
+   */
   public static function getUserTypeByArea()
   {
     // dd('area: '.session('area'));

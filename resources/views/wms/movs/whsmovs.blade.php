@@ -19,13 +19,13 @@
       <div class="form-group">
 				{!! Form::hidden('mvt_whs_class_id', $oMovType->mvt_class_id) !!}
   			{!! Form::label('mvt_whs_type_id', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_whs_type_id', $movTypes,  $movement->mvt_whs_type_id != 0 ?  $movement->mvt_whs_type_id : $oMovType->id_mvt_type, ['class'=>'form-control select-one',
+				{!! Form::select('mvt_whs_type_id', $movTypes,  $movement->mvt_whs_type_id != 0 ?  $movement->mvt_whs_type_id : $oMovType->id_mvt_type, ['class'=>'form-control',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required']) !!}
   		</div>
 
       <div class="form-group">
   			{!! Form::label('mvt_com', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_com', $mvtComp, 1, ['class'=>'form-control select-one',
+				{!! Form::select('mvt_com', $mvtComp, 1, ['class'=>'form-control',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required']) !!}
   		</div>
 
@@ -44,11 +44,14 @@
   		</div>
 
 			<div class="form-group">
-				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_OUT'))
+				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_OUT') ||
+							$oMovType->id_mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA'))
 						{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
 						{!! Form::select('whs_src', $warehouses, 0, ['class'=>'form-control',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
-				@else
+				@endif
+				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_IN') ||
+							$oMovType->id_mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA'))
 		  			{!! Form::label('whs_des', trans('userinterface.labels.MVT_WHS_DEST').'*') !!}
 						{!! Form::select('whs_des', $warehouses, 0, ['class'=>'form-control',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
@@ -81,7 +84,7 @@
 			<br />
 			<br /> --}}
 			<div class="form-group">
-				<table id="example" class="table table-bordered" cellspacing="0" width="100%">
+				<table id="example" class="table table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 						<thead>
 								<tr class="titlerow">
 										<th data-override="id_tr" style="display:none;"></th>
@@ -89,15 +92,16 @@
 										<th>{{ trans('wms.labels.MAT_PROD') }}</th>
 										<th>{{ trans('wms.labels.UNIT') }}</th>
 										<th>{{ trans('wms.labels.LOCATION') }}</th>
-										<th>{{ trans('wms.labels.LOT') }}</th>
 										<th data-override="price">{{ trans('wms.labels.PALLET') }}</th>
 										<th data-override="price">{{ trans('wms.labels.PRICE') }}</th>
 										<th data-override="qty">{{ trans('wms.labels.QTY') }}</th>
+										<th>{{ trans('wms.labels.LOT') }}</th>
+										<th>{{ trans('wms.labels.STOCK') }}</th>
 										<th>-</th>
-										<th data-override="id_item" style="display:none;"></th>
+										{{-- <th data-override="id_item" style="display:none;"></th>
 										<th data-override="id_unit" style="display:none;"></th>
 										<th data-override="id_location" style="display:none;"></th>
-										<th data-override="id_pallet" style="display:none;"></th>
+										<th data-override="id_pallet" style="display:none;"></th> --}}
 								</tr>
 						</thead>
 						<tfoot>
@@ -113,7 +117,7 @@
 								</tr> --}}
 						</tfoot>
 						<tbody id="lbody">
-							@foreach ($movement->rows as $row)
+							{{-- @foreach ($movement->rows as $row)
 								<tr  class="clickable" data-toggle="collapse" id="{{ $row->item->id_item }}" data-target=".{{ $row->item->id_item }}">
 										<td><i class="glyphicon glyphicon-plus"></i></td>
 										<td>{{ $row->item->code }}</td>
@@ -136,7 +140,7 @@
 				            <td>data</td>
 									</tr>
 								@endforeach
-							@endforeach
+							@endforeach --}}
 						</tbody>
 				</table>
 			</div>
@@ -154,12 +158,79 @@
 	@include('templates.scriptsmovs')
 	<script>
 
-		var lotsjs = <?php echo json_encode($lots); ?>;
-		var locationsjs = <?php echo json_encode($locations); ?>;
-		var palletsjs = <?php echo json_encode($pallets); ?>;
-		var bInput = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
+		function GlobalData () {
+		  this.lLots = <?php echo json_encode($lots); ?>;
+		  this.lPallets = <?php echo json_encode($pallets); ?>;
+		  this.lLocations = <?php echo json_encode($locations); ?>;
+		  this.bIsInputMov = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
+		  this.iMvtClass = <?php echo json_encode($oMovType->mvt_class_id); ?>;
+		  this.iMvtType = <?php echo json_encode($oMovType->id_mvt_type); ?>;
+		  this.IS_ITEM = 1;
+		  this.IS_LOT = 2;
+		  this.IS_PALLET = 3;
 
-		var globalData = new GlobalData(lotsjs, locationsjs, palletsjs, bInput);
+		  this.MVT_CLS_IN = <?php echo json_encode(\Config::get('scwms.MVT_CLS_IN')) ?>; //
+		  this.MVT_CLS_OUT = <?php echo json_encode(\Config::get('scwms.MVT_CLS_OUT')) ?>; //
+
+		  this.MVT_TP_IN_SAL = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_SAL')) ?>;
+		  this.MVT_TP_IN_PUR = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_PUR')) ?>;
+		  this.MVT_TP_IN_ADJ = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_ADJ')) ?>;
+		  this.MVT_TP_IN_TRA = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_TRA')) ?>; // transfer (traspaso)
+		  this.MVT_TP_IN_CON = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_CON')) ?>; // conversion
+		  this.MVT_TP_IN_PRO = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_PRO')) ?>; // production
+		  this.MVT_TP_IN_EXP = <?php echo json_encode(\Config::get('scwms.MVT_TP_IN_EXP')) ?>; // expenses
+		  this.MVT_TP_OUT_SAL = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_SAL')) ?>;
+		  this.MVT_TP_OUT_PUR = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_PUR')) ?>;
+		  this.MVT_TP_OUT_ADJ = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_ADJ')) ?>;
+		  this.MVT_TP_OUT_TRA = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_TRA')) ?>;
+		  this.MVT_TP_OUT_CON = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_CON')) ?>;
+		  this.MVT_TP_OUT_PRO = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_PRO')) ?>;
+		  this.MVT_TP_OUT_EXP = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_EXP')) ?>;
+
+		  this.RE_PALL_IN  =  <?php echo json_encode(\Config::get('scwms.RE_PALL_IN')) ?>;
+		  this.RE_PALL_OUT  =  <?php echo json_encode(\Config::get('scwms.RE_PALL_OUT')) ?>;
+
+			var qty = <?php echo json_encode(session('decimals_qty')) ?>;
+			var amt = <?php echo json_encode(session('decimals_amt')) ?>;
+			var loc = <?php echo json_encode(session('location_enabled')) ?>;
+			this.DEC_QTY = parseInt(qty);
+			this.DEC_AMT = parseInt(amt);
+			this.LOCATION_ENABLED = (parseInt(loc) == 1);
+		}
+
+		var globalData = new GlobalData();
+
+		if (localStorage.getItem('movement') !== null) {
+			var errors = <?php echo json_encode($errors->all()) ?>;
+			console.log(errors);
+
+			if (errors.length > 0) {
+				console.log("here again");
+				var retrievedObject = localStorage.getItem('movement');
+				console.log(JSON.parse(retrievedObject));
+				movement = setMovement(JSON.parse(retrievedObject));
+
+				movement.rows.forEach(function(element) {
+						var type = 0;
+						if(element.iPalletId > 1) {
+								type = globalData.IS_PALLET;
+						}
+						else if(element.lotRows.length == 0){
+								type = globalData.IS_ITEM;
+						}
+						else {
+							type = globalData.IS_LOT;
+						}
+
+				    addRowTr(element.iIdRow, element,
+												(globalData.bIsInputMov ? document.getElementById('whs_des').value : document.getElementById('whs_src').value),
+												type);
+				});
+			}
+
+			localStorage.removeItem('movement');
+		}
+
 
 		// var totals=[0,0,0];
 		/*
@@ -205,6 +276,8 @@
 						$(function(){
 						  $("button.removebutton").attr("disabled", true);
 						  $("button.buttlots").attr("disabled", true);
+						  // $("button.butstk").attr("disabled", true);
+						  $("select.selPallet").attr("disabled", true);
 						});
 
 						console.log(movement);
@@ -222,6 +295,8 @@
 				$(function(){
 					$("button.removebutton").attr("disabled", false);
 					$("button.buttlots").attr("disabled", false);
+					// $("button.butstk").attr("disabled", false);
+					$("select.selPallet").attr("disabled", false);
 				});
 
 				setData("");
@@ -234,3 +309,4 @@
 @endsection
 
 @include('wms.movs.lotrows')
+@include('wms.movs.stock')

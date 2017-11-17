@@ -7,9 +7,9 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
 use App\SBarcode\SBarcode;
-use App\SCore\SStockManagment;
+use App\Http\Requests\WMS\SMovRequest;
+use App\SCore\SStockUtils;
 
-use App\Http\Requests\WMS\SWhsRequest;
 use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
@@ -65,7 +65,8 @@ class SMovsController extends Controller
             $row->lotRows;
             $row->item->unit;
         }
-        // \Debugbar::info($lMovRows);
+
+        //  \Debugbar::info($date);
         // dd($lMovRows);
         return view('wms.movs.index')
                     ->with('rows', $lMovRows);
@@ -104,13 +105,16 @@ class SMovsController extends Controller
             $mvtComp = SMvtAdjType::where('is_deleted', false)->lists('name', 'id_mvt_adj_type');
             break;
 
+          case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_IN_TRA'):
+            $mvtComp = SMvtAdjType::where('id_mvt_adj_type', 1)->lists('name', 'id_mvt_adj_type');
+            break;
+
           case \Config::get('scwms.MVT_TP_IN_CON'):
           case \Config::get('scwms.MVT_TP_IN_PRO'):
-          case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_OUT_CON'):
           case \Config::get('scwms.MVT_TP_OUT_PRO'):
-            $mvtComp = SMvtMfgType::where('is_deleted', false)->lists('name', 'id_mvt_adj_type');
+            $mvtComp = SMvtMfgType::where('is_deleted', false)->lists('name', 'id_mvt_mfg_type');
             break;
 
           case \Config::get('scwms.MVT_TP_IN_EXP'):
@@ -134,16 +138,42 @@ class SMovsController extends Controller
                           ->with('movement', $movement);
     }
 
-
+    /**
+     * [getTable set the value of data from client to session('data')]
+     *
+     * @param  Request $request [$request->value]
+     */
     public function getTable(Request $request)
     {
       \Debugbar::info($request->value);
       session(['data' => $request->value]);
     }
 
-    public function store(Request $request)
+    /**
+     * [store saves the whs movs]
+     * @param  Request $request [description]
+     * @return [redirect to whs.home]
+     */
+    public function store(SMovRequest $request)
     {
         \Debugbar::info('Store');
+
+        $whsId = 0;
+        if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
+        {
+          $whsId = $request->input('whs_src');
+
+          $aErrors = SStockUtils::validateStock(session('data'), $whsId);
+          if(sizeof($aErrors) > 0)
+          {
+              return redirect()->back()->withErrors($aErrors)->withInput();
+              // return view('wms.index');
+          }
+        }
+        else
+        {
+          $whsId = $request->input('whs_des');
+        }
 
         $movement = new SMovement($request->all());
 
@@ -184,16 +214,6 @@ class SMovsController extends Controller
             break;
         }
 
-        $whsId = 0;
-        if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
-        {
-          $whsId = $request->input('whs_src');
-        }
-        else
-        {
-          $whsId = $request->input('whs_des');
-        }
-
         $movement->whs_id = $whsId;
         $movement->branch_id = $movement->whs->branch_id;
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
@@ -208,7 +228,6 @@ class SMovsController extends Controller
            $oMvtRow = new SMovementRow();
            $oMvtRow->quantity = $row['dQuantity'];
            $oMvtRow->amount_unit = $row['dPrice'];
-          //  $oMvtRow->mvt_id = 1;
            $oMvtRow->item_id = $row['iItemId'];
            $oMvtRow->unit_id = $row['iUnitId'];
            $oMvtRow->pallet_id = $row['iPalletId'];
@@ -217,7 +236,7 @@ class SMovsController extends Controller
            $oMvtRow->doc_invoice_row_id = 1;
            $oMvtRow->doc_debit_note_row_id = 1;
            $oMvtRow->doc_credit_note_row_id = 1;
-
+           \Debugbar::warning($row);
            $movLotRows = array();
            foreach ($row['lotRows'] as $lotRow) {
                $oMovLotRow = new SMovementRowLot();
@@ -251,10 +270,20 @@ class SMovsController extends Controller
         //     \Debugbar::warning('Se guardó');
         // }
 
+        // $validator = Validator::make($request->all(), [
+        //     'title' => 'required|unique:posts|max:255',
+        //     'body' => 'required',
+        // ]);
+        //
+        // if ($validator->fails()) {
+        //     return redirect('post/create')
+        //                 ->withErrors($validator)
+        //                 ->withInput();
+        // }
+
         \DB::connection('company')->transaction(function() use ($movement, $movementRows, $request) {
           try
           {
-
             $movement->save();
             foreach ($movementRows as $movRow)
             {
@@ -277,50 +306,99 @@ class SMovsController extends Controller
           }
        });
 
-        return redirect()->route('wms.home');
+        // return redirect()->route('wms.home');
+        return view('wms.index');
     }
 
+    /**
+     * [children gets the data of code received from view]
+     *
+     * @param  Request $request [parent, whs, idCls]
+     * @return [array]    [array of SMovementRow]
+     */
     public function children(Request $request)
     {
       $rows = array();
 
       try
       {
-          \Debugbar::info("param: ".$request->parent);
+          \Debugbar::info("param: ".$request->parent." whs:".$request->whs);
+
+          $dStock = 0.0;
           $obj = SBarcode::decodeBarcode($request->parent);
+          // If the barcode is Item
           if ($obj == NULL)
           {
             $items = SItem::where('is_deleted', false)->where('code', $request->parent)->get();
 
             foreach ($items as $item) {
                 $row = $this->createMovement($item->id_item, $item->unit_id, 0);
+
+                $aParameters = array();
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $item->id_item;
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $item->unit_id;
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $request->whs;
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
+
+                $row->aux_stock = session('stock')->getStock($aParameters);
+
                 array_push($rows, $row);
             }
           }
+
+          // If the barcode is Pallet
           elseif ($obj instanceof SPallet)
           {
               $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
-              $row->pallet_id = $obj->id_pallet;
-              $result = SStockManagment::getLotsOfPallet($row->pallet_id);
-              $row->auxLots = $this->createLotRows($result);
+
+              $aParameters = array();
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $obj->item_id;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $obj->unit_id;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $obj->id_pallet;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $request->whs;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
+
+              $row->aux_stock = session('stock')->getStock($aParameters);
+
+              $result = session('stock')->getLotsOfPallet($obj->id_pallet, $request->whs);
+              $row->aux_lots = $this->createLotRows($result);
 
               $qty = 0;
               $amnt = 0;
-              foreach ($row->auxLots as $lot) {
+              foreach ($row->aux_lots as $lot) {
                 $qty += $lot->quantity;
                 $amnt += $lot->amount;
               }
+
               $row->quantity = $qty;
               $row->amount = $amnt;
               $row->amount_unit = $amnt/$qty;
+              $row->pallet_id = $obj->id_pallet;
 
               array_push($rows, $row);
           }
+
+          //If the barcode is lot
           elseif ($obj instanceof SWmsLot)
           {
               $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
               $row->aux_lot_id = $obj->id_lot;
-              \Debugbar::error("lote");
+
+              $aParameters = array();
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $obj->item_id;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $obj->unit_id;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $obj->id_lot;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $request->whs;
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
+
+              $row->aux_stock = session('stock')->getStock($aParameters);
 
               array_push($rows, $row);
           }
@@ -344,6 +422,7 @@ class SMovsController extends Controller
         $movRow->unit;
         $movRow->quantity = $dQuantity;
         $movRow->pallet_id = 1;
+        $movRow->location_id = 1;
 
         return $movRow;
     }

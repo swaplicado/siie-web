@@ -21,6 +21,9 @@ return [
     'MVT_TP_OUT_PRO' => '13',
     'MVT_TP_OUT_EXP' => '14',
 
+    'RE_PALL_IN'  =>  '100',
+    'RE_PALL_OUT'  =>  '101',
+
     // applies only for sales and purchases
     'MVT_SPT_TP_STK_RET' => '1', // supply (surtido) and return
     'MVT_SPT_TP_CHA' => '2', // change
@@ -58,5 +61,21 @@ return [
                         'STK_BY_WAREHOUSE' => '5',
                       ],
 
-    'RECONFIG_PALLETS'  =>  '100',
+    'RECONFIG_PALLETS' => '100',
+
+    'STOCK_PARAMS' => [
+                        'ITEM' => '0',
+                        'UNIT' => '1',
+                        'LOT' => '2',
+                        'PALLET' => '3',
+                        'LOCATION' => '4',
+                        'WHS' => '5',
+                        'BRANCH' => '6',
+                      ],
+
+    'STOCK' => [
+                  'SEGREGATED' => '2',
+                  'RELEASED' => '1',
+                  'AVAILABLE' => '0',
+                ],
 ];
