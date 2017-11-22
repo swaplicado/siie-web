@@ -4,6 +4,9 @@
 class SMovement {
     constructor() {
       this.idRow = 0;
+      this.iMvtType = 0;
+      this.iWhsSrc = 0;
+      this.iWhsDes = 0;
       this.rows = [];
     }
 
@@ -26,7 +29,7 @@ class SMovement {
     }
 
     addRow(row) {
-      this.rows[this.idRow] = row;
+      this.rows.push(row);
       this.idRow++;
     }
 
@@ -84,7 +87,7 @@ class SMovementRow {
     }
 
     addLotRow(lotRow) {
-      this.lotRows[this.idLotRow] = lotRow;
+      this.lotRows.push(lotRow);
       this.idLotRow++;
     }
 

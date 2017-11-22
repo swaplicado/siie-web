@@ -33,7 +33,7 @@ class SWmsMenu {
                 ->route('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_WHS_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA')])
-                ->route('wms.movs.create', trans('wms.RECONFIG_PALLETS'), [\Config::get('scwms.RECONFIG_PALLETS')])
+                ->route('wms.movs.create', trans('wms.RECONFIG_PALLETS'), [\Config::get('scwms.PALLET_RECONFIG_OUT')])
         )
         ->submenu(
             Link::to('#', trans('wms.WHS_MOVS_QUERY').'<span class="caret"></span>')

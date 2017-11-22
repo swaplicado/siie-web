@@ -6,18 +6,27 @@ var vue = '';
 $(document).on('click', 'button.buttlots', function () {
     idParentTr = $(this).closest('tr').attr('id');
 
-    document.getElementById("qtyComplete").value = parseFloat(movement.getRow(idParentTr).dQuantity).toFixed(globalData.DEC_QTY);
+    // document.getElementById("qtyComplete").value = parseFloat(movement.getRow(idParentTr).dQuantity).toFixed(globalData.DEC_QTY);
 
     $('#lotsbody').empty();
     console.log("readed " + idParentTr);
 
-    if(movement.getRow(idParentTr)) {
-      movement.getRow(idParentTr).lotRows.forEach(function(lotRow) {
+    var row = movement.getRow(idParentTr);
+    if(row) {
+      if (row.iPalletId != 1 && movement.iMvtType == globalData.MVT_TP_OUT_TRA) {
+        document.getElementById('addBtn').disabled = true;
+      }
+      else
+      {
+        document.getElementById('addBtn').disabled = false;
+      }
+
+      row.lotRows.forEach(function(lotRow) {
           $('#lotsbody').append(createLotRow(lotRow.identifier, lotRow.iLotId, lotRow.dQuantity, lotRow.dPrice));
       });
     }
 
-    validateLots();
+    validateLots(idParentTr);
     return false;
 });
 
@@ -31,6 +40,8 @@ function addRowAux() {
 */
 function createLotRow(id, lotId, quantity, price) {
     var oTr = document.createElement("tr");
+    var iMovType = parseInt(document.getElementById('mvt_whs_type_id').value);
+    var parentRow = movement.getRow(idParentTr);
 
     oTr.setAttribute("id", "l" + id);
 
@@ -40,7 +51,7 @@ function createLotRow(id, lotId, quantity, price) {
     var bLotSet = false;
 
     globalData.lLots.forEach(function(oLot) {
-      if (oLot.item_id == movement.getRow(idParentTr).iItemId && oLot.unit_id == movement.getRow(idParentTr).iUnitId) {
+      if (oLot.item_id == parentRow.iItemId && oLot.unit_id == parentRow.iUnitId) {
           if (! bLotSet) {
             firstLot = oLot.id_lot;
           }
@@ -76,18 +87,21 @@ function createLotRow(id, lotId, quantity, price) {
     var oTdLOT = document.createElement("td");
     oTdLOT.appendChild(document.createTextNode(valuesRow[LOT]));
     oTdLOT.setAttribute("align", "center");
-    oTdLOT.innerHTML = "<select onChange='setLot(this.value, this)' value=" + iDefaultLot + " class='form-control'>" + options + "</select>";
+    oTdLOT.innerHTML = "<select " +
+                          ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ? "disabled='true'" : "") +
+                           " onChange='setLot(this.value, this)' class='form-control'>" + options + "</select>";
 
     var oTdQTY = document.createElement("td");
-    oTdQTY.appendChild(document.createTextNode(valuesRow[QTY]));
-    oTdQTY.setAttribute("contenteditable", "true");
-    oTdQTY.setAttribute("align", "right");
-    oTdQTY.setAttribute("onkeyup", "validateLots()");
+    oTdQTY.innerHTML = "<input align='right' class='form-control' type='number' onkeyup='validateLots(" + idParentTr + ")' " +
+                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ? "readonly='readonly'" : "") +
+                                " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
+                                valuesRow[QTY] + "'>";
 
     var oTdPRICE = document.createElement("td");
-    oTdPRICE.appendChild(document.createTextNode(valuesRow[PRICE]));
-    oTdPRICE.setAttribute("contenteditable", "true");
-    oTdPRICE.setAttribute("align", "right");
+    oTdPRICE.innerHTML = "<input align='right' class='form-control' type='number' onkeyup='validateLots(" + idParentTr + ")' " +
+                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ? "readonly='readonly'" : "") +
+                                " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
+                                valuesRow[PRICE] + "'>";
 
     var oTdTOTAL = document.createElement("td");
     oTdTOTAL.appendChild(document.createTextNode(valuesRow[TOTAL]));
@@ -95,9 +109,11 @@ function createLotRow(id, lotId, quantity, price) {
 
     var oTdBTN_DEL = document.createElement("td");
     oTdBTN_DEL.appendChild(document.createTextNode(valuesRow[BTN_DEL]));
-    oTdBTN_DEL.innerHTML = "<button type='button' onClick='validateLots()' class='removeLotbutton btn btn-danger btn-xs' title='Quitar renglón'>" +
-                      "<li class='glyphicon glyphicon-remove'></li>"
-                      "</button>";
+    if (parentRow.iPalletId == 1 || (iMovType != globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1)) {
+      oTdBTN_DEL.innerHTML = "<button type='button' onClick='validateLots('" + idParentTr + "')' class='removeLotbutton btn btn-danger btn-xs' title='Quitar renglón'>" +
+                        "<li class='glyphicon glyphicon-remove'></li>"
+                        "</button>";
+    }
 
     var oTdPARENT_TR = document.createElement("td");
     oTdPARENT_TR.appendChild(document.createTextNode(valuesRow[PARENT_TR]));
@@ -129,7 +145,7 @@ $(document).on('click', 'button.removeLotbutton', function () {
     $(this).closest('tr').remove();
     movement.getRow(idParentTr).removeLotRow(id);
     console.log("removed " + id);
-    validateLots();
+    validateLots(idParentTr);
     return false;
 });
 
@@ -186,7 +202,7 @@ function pushLotTableRows(parent) {
 */
 function addOrUpdateLotRow(idParent, idLot, quantity, price) {
     var bLotExists = false;
-    movement.getRow(idParentTr).lotRows.forEach(function(lotR) {
+    movement.getRow(idParent).lotRows.forEach(function(lotR) {
         if (lotR.iLotId == idLot) {
             lotR.dQuantity += quantity;
             bLotExists = true;

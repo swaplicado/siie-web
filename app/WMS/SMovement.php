@@ -7,6 +7,8 @@ class SMovement extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_mvt';
   protected $table = 'wms_mvts';
+  
+  public $aAuxRows = [];
 
   protected $fillable = [
                     'dt_date',

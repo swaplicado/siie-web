@@ -29,7 +29,7 @@ return [
           'MOV_WHS_TRS_OUT' => 'Traspaso de almacén',
           'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
           'WHS_MOVS' => 'Movimientos de inventario',
-          'RECONFIG_PALLETS' => 'Reconfiguración de tarimas',
+          'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',

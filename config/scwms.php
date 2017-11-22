@@ -21,8 +21,8 @@ return [
     'MVT_TP_OUT_PRO' => '13',
     'MVT_TP_OUT_EXP' => '14',
 
-    'RE_PALL_IN'  =>  '100',
-    'RE_PALL_OUT'  =>  '101',
+    'PALLET_RECONFIG_IN'  =>  '15',
+    'PALLET_RECONFIG_OUT'  =>  '16',
 
     // applies only for sales and purchases
     'MVT_SPT_TP_STK_RET' => '1', // supply (surtido) and return

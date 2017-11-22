@@ -19,20 +19,19 @@
       <div class="form-group">
 				{!! Form::hidden('mvt_whs_class_id', $oMovType->mvt_class_id) !!}
   			{!! Form::label('mvt_whs_type_id', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_whs_type_id', $movTypes,  $movement->mvt_whs_type_id != 0 ?  $movement->mvt_whs_type_id : $oMovType->id_mvt_type, ['class'=>'form-control',
-																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required']) !!}
+				{!! Form::select('mvt_whs_type_id', $movTypes, $oMovType->id_mvt_type, ['class'=>'form-control',
+																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'disabled']) !!}
   		</div>
 
       <div class="form-group">
   			{!! Form::label('mvt_com', trans('userinterface.labels.MVT_TYPE').'*') !!}
 				{!! Form::select('mvt_com', $mvtComp, 1, ['class'=>'form-control',
-																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required']) !!}
+																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required', ]) !!}
   		</div>
 
       <div class="form-group">
   			{!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
-  			{!! Form::text('folio',
-  				isset($movement) ? $movement->folio : null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'required', 'unique']) !!}
+  			{!! Form::text('folio', null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'required', 'unique']) !!}
   		</div>
 
 
@@ -71,7 +70,6 @@
 																												'placeholder' => trans('userinterface.placeholders.QUANTITY')]) !!}
 							</div>
 						  <div class="col-md-3">
-									{{-- {!! Form::submit(trans('actions.ADD'), ['class'=>'form-control btn-primary', 'id' => 'tButton']) !!} --}}
 									<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
 							</div>
 						</div>
@@ -80,9 +78,6 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-			{{-- <button class="btn btn-danger" type="button" onclick="fnselect()"><i class="glyphicon glyphicon-remove"></i></button>
-			<br />
-			<br /> --}}
 			<div class="form-group">
 				<table id="example" class="table table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 						<thead>
@@ -98,49 +93,9 @@
 										<th>{{ trans('wms.labels.LOT') }}</th>
 										<th>{{ trans('wms.labels.STOCK') }}</th>
 										<th>-</th>
-										{{-- <th data-override="id_item" style="display:none;"></th>
-										<th data-override="id_unit" style="display:none;"></th>
-										<th data-override="id_location" style="display:none;"></th>
-										<th data-override="id_pallet" style="display:none;"></th> --}}
 								</tr>
 						</thead>
-						<tfoot>
-								{{-- <tr class="totalColumn">
-										<td>{{ trans('userinterface.TOTAL') }}</td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td></td>
-										<td align="right" class="totalCol"></td>
-								</tr> --}}
-						</tfoot>
 						<tbody id="lbody">
-							{{-- @foreach ($movement->rows as $row)
-								<tr  class="clickable" data-toggle="collapse" id="{{ $row->item->id_item }}" data-target=".{{ $row->item->id_item }}">
-										<td><i class="glyphicon glyphicon-plus"></i></td>
-										<td>{{ $row->item->code }}</td>
-										<td>{{ $row->item->name }}</td>
-										<td>{{ $row->item->unit->code }}</td>
-										<td>{{ 'Estante' }}</td>
-										<td>{{ '12354872' }}
-											<a href="">
-													<i class="glyphicon glyphicon-duplicate btn-sm"/>
-											</a>
-										</td>
-										<td>{{ $row->pallet->pallet }}</td>
-										<td align="right">{{ $row->amount_unit }}</td>
-										<td align="right" class="summ">{{ $row->quantity }}</td>
-								</tr>
-								@foreach ($row->lotRows as $lotRow)
-									<tr class="collapse {{ $row->item->id_item }}">
-										<td>data</td>
-				          	<td>data</td>
-				            <td>data</td>
-									</tr>
-								@endforeach
-							@endforeach --}}
 						</tbody>
 				</table>
 			</div>

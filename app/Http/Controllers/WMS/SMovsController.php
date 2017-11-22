@@ -9,6 +9,7 @@ use App\Http\Controllers\WMS\SStockController;
 use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SCore\SStockUtils;
+use App\SCore\SMovsManagment;
 
 use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
@@ -89,7 +90,6 @@ class SMovsController extends Controller
         $lots = SWmsLot::where('is_deleted', false)->get();
         $pallets = SPallet::where('is_deleted', false)->get();
 
-        $movement->rows;
         $mvtComp = NULL;
 
         switch ($mvtType) {
@@ -122,6 +122,11 @@ class SMovsController extends Controller
             $mvtComp = SMvtExpType::where('is_deleted', false)->lists('name', 'id_mvt_exp_type');
             break;
 
+          case \Config::get('scwms.PALLET_RECONFIG_IN'):
+          case \Config::get('scwms.PALLET_RECONFIG_OUT'):
+            $mvtComp = SMvtExpType::where('id_mvt_exp_type', 1)->lists('name', 'id_mvt_exp_type');
+            break;
+
           default:
             # code...
             break;
@@ -134,8 +139,7 @@ class SMovsController extends Controller
                           ->with('warehouses', $warehouses)
                           ->with('locations', $locations)
                           ->with('lots', $lots)
-                          ->with('pallets', $pallets)
-                          ->with('movement', $movement);
+                          ->with('pallets', $pallets);
     }
 
     /**
@@ -159,30 +163,46 @@ class SMovsController extends Controller
         \Debugbar::info('Store');
 
         $whsId = 0;
-        if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
-        {
-          $whsId = $request->input('whs_src');
+        $whsSrc = 0;
+        $whsDes = 0;
+        if (session('data')['iMvtType'] == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+            $whsSrc = session('data')['iWhsSrc'];
+            $whsDes = session('data')['iWhsDes'];
+            $whsId = session('data')['iWhsSrc'];
 
-          $aErrors = SStockUtils::validateStock(session('data'), $whsId);
-          if(sizeof($aErrors) > 0)
-          {
-              return redirect()->back()->withErrors($aErrors)->withInput();
-              // return view('wms.index');
-          }
+            $aErrors = SStockUtils::validateStock(session('data'), $whsSrc);
+            if(sizeof($aErrors) > 0)
+            {
+                return redirect()->back()->withErrors($aErrors)->withInput();
+                // return view('wms.index');
+            }
+        }
+        else if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
+        {
+            $whsId = session('data')['iWhsSrc'];
+
+            $aErrors = SStockUtils::validateStock(session('data'), $whsId);
+            if(sizeof($aErrors) > 0)
+            {
+                return redirect()->back()->withErrors($aErrors)->withInput();
+                // return view('wms.index');
+            }
         }
         else
         {
-          $whsId = $request->input('whs_des');
+            // $whsId = $request->input('whs_des');
+            $whsId = session('data')['iWhsDes'];
         }
 
         $movement = new SMovement($request->all());
 
+        $movement->mvt_whs_type_id = session('data')['iMvtType'];
         $movement->mvt_trn_type_id = 1;
         $movement->mvt_adj_type_id = 1;
         $movement->mvt_mfg_type_id = 1;
         $movement->mvt_exp_type_id = 1;
 
-        switch ($movement->mvt_whs_type_id) {
+        switch (session('data')['iMvtType']) {
           case \Config::get('scwms.MVT_TP_IN_SAL'):
           case \Config::get('scwms.MVT_TP_IN_PUR'):
           case \Config::get('scwms.MVT_TP_OUT_SAL'):
@@ -236,7 +256,7 @@ class SMovsController extends Controller
            $oMvtRow->doc_invoice_row_id = 1;
            $oMvtRow->doc_debit_note_row_id = 1;
            $oMvtRow->doc_credit_note_row_id = 1;
-           \Debugbar::warning($row);
+
            $movLotRows = array();
            foreach ($row['lotRows'] as $lotRow) {
                $oMovLotRow = new SMovementRowLot();
@@ -251,63 +271,66 @@ class SMovsController extends Controller
            array_push($movementRows, $oMvtRow);
         }
 
-        // \DB::beginTransaction();
-        // try {
-        //     $movement->save();
-        //     $movement->rows()->saveMany($movementRows);
-        //
-        //     $success = true;
-        // } catch (\Exception $e) {
-        //     \Debugbar::warning('No se guardó');
-        //     $success = false;
-        //     \DB::rollback();
-        // }
-        //
-        // \DB::commit();
-        //
-        // if ($success) {
-        //     // the transaction worked ...
-        //     \Debugbar::warning('Se guardó');
-        // }
+        $movements = SMovsManagment::processMovement($movement,
+                                                    $movementRows,
+                                                    $request->input('mvt_whs_class_id'),
+                                                    session('data')['iMvtType'],
+                                                    $whsSrc,
+                                                    $whsDes);
 
-        // $validator = Validator::make($request->all(), [
-        //     'title' => 'required|unique:posts|max:255',
-        //     'body' => 'required',
-        // ]);
-        //
-        // if ($validator->fails()) {
-        //     return redirect('post/create')
-        //                 ->withErrors($validator)
-        //                 ->withInput();
-        // }
+        $this->saveMovement($movements, $request);
 
-        \DB::connection('company')->transaction(function() use ($movement, $movementRows, $request) {
-          try
-          {
-            $movement->save();
-            foreach ($movementRows as $movRow)
-            {
-              $row = $movement->rows()->save($movRow);
-              $row->lotRows()->saveMany($movRow->getAuxLots());
-            }
-
-            $movement = SMovement::find($movement->id_mvt);
-            foreach ($movement->rows as $row) {
-              $row->lotRows;
-            }
-            \Debugbar::info($movement);
-
-            $stkController = new SStockController();
-            $stkController->store($request, $movement);
-          }
-          catch (\Exception $e) {
-            \Debugbar::warning('Not saved!');
-            \Debugbar::info($e);
-          }
-       });
 
         // return redirect()->route('wms.home');
         return view('wms.index');
+    }
+
+    /**
+     * [Saves the movement in DB and creates and saves stock rows]
+     * @param  [SMovement] $movement
+     * @param  [Array of SMovementRow] $movementRows
+     * @param  [SMovRequest] $request
+     */
+    private function saveMovement($movements, $request)
+    {
+        \DB::connection('company')->transaction(function() use ($movements, $request) {
+          try
+          {
+            foreach ($movements as $mov)
+            {
+                $movement = clone $mov;
+                $movement->save();
+
+                foreach ($mov->aAuxRows as $movRow)
+                {
+                  $row = clone $movRow;
+                  $row->mvt_id = $movement->id_mvt;
+                  $row->save();
+
+                  foreach ($movRow->getAuxLots() as $lotRow)
+                  {
+                     $lRow = clone $lotRow;
+                     $lRow->mvt_row_id = $row->id_mvt_row;
+                     $lRow->save();
+                  }
+                  // $row->lotRows()->saveMany($movRow->getAuxLots());
+                }
+
+                $movement = SMovement::find($movement->id_mvt);
+                foreach ($movement->rows as $row)
+                {
+                  $row->lotRows;
+                }
+
+                $stkController = new SStockController();
+                $stkController->store($request, $movement);
+            }
+          }
+          catch (\Exception $e) {
+              \Debugbar::warning('Not saved!');
+              \Debugbar::error($e);
+          }
+       });
     }
 
     /**
@@ -322,8 +345,6 @@ class SMovsController extends Controller
 
       try
       {
-          \Debugbar::info("param: ".$request->parent." whs:".$request->whs);
-
           $dStock = 0.0;
           $obj = SBarcode::decodeBarcode($request->parent);
           // If the barcode is Item
@@ -413,6 +434,13 @@ class SMovsController extends Controller
       }
     }
 
+    /**
+     * [createMovement description]
+     * @param  string $iItemId   [description]
+     * @param  string $iUnitId   [description]
+     * @param  string $dQuantity [description]
+     * @return [type]            [description]
+     */
     public function createMovement($iItemId = '0', $iUnitId = '0', $dQuantity = '0')
     {
         $movRow = new SMovementRow();
@@ -427,6 +455,11 @@ class SMovsController extends Controller
         return $movRow;
     }
 
+    /**
+     * [createLotRows description]
+     * @param  array  $result [description]
+     * @return [type]         [description]
+     */
     public function createLotRows($result = [])
     {
        $lotRows = array();

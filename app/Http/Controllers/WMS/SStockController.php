@@ -47,7 +47,7 @@ class SStockController extends Controller
           $orderBy2 = 'ws.item_id';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
-          $select = $select.', '.'wp.pallet as pallet';
+          $select = $select.', '.'wp.pallet as pallet, ww.name as warehouse';
           $groupBy = ['ws.pallet_id','ws.item_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.item_id';
@@ -84,12 +84,18 @@ class SStockController extends Controller
                     ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
                     ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
                     ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
+                    ->where('ws.is_deleted', false)
                     ->select(\DB::raw($select))
                     ->groupBy($groupBy)
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)
-                    ->where('ws.is_deleted', false)
-                    ->get();
+                    ->having('stock', '>', '0');
+
+      if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET')) {
+          $stock = $stock->groupBy('ws.whs_id');
+      }
+
+      $stock = $stock->get();
 
       return view('wms.stock.stock')
                         ->with('iStockType', $iStockType)
@@ -104,6 +110,7 @@ class SStockController extends Controller
      */
     public function store(Request $request, $oMovement)
     {
+        \Debugbar::error($oMovement);
         foreach ($oMovement->rows as $movRow) {
           foreach ($movRow->lotRows as $lotRow) {
             $oStock = new SStock();

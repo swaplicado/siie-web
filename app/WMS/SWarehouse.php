@@ -1,6 +1,7 @@
 <?php namespace App\WMS;
 
 use Illuminate\Database\Eloquent\Model;
+use App\WMS\SLocation;
 
 class SWarehouse extends Model {
 
@@ -44,6 +45,11 @@ class SWarehouse extends Model {
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
+  }
+
+  public function getDefaultLocation()
+  {
+     return (SLocation::where('whs_id', $this->id_whs)->where('is_default', true)->get())[0];
   }
 
   public function scopeSearch($query, $name, $iFilter)

@@ -29,6 +29,8 @@ function addRow(e) {
 
   var sItemCode = document.getElementById("item").value; // gets the code of code bar
   var dInputQuantity = parseFloat(document.getElementById("quantity").value); // gets the quantity
+  var iWmsMvtType = parseInt(document.getElementById('mvt_whs_type_id').value);
+  movement.iMvtType = iWmsMvtType;
 
   var iWhsId = 0;
   var whsStock = 0;
@@ -61,7 +63,6 @@ function addRow(e) {
         }
         else if (oMovementRow.pallet_id > 1) {
           iMovType = globalData.IS_PALLET;
-          console.log(oMovementRow);
         }
         else {
           iMovType = globalData.IS_ITEM;
@@ -102,7 +103,7 @@ function addRow(e) {
         else {
           var idRow = movement.rowIdentifier; // gets the identifier of current row
 
-          addRowTr(idRow, ojsMovRow, iWhsId, iMovType);
+          addRowTr(idRow, ojsMovRow, iWhsId, iMovType, iWmsMvtType);
 
           rowTrId = movement.rowIdentifier;
           movement.addRow(ojsMovRow);
@@ -131,7 +132,7 @@ function addRow(e) {
 /*
 * Add a new Row on HTML table
 */
-function addRowTr(identifier, jsRow, iWhsId, iMovType) {
+function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
       // Pallets select
       var bPallSet = false;
       var iDefaultPallet = 1;
@@ -167,7 +168,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType) {
               locationOptions += "<option " +
                                       "value=" + element.id_whs_location +
                                       (isDefault ? " selected" : "") + ">" +
-                                      element.code + " - " + element.name +
+                                      element.code + "-" + element.name +
                                   "</option>";
           }
       });
@@ -236,22 +237,24 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType) {
 
     var oTdPALLETS = document.createElement("td");
     oTdPALLETS.setAttribute("align", "center");
-    oTdPALLETS.innerHTML = "<select onChange='setPall(this.value, this)' class='selPallet form-control'>" + optionsPall + "</select>";
+    oTdPALLETS.innerHTML = "<select " + (iWmsMvtType == globalData.MVT_TP_OUT_TRA ? "disabled='true'" : "")  +
+                              " onChange='setPall(this.value, this)' class='selPallet form-control'>" +
+                                          optionsPall +
+                            "</select>";
 
     var oTdPRICE = document.createElement("td");
-    oTdPRICE.appendChild(document.createTextNode(values[PRICE]));
     oTdPRICE.setAttribute("align", "right");
-    if (iMovType != globalData.IS_PALLET && globalData.iMvtType != globalData.MVT_TP_IN_TRA && globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
-      oTdPRICE.setAttribute("contenteditable", "true");
-    }
+    oTdPRICE.innerHTML = "<input align='right' class='form-control' type='number' " +
+                                (iMovType == globalData.IS_PALLET || iMovType == globalData.IS_LOT || (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
+                                " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
+                                values[PRICE] + "'>";
 
     var oTdQUANTITY = document.createElement("td");
-    oTdQUANTITY.appendChild(document.createTextNode(values[QUANTITY]));
-    oTdQUANTITY.setAttribute("class", "summ clsqty");
     oTdQUANTITY.setAttribute("align", "right");
-    if (iMovType != globalData.IS_PALLET && globalData.iMvtType != globalData.MVT_TP_IN_TRA && globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
-      oTdPRICE.setAttribute("contenteditable", "true");
-    }
+    oTdQUANTITY.innerHTML = "<input align='right' class='form-control summ clsqty' type='number' " +
+                                (iMovType == globalData.IS_PALLET || iMovType == globalData.IS_LOT || (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
+                                " placeholder='1.00' step='0.01' min='0' maxlength='15' size='2' value='" +
+                                values[QUANTITY] + "'>";
 
     var oTdLOTS = document.createElement("td");
     oTdLOTS.innerHTML = "<button type='button' class='buttlots btn btn-info btn-md'" +
@@ -312,7 +315,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType) {
 * Update the values of row when the item already exists
 */
 function updateRowTr(idRow, quantity) {
-  document.getElementById(idRow).children[7].innerHTML = parseFloat(quantity).toFixed(globalData.DEC_QTY);
+  document.getElementById(idRow).children[7].children[0].value = parseFloat(quantity).toFixed(globalData.DEC_QTY);
   movement.getRow(idRow).dQuantity = parseFloat(quantity);
 }
 

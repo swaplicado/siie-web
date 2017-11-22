@@ -51,26 +51,49 @@ function validateMovement(oMovement) {
 function validateInput() {
     var sItemCode = document.getElementById("item").value; // gets the code of code bar
     var dInputQuantity = document.getElementById("quantity").value; // gets the quantity
+    var iMovType = document.getElementById('mvt_whs_type_id').value;
 
-    var iWhsId = 0;
-    if (globalData.bIsInputMov) {
-      iWhsId = document.getElementById("whs_des").value;
+    var iWhsSrcId = 0;
+    var iWhsDesId = 0;
+
+    if (iMovType == globalData.MVT_TP_OUT_TRA) {
+      iWhsSrcId = document.getElementById("whs_src").value;
+      iWhsDesId = document.getElementById("whs_des").value;
     }
     else {
-      iWhsId = document.getElementById("whs_src").value;
+      if (!globalData.bIsInputMov) {
+          iWhsSrcId = document.getElementById("whs_src").value;
+      }
+      else {
+          iWhsDesId = document.getElementById("whs_des").value;
+      }
     }
 
-    if (iWhsId == 0) {
-      alert('Debe elegir un almacén');
+    if (iWhsSrcId == 0 && (!globalData.bIsInputMov || iMovType == globalData.MVT_TP_OUT_TRA)) {
+      alert('Debe elegir un almacén origen');
       document.getElementById("item").value = '';
       return false;
     }
+    if (iWhsDesId == 0 && (globalData.bIsInputMov || iMovType == globalData.MVT_TP_OUT_TRA)) {
+      alert('Debe elegir un almacén destino');
+      document.getElementById("item").value = '';
+      return false;
+    }
+
+    if (iMovType == globalData.MVT_TP_OUT_TRA) {
+      document.getElementById('whs_des').disabled = true;
+      movement.iWhsDes = parseInt(document.getElementById("whs_des").value);
+      document.getElementById('whs_src').disabled = true;
+      movement.iWhsSrc = parseInt(document.getElementById("whs_src").value);
+    }
     else {
       if (globalData.bIsInputMov) {
-        document.getElementById('whs_des').setAttribute("readonly", "readonly");
+        document.getElementById('whs_des').disabled = true;
+        movement.iWhsDes = parseInt(document.getElementById("whs_des").value);
       }
       else {
-        document.getElementById('whs_src').setAttribute("readonly", "readonly");
+        document.getElementById('whs_src').disabled = true;
+        movement.iWhsSrc = parseInt(document.getElementById("whs_src").value);
       }
     }
 
@@ -94,55 +117,56 @@ function validateInput() {
 * Validate sum of quantity in modal window
 * and enable or disable the close button
 */
-function validateLots() {
-  var total = 0.0;
-  var column = 1;
-  var columnLot = 6;
-  var bCeros = false;
-  var bLots = false;
+function validateLots(parentId) {
+    var total = 0.0;
+    var column = 1;
+    var columnLot = 6;
+    var bCeros = false;
+    var bLots = false;
 
-  // In this way using eq we select the second row, since the first one is 0
-  $("#lotsbody tr").find('td:eq(' + column + ')').each(function () {
+    // In this way using eq we select the second row, since the first one is 0
+    $("#lotsbody tr").find('td:eq(' + column + ')').each(function () {
 
-   //get the value from cell
-    valor = $(this).html();
-    if (valor <= 0) {
-      bCeros = true;
+     //get the value from cell
+      valor = $(this).html();
+      if (valor <= 0) {
+        bCeros = true;
+      }
+
+     //parse and sum
+      total += parseFloat(valor)
+    })
+
+    $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
+
+     //get the value from cell
+      valor = $(this).html();
+      if (valor == 0 || valor == '') {
+        bLots = true;
+      }
+    })
+
+    btnClose = document.getElementById('closeModal');
+
+    // var dQuantity = document.getElementById('qtyComplete').value;
+    // Valid if the amount to complete is correct and enable and disable the button
+    if (bCeros) {
+      btnClose.disabled = true;
+      alert("No puede haber renglones con cantidad menor o igual a cero");
+      return false;
+    }
+    if (bLots) {
+      btnClose.disabled = true;
+      alert("No puede haber renglones sin lote");
+      return false;
+    }
+    var iMovType = document.getElementById('mvt_whs_type_id').value;
+    var parentRow = movement.getRow(parentId);
+
+    if (iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) {
+      btnClose.disabled = true;
+      return false;
     }
 
-   //parse and sum
-    total += parseFloat(valor)
-  })
-
-  $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
-
-   //get the value from cell
-    valor = $(this).html();
-    if (valor == 0 || valor == '') {
-      bLots = true;
-    }
-  })
-
-  btnClose = document.getElementById('closeModal');
-
-  var dQuantity = document.getElementById('qtyComplete').value;
-  // Valid if the amount to complete is correct and enable and disable the button
-  if (bCeros) {
-    btnClose.disabled = true;
-    alert("No puede haber renglones con cantidad menor o igual a cero");
-    return false;
-  }
-  if (bLots) {
-    btnClose.disabled = true;
-    alert("No puede haber renglones sin lote");
-    return false;
-  }
-
-  btnClose.disabled = false;
-  // if (dQuantity == total) {
-  //   btnClose.disabled = false;
-  // }
-  // else {
-  //   btnClose.disabled = true;
-  // }
+    btnClose.disabled = false;
 }
