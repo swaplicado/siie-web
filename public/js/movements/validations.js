@@ -4,14 +4,27 @@
 function validateMovement(oMovement) {
 
   if (oMovement.rows.length == 0) {
-    alert("No ha agregado movimientos.");
+    swal("Error", "No han agregado movimientos.", "error");
     return false;
   }
 
   var valid = true;
+  var rowIndex = 1;
   oMovement.rows.forEach(function(row) {
       if (row.oAuxItem.is_lot && row.lotRows.length == 0) {
-          alert("El renglón " + row.oAuxItem.name + " no tiene lotes asignados.");
+          swal("Error", "El renglón " + row.oAuxItem.name + " no tiene lotes asignados.", "error");
+          valid = false;
+          return false;
+      }
+
+      if (Number.isNaN(Number.parseFloat(row.dQuantity))) {
+          swal("Error", "Debe ingresar sólo números en los campos cantidad y precio.", "error");
+          valid = false;
+          return false;
+      }
+
+      if (!row.oAuxItem.is_bulk && isFloat(parseFloat(row.dQuantity))) {
+          swal("Error", "El renglón " + row.oAuxItem.name + " no acepta decimales.", "error");
           valid = false;
           return false;
       }
@@ -21,26 +34,59 @@ function validateMovement(oMovement) {
           qtySum += lotRow.dQuantity;
 
           if (row.oAuxItem.is_lot && lotRow.iLotId <= 0) {
-            alert("El código " + row.sAuxItemCode + " no tiene un lote asignado.");
+            swal("Error", "El código " + row.sAuxItemCode + " no tiene un lote asignado.", "error");
             valid = false;
             return false;
           }
       });
 
-      // if (valid && qtySum != row.dQuantity) {
-      //   alert("La cantidad del código " + row.oAuxItem.name + " no coincide con lo asignado.");
-      //   valid = false;
-      //   return false;
-      // }
-
-      // if (valid) {
-      //   if (!globalData.bIsInputMov && row.aStock[0] < row.dQuantity) {
-      //       alert("No hay suficientes existencias en el almacén para realizar el movimiento");
-      //       valid = false;
-      //       return false;
-      //   }
-      // }
+      if (row.oAuxItem.is_lot && qtySum != row.dQuantity) {
+          swal("Error", "Asignación de lotes inconsistente en el material/producto " + row.oAuxItem.name + ", renglón " + rowIndex + ".", "error");
+          valid = false;
+          return false;
+      }
+      rowIndex++;
   });
+
+  if (oMovement.iMvtType == globalData.PALLET_RECONFIG_IN) {
+      var totalQuantity = 0;
+      var palletLotRows = [];
+
+      function LotRow(idLot, quantity) {
+          this.iLotId = idLot;
+          this.dQuantity = quantity;
+      }
+
+      oMovement.auxPalletRow.lotRows.forEach(function(row) {
+          palletLotRows.push(new LotRow(row.iLotId, row.dQuantity));
+      });
+
+      oMovement.rows.forEach(function(row) {
+        totalQuantity += row.dQuantity;
+
+        row.lotRows.forEach(function(lotRow) {
+            palletLotRows.forEach(function(palletLot) {
+                if (lotRow.iLotId == palletLot.iLotId) {
+                    palletLot.dQuantity -= lotRow.dQuantity;
+                }
+            });
+        });
+      });
+
+      if (totalQuantity > oMovement.auxPalletRow.dQuantity) {
+        swal("Error", "No puede mover más unidades de las que contiene la tarima.", "error");
+        valid = false;
+        return false;
+      }
+
+      palletLotRows.forEach(function(palletLot) {
+          if (palletLot.dQuantity < 0) {
+            swal("Error", "No hay suficientes existencias de lote " + palletLot.iLotId + " en la tarima.", "error");
+            valid = false;
+            return false;
+          }
+      });
+  }
 
   return valid;
 }
@@ -70,35 +116,39 @@ function validateInput() {
     }
 
     if (iWhsSrcId == 0 && (!globalData.bIsInputMov || iMovType == globalData.MVT_TP_OUT_TRA)) {
-      alert('Debe elegir un almacén origen');
+      swal("Aviso", "Debe elegir un almacén origen.", "warning");
       document.getElementById("item").value = '';
       return false;
     }
     if (iWhsDesId == 0 && (globalData.bIsInputMov || iMovType == globalData.MVT_TP_OUT_TRA)) {
-      alert('Debe elegir un almacén destino');
+      swal("Aviso", "Debe elegir un almacén destino.", "warning");
       document.getElementById("item").value = '';
       return false;
     }
 
     if (iMovType == globalData.MVT_TP_OUT_TRA) {
-      document.getElementById('whs_des').disabled = true;
+      // document.getElementById('whs_des').setAttribute("disabled", "disabled");
       movement.iWhsDes = parseInt(document.getElementById("whs_des").value);
-      document.getElementById('whs_src').disabled = true;
+      $('#whs_des').prop('disabled', true).trigger("chosen:updated");
+      // document.getElementById('whs_src').setAttribute("disabled", "disabled");
       movement.iWhsSrc = parseInt(document.getElementById("whs_src").value);
+      $('#whs_src').prop('disabled', true).trigger("chosen:updated");
     }
     else {
       if (globalData.bIsInputMov) {
-        document.getElementById('whs_des').disabled = true;
+        // document.getElementById('whs_des').setAttribute("disabled", "disabled");
+        $('#whs_des').prop('disabled', true).trigger("chosen:updated");
         movement.iWhsDes = parseInt(document.getElementById("whs_des").value);
       }
       else {
-        document.getElementById('whs_src').disabled = true;
+        // document.getElementById('whs_src').prop('disabled', true).trigger("chosen:updated");
+        $('#whs_src').prop('disabled', true).trigger("chosen:updated");
         movement.iWhsSrc = parseInt(document.getElementById("whs_src").value);
       }
     }
 
     if (sItemCode == '') {
-      alert('Debe ingresar un código');
+      swal("Aviso", "Debe ingresar un código.", "warning");
       return false;
     }
     else {
@@ -106,7 +156,7 @@ function validateInput() {
     }
 
     if (dInputQuantity <= 0) {
-      alert('La cantidad no puede ser menor o igual a cero');
+      swal("Aviso", "La cantidad no puede ser menor o igual a cero.", "warning");
       return false;
     }
 
@@ -123,50 +173,77 @@ function validateLots(parentId) {
     var columnLot = 6;
     var bCeros = false;
     var bLots = false;
+    var bNumber = true;
+    var bBulk = true;
+
+    var parentRow = movement.getRow(parentId);
 
     // In this way using eq we select the second row, since the first one is 0
     $("#lotsbody tr").find('td:eq(' + column + ')').each(function () {
 
      //get the value from cell
-      valor = $(this).html();
+      valor = $(this)[0].children[0].value;
+      if (Number.isNaN(Number.parseFloat(valor))) {
+          bNumber = false;
+          return false;
+      }
       if (valor <= 0) {
-        bCeros = true;
+          bCeros = true;
+          return false;
+      }
+
+      if (!parentRow.oAuxItem.is_bulk && isFloat(parseFloat(valor))) {
+          bBulk = false;
+          return false;
       }
 
      //parse and sum
       total += parseFloat(valor)
-    })
+    });
 
-    $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
-
-     //get the value from cell
-      valor = $(this).html();
-      if (valor == 0 || valor == '') {
-        bLots = true;
-      }
-    })
+    // $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
+    //
+    //  //get the value from cell
+    //   valor = $(this)[0].children[0].value;
+    //   if (valor == 0 || valor == '') {
+    //     bLots = true;
+    //   }
+    // })
 
     btnClose = document.getElementById('closeModal');
 
     // var dQuantity = document.getElementById('qtyComplete').value;
     // Valid if the amount to complete is correct and enable and disable the button
+    if (!bNumber) {
+      swal("Error", "Debe ingresar sólo números en los campos cantidad y precio.", "error");
+      return false;
+    }
     if (bCeros) {
-      btnClose.disabled = true;
-      alert("No puede haber renglones con cantidad menor o igual a cero");
+      // btnClose.disabled = true;
+      swal("Aviso", "No puede haber renglones con cantidad menor o igual a cero.", "warning");
       return false;
     }
-    if (bLots) {
-      btnClose.disabled = true;
-      alert("No puede haber renglones sin lote");
+    if (!bBulk) {
+      // btnClose.disabled = true;
+      swal("Aviso", "No se admiten decimales para este material/producto.", "warning");
       return false;
     }
+    // if (bLots) {
+    //   btnClose.disabled = true;
+    //   alert("No puede haber renglones sin lote");
+    //   return false;
+    // }
     var iMovType = document.getElementById('mvt_whs_type_id').value;
-    var parentRow = movement.getRow(parentId);
+
 
     if (iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) {
       btnClose.disabled = true;
       return false;
     }
+    else {
+      btnClose.disabled = false;
+    }
 
-    btnClose.disabled = false;
+    return true;
+
 }

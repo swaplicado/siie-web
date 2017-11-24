@@ -8,6 +8,7 @@ class SMovement {
       this.iWhsSrc = 0;
       this.iWhsDes = 0;
       this.rows = [];
+      this.auxPalletRow = '';
     }
 
     get rowIdentifier() {
@@ -63,6 +64,8 @@ class SMovementRow {
       this.dPrice = 0;
       this.oAuxItem = '';
       this.oAuxUnit = '';
+      this.oAuxPallet = '';
+      this.oAuxLocation = '';
 
       this.lotRows = [];
       this.aStock = [];

@@ -30,6 +30,8 @@ return [
           'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
           'WHS_MOVS' => 'Movimientos de inventario',
           'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
+          'PALLET_DIVISION' => 'División de tarima',
+          'PALLET_CREATION' => 'Creación de tarima',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',
@@ -48,6 +50,7 @@ return [
                       'QTY' => 'Cantidad',
                       'LOTS_ASSIGNAMENT' => 'Asignación de lotes',
                       'QTY_FOR_COMPLETE' => 'Cantidad por completar',
+                      'WAREHOUSE' => 'Almacén',
                     ],
 
       'buttons'  => [

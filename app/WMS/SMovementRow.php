@@ -61,6 +61,11 @@ class SMovementRow extends Model {
     return $this->belongsTo('App\WMS\SPallet', 'pallet_id');
   }
 
+  public function location()
+  {
+    return $this->belongsTo('App\WMS\SLocation', 'location_id');
+  }
+
   public function setAuxLots($value = array())
   {
      $this->auxLots = $value;

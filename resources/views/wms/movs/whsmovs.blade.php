@@ -19,13 +19,13 @@
       <div class="form-group">
 				{!! Form::hidden('mvt_whs_class_id', $oMovType->mvt_class_id) !!}
   			{!! Form::label('mvt_whs_type_id', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_whs_type_id', $movTypes, $oMovType->id_mvt_type, ['class'=>'form-control',
+				{!! Form::select('mvt_whs_type_id', $movTypes, $oMovType->id_mvt_type, ['class'=>'form-control select-one',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'disabled']) !!}
   		</div>
 
       <div class="form-group">
   			{!! Form::label('mvt_com', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_com', $mvtComp, 1, ['class'=>'form-control',
+				{!! Form::select('mvt_com', $mvtComp, 1, ['class'=>'form-control select-one',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required', ]) !!}
   		</div>
 
@@ -46,13 +46,15 @@
 				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_OUT') ||
 							$oMovType->id_mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA'))
 						{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
-						{!! Form::select('whs_src', $warehouses, 0, ['class'=>'form-control',
+						{!! Form::select('whs_src', $warehouses, 0, ['class'=>'form-control border_red select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
 				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_IN') ||
 							$oMovType->id_mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA'))
-		  			{!! Form::label('whs_des', trans('userinterface.labels.MVT_WHS_DEST').'*') !!}
-						{!! Form::select('whs_des', $warehouses, 0, ['class'=>'form-control',
+		  			{!! Form::label('whs_des', ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ?
+							trans('wms.labels.WAREHOUSE') :
+									trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
+						{!! Form::select('whs_des', $warehouses, 0, ['class'=>'form-control select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
 			</div>
@@ -67,7 +69,8 @@
 							</div>
 						  <div class="col-md-3">
 									{!! Form::number('quantity', 1, ['class'=>'form-control', 'id' => 'quantity','onkeypress' => 'addRowByEnter(event)',
-																												'placeholder' => trans('userinterface.placeholders.QUANTITY')]) !!}
+																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
+																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ? 'disabled' : '']) !!}
 							</div>
 						  <div class="col-md-3">
 									<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
@@ -76,20 +79,26 @@
   			</div>
     </div>
   </div>
+	@if ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN'))
+		<label style="color: #0200e6">Tarima a dividir:</label>
+		@include('wms.movs.pallet')
+		<br />
+		<label style="color: #0200e6">Elementos que se moverán:</label>
+	@endif
   <div class="row">
     <div class="col-xs-12">
 			<div class="form-group">
 				<table id="example" class="table table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 						<thead>
 								<tr class="titlerow">
-										<th data-override="id_tr" style="display:none;"></th>
-										<th data-override="code">{{ trans('wms.labels.CODE') }}</th>
+										<th style="display:none;"></th>
+										<th>{{ trans('wms.labels.CODE') }}</th>
 										<th>{{ trans('wms.labels.MAT_PROD') }}</th>
 										<th>{{ trans('wms.labels.UNIT') }}</th>
 										<th>{{ trans('wms.labels.LOCATION') }}</th>
-										<th data-override="price">{{ trans('wms.labels.PALLET') }}</th>
-										<th data-override="price">{{ trans('wms.labels.PRICE') }}</th>
-										<th data-override="qty">{{ trans('wms.labels.QTY') }}</th>
+										<th>{{ trans('wms.labels.PALLET') }}</th>
+										<th>{{ trans('wms.labels.PRICE') }}</th>
+										<th>{{ trans('wms.labels.QTY') }}</th>
 										<th>{{ trans('wms.labels.LOT') }}</th>
 										<th>{{ trans('wms.labels.STOCK') }}</th>
 										<th>-</th>
@@ -116,6 +125,7 @@
 		function GlobalData () {
 		  this.lLots = <?php echo json_encode($lots); ?>;
 		  this.lPallets = <?php echo json_encode($pallets); ?>;
+			this.lWarehouses = <?php echo json_encode($warehousesObj); ?>;
 		  this.lLocations = <?php echo json_encode($locations); ?>;
 		  this.bIsInputMov = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
 		  this.iMvtClass = <?php echo json_encode($oMovType->mvt_class_id); ?>;
@@ -142,8 +152,8 @@
 		  this.MVT_TP_OUT_PRO = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_PRO')) ?>;
 		  this.MVT_TP_OUT_EXP = <?php echo json_encode(\Config::get('scwms.MVT_TP_OUT_EXP')) ?>;
 
-		  this.RE_PALL_IN  =  <?php echo json_encode(\Config::get('scwms.RE_PALL_IN')) ?>;
-		  this.RE_PALL_OUT  =  <?php echo json_encode(\Config::get('scwms.RE_PALL_OUT')) ?>;
+		  this.PALLET_RECONFIG_IN  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_IN')) ?>;
+		  this.PALLET_RECONFIG_OUT  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_OUT')) ?>;
 
 			var qty = <?php echo json_encode(session('decimals_qty')) ?>;
 			var amt = <?php echo json_encode(session('decimals_amt')) ?>;
@@ -222,6 +232,13 @@
 			var sBut = document.getElementById("saveButton"); // save button
 
 			if (fre.firstChild.data == "Congelar") {
+				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
+					movement.auxPalletRow = oPalletRow;
+				}
+				else {
+					movement.auxPalletRow = '';
+				}
+
 				if (validateMovement(movement)) {
 						but.disabled = true;
 						item.disabled = true;
@@ -235,7 +252,10 @@
 						  $("select.selPallet").attr("disabled", true);
 						});
 
-						console.log(movement);
+						if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
+							discountMovements(movement);
+						}
+
 						setData(movement); //the table is sends to the server
 
 						fre.innerHTML = "Descongelar";
@@ -247,11 +267,14 @@
 				qty.disabled = false;
 				sBut.disabled = true;
 
-				$(function(){
+				$(function() {
 					$("button.removebutton").attr("disabled", false);
+					if (globalData.iMvtType != globalData.MVT_TP_OUT_TRA && globalData.iMvtType != globalData.PALLET_RECONFIG_IN) {
+						$("select.selPallet").attr("disabled", false);
+					}
 					$("button.buttlots").attr("disabled", false);
 					// $("button.butstk").attr("disabled", false);
-					$("select.selPallet").attr("disabled", false);
+
 				});
 
 				setData("");
@@ -259,6 +282,10 @@
 				fre.innerHTML = "Congelar";
 			}
 		}
+
+		$('.select-one').chosen({
+			placeholder_select_single: 'Seleccione un item...'
+		});
 
 	</script>
 @endsection
