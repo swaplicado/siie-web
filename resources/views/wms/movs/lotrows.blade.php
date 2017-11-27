@@ -44,7 +44,7 @@
 				</table>
       </div>
       <div class="modal-footer">
-        <button id="closeModal" type="button" disabled="true" class="btn btn-default" data-dismiss="modal">{{ trans('actions.SAVE') }}</button>
+        <button id="closeModal" type="button" class="btn btn-default" data-dismiss="modal">{{ trans('actions.SAVE') }}</button>
       </div>
     </div>
 

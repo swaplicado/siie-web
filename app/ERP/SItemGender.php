@@ -35,7 +35,7 @@ class SItemGender extends Model {
     return $this->belongsTo('App\ERP\SItemGroup', 'item_group_id');
   }
 
-  public function class()
+  public function itemClass()
   {
     return $this->belongsTo('App\ERP\SItemClass', 'item_class_id');
   }

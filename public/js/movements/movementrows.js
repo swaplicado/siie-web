@@ -1,3 +1,14 @@
+/**
+ * 0 = isn't pallet reconfiguration
+ * 1 = the pallet was set
+ * 2 = the first not is pallet
+ * 3 = normal process after pallet set
+ *
+ * @type {Number} iPalletReconfig
+ */
+var iPalletReconfig = 0;
+var palletMovement = new SMovement();
+
 /*
 * Calls the method to add row when the button is clicked
 * Row of movement
@@ -42,30 +53,48 @@ function addRow(e) {
     whsStock = iWhsId;
   }
 
+  document.getElementById('item').value = '';
+
   //ajax
   $.get('./create/children?parent=' + sItemCode + '&whs=' + whsStock + '&idCls=' + globalData.iMvtClass,
    function(data) { // executes the method children of controller
       // data is the "data" that the controller returns
       $('.dataTables_empty').remove(); // remove the row with the class: dataTables_empty
       var bItemFound = false;
-      console.log(data);
+      var bIsItemFromWhs = true;
 
       $.each(data, function(index, oMovementRow) { // iterate each of the movements
         bItemFound = true;
         bFound = false;
         iRowId = 0;
 
+        if (!validateItemFromWarehouse(globalData.lWarehouses, iWhsId, oMovementRow.item)) {
+            bIsItemFromWhs = false;
+            return false;
+        }
+
         var iMovType = 0;
         if (oMovementRow.aux_lot_id > 0) {
           iMovType = globalData.IS_LOT;
           idLot = oMovementRow.aux_lot_id;
-          console.log(oMovementRow);
         }
         else if (oMovementRow.pallet_id > 1) {
           iMovType = globalData.IS_PALLET;
         }
         else {
           iMovType = globalData.IS_ITEM;
+        }
+
+        // Pallets reconfiguration
+        if ((iWmsMvtType == globalData.PALLET_RECONFIG_IN || iWmsMvtType == globalData.PALLET_RECONFIG_OUT) &&
+                (iPalletReconfig == 0 || iPalletReconfig == 2)) {
+            if (iMovType == globalData.IS_PALLET) {
+                iPalletReconfig = 1;
+            }
+            else {
+                iPalletReconfig = 2;
+                return false;
+            }
         }
 
         var ojsMovRow = new SMovementRow(movement.rowIdentifier);
@@ -76,11 +105,20 @@ function addRow(e) {
         ojsMovRow.iLocationId = oMovementRow.location_id;
         ojsMovRow.oAuxItem = oMovementRow.item;
         ojsMovRow.oAuxUnit = oMovementRow.unit;
+        ojsMovRow.oAuxPallet = oMovementRow.pallet;
+        ojsMovRow.oAuxLocation = oMovementRow.location;
         ojsMovRow.aStock = oMovementRow.aux_stock;
 
         // If the definition of the platform has an assigned amount, this is set, if the user's input is not set
         ojsMovRow.dQuantity = oMovementRow.quantity > 0 ? parseFloat(oMovementRow.quantity) * dInputQuantity : dInputQuantity;
         ojsMovRow.dPrice = oMovementRow.amount_unit >= 0 ? parseFloat(oMovementRow.amount_unit) : 0;
+
+        //pallets reconfiguration
+        if (iPalletReconfig == 3) {
+           if (!palletValidation(ojsMovRow, iWhsId, iMovType == globalData.IS_LOT ? oMovementRow.aux_lot_id : 0)) {
+                return false;
+           }
+        }
 
         // checks if the pallet was selected before
         movement.rows.forEach(function(element) {
@@ -96,35 +134,52 @@ function addRow(e) {
         // if pallet was selected previously
         if (bFound) {
           movement.getRow(iRowId).dQuantity += ojsMovRow.dQuantity;
-          updateRowTr(iRowId, movement.getRow(iRowId).dQuantity);
-
           rowTrId = iRowId;
+          if (iWmsMvtType != globalData.PALLET_RECONFIG_IN || iMovType != globalData.IS_PALLET) {
+            updateRowTr(iRowId, movement.getRow(iRowId).dQuantity);
+          }
         }
         else {
           var idRow = movement.rowIdentifier; // gets the identifier of current row
-
-          addRowTr(idRow, ojsMovRow, iWhsId, iMovType, iWmsMvtType);
-
           rowTrId = movement.rowIdentifier;
           movement.addRow(ojsMovRow);
-          console.log(movement.rows);
+
+          if (iWmsMvtType != globalData.PALLET_RECONFIG_IN || iPalletReconfig == 3) {
+            addRowTr(idRow, ojsMovRow, iWhsId, iMovType, iWmsMvtType);
+          }
         }
 
         //this code adds the lots to rows
         if (iMovType == globalData.IS_LOT) {
-            // If the movement row is of lot, add a new lot
-            addOrUpdateLotRow(rowTrId, idLot, ojsMovRow.dQuantity, ojsMovRow.dPrice);
+            if (iWmsMvtType != globalData.PALLET_RECONFIG_IN || iMovType != globalData.IS_PALLET) {
+              // If the movement row is of lot, add a new lot
+              addOrUpdateLotRow(rowTrId, idLot, ojsMovRow.dQuantity, ojsMovRow.dPrice);
+            }
         }
         else if (iMovType == globalData.IS_PALLET) {
           // if the movement row is of a pallet, add the lots with stock in pallet
-          oMovementRow.aux_lots.forEach(function(lot) {
-              addOrUpdateLotRow(rowTrId, parseInt(lot.lot_id), parseFloat(lot.quantity), parseFloat(lot.amount_unit));
-          });
+          if (iWmsMvtType != globalData.PALLET_RECONFIG_IN  || iPalletReconfig == 1 || iMovType != globalData.IS_PALLET) {
+            oMovementRow.aux_lots.forEach(function(lot) {
+                addOrUpdateLotRow(rowTrId, parseInt(lot.lot_id), parseFloat(lot.quantity), parseFloat(lot.amount_unit));
+            });
+          }
+        }
+
+        if (iWmsMvtType == globalData.PALLET_RECONFIG_IN && iPalletReconfig == 1) {
+            palletRow = movement.rows.pop()
+            iPalletReconfig = 3;
+            document.getElementById('quantity').disabled = false;
+            updatePallet(palletRow);
         }
       });
 
       if (! bItemFound) {
-        alert("No se encontraron resultados");
+        // alert("No se encontraron resultados");
+        swal( "???", "No se encontraron resultados.", "warning");
+      }
+      if (iWmsMvtType == globalData.PALLET_RECONFIG_IN && iPalletReconfig == 2) {
+        // alert("Debe de elegir primero una tarima");
+        swal( "Error", "Debe de elegir primero una tarima.", "error");
       }
     });
 }
@@ -188,10 +243,6 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
     const QUANTITY = 8;
     const DEL = 9;
     const STOCK = 14;
-    // const ITEM_ID = 10;
-    // const UNIT_ID = 11;
-    // const LOC_ID = 12;
-    // const PALL_ID = 13;
 
     var values = [ //this is the array of values for the row
                 identifier,
@@ -202,7 +253,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
                 "  Lotes",
                 "",
                 parseFloat(jsRow.dPrice).toFixed(globalData.DEC_AMT),
-                parseFloat(jsRow.dQuantity).toFixed(globalData.DEC_QTY),
+                parseFloat(iWmsMvtType == globalData.PALLET_RECONFIG_IN && iMovType == globalData.IS_PALLET ? 1 : jsRow.dQuantity).toFixed(globalData.DEC_QTY),
                 "",
                 parseInt(jsRow.iItemId),
                 parseInt(jsRow.iUnitId),
@@ -237,7 +288,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
 
     var oTdPALLETS = document.createElement("td");
     oTdPALLETS.setAttribute("align", "center");
-    oTdPALLETS.innerHTML = "<select " + (iWmsMvtType == globalData.MVT_TP_OUT_TRA ? "disabled='true'" : "")  +
+    oTdPALLETS.innerHTML = "<select " + (iWmsMvtType == globalData.MVT_TP_OUT_TRA || iWmsMvtType == globalData.PALLET_RECONFIG_IN ? "disabled='true'" : "")  +
                               " onChange='setPall(this.value, this)' class='selPallet form-control'>" +
                                           optionsPall +
                             "</select>";
@@ -251,7 +302,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
 
     var oTdQUANTITY = document.createElement("td");
     oTdQUANTITY.setAttribute("align", "right");
-    oTdQUANTITY.innerHTML = "<input align='right' class='form-control summ clsqty' type='number' " +
+    oTdQUANTITY.innerHTML = "<input align='right' class='form-control' type='number' " +
                                 (iMovType == globalData.IS_PALLET || iMovType == globalData.IS_LOT || (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='2' value='" +
                                 values[QUANTITY] + "'>";
@@ -271,26 +322,6 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
     oTdDEL.innerHTML = "<button type='button' class='removebutton btn btn-danger btn-md' title='Quitar renglón'>" +
     "<li class='glyphicon glyphicon-remove'></li>"
     "</button>";
-    //
-    // var oTdITEM_ID = document.createElement("td");
-    // oTdITEM_ID.appendChild(document.createTextNode(values[ITEM_ID]));
-    // oTdITEM_ID.setAttribute("style", "display:none;");
-    // oTdITEM_ID.setAttribute("class", "id_item");
-    //
-    // var oTdUNIT_ID = document.createElement("td");
-    // oTdUNIT_ID.appendChild(document.createTextNode(values[UNIT_ID]));
-    // oTdUNIT_ID.setAttribute("style", "display:none;");
-    // oTdUNIT_ID.setAttribute("class", "id_unit");
-    //
-    // var oTdLOC_ID = document.createElement("td");
-    // oTdLOC_ID.appendChild(document.createTextNode(values[LOC_ID]));
-    // oTdLOC_ID.setAttribute("style", "display:none;");
-    // oTdLOC_ID.setAttribute("class", "id_loc");
-    //
-    // var oTdPALL_ID = document.createElement("td");
-    // oTdPALL_ID.appendChild(document.createTextNode(values[PALL_ID]));
-    // oTdPALL_ID.setAttribute("style", "display:none;");
-    // oTdPALL_ID.setAttribute("class", "id_pall");
 
     oTr.appendChild(oTdFIRST);
     oTr.appendChild(oTdITEM_CODE);
@@ -303,10 +334,6 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
     oTr.appendChild(oTdLOTS);
     oTr.appendChild(oTdSTOCK);
     oTr.appendChild(oTdDEL);
-    // oTr.appendChild(oTdITEM_ID);
-    // oTr.appendChild(oTdUNIT_ID);
-    // oTr.appendChild(oTdLOC_ID);
-    // oTr.appendChild(oTdPALL_ID);
 
     tblBody.appendChild(oTr);
 }
@@ -392,4 +419,60 @@ function viewStock(obj) {
     Vue.set(vm.stock, 'released', dReleased);
     Vue.set(vm.stock, 'segregated', dSegregated);
     Vue.set(vm.stock, 'available', dAvailable);
+}
+
+function validateItemFromWarehouse(lWarehouses, whsId, item) {
+  isValid = false;
+
+  /**
+   *  Item classes
+   *  1	MATERIAL
+   *  2	PRODUCT
+   *  3	SPENDING
+   */
+  /**
+   *  Whs types
+   *  1 N/A
+   *  2 MATERIAL
+   *  3 PRODUCTION
+   *  4 PRODUCT
+   */
+
+  lWarehouses.forEach(function(whs) {
+      if (whs.id_whs == whsId) {
+        switch (whs.whs_type.id_whs_type) {
+          case 1:
+                  isValid = true;
+                  return true;
+            break;
+          case 2:
+                  if (item.gender.item_class.id_item_class == 1) {
+                    isValid = true;
+                    return true;
+                  }
+            break;
+          case 3:
+                  if (item.gender.item_class.id_item_class == 2 || item.gender.item_class.id_item_class == 1) {
+                    isValid = true;
+                    return true;
+                  }
+            break;
+          case 4:
+                  if (item.gender.item_class.id_item_class == 2) {
+                    isValid = true;
+                    return true;
+                  }
+            break;
+          default:
+
+        }
+      }
+  });
+
+  if (!isValid) {
+      // alert("No puede ingresar este material/producto en este almacén");
+      swal("Error", "No puede ingresar este material/producto en este almacén.", "error");
+  }
+
+  return isValid;
 }
