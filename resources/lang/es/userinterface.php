@@ -20,6 +20,7 @@
 		'PERMISSIONS' => 'Permisos',
 		'CATALOGUES' => 'Catálogos',
 		'TOTAL' => 'TOTAL',
+		'SYS_PERMISSIONS' => 'Permisos del sistema',
 
 		'administration' =>	[
 													'MSG_YES' => 'Sí',
@@ -49,6 +50,7 @@
 											'LIST_SPENDING' => 'Gastos',
 											'CHANGE_PASS' => 'Cambiar contraseña',
 											'CREATE_ADDRESS' => 'Crear dirección',
+											'CREATE_USER_PERMISSION' => 'Otorgar los permisos correspondientes a:',
 											'CREATE_USER' => 'Crear usuario',
 											'CREATE_PERMISSION' => 'Crear usuario',
 											'CREATE_ASSIGNAMENT' => 'Crear asignación',
