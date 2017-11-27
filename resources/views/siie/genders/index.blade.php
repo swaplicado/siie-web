@@ -28,8 +28,8 @@
 			@foreach($genders as $gender)
 				<tr>
 					<td>{{ $gender->name }}</td>
-					<td>{{ $gender->group->name }}</td>
-					<td>{{ $gender->class->name }}</td>
+					<td>{{ $gender->itemClass->name }}</td>
+					<td>{{ $gender->itemClass->name }}</td>
 					<td>{{ $gender->type->name }}</td>
 					<td>
 						@if (! $gender->is_deleted)
