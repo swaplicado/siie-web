@@ -19,7 +19,10 @@
         </div>
         <div class="panel-body">
           <section>
+            <br />
+            <br />
             @include('flash::message')
+            <br />
             @include('templates.error')
 
             <div class="col-md-12">
@@ -32,8 +35,6 @@
     </div>
 
     </div>
-    @include('templates.scriptsmovs')
-
     @yield('js')
   </body>
   <footer>

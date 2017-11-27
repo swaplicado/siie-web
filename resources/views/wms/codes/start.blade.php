@@ -41,7 +41,7 @@
 
 
       	<div class="form-group" align="right">
-      		{!! Form::submit('Generar', ['class' => 'btn btn-primary', 'onClick' => 'disable(this)']) !!}
+      		{!! Form::submit('Generar', ['class' => 'btn btn-primary']) !!}
         </div>
       </div>
 

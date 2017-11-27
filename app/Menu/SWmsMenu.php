@@ -18,13 +18,43 @@ class SWmsMenu {
             \Menu::new()
                 ->addClass('dropdown-menu')
                 ->route('wms.whs.index', trans('wms.WAREHOUSES'))
-                ->route('wms.locs.index', trans('wms.LOCATIONS'))
+                ->addIf(session('location_enabled'), Link::toRoute('wms.locs.index', trans('wms.LOCATIONS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
-                ->link('#', trans('wms.PALLETS'))
-                ->link('#', trans('wms.LOTS'))
+                ->route('wms.pallets.index', trans('wms.PALLETS'))
+                ->route('wms.lots.index', trans('wms.LOTS'))
                 ->route('wms.codes.start', trans('wms.BAR_CODES'))
         )
-        ->route('wms.movs.index', trans('wms.MOV_STK'))
+        ->submenu(
+            Link::to('#', trans('wms.MOV_STK').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->route('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ')])
+                ->route('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ')])
+                ->route('wms.movs.create', trans('wms.MOV_WHS_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA')])
+                ->route('wms.movs.create', trans('wms.RECONFIG_PALLETS'), [\Config::get('scwms.PALLET_RECONFIG_OUT')])
+        )
+        ->submenu(
+            Link::to('#', trans('wms.WHS_MOVS_QUERY').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->route('wms.movs.index', trans('wms.WHS_MOVS'))
+        )
+        ->submenu(
+            Link::to('#', trans('wms.STOCK_QUERY').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->route('wms.stock.index', 'Existencias por ítem', [\Config::get('scwms.STOCK_TYPE.STK_BY_ITEM')])
+                ->route('wms.stock.index', 'Existencias por tarima', [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET')])
+                ->route('wms.stock.index', 'Existencias por lote', [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT')])
+                ->addIf(session('location_enabled'), Link::toRoute('wms.stock.index', 'Existencias por ubicación', [\Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION')]))
+                ->route('wms.stock.index', 'Existencias por almacén', [\Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE')])
+        )
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
     });

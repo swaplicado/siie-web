@@ -4,6 +4,7 @@
 
 return [
       'MODULE'  => 'Módulo Almacenes',
+      'STOCK_QUERY'  => 'Consulta de existencias',
 
       'CATALOGUES' => 'Catálogos',
           'WAREHOUSES' => 'Almacenes',
@@ -22,7 +23,13 @@ return [
           'PALL_STK' => 'Existencias por tarima',
           'LOC_STK' => 'Existencias por ubicación',
           'WHS_STK' => 'Existencias por Almacén',
-          'MOV_STK' => 'Movimientos de inventario',
+          'MOV_STK' => 'Operaciones',
+          'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
+          'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
+          'MOV_WHS_TRS_OUT' => 'Traspaso de almacén',
+          'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
+          'WHS_MOVS' => 'Movimientos de inventario',
+          'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',
@@ -34,9 +41,17 @@ return [
                       'UNIT' => 'Unidad',
                       'LOCATION' => 'Ubicación',
                       'LOT' => 'Lote',
+                      'STOCK' => 'Existencia',
+                      'STOCKS' => 'Existencias',
                       'PALLET' => 'Tarima',
                       'PRICE' => 'Precio',
                       'QTY' => 'Cantidad',
+                      'LOTS_ASSIGNAMENT' => 'Asignación de lotes',
+                      'QTY_FOR_COMPLETE' => 'Cantidad por completar',
+                    ],
+
+      'buttons'  => [
+                      'ADD_LOT' => 'Agregar lote',
                     ],
 
       'QRY_INVENTORY' =>  'Consulta de inventarios',

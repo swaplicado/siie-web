@@ -13,7 +13,9 @@
 @section('content')
 
 	<?php $sRoute='siie.branches' ?>
-
+	@section('create')
+		@include('templates.form.create')
+	@endsection
 	<table data-toggle="table" class="table table-striped">
 		<thead>
 			<th>{{ trans('userinterface.labels.BP') }}</th>

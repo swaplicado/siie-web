@@ -45,7 +45,8 @@ class SConnectionUtils {
 
     public static function reconnectCompany($sDataBase = '')
     {
-        \Config::set('database.connections.siie.database', session()->has('company') ? session('company')->database_name : $sDataBase);
+        $connection = session()->has('db_configuration') ? session('db_configuration')->getConnCompany() : '';
+        \Config::set('database.connections.'.$connection.'.database', session()->has('company') ? session('company')->database_name : $sDataBase);
     }
 
 }

@@ -86,6 +86,8 @@
 											'SELECT_COMPANY' => 'Seleccione empresa:',
 											'SELECT_MODULE' => 'Seleccione Módulo',
 											'WHS_MOVS' => 'Movimientos de inventario',
+											'WHS_STOCK' => 'Existencias',
+											'WHS_MOVEMENTS' => 'Movimientos de inventario',
 											'GENERATION_BARCODE' => 'Generación de Codigos de barras'
 											],
 
@@ -123,6 +125,7 @@
 							 				'DB_SCH' => 'Esquema por default',
 											'EXPERY' => 'Fecha de caducidad',
 							 				'FAMILY' => 'Nombre de familia...',
+							 				'FOLIO' => 'Folio...',
 							 				'GENDER' => 'Género...',
 							 				'GROUP' => 'Nombre de grupo...',
 							 				'LOCALITY' => 'Localidad...',
@@ -136,6 +139,8 @@
 											'SELECT_UNIT' => 'Seleccione unidad...',
 											'SELECT_ITEM' => 'Seleccione item...',
 											'SELECT_UNIT' => 'Seleccione unidad...',
+											'SELECT_MVT_TYPE' => 'Seleccione tipo de movimiento...',
+											'SELECT_WHS' => 'Seleccione almacén...',
 											'PASSWORD' => '*********',
 											'CODE' => 'Código...',
 											'BRANCH' => 'Sucursal...',
@@ -152,6 +157,7 @@
 											'STREET' => 'Calle...',
 											'SYMBOL' => 'Símbolo...',
 											'EQUIVALENCE' => 'Equivalencia...',
+											'QUANTITY' => 'Cantidad...',
 											'WAREHOUSE' => 'Nombre almacén...',
 											'WHS_TYPE' => 'Tipo almacén...',
 											'LOCATION' => 'Ubicación...',

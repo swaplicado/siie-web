@@ -11,6 +11,7 @@ use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\WMS\SWarehouse;
+use App\WMS\SLocation;
 use App\WMS\SWhsType;
 use App\SUtils\SProcess;
 
@@ -82,6 +83,17 @@ class SWarehousesController extends Controller
       $whs->created_by_id = \Auth::user()->id;
 
       $whs->save();
+
+      $location = new SLocation();
+      $location->code = 'def'.$whs->id_whs;
+      $location->name = 'default';
+      $location->is_default = true;
+      $location->is_deleted = false;
+      $location->whs_id = $whs->id_whs;
+      $location->created_by_id = 1;
+      $location->updated_by_id = 1;
+
+      $location->save();
 
       Flash::success(trans('messages.REG_CREATED'))->important();
 

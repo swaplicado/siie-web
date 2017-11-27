@@ -209,10 +209,33 @@ Route::group(['middleware' => ['auth']], function() {
       /*
       * Iventory movements
       **/
-      Route::resource('movs','WMS\SMovsController');
-      Route::get('/movs/children', [
+      Route::get('/movs/view', [
+      	'uses' => 'WMS\SMovsController@index',
+      	'as' => 'wms.movs.index'
+      ]);
+      Route::post('/movs', [
+      	'uses' => 'WMS\SMovsController@store',
+      	'as' => 'wms.movs.store'
+      ]);
+      Route::get('/movs/{id?}/create', [
+      	'uses' => 'WMS\SMovsController@create',
+      	'as' => 'wms.movs.create'
+      ]);
+      Route::get('/movs/{id?}/create/children', [
       	'uses' => 'WMS\SMovsController@children',
-      	'as' => 'wms.movs.children'
+      	'as' => 'wms.movs.create.children'
+      ]);
+      Route::post('/movs/{id?}/create/storetable', [
+      	'uses' => 'WMS\SMovsController@getTable',
+      	'as' => 'wms.movs.create.storetable'
+      ]);
+
+      /*
+      * Stock
+      **/
+      Route::get('/stock/{id}', [
+      	'uses' => 'WMS\SStockController@index',
+      	'as' => 'wms.stock.index'
       ]);
 
       /*
@@ -232,6 +255,16 @@ Route::group(['middleware' => ['auth']], function() {
         'as' => 'wms.codes.generate'
       ]);
 
+      Route::get('/codes/consultBarcode',[
+        'uses' => 'WMS\SCodesController@consultBarcode',
+        'as' => 'wms.codes.consult'
+      ]);
+
+      Route::post('/codes/decode', [
+        'uses' => 'WMS\SCodesController@decode',
+        'as' => 'wms.codes.decode'
+      ]);
+
       /*
       * Lots
       **/
@@ -247,6 +280,23 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('lots/{id}/copy', [
         'uses' => 'WMS\SWmsLotsController@Copy',
         'as'   => 'wms.lots.copy'
+      ]);
+
+      /*
+      * Pallets
+      **/
+      Route::resource('pallets','WMS\SPalletsController');
+      Route::get('pallets/{id}/destroy',[
+        'uses' => 'WMS\SPalletsController@Destroy',
+        'as'   => 'wms.pallets.destroy'
+      ]);
+      Route::get('pallets/{id}/active',[
+        'uses' => 'WMS\SPalletsController@Activate',
+        'as'   => 'wms.pallets.activate'
+      ]);
+      Route::get('lots/{id}/copy', [
+        'uses' => 'WMS\SPalletsController@Copy',
+        'as'   => 'wms.pallets.copy'
       ]);
 
   });

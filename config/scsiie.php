@@ -3,6 +3,13 @@
 
 return [
 
+  'CONFIGURATION' => [
+                  'PARTNER_ID' => '1',
+                  'DECIMALS_AMT' => '2',
+                  'DECIMALS_QTY' => '3',
+                  'LOC_ENABLED' => '4',
+                ],
+
   'ATT' => [
 
                 'IS_COMP' => '1',
@@ -22,5 +29,10 @@ return [
                     'MATERIAL' => '1',
                     'PRODUCT' => '2',
                     'SPENDING' => '3',
+                  ],
+
+  'FRMT' =>       [
+                    'AMT' => '1',
+                    'QTY' => '2',
                   ],
 ];

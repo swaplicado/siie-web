@@ -1064,11 +1064,14 @@ class Builder
      */
     public function groupBy()
     {
-        foreach (func_get_args() as $arg) {
-            $this->groups = array_merge((array) $this->groups, is_array($arg) ? $arg : [$arg]);
-        }
+      $args = func_get_args();
+      foreach($args AS $arg)
+      {
+          $arg = (is_array($arg)) ? $arg:[$arg];
+          $this->groups = array_merge((array) $this->groups, $arg);
+      }
 
-        return $this;
+      return $this;
     }
 
     /**

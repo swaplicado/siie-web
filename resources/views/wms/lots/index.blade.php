@@ -27,7 +27,7 @@
 		<tbody>
 			@foreach($lots as $lot)
 				<tr>
-					<td>{{ $lot->name }}</td>
+					<td>{{ $lot->lot }}</td>
 					<td>{{ $lot->dt_expiry }}</td>
 					<td>{{ $lot->item->name }}</td>
 					<td>{{ $lot->unit->name }}</td>

@@ -7,6 +7,10 @@ class SMovementRow extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_mvt_row';
   protected $table = 'wms_mvt_rows';
+  public $timestamps = false;
+  protected $auxLots = array();
+  public $iAuxLotId = 0;
+  public $aAuxStock = [];
 
   protected $fillable = [
                           'id_mvt_row',
@@ -26,12 +30,15 @@ class SMovementRow extends Model {
                           'doc_order_row_id',
                           'doc_invoice_row_id',
                           'doc_debit_note_row_id',
-                          'doc_credit_note_row_id'
+                          'doc_credit_note_row_id',
+                          'aux_lot_id',
+                          'aux_lots',
+                          'aux_stock',
                         ];
 
   public function movement()
   {
-    return $this->belongsTo('App\WMS\SMovement', 'id_mvt', 'mvt_id');
+    return $this->belongsTo('App\WMS\SMovement', 'mvt_id', 'id_mvt');
   }
 
   public function lotRows()
@@ -44,9 +51,65 @@ class SMovementRow extends Model {
     return $this->belongsTo('App\ERP\SItem', 'item_id');
   }
 
+  public function unit()
+  {
+    return $this->belongsTo('App\ERP\SUnit', 'unit_id');
+  }
+
   public function pallet()
   {
     return $this->belongsTo('App\WMS\SPallet', 'pallet_id');
+  }
+
+  public function setAuxLots($value = array())
+  {
+     $this->auxLots = $value;
+  }
+
+  public function getAuxLots()
+  {
+     return $this->auxLots;
+  }
+
+  public function setLotId($value = '0')
+  {
+    $this->iAuxLotId = $value;
+  }
+
+  public function getLotId()
+  {
+    return $this->iAuxLotId;
+  }
+
+  public function setStockAux($value = [])
+  {
+    $this->aAuxStock = $value;
+  }
+
+  public function getStockAux()
+  {
+    return $this->aAuxStock;
+  }
+
+  public function scopeSearch($query, $name, $iFilter)
+  {
+      switch ($iFilter) {
+        case \Config::get('scsys.FILTER.ACTIVES'):
+            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+          break;
+
+        case \Config::get('scsys.FILTER.DELETED'):
+            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+          break;
+
+        case \Config::get('scsys.FILTER.ALL'):
+            return $query;
+          break;
+
+        default:
+            return $query;
+          break;
+      }
   }
 
 }

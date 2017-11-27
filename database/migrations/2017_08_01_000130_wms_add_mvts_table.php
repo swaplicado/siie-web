@@ -39,7 +39,7 @@ class WmsAddMvtsTable extends Migration {
           Schema::connection($this->sConnection)->create('wms_mvts', function (blueprint $table) {
             $table->bigIncrements('id_mvt');
           	$table->date('dt_date');
-          	$table->integer('folio');
+            $table->char('folio', 50);
           	$table->decimal('total_amount', 17,2);
           	$table->decimal('total_length', 23,8);
           	$table->decimal('total_surface', 23,8);

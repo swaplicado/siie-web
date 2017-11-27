@@ -75,6 +75,8 @@ class WmsAddMvtsTables extends Migration {
           	['id_mvt_type' => '12','code' => 'SN','name' => 'SALIDA CONVERSIÓN','mvt_class_id' => '2','is_deleted' => '0'],
           	['id_mvt_type' => '13','code' => 'SP','name' => 'SALIDA PRODUCCIÓN','mvt_class_id' => '2','is_deleted' => '0'],
           	['id_mvt_type' => '14','code' => 'SG','name' => 'SALIDA GASTOS','mvt_class_id' => '2','is_deleted' => '0'],
+          	['id_mvt_type' => '15','code' => 'RTE','name' => 'RECONFIGURACION ENTRADA','mvt_class_id' => '1','is_deleted' => '0'],
+          	['id_mvt_type' => '16','code' => 'RTS','name' => 'RECONFIGURACIÓN SALIDA','mvt_class_id' => '2','is_deleted' => '0'],
           ]);
 
           Schema::connection($this->sConnection)->create('wmss_mvt_trn_types', function (blueprint $table) {

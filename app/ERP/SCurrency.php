@@ -8,7 +8,7 @@ class SCurrency extends Model {
   protected $primaryKey = 'id_currency';
   protected $table = 'erps_currencies';
 
-  public static function getTable()
+  public function getTable()
   {
     return $this->table;
   }

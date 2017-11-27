@@ -7,6 +7,7 @@ class SMovementRowLot extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_mvt_row_lot';
   protected $table = 'wms_mvt_row_lots';
+  public $timestamps = false;
 
   protected $fillable = [
                           'id_mvt_row_lot',

@@ -28,4 +28,9 @@ class SWmsController extends Controller
     {
         return view('wms.index');
     }
+
+    public function index()
+    {
+        return view('wms.index');
+    }
 }

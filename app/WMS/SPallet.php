@@ -13,17 +13,26 @@ class SPallet extends Model {
                           'is_deleted',
                           'item_id',
                           'unit_id',
+                          'quantity',
                         ];
+
+
 
   public function getTable()
   {
     return $this->table;
   }
 
-  public function warehouse()
+  public function item()
   {
-    return $this->belongsTo('App\WMS\SWarehouse', 'whs_id');
+    return $this->belongsTo('App\ERP\SItem');
   }
+
+  public function unit()
+  {
+    return $this->belongsTo('App\ERP\SUnit');
+  }
+
 
   public function userCreation()
   {
@@ -40,20 +49,20 @@ class SPallet extends Model {
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                        ->where('name', 'LIKE', "%".$name."%");
+                        ->where('pallet', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                          ->where('name', 'LIKE', "%".$name."%");
+                          ->where('pallet', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.ALL'):
-            return $query->where('name', 'LIKE', "%".$name."%");
+            return $query->where('pallet', 'LIKE', "%".$name."%");
           break;
 
         default:
-            return $query->where('name', 'LIKE', "%".$name."%");
+            return $query->where('pallet', 'LIKE', "%".$name."%");
           break;
       }
   }
