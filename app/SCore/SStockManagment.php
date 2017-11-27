@@ -12,7 +12,7 @@ class SStockManagment
     * @param  integer $iWhsId    [This param is send when requires stock of a specific warehouse]
     * @return [result]   [array of result of query]
     */
-    public static function getLotsOfPallet($iPalletId = 0, $iWhsId = 0) {
+    public static function getLotsOfPallet($iPalletId , $iWhsId = 0) {
 
         $select = 'ws.lot_id, wl.lot,sum(ws.input) as inputs,
                            sum(ws.output) as outputs,
