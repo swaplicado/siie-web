@@ -57,10 +57,9 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           Schema::connection($this->sConnection)->create('erpu_item_groups', function (blueprint $table) {
           	$table->increments('id_item_group');
           	$table->char('name', 100);
-          	$table->integer('external_id');
-            $table->unique('external_id');
+          	$table->integer('external_id')->unique();
           	$table->boolean('is_deleted');
-          	$table->integer('item_family_id')->unique();
+          	$table->integer('item_family_id')->index();
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
@@ -90,7 +89,7 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           	$table->boolean('is_lot');
           	$table->boolean('is_bulk');
           	$table->boolean('is_deleted');
-          	$table->integer('item_group_id')->unique();
+          	$table->integer('item_group_id')->index();
           	$table->integer('item_class_id')->unsigned();
           	$table->integer('item_type_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();

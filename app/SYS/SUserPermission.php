@@ -8,7 +8,7 @@ class SUserPermission extends Model
   protected $primaryKey = 'id_user_permission';
   protected $table = 'user_permissions';
   public $timestamps = false;
-  protected $fillable = ['id_usr_per','user_id','permission_id', 'permission_type_id', 'company_id_opt','privilege_id'];
+  protected $fillable = ['id_usr_per','user_id','permission_id', 'permission_type_id', 'company_id_opt','privilege_id', 'modules_id'];
 
   public function user()
   {

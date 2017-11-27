@@ -110,3 +110,6 @@ td { font-size: 90%; }
   background-color: #f0f7fd;
   border-color: #d0e3f0;
 }
+.displayNone{
+  display:none;
+}
