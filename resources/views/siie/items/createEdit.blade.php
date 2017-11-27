@@ -28,7 +28,7 @@
 @section('content')
 
 	<div class="row">
-	  <div class="col-md-6">
+		  <div class="col-md-6">
 
 			<div class="form-group">
 				{!! Form::label('code', trans('userinterface.labels.CODE').'*') !!}

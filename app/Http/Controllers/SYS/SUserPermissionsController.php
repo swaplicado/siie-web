@@ -1,26 +1,40 @@
-<?php namespace App\Http\Controllers\SYS;
+<?php
+
+namespace App\Http\Controllers\SYS;
 
 use Illuminate\Http\Request;
-use App\SYS\SUserPermission;
-use Laracasts\Flash\Flash;
+
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\User;
+use Laracasts\Flash\Flash;
+use App\SUtils\SUtil;
+use App\SUtils\SMenu;
+use App\SUtils\SValidation;
+use App\ERP\SBranch;
+use App\SUtils\SProcess;
+use App\WMS\SWmsLot;
+use App\ERP\SItem;
+use App\ERP\SUnit;
+use App\SYS\SPermissionType;
+use App\SYS\SModule;
 use App\SYS\SPermission;
 use App\SYS\SPrivilege;
-use App\SUtils\SValidation;
-use App\SUtils\SUtil;
+use App\SYS\SCompany;
+use App\SYS\SUserPermission;
+use App\User;
 
 class SUserPermissionsController extends Controller
 {
   private $oCurrentUserPermission;
   private $iFilter;
+  private $sClassNav;
 
   public function __construct()
   {
-      $this->middleware('mdadmin');
-      $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
-      $this->oCurrentUserPermission = NULL;
+
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CENTRAL_CONFIG'), \Config::get('scsys.MODULES.ERP'));
+
+       $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
   }
 
     /**
@@ -31,18 +45,12 @@ class SUserPermissionsController extends Controller
     public function index(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $userPermissions = SUserPermission::orderBy('id_user_permission', 'ASC')->paginate(4);
+        $users = User::Search($request->username, $this->iFilter)->orderBy('id', 'ASC')->paginate(10);
 
-        $userPermissions->each(function($userPermissions) {
-          $userPermissions->user;
-          $userPermissions->permission;
-          $userPermissions->privilege;
-        });
-
-        return view('admin.userPermissions.index')
-                            ->with('userPermissions', $userPermissions)
-                            ->with('actualUserPermission', $this->oCurrentUserPermission)
-                            ->with('iFilter', $this->iFilter);
+        return view('userpermissions.index')
+        ->with('actualUserPermission', $this->oCurrentUserPermission)
+        ->with('users', $users)
+        ->with('iFilter', $this->iFilter);
     }
 
     /**
@@ -52,15 +60,19 @@ class SUserPermissionsController extends Controller
      */
     public function create()
     {
-        $users = User::orderBy('username', 'ASC')->lists('username', 'id');
-        $permissions = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
-        $privileges = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+      $Syspermission = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
+      $Module = SModule::orderBy('name', 'ASC')->lists('name', 'id_module');
+      $permission = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
+      $Privilege = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+      $Companies = SCompany::orderBy('name', 'ASC')->lists('name', 'id_company');
 
-        return view('admin.userPermissions.createEdit')
-                    ->with('users', $users)
-                    ->with('permissions', $permissions)
-                    ->with('privileges', $privileges);
-
+        return view('userpermissions.createEdit')
+        ->with('actualUserPermission', $this->oCurrentUserPermission)
+        ->with('syspermissions', $Syspermission)
+        ->with('modules', $Module)
+        ->with('permissions', $permission)
+        ->with('companies', $Companies)
+        ->with('privileges', $Privilege);
     }
 
     /**
@@ -69,26 +81,51 @@ class SUserPermissionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $userPermission = new SUserPermission($request->all());
+     public function store(Request $request)
+     {
+       $assignament = new SUserPermission($request->all());
+       dd($assignament);
+       // $assignament->save();
+       //
+       // Flash::success(trans('messages.REG_CREATED'))->important();
+       //
+       // return redirect()->route('wms.lots.index');
+     }
 
-        $userPermission->save();
-
-        Flash::success(trans('messages.REG_CREATED'))->important();
-
-        return redirect()->route('admin.userPermissions.index');
-    }
 
     /**
-     * Display the specified resource.
+     * Display the userpermission.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showUserPermission($id)
     {
-        //
+      $data = SItem::select('id_module')
+                    ->join('syss_modules','syss_modules.id_module','=','erpu_items.id_item')
+                    ->join('syss_permission_types','syss_permission_types.item_id','=','erpu_items.id_item')
+                    ->join('syss_permissions','syss_permissions.item_id','=','erpu_items.id_item')
+                    ->join('syss_privileges','syss_privileges.item_id','=','erpu_items.id_item')
+                    ->get();
+      return response()->json($data);
+    }
+
+    /*
+     * Function for find permissions
+     */
+    public function findPermission(Request $request){
+        $data = SPermission::select('id_permission', 'name')
+                ->WHERE('module_id', $request->id)
+                        ->get();
+         return response()->json($data);
+    }
+    /*
+     * Function for find companies
+     */
+    public function findCompanies(){
+        $data = SCompany::select('id_company', 'name')
+                        ->get();
+        return response()->json($data);
     }
 
     /**
@@ -99,21 +136,7 @@ class SUserPermissionsController extends Controller
      */
     public function edit($id)
     {
-        $userPermission = SUserPermission::find($id);
-
-        $userPermission->user;
-        $userPermission->permission;
-        $userPermission->privilege;
-
-        $users = User::orderBy('username', 'ASC')->lists('username', 'id');
-        $permissions = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
-        $privileges = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
-
-        return view('admin.userPermissions.createEdit')
-          ->with('userPermission', $userPermission)
-          ->with('users', $users)
-          ->with('permissions', $permissions)
-          ->with('privileges', $privileges);
+        //
     }
 
     /**
@@ -125,34 +148,7 @@ class SUserPermissionsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $userPermission = SUserPermission::find($id);
-        $userPermission->fill($request->all());
-        $userPermission->save();
-
-        Flash::success(trans('messages.REG_EDITED'));
-
-        return redirect()->route('admin.userPermissions.index');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function activate(Request $request, $id)
-    {
-        $userPermission = SUserPermission::find($id);
-
-        $userPermission->fill($request->all());
-        $userPermission->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-
-        $userPermission->save();
-
-        Flash::success(trans('messages.REG_ACTIVATED'))->important();
-
-        return redirect()->route('admin.userPermissions.index');
+        //
     }
 
     /**
@@ -161,17 +157,31 @@ class SUserPermissionsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        $userPermission = SUserPermission::find($id);
-
-        $userPermission->fill($request->all());
-        $userPermission->is_deleted = \Config::get('scsys.STATUS.DEL');
-
-        $userPermission->save();
-        #$userPermission->delete();
-        Flash::error(trans('messages.REG_DELETED'))->important();
-
-        return redirect()->route('admin.userPermissions.index');
+        //
     }
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    // public function show($id)
+    // {
+      // $Syspermission = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
+      // $Module = SModule::orderBy('name', 'ASC')->lists('name', 'id_module');
+      // $permission = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
+      // $Privilege = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+      // $Companies = SCompany::orderBy('name', 'ASC')->lists('name', 'id_company');
+      //
+      //   return view('userpermissions.view')
+      //   ->with('actualUserPermission', $this->oCurrentUserPermission)
+      //   ->with('syspermissions', $Syspermission)
+      //   ->with('modules', $Module)
+      //   ->with('permissions', $permission)
+      //   ->with('companies', $Companies)
+      //   ->with('privileges', $Privilege);
+    // }
+
 }

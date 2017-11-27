@@ -23,6 +23,7 @@ class SFamilyRequest extends Request
     {
         return [
             'name' => 'required',
+            'external_id' => 'unique',
         ];
     }
 }

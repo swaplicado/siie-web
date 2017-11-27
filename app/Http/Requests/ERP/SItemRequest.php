@@ -35,4 +35,22 @@ class SItemRequest extends Request
             'unit_id' => 'required|exists:siie.'.$unit->getTable().',id_unit',
         ];
     }
+    // /**
+    //  * Get the validation rules that apply to the request.
+    //  * RESPALDO
+    //  * @return array
+    //  */
+    // public function rules()
+    // {
+    //     $item = new SItem();
+    //     $gender = new SItemGender();
+    //     $unit = new SUnit();
+    //
+    //     return [
+    //         'code' => 'required|unique:siie.'.$item->getTable(),
+    //         'name' => 'required',
+    //         'item_gender_id' => 'required|exists:siie.'.$gender->getTable().',id_item_gender',
+    //         'unit_id' => 'required|exists:siie.'.$unit->getTable().',id_unit',
+    //     ];
+    // }
 }

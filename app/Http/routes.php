@@ -106,18 +106,20 @@ Route::group(['middleware' => ['auth']], function() {
   		]);
 
       /*
-      * userPermissions
-      **/
-
-  		Route::resource('userPermissions','SYS\SUserPermissionsController');
-  		Route::get('userPermissions/{id}/activate', [
-  			'uses' => 'SYS\SUserPermissionsController@Activate',
-  			'as' => 'admin.userPermissions.activate'
-  		]);
-  		Route::get('userPermissions/{id}/destroy',[
-  			'uses' => 'SYS\SUserPermissionsController@Destroy',
-  			'as' => 'admin.userPermissions.destroy'
-  		]);
+        * userpermissions
+      */
+       Route::get('userpermissions/findPermission','SYS\SUserPermissionsController@findPermission');
+       Route::get('userpermissions/findCompanies','SYS\SUserPermissionsController@findCompanies');
+       Route::get('userpermissions/findBranches','SYS\SUserPermissionsController@findBranches');
+       Route::resource('userpermissions','SYS\SUserPermissionsController');
+   		Route::get('userpermissions/{id}/activate', [
+   			'uses' => 'SYS\SUserPermissionsController@Activate',
+   			'as' => 'admin.userpermissions.activate'
+   		]);
+   		Route::get('userpermissions/{id}/destroy',[
+   			'uses' => 'SYS\SUserPermissionsController@Destroy',
+   			'as' => 'admin.userpermissions.destroy'
+   		]);
 
       /*
       * Companies
