@@ -43,14 +43,12 @@
   		</div>
 
 			<div class="form-group">
-				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_OUT') ||
-							$oMovType->id_mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA'))
+				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_src'))
 						{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
 						{!! Form::select('whs_src', $warehouses, 0, ['class'=>'form-control border_red select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
-				@if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_IN') ||
-							$oMovType->id_mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA'))
+				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_des'))
 		  			{!! Form::label('whs_des', ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ?
 							trans('wms.labels.WAREHOUSE') :
 									trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
@@ -79,11 +77,11 @@
   			</div>
     </div>
   </div>
-	@if ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN'))
-		<label style="color: #0200e6">Tarima a dividir:</label>
+	@if (App\SUtils\SGuiUtils::showPallet($oMovType->id_mvt_type))
+		<label style="color: #0200e6">{{ App\SUtils\SGuiUtils::getLabelOfPallet($oMovType->id_mvt_type) }}</label>
 		@include('wms.movs.pallet')
 		<br />
-		<label style="color: #0200e6">Elementos que se moverán:</label>
+		<label style="color: #0200e6">{{ trans('wms.labels.ELEMENTS_TO_MOVE') }}</label>
 	@endif
   <div class="row">
     <div class="col-xs-12">
@@ -161,6 +159,7 @@
 			this.DEC_QTY = parseInt(qty);
 			this.DEC_AMT = parseInt(amt);
 			this.LOCATION_ENABLED = (parseInt(loc) == 1);
+			this.isPalletReconfiguration = this.iMvtType == this.PALLET_RECONFIG_IN || this.iMvtType == this.PALLET_RECONFIG_OUT;
 		}
 
 		var globalData = new GlobalData();
@@ -174,6 +173,13 @@
 				var retrievedObject = localStorage.getItem('movement');
 				console.log(JSON.parse(retrievedObject));
 				movement = setMovement(JSON.parse(retrievedObject));
+
+				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
+					oPalletRow = movement.auxPalletRow;
+				}
+				else {
+					oPalletRow = '';
+				}
 
 				movement.rows.forEach(function(element) {
 						var type = 0;
@@ -219,69 +225,6 @@
 		// $(document).ready(function() {
 		//     $('#example').DataTable();
 		// });
-
-		/*
-		* When freeze is pressed, the field of item, quantity and the button
-		* of add are disabled, but the data of the movement is send to server too
-		*/
-		function unfreeze() {
-			var fre = document.getElementById("idFreeze"); // freeze button
-			var but = document.getElementById("tButton"); // Add button
-			var item = document.getElementById("item"); // item field
-			var qty = document.getElementById("quantity"); // quantity field
-			var sBut = document.getElementById("saveButton"); // save button
-
-			if (fre.firstChild.data == "Congelar") {
-				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
-					movement.auxPalletRow = oPalletRow;
-				}
-				else {
-					movement.auxPalletRow = '';
-				}
-
-				if (validateMovement(movement)) {
-						but.disabled = true;
-						item.disabled = true;
-						qty.disabled = true;
-						sBut.disabled = false;
-
-						$(function(){
-						  $("button.removebutton").attr("disabled", true);
-						  $("button.buttlots").attr("disabled", true);
-						  // $("button.butstk").attr("disabled", true);
-						  $("select.selPallet").attr("disabled", true);
-						});
-
-						if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
-							discountMovements(movement);
-						}
-
-						setData(movement); //the table is sends to the server
-
-						fre.innerHTML = "Descongelar";
-				}
-			}
-			else {
-				but.disabled = false;
-				item.disabled = false;
-				qty.disabled = false;
-				sBut.disabled = true;
-
-				$(function() {
-					$("button.removebutton").attr("disabled", false);
-					if (globalData.iMvtType != globalData.MVT_TP_OUT_TRA && globalData.iMvtType != globalData.PALLET_RECONFIG_IN) {
-						$("select.selPallet").attr("disabled", false);
-					}
-					$("button.buttlots").attr("disabled", false);
-					// $("button.butstk").attr("disabled", false);
-
-				});
-
-				setData("");
-
-				fre.innerHTML = "Congelar";
-			}
-		}
 
 		$('.select-one').chosen({
 			placeholder_select_single: 'Seleccione un item...'

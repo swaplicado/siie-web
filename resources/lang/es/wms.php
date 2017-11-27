@@ -19,10 +19,13 @@ return [
 
 
       'INVENTORY' => 'Inventarios',
+          'ITEM_STK' => 'Existencias por material/producto',
           'LOT_STK' => 'Existencias por lote',
-          'PALL_STK' => 'Existencias por tarima',
+          'PALLET_STK' => 'Existencias por tarima',
           'LOC_STK' => 'Existencias por ubicación',
-          'WHS_STK' => 'Existencias por Almacén',
+          'WHS_STK' => 'Existencias por almacén',
+          'LOT_WHS_STK' => 'Existencias por lote por almacén',
+          'PALLET_LOT_STK' => 'Existencias por tarima por lote',
           'MOV_STK' => 'Operaciones',
           'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
@@ -30,8 +33,8 @@ return [
           'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
           'WHS_MOVS' => 'Movimientos de inventario',
           'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
-          'PALLET_DIVISION' => 'División de tarima',
-          'PALLET_CREATION' => 'Creación de tarima',
+          'PALLET_DIVISION' => 'Dividir tarima',
+          'PALLET_ADD' => 'Agregar a tarima',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',
@@ -51,6 +54,9 @@ return [
                       'LOTS_ASSIGNAMENT' => 'Asignación de lotes',
                       'QTY_FOR_COMPLETE' => 'Cantidad por completar',
                       'WAREHOUSE' => 'Almacén',
+                      'PALLET_TO_DIVIDE' => 'Tarima a dividir',
+                      'PALLET_TO_FILL' => 'Tarima destino',
+                      'ELEMENTS_TO_MOVE' => 'Elementos a mover',
                     ],
 
       'buttons'  => [

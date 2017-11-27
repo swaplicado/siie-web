@@ -1,4 +1,5 @@
 var oPalletRow = '';
+var oReconfigurationMov = '';
 
 /**
  * [Vue object to show pallet on view]
@@ -22,7 +23,7 @@ vuePallet = new Vue({
 /**
  * [viewStock set the values of stock to html table]
  */
-function updatePallet(palletRow) {
+function updatePallet(palletRow, movType) {
     oPalletRow = palletRow;
 
     Vue.set(vuePallet.sPallet, 'code', palletRow.oAuxItem.code);
@@ -36,16 +37,18 @@ function updatePallet(palletRow) {
     console.log("lotes:");
     console.log(globalData.lLots);
 
-    var auxLots = [];
-    globalData.lLots.forEach(function(lot) {
-        palletRow.lotRows.forEach(function(lotR) {
-            if (lot.id_lot == lotR.iLotId || lot.id_lot == 1) {
-                auxLots.push(lot);
-            }
-        });
-    });
+    if (movType == globalData.PALLET_RECONFIG_IN) {
+      var auxLots = [];
+      globalData.lLots.forEach(function(lot) {
+          palletRow.lotRows.forEach(function(lotR) {
+              if (lot.id_lot == lotR.iLotId || lot.id_lot == 1) {
+                  auxLots.push(lot);
+              }
+          });
+      });
 
-    globalData.lLots = auxLots;
+      globalData.lLots = auxLots;
+    }
     document.getElementById('palletStk').disabled = false;
 }
 
@@ -63,12 +66,12 @@ $(document).on('click', 'button.palletLots', function () {
  * @param  {[SMovementRow]} row [description]
  * @return {[boolean]}     [description]
  */
-function palletValidation(row, whsId, lotId) {
+function palletValidation(row, whsId, lotId, movType) {
    if (oPalletRow.iPalletId == row.iPalletId) {
      swal("Error", "No puede agregar la misma tarima.", "error");
      return false;
    }
-   else if(oPalletRow.oAuxItem.is_lot && lotId != 0) {
+   else if(oPalletRow.oAuxItem.is_lot && lotId != 0 && movType == globalData.PALLET_RECONFIG_IN) {
       var bExists = false;
       oPalletRow.lotRows.forEach(function(palletLot) {
             if (lotId == palletLot.iLotId) {

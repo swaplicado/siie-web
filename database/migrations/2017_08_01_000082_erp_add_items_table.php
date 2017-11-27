@@ -61,7 +61,7 @@ class ErpAddItemsTable extends Migration {
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
-          DB::statement('ALTER TABLE siie_cartro.erpu_items AUTO_INCREMENT = 0;');
+          DB::connection($this->sConnection)->statement('ALTER TABLE erpu_items AUTO_INCREMENT = 0;');
           DB::connection($this->sConnection)->table('erpu_items')->insert([
           	['id_item' => '0','code' => 'N/A','name' => 'N/A','length' => '0','surface' => '0','volume' => '0',
             'mass' => '0','is_lot' => '0','is_bulk' => '0','item_gender_id' => '0','unit_id' => '1',
