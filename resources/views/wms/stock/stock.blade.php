@@ -23,16 +23,21 @@
 		        <tr class="titlerow">
 		            <th>Clave</th>
 		            <th>Item</th>
-								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'))
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'))
 									<th>Tarima</th>
 								@endif
-								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'))
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'))
 		            	<th>Lote</th>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'))
 			            <th>Ubicación</th>
 								@endif
-								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') || $iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'))
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
+								 			$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
+												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
 			            <th>Almacén</th>
 								@endif
 		            <th>Entradas</th>
@@ -46,16 +51,21 @@
 						<tr>
 		            <td>{{ $row->item_code }}</td>
 		            <td>{{ $row->item }}</td>
-								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'))
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'))
 									<td>{{ $row->pallet == 'N/A' ? 'SIN TARIMA' : $row->pallet }}</td>
 								@endif
-								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'))
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
+												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'))
 									<td>{{ $row->lot_ }}</td>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'))
 									<td>{{ $row->location }}</td>
 								@endif
-								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') || $iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'))
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
+												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
+													$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
 									<td>{{ $row->warehouse }}</td>
 								@endif
 		            <td align="right">{{ session('utils')->formatNumber($row->inputs, \Config::get('scsiie.FRMT.QTY')) }}</td>

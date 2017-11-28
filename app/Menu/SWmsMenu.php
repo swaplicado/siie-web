@@ -34,7 +34,7 @@ class SWmsMenu {
                 ->route('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_WHS_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA')])
                 ->route('wms.movs.create', trans('wms.PALLET_DIVISION'), [\Config::get('scwms.PALLET_RECONFIG_IN')])
-                ->route('wms.movs.create', trans('wms.PALLET_CREATION'), [\Config::get('scwms.PALLET_RECONFIG_OUT')])
+                ->route('wms.movs.create', trans('wms.PALLET_ADD'), [\Config::get('scwms.PALLET_RECONFIG_OUT')])
         )
         ->submenu(
             Link::to('#', trans('wms.WHS_MOVS_QUERY').'<span class="caret"></span>')
@@ -50,11 +50,13 @@ class SWmsMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
-                ->route('wms.stock.index', 'Existencias por ítem', [\Config::get('scwms.STOCK_TYPE.STK_BY_ITEM')])
-                ->route('wms.stock.index', 'Existencias por tarima', [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET')])
-                ->route('wms.stock.index', 'Existencias por lote', [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT')])
-                ->addIf(session('location_enabled'), Link::toRoute('wms.stock.index', 'Existencias por ubicación', [\Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION')]))
-                ->route('wms.stock.index', 'Existencias por almacén', [\Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE')])
+                ->route('wms.stock.index', trans('wms.ITEM_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_ITEM')])
+                ->route('wms.stock.index', trans('wms.PALLET_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET')])
+                ->route('wms.stock.index', trans('wms.LOT_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT')])
+                ->addIf(session('location_enabled'), Link::toRoute('wms.stock.index', trans('wms.LOC_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION')]))
+                ->route('wms.stock.index', trans('wms.WHS_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE')])
+                ->route('wms.stock.index', trans('wms.LOT_WHS_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE')])
+                ->route('wms.stock.index', trans('wms.PALLET_LOT_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT')])
         )
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();

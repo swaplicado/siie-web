@@ -68,7 +68,7 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
-          DB::statement('ALTER TABLE siie_cartro.erpu_item_groups AUTO_INCREMENT = 0;');
+          DB::connection($this->sConnection)->statement('ALTER TABLE erpu_item_groups AUTO_INCREMENT = 0;');
           DB::connection($this->sConnection)->table('erpu_item_groups')->insert([
           	['id_item_group' => '0','name' => 'N/A','external_id' => '0', 'is_deleted' => '0','item_family_id' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
@@ -102,7 +102,8 @@ class ErpAddFamiliesGroupsGendersTable extends Migration {
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
-          DB::statement('ALTER TABLE siie_cartro.erpu_item_genders AUTO_INCREMENT = 0;');
+          
+          DB::connection($this->sConnection)->statement('ALTER TABLE erpu_item_genders AUTO_INCREMENT = 0;');
           DB::connection($this->sConnection)->table('erpu_item_genders')->insert([
           	['id_item_gender' => '0','name' => 'N/A','external_id' => '0','is_length' => '0','is_length_var' => '0','is_surface' => '0',
             'is_surface_var' => '0','is_volume' => '0','is_volume_var' => '0','is_mass' => '0','is_mass_var' => '0','is_lot' => '0','is_bulk' => '0',

@@ -86,7 +86,7 @@ function addRow(e) {
         }
 
         // Pallets reconfiguration
-        if ((iWmsMvtType == globalData.PALLET_RECONFIG_IN || iWmsMvtType == globalData.PALLET_RECONFIG_OUT) &&
+        if (globalData.isPalletReconfiguration &&
                 (iPalletReconfig == 0 || iPalletReconfig == 2)) {
             if (iMovType == globalData.IS_PALLET) {
                 iPalletReconfig = 1;
@@ -115,8 +115,11 @@ function addRow(e) {
 
         //pallets reconfiguration
         if (iPalletReconfig == 3) {
-           if (!palletValidation(ojsMovRow, iWhsId, iMovType == globalData.IS_LOT ? oMovementRow.aux_lot_id : 0)) {
+           if (!palletValidation(ojsMovRow, iWhsId, iMovType == globalData.IS_LOT ? oMovementRow.aux_lot_id : 0, iWmsMvtType)) {
                 return false;
+           }
+           if (iMovType == globalData.IS_PALLET && iWmsMvtType == globalData.PALLET_RECONFIG_IN) {
+              ojsMovRow.dQuantity = 0;
            }
         }
 
@@ -144,32 +147,33 @@ function addRow(e) {
           rowTrId = movement.rowIdentifier;
           movement.addRow(ojsMovRow);
 
-          if (iWmsMvtType != globalData.PALLET_RECONFIG_IN || iPalletReconfig == 3) {
+          if (!globalData.isPalletReconfiguration || iPalletReconfig == 3) {
             addRowTr(idRow, ojsMovRow, iWhsId, iMovType, iWmsMvtType);
           }
         }
 
         //this code adds the lots to rows
         if (iMovType == globalData.IS_LOT) {
-            if (iWmsMvtType != globalData.PALLET_RECONFIG_IN || iMovType != globalData.IS_PALLET) {
+            if (iPalletReconfig == 1 || iMovType == globalData.IS_LOT) {
               // If the movement row is of lot, add a new lot
               addOrUpdateLotRow(rowTrId, idLot, ojsMovRow.dQuantity, ojsMovRow.dPrice);
             }
         }
         else if (iMovType == globalData.IS_PALLET) {
           // if the movement row is of a pallet, add the lots with stock in pallet
-          if (iWmsMvtType != globalData.PALLET_RECONFIG_IN  || iPalletReconfig == 1 || iMovType != globalData.IS_PALLET) {
-            oMovementRow.aux_lots.forEach(function(lot) {
-                addOrUpdateLotRow(rowTrId, parseInt(lot.lot_id), parseFloat(lot.quantity), parseFloat(lot.amount_unit));
-            });
+          if (iPalletReconfig == 0 || iPalletReconfig == 1 || iMovType == globalData.IS_LOT || (iWmsMvtType == globalData.PALLET_RECONFIG_OUT && iPalletReconfig == 3)) {
+              oMovementRow.aux_lots.forEach(function(lot) {
+                  addOrUpdateLotRow(rowTrId, parseInt(lot.lot_id), parseFloat(lot.quantity), parseFloat(lot.amount_unit));
+              });
           }
         }
 
-        if (iWmsMvtType == globalData.PALLET_RECONFIG_IN && iPalletReconfig == 1) {
+        if (iPalletReconfig == 1) {
             palletRow = movement.rows.pop()
             iPalletReconfig = 3;
             document.getElementById('quantity').disabled = false;
             updatePallet(palletRow);
+            oReconfigurationMov = new SMovement()
         }
       });
 
@@ -177,9 +181,10 @@ function addRow(e) {
         // alert("No se encontraron resultados");
         swal( "???", "No se encontraron resultados.", "warning");
       }
-      if (iWmsMvtType == globalData.PALLET_RECONFIG_IN && iPalletReconfig == 2) {
+      if (globalData.isPalletReconfiguration &&
+              iPalletReconfig == 2) {
         // alert("Debe de elegir primero una tarima");
-        swal( "Error", "Debe de elegir primero una tarima.", "error");
+        swal("Error", "Debe de elegir primero una tarima.", "error");
       }
     });
 }
@@ -288,7 +293,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
 
     var oTdPALLETS = document.createElement("td");
     oTdPALLETS.setAttribute("align", "center");
-    oTdPALLETS.innerHTML = "<select " + (iWmsMvtType == globalData.MVT_TP_OUT_TRA || iWmsMvtType == globalData.PALLET_RECONFIG_IN ? "disabled='true'" : "")  +
+    oTdPALLETS.innerHTML = "<select " + (iWmsMvtType == globalData.MVT_TP_OUT_TRA || globalData.isPalletReconfiguration ? "disabled='true'" : "")  +
                               " onChange='setPall(this.value, this)' class='selPallet form-control'>" +
                                           optionsPall +
                             "</select>";

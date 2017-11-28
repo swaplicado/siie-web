@@ -13,6 +13,7 @@ use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
 use App\WMS\SStock;
+use App\SCore\SStockManagment;
 
 class SStockController extends Controller
 {
@@ -48,7 +49,7 @@ class SStockController extends Controller
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
           $select = $select.', '.'wp.pallet as pallet, ww.name as warehouse';
-          $groupBy = ['ws.pallet_id','ws.item_id'];
+          $groupBy = ['ws.pallet_id','ws.item_id','ws.whs_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.item_id';
           break;
@@ -70,29 +71,39 @@ class SStockController extends Controller
           $orderBy1 = 'ws.whs_id';
           $orderBy2 = 'ws.item_id';
           break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
+          $select = $select.', '.'wl.lot AS lot_, ww.name as warehouse';
+          $groupBy = ['ws.item_id','ws.lot_id','ws.whs_id'];
+          $orderBy1 = 'ws.item_id';
+          $orderBy2 = 'ws.lot_id';
+          break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
+          $select = $select.', '.'wp.pallet as pallet, wl.lot AS lot_';
+          $groupBy = ['ws.pallet_id','ws.lot_id','ws.item_id'];
+          $orderBy1 = 'ws.pallet_id';
+          $orderBy2 = 'ws.lot_id';
+          break;
 
         default:
           # code...
           break;
       }
 
-      $stock = \DB::connection(session('db_configuration')->getConnCompany())
-                    ->table('wms_stock as ws')
-                    ->join('erpu_items as ei', 'ws.item_id', '=', 'ei.id_item')
-                    ->join('erpu_units as eu', 'ei.unit_id', '=', 'eu.id_unit')
-                    ->join('wms_pallets as wp', 'ws.pallet_id', '=', 'wp.id_pallet')
-                    ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
-                    ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
-                    ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
-                    ->where('ws.is_deleted', false)
+      $stock = SStockManagment::getStockBaseQuery($select)
                     ->select(\DB::raw($select))
+                    ->where('ws.is_deleted', false)
                     ->groupBy($groupBy)
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)
                     ->having('stock', '>', '0');
 
-      if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET')) {
-          $stock = $stock->groupBy('ws.whs_id');
+      if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
+      {
+          $stock = $stock->orderBy('ws.whs_id');
+      }
+      elseif ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'))
+      {
+          $stock = $stock->orderBy('ws.item_id');
       }
 
       $stock = $stock->get();

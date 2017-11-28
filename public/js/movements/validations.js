@@ -1,10 +1,73 @@
 /*
+* When freeze is pressed, the field of item, quantity and the button
+* of add are disabled, but the data of the movement is send to server too
+*/
+function unfreeze() {
+  var fre = document.getElementById("idFreeze"); // freeze button
+  var but = document.getElementById("tButton"); // Add button
+  var item = document.getElementById("item"); // item field
+  var qty = document.getElementById("quantity"); // quantity field
+  var sBut = document.getElementById("saveButton"); // save button
+
+  if (fre.firstChild.data == "Congelar") {
+    if (globalData.isPalletReconfiguration) {
+      movement.auxPalletRow = oPalletRow;
+    }
+    else {
+      movement.auxPalletRow = '';
+    }
+
+    if (validateMovement(movement)) {
+        but.disabled = true;
+        item.disabled = true;
+        qty.disabled = true;
+        sBut.disabled = false;
+
+        $(function(){
+          $("button.removebutton").attr("disabled", true);
+          $("button.buttlots").attr("disabled", true);
+          // $("button.butstk").attr("disabled", true);
+          $("select.selPallet").attr("disabled", true);
+        });
+
+        if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
+          discountMovements(movement);
+        }
+
+        setData(movement); //the table is sends to the server
+
+        fre.innerHTML = "Descongelar";
+    }
+  }
+  else {
+    but.disabled = false;
+    item.disabled = false;
+    qty.disabled = false;
+    sBut.disabled = true;
+
+    $(function() {
+      $("button.removebutton").attr("disabled", false);
+      if (globalData.iMvtType != globalData.MVT_TP_OUT_TRA && !globalData.isPalletReconfiguration) {
+        $("select.selPallet").attr("disabled", false);
+      }
+      $("button.buttlots").attr("disabled", false);
+      // $("button.butstk").attr("disabled", false);
+
+    });
+
+    setData("");
+
+    fre.innerHTML = "Congelar";
+  }
+}
+
+/*
 * Validate the movement rows in whsmovs.blade.php
 */
 function validateMovement(oMovement) {
 
   if (oMovement.rows.length == 0) {
-    swal("Error", "No han agregado movimientos.", "error");
+    swal("Error", "No ha agregado movimientos.", "error");
     return false;
   }
 
@@ -14,19 +77,19 @@ function validateMovement(oMovement) {
       if (row.oAuxItem.is_lot && row.lotRows.length == 0) {
           swal("Error", "El renglón " + row.oAuxItem.name + " no tiene lotes asignados.", "error");
           valid = false;
-          return false;
+          return true;
       }
 
       if (Number.isNaN(Number.parseFloat(row.dQuantity))) {
           swal("Error", "Debe ingresar sólo números en los campos cantidad y precio.", "error");
           valid = false;
-          return false;
+          return true;
       }
 
       if (!row.oAuxItem.is_bulk && isFloat(parseFloat(row.dQuantity))) {
           swal("Error", "El renglón " + row.oAuxItem.name + " no acepta decimales.", "error");
           valid = false;
-          return false;
+          return true;
       }
 
       var qtySum = 0.0;
@@ -36,29 +99,28 @@ function validateMovement(oMovement) {
           if (row.oAuxItem.is_lot && lotRow.iLotId <= 0) {
             swal("Error", "El código " + row.sAuxItemCode + " no tiene un lote asignado.", "error");
             valid = false;
-            return false;
+            return true;
           }
       });
 
       if (row.oAuxItem.is_lot && qtySum != row.dQuantity) {
           swal("Error", "Asignación de lotes inconsistente en el material/producto " + row.oAuxItem.name + ", renglón " + rowIndex + ".", "error");
           valid = false;
-          return false;
+          return true;
       }
       rowIndex++;
   });
+
+  if (!valid) {
+    return false;
+  }
 
   if (oMovement.iMvtType == globalData.PALLET_RECONFIG_IN) {
       var totalQuantity = 0;
       var palletLotRows = [];
 
-      function LotRow(idLot, quantity) {
-          this.iLotId = idLot;
-          this.dQuantity = quantity;
-      }
-
       oMovement.auxPalletRow.lotRows.forEach(function(row) {
-          palletLotRows.push(new LotRow(row.iLotId, row.dQuantity));
+          palletLotRows.push(new LotRow(row.iLotId, row.dQuantity)); //LotRow in pallets.js
       });
 
       oMovement.rows.forEach(function(row) {
@@ -83,7 +145,7 @@ function validateMovement(oMovement) {
           if (palletLot.dQuantity < 0) {
             swal("Error", "No hay suficientes existencias de lote " + palletLot.iLotId + " en la tarima.", "error");
             valid = false;
-            return false;
+            return true;
           }
       });
   }
