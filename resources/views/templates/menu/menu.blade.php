@@ -29,7 +29,7 @@
               @endif
               @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.ASSIGNAMENTS')))
                 <li>
-                  <a href="{{ route('admin.userPermissions.index') }}">{{ trans('userinterface.USER_PERMISSIONS') }}</a>
+                  <a href="{{ route('admin.userpermissions.index') }}">{{ trans('userinterface.USER_PERMISSIONS') }}</a>
                 </li>
               @endif
               @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.PERMISSIONS')))

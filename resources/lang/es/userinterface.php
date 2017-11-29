@@ -105,6 +105,7 @@
 								  		'ACCESS' => 'Acceso a empresas',
 								  		'BRANCH' => 'Crear sucursal',
 								  		'ADDRESS' => 'Direcciones',
+								  		'USERPERMISSION' => 'Permisos',
 											],
 
 		'placeholders' 	=> 	[
@@ -172,6 +173,7 @@
 							 				'DELETE' => 'Eliminar',
 							 				'BRANCH' => 'Crear sucursal',
 							 				'ADDRESS' => 'Crear dirección',
+							 				'USERPERMISSION' => 'Agregar Permisos',
 											],
 
 		'labels'			 	=>  [

@@ -21,6 +21,7 @@ use App\SYS\SPermission;
 use App\SYS\SPrivilege;
 use App\SYS\SCompany;
 use App\SYS\SUserPermission;
+use App\SYS\SUserCompany;
 use App\User;
 
 class SUserPermissionsController extends Controller
@@ -60,19 +61,83 @@ class SUserPermissionsController extends Controller
      */
     public function create()
     {
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function creator($id)
+    {
+
       $Syspermission = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
       $Module = SModule::orderBy('name', 'ASC')->lists('name', 'id_module');
       $permission = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
       $Privilege = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
-      $Companies = SCompany::orderBy('name', 'ASC')->lists('name', 'id_company');
 
-        return view('userpermissions.createEdit')
+      $id_id = preg_split("/[,,]+/", $id);
+      $nameUser = $id_id[0];
+      $idUser = $id_id[1];
+      $Companies = SUserCompany::select('id_user_access','company_id')
+                  ->where('user_id',$idUser)
+                  ->get();
+
+      $Companies->each(function($Companies){
+                  $Companies->company;
+      });
+
+
+
+      return view('userpermissions.createEdit')
         ->with('actualUserPermission', $this->oCurrentUserPermission)
         ->with('syspermissions', $Syspermission)
         ->with('modules', $Module)
         ->with('permissions', $permission)
         ->with('companies', $Companies)
-        ->with('privileges', $Privilege);
+        ->with('privileges', $Privilege)
+        ->with('selectedNameId', $nameUser)
+        ->with('selectedUserId', $idUser);
+
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function brWhsCreate()
+    {
+      $id="Admin,,2";
+      $Syspermission = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
+      $Module = SModule::orderBy('name', 'ASC')->lists('name', 'id_module');
+      $permission = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
+      $Privilege = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+
+      $id_id = preg_split("/[,,]+/", $id);
+      $nameUser = $id_id[0];
+      $idUser = $id_id[1];
+      $Companies = SUserCompany::select('id_user_access','company_id')
+                  ->where('user_id',$idUser)
+                  ->get();
+
+      $Companies->each(function($Companies){
+                  $Companies->company;
+      });
+
+
+
+      return view('userpermissions.brWhsCreate')
+        ->with('actualUserPermission', $this->oCurrentUserPermission)
+        ->with('syspermissions', $Syspermission)
+        ->with('modules', $Module)
+        ->with('permissions', $permission)
+        ->with('companies', $Companies)
+        ->with('privileges', $Privilege)
+        ->with('selectedNameId', $nameUser)
+        ->with('selectedUserId', $idUser);
+
     }
 
     /**
@@ -83,13 +148,21 @@ class SUserPermissionsController extends Controller
      */
      public function store(Request $request)
      {
-       $assignament = new SUserPermission($request->all());
-       dd($assignament);
-       // $assignament->save();
-       //
-       // Flash::success(trans('messages.REG_CREATED'))->important();
-       //
-       // return redirect()->route('wms.lots.index');
+      $permission_id_array = $request->permission_id;
+
+         for ($i=0; $i < count($permission_id_array); $i++) {
+           $assignament = new SUserPermission($request->all());
+           $assignament->user_id = $request->selectedUserId;
+           $assignament->module_id = $request->module_id;
+           $assignament->company_id_opt = $request->companies_id;
+           $assignament->permission_type_id = 2;
+           $assignament->permission_id = $permission_id_array[$i];
+           $assignament->save();
+         }
+
+       Flash::success(trans('messages.REG_CREATED'))->important();
+
+       return redirect()->route('admin.userpermissions.index');
      }
 
 

@@ -112,6 +112,14 @@ Route::group(['middleware' => ['auth']], function() {
        Route::get('userpermissions/findCompanies','SYS\SUserPermissionsController@findCompanies');
        Route::get('userpermissions/findBranches','SYS\SUserPermissionsController@findBranches');
        Route::resource('userpermissions','SYS\SUserPermissionsController');
+       Route::get('userpermissions/{id}/creator', [
+    			'uses' => 'SYS\SUserPermissionsController@Creator',
+    			'as' => 'admin.userpermissions.creator'
+    		]);
+       Route::get('userpermissions/brWhsCreate', [
+    			'uses' => 'SYS\SUserPermissionsController@brWhsCreate',
+    			'as' => 'admin.userpermissions.brWhsCreate'
+    		]);
    		Route::get('userpermissions/{id}/activate', [
    			'uses' => 'SYS\SUserPermissionsController@Activate',
    			'as' => 'admin.userpermissions.activate'

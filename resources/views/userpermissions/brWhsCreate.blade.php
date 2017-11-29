@@ -2,38 +2,40 @@
 @section('menu')
 @include('templates.menu.menumodules')
 @endsection
-@section('title', trans('userinterface.titles.CREATE_USER_PERMISSION') . " " . $selectedNameId ." # de usuario: " . $selectedUserId)
+@section('title', trans('userinterface.titles.CREATE_USER_PERMISSION') . " ")// . $selectedNameId ." # de usuario: " . $selectedUserId)
 @section('content')
+  <?php
+  $branches = array("", "", "");
+  ?>
 {!! Form::open(['route' => 'admin.userpermissions.store', 'method' => 'POST']) !!}
 <div class="container-fluid" style="top:100px">
    <div class="row">
 		 <div class="col-md-4"></div>
       <div class="col-md-4 text-center form-group">
-          {{-- MODULES SELECT --}}
+
          <div class="well">
 					 <h3>{!! trans('userinterface.MODULES') !!}</h3>
             {!! Form::select("module_id", $modules, null, ['class'=>'form-control select-modules modules', 'placeholder' => trans('userinterface.titles.SELECT_MODULE'), 'required']) !!}
          </div>
-          {{-- PERMISSIONS SELECT --}}
+
 				 <div class="well text-left permissions" id="permissions">
 				 </div>
 
-         {{-- COMPANIES SELECT --}}
-				 <div class="well companies" id="companies">
-           <h3>{!! trans('userinterface.COMPANIES') !!}</h3>
-           @foreach ($companies as $company)
+				 <div class="well branches" id="branches">
+           <h3>{!! trans('userinterface.branches') !!}</h3>
+           {{-- @foreach ($branches as $branch)
              <label>
-               {!! Form::checkbox("companies_id", $company->company_id, null, ['class'=>'','required']) !!}
-               <?php echo $company->company->name ;?>
+               {!! Form::checkbox("branches_id", $branch->company_id, null, ['class'=>'','required']) !!}
+
              </label>
              <br>
-           @endforeach
+           @endforeach --}}
 
          </div>
-         {{-- BRANCHES SELECT --}}
+
 				 <div class="well branches displayNone" id="branches">
          </div>
-         {{-- PRIVILEGES SELECT --}}
+
          <div class="well" id="privileges">
 					 <h3>{!! trans('userinterface.PRIVILEGES') !!}</h3>
             {!! Form::select("privilege_id", $privileges, null, ['class'=>'form-control select-privileges', 'placeholder' => trans('userinterface.placeholders.SELECT_PRIVILEGE'), 'required']) !!}
@@ -60,7 +62,7 @@
    $('.select-syspermissions').chosen({});
    $('.select-modules').chosen({});
    $('.select-permissions').chosen({});
-   $('.select-companies').chosen({});
+   $('.select-branches').chosen({});
    $('.select-privileges').chosen({});
 
    //filter permission by modules.
@@ -84,37 +86,11 @@
        });
    });
 
-   // $(document).on('change', '.syspermissions', function(){
-   //     var eti_id = $(this).val();
-   //     var div = $(this).parent();
-   //     var opt = " ";
-   //     if (eti_id==2){
-   //       // document.getElementById("companies").classList.remove("displayNone");
-   //       $.ajax({
-   //         type:'get',
-   //         url:'{!!URL::to('admin/userpermissions/findCompanies')!!}',
-   //         success:function(data){
-   //           document.getElementById("companies").classList.remove("displayNone");
-   //           opt += '<h3 class="text-center"> EMPRESA </h3><br>';
-   //           for(var i = 0; i < data.length; i++){
-   //               opt += '<label><input class="text-left company_id_opt" name="company_id_opt" type="checkbox" value="' + data[i].id_company + '"> ' + data[i].name + '</label><br>';
-   //           }
-   //           $('.companies').empty(" ");
-   //           $('.companies').append(opt);
-   //         },
-   //         error:function(){}
-   //       });
-   //     }
-   //     else{
-   //       $('.companies').empty(" ");
-   //     }
-   // });
-
    $(document).on('change', '.company_id_opt', function(){
        var eti_id = $(this).val();
        var div = $(this).parent();
        var opt = " ";
-         // document.getElementById("companies").classList.remove("displayNone");
+         // document.getElementById("branches").classList.remove("displayNone");
          $.ajax({
            type:'get',
            url:'{!!URL::to('admin/userpermissions/findBranches')!!}',
