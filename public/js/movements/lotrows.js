@@ -8,40 +8,47 @@ $(document).on('click', 'button.buttlots', function () {
 
     // document.getElementById("qtyComplete").value = parseFloat(movement.getRow(idParentTr).dQuantity).toFixed(globalData.DEC_QTY);
 
-    $('#lotsbody').empty();
+    // $('#lotsbody').empty();
     console.log("readed " + idParentTr);
 
     var row = movement.getRow(idParentTr);
-    if(row) {
-      if (row.iPalletId != 1 && movement.iMvtType == globalData.MVT_TP_OUT_TRA) {
-        document.getElementById('addBtn').disabled = true;
-      }
-      else
-      {
-        document.getElementById('addBtn').disabled = false;
-      }
 
-      row.lotRows.forEach(function(lotRow) {
-          $('#lotsbody').append(createLotRow(lotRow.identifier, lotRow.iLotId, lotRow.dQuantity, lotRow.dPrice));
-      });
+    if(row) {
+      attachRow(row, false);
     }
 
     validateLots(idParentTr);
     return false;
 });
 
+function attachRow(row, bPalletReconfiguration) {
+    $('#lotsbody').empty();
+
+    if (row.iPalletId != 1 && movement.iMvtType == globalData.MVT_TP_OUT_TRA) {
+      document.getElementById('addBtn').disabled = true;
+    }
+    else
+    {
+      document.getElementById('addBtn').disabled = false;
+    }
+
+    row.lotRows.forEach(function(lotRow) {
+        $('#lotsbody').append(createLotRow(row, lotRow.identifier, lotRow.iLotId, lotRow.dQuantity, lotRow.dPrice, bPalletReconfiguration));
+    });
+}
+
 
 function addRowAux() {
-    $('#lotsbody').append(createLotRow(0, 0, 0, 0));
+    $('#lotsbody').append(createLotRow(null, 0, 0, 0, 0, false));
 }
 
 /*
 * Creates a row of table in HTML
 */
-function createLotRow(id, lotId, quantity, price) {
+function createLotRow(row, id, lotId, quantity, price, bPalletReconfiguration) {
     var oTr = document.createElement("tr");
     var iMovType = parseInt(document.getElementById('mvt_whs_type_id').value);
-    var parentRow = movement.getRow(idParentTr);
+    var parentRow = row == null ? movement.getRow(idParentTr) : row;
 
     oTr.setAttribute("id", "l" + id);
 
@@ -88,18 +95,18 @@ function createLotRow(id, lotId, quantity, price) {
     oTdLOT.appendChild(document.createTextNode(valuesRow[LOT]));
     oTdLOT.setAttribute("align", "center");
     oTdLOT.innerHTML = "<select " +
-                          ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ? "disabled='true'" : "") +
+                          ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) || bPalletReconfiguration ? "disabled='true'" : "") +
                            " onChange='setLot(this.value, this)' class='form-control'>" + options + "</select>";
 
     var oTdQTY = document.createElement("td");
-    oTdQTY.innerHTML = "<input align='right' class='form-control' type='number' onkeyup='validateLots(" + idParentTr + ")' " +
-                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ? "readonly='readonly'" : "") +
+    oTdQTY.innerHTML = "<input align='right' class='form-control' type='number' " +
+                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) || bPalletReconfiguration ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
                                 valuesRow[QTY] + "'>";
 
     var oTdPRICE = document.createElement("td");
-    oTdPRICE.innerHTML = "<input align='right' class='form-control' type='number' onkeyup='validateLots(" + idParentTr + ")' " +
-                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ? "readonly='readonly'" : "") +
+    oTdPRICE.innerHTML = "<input align='right' class='form-control' type='number' " +
+                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) || bPalletReconfiguration ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
                                 valuesRow[PRICE] + "'>";
 
@@ -109,7 +116,7 @@ function createLotRow(id, lotId, quantity, price) {
 
     var oTdBTN_DEL = document.createElement("td");
     oTdBTN_DEL.appendChild(document.createTextNode(valuesRow[BTN_DEL]));
-    if (parentRow.iPalletId == 1 || (iMovType != globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1)) {
+    if ((parentRow.iPalletId == 1 || (iMovType != globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1)) && !bPalletReconfiguration ) {
       oTdBTN_DEL.innerHTML = "<button type='button' onClick='validateLots('" + idParentTr + "')' class='removeLotbutton btn btn-danger btn-xs' title='Quitar renglón'>" +
                         "<li class='glyphicon glyphicon-remove'></li>"
                         "</button>";
@@ -162,6 +169,10 @@ function setLot(value, obj) {
 * Calls the method to save table when the button close of modal window is clicked
 */
 $('#closeModal').on('click', function(e) {
+    if (! validateLots(idParentTr)) {
+      return false;
+    }
+
     pushLotTableRows(idParentTr);
 
     var qty = 0;
@@ -189,8 +200,8 @@ function pushLotTableRows(parent) {
 
   movement.getRow(idParentTr).lotRows = [];
   $('#lotsbody tr').each(function(index, element) {
-    var dQuantity = parseFloat($(element).find("td").eq(QTY).html());
-    var dPrice = parseFloat($(element).find("td").eq(PRICE).html());
+    var dQuantity = parseFloat($(element).find("td").eq(QTY)[0].children[0].value);
+    var dPrice = parseFloat($(element).find("td").eq(PRICE)[0].children[0].value);
     var dLotId = parseInt($(element).find("td").eq(LOT_VALUE).html());
 
     addOrUpdateLotRow(parent, dLotId, dQuantity, dPrice);

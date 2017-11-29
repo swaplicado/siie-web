@@ -48,8 +48,10 @@ class SGendersController extends Controller
 
         foreach ($lGenders as $gender) {
           $gender->group;
+          $gender->itemClass;
+          $gender->type;
         }
-
+        // dd($lGenders);
         return view('siie.genders.index')
             ->with('genders', $lGenders)
             ->with('actualUserPermission', $this->oCurrentUserPermission)

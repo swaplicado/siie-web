@@ -291,6 +291,10 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'WMS\SWmsLotsController@Copy',
         'as'   => 'wms.lots.copy'
       ]);
+      Route::get('lots/{id}/barcode', [
+        'uses' => 'WMS\SWmsLotsController@Barcode',
+        'as'   => 'wms.lots.barcode'
+      ]);
 
       /*
       * Pallets
@@ -307,6 +311,10 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('lots/{id}/copy', [
         'uses' => 'WMS\SPalletsController@Copy',
         'as'   => 'wms.pallets.copy'
+      ]);
+      Route::get('pallets/{id}/barcode', [
+        'uses' => 'WMS\SPalletsController@Barcode',
+        'as'   => 'wms.pallets.barcode'
       ]);
 
   });
@@ -343,10 +351,11 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'ERP\SBranchesController@Activate',
         'as' => 'siie.branches.activate'
       ]);
-      Route::get('branches/{id}/create', [
+      Route::get('branches/{id}/edit', [
         'uses' => 'ERP\SBranchesController@create',
-        'as' => 'siie.branches.create'
+        'as' => 'siie.branches.edit'
       ]);
+      
 
       /*
       * address

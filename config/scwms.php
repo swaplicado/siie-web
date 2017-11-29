@@ -59,6 +59,8 @@ return [
                         'STK_BY_LOT' => '3',
                         'STK_BY_LOCATION' => '4',
                         'STK_BY_WAREHOUSE' => '5',
+                        'STK_BY_LOT_BY_WAREHOUSE' => '6',
+                        'STK_BY_PALLET_BY_LOT' => '7',
                       ],
 
     'RECONFIG_PALLETS' => '100',
