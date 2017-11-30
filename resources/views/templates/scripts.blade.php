@@ -15,3 +15,4 @@
 <script src="{{ asset('list-group/listgroup.js') }}"></script>
 <script src="{{asset('datePicker/js/bootstrap-datepicker.js')}}"></script>
 <script src="{{asset('datePicker/locales/bootstrap-datepicker.es.min.js')}}"></script>
+<script src="{{ asset('sweet-alert/sweetalert2.min.js') }}"></script>

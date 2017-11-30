@@ -15,6 +15,7 @@ return array(
     'Laracasts\\Flash' => array($vendorDir . '/laracasts/flash/src'),
     'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
     'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
+    'Felixkiss\\UniqueWithValidator\\' => array($vendorDir . '/felixkiss/uniquewith-validator/src'),
     'Dotenv' => array($vendorDir . '/vlucas/phpdotenv/src'),
     'Diff' => array($vendorDir . '/phpspec/php-diff/lib'),
 );

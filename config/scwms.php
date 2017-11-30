@@ -80,4 +80,12 @@ return [
                   'RELEASED' => '1',
                   'AVAILABLE' => '0',
                 ],
+
+    'CONTAINERS' => [
+                  'NA' => '1',
+                  'LOCATION' => '2',
+                  'WAREHOUSE' => '3',
+                  'BRANCH' => '4',
+                  'COMPANY' => '5',
+                ],
 ];

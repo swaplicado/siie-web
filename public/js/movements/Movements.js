@@ -129,8 +129,42 @@ class SLotRow {
  */
 function setMovement(obj) {
    var mov = new SMovement();
+   mov.iMvtType = obj.iMvtType;
+   mov.iWhsSrc = obj.iWhsSrc;
+   mov.iWhsDes = obj.iWhsDes;
    mov.idRow = obj.idRow;
-   mov.rows = obj.rows;
+
+   var mRows = [];
+   obj.rows.forEach(function(rowS) {
+       var rowN = new SMovementRow(rowS.iIdRow);
+       rowN.idLotRow = rowS.idLotRow;
+       rowN.iItemId = rowS.iItemId;
+       rowN.iUnitId = rowS.iUnitId;
+       rowN.iPalletId = rowS.iPalletId;
+       rowN.iLocationId = rowS.iLocationId;
+       rowN.dQuantity = rowS.dQuantity;
+       rowN.dPrice = rowS.dPrice;
+       rowN.oAuxItem = rowS.oAuxItem;
+       rowN.oAuxUnit = rowS.oAuxUnit;
+       rowN.oAuxPallet = rowS.oAuxPallet;
+       rowN.oAuxLocation = rowS.oAuxLocation;
+       rowN.aStock = rowS.aStock;
+
+       var mLotRows = [];
+       rowS.lotRows.forEach(function(lotRowS) {
+          var lotRowN = new SMovementRow(lotRowS.id);
+          lotRowN.iLotId = lotRowS.iLotId;
+          lotRowN.dQuantity = lotRowS.dQuantity;
+          lotRowN.dPrice = lotRowS.dPrice;
+
+          mLotRows.push(lotRowN);
+       });
+       rowN.lotRows = mLotRows
+
+       mRows.push(rowN);
+   });
+
+   mov.rows = mRows;
 
    return mov;
 }

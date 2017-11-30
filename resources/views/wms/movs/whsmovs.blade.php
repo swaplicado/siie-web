@@ -29,30 +29,30 @@
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required', ]) !!}
   		</div>
 
-      <div class="form-group">
+      {{-- <div class="form-group">
   			{!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
   			{!! Form::text('folio', null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'required', 'unique']) !!}
-  		</div>
+  		</div> --}}
 
-
-    </div>
-    <div class="col-md-6">
 			<div class="form-group">
   			{!! Form::label('dt_date', trans('userinterface.labels.MVT_DATE').'*') !!}
   			{!! Form::date('dt_date', \Carbon\Carbon::now(), ['class'=>'form-control']) !!}
   		</div>
 
+    </div>
+    <div class="col-md-6">
+
 			<div class="form-group">
 				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_src'))
 						{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
-						{!! Form::select('whs_src', $warehouses, 0, ['class'=>'form-control border_red select-one',
+						{!! Form::select('whs_src', $warehouses, $whs_src, ['class'=>'form-control border_red select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
 				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_des'))
 		  			{!! Form::label('whs_des', ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ?
 							trans('wms.labels.WAREHOUSE') :
 									trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
-						{!! Form::select('whs_des', $warehouses, 0, ['class'=>'form-control select-one',
+						{!! Form::select('whs_des', $warehouses, $whs_des, ['class'=>'form-control select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
 			</div>
@@ -68,7 +68,8 @@
 						  <div class="col-md-3">
 									{!! Form::number('quantity', 1, ['class'=>'form-control', 'id' => 'quantity','onkeypress' => 'addRowByEnter(event)',
 																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
-																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ? 'disabled' : '']) !!}
+																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ||
+																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
 							</div>
 						  <div class="col-md-3">
 									<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
@@ -174,6 +175,13 @@
 				console.log(JSON.parse(retrievedObject));
 				movement = setMovement(JSON.parse(retrievedObject));
 
+				if (movement.iWhsDes != 0) {
+					document.getElementById('whs_des').value = movement.iWhsDes;
+				}
+				if (movement.iWhsSrc != 0) {
+					document.getElementById('whs_src').value = movement.iWhsSrc;
+				}
+
 				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
 					oPalletRow = movement.auxPalletRow;
 				}
@@ -194,7 +202,7 @@
 						}
 
 				    addRowTr(element.iIdRow, element,
-												(globalData.bIsInputMov ? document.getElementById('whs_des').value : document.getElementById('whs_src').value),
+												(globalData.bIsInputMov ? movement.iWhsDes : movement.iWhsSrc),
 												type);
 				});
 			}

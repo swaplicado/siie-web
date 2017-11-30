@@ -211,7 +211,7 @@ Route::group(['middleware' => ['auth']], function() {
       /*
       * Iventory movements
       **/
-      Route::get('/movs/view', [
+      Route::get('/movs/view/{folio?}', [
       	'uses' => 'WMS\SMovsController@index',
       	'as' => 'wms.movs.index'
       ]);
@@ -238,6 +238,19 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('/stock/{id}', [
       	'uses' => 'WMS\SStockController@index',
       	'as' => 'wms.stock.index'
+      ]);
+
+      /*
+      * Folios
+      **/
+      Route::resource('folios','WMS\SFoliosController');
+      Route::get('folios/{id}/destroy', [
+        'uses' => 'WMS\SFoliosController@Destroy',
+        'as' => 'wms.folios.destroy'
+      ]);
+      Route::get('locs/{id}/activate', [
+        'uses' => 'WMS\SFoliosController@Activate',
+        'as' => 'wms.folios.activate'
       ]);
 
       /*
@@ -347,7 +360,7 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'ERP\SBranchesController@create',
         'as' => 'siie.branches.edit'
       ]);
-      
+
 
       /*
       * address

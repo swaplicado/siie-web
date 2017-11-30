@@ -43,6 +43,7 @@ class SWmsMenu {
             \Menu::new()
                 ->addClass('dropdown-menu')
                 ->route('wms.movs.index', trans('wms.WHS_MOVS'))
+                ->route('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS'))
         )
         ->submenu(
             Link::to('#', trans('wms.STOCK_QUERY').'<span class="caret"></span>')

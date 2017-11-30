@@ -9,7 +9,78 @@ use App\WMS\SLocation;
  */
 class SStockUtils
 {
-    public static function validateStock($aMovement = [], $iWhsId = 0)
+    public static function validateStock($oMovement = '')
+    {
+        $aErrors = array();
+
+        if ($oMovement == '')
+        {
+          array_push($aErrors, "El movimiento está vacío");
+          return $aErrors;
+        }
+
+        $aParameters = array();
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 0;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 0;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
+
+        foreach ($oMovement->aAuxRows as $movRow)
+        {
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow->item_id;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow->unit_id;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow->pallet_id;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $movRow->whs_id;
+
+            if ($movRow->item->is_lot)
+            {
+                if (sizeof($movRow->getAuxLots()) == 0)
+                {
+                    array_push($aErrors, "El renglón ".$movRow['oAuxItem']['name']." no tiene lotes asignados");
+                }
+                else
+                {
+                  foreach ($movRow->getAuxLots() as $lotRow)
+                  {
+                      $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $lotRow->lot_id;
+
+                      if (session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow->quantity)
+                      {
+                          if ($movRow->pallet_id == 1) {
+                            array_push($aErrors, "No hay suficientes existencias SIN TARIMA del lote ".$lotRow->lot->lot);
+                          }
+                          else {
+                            array_push($aErrors, "No hay suficientes existencias del lote ".$lotRow->lot->lot." en la tarima ".$movRow->pallet->pallet);
+                          }
+                          return $aErrors;
+                      }
+                  }
+                }
+            }
+            else
+            {
+                if (session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow->quantity)
+                {
+                    if ($movRow->pallet_id == 1)
+                    {
+                      array_push($aErrors, "No hay suficientes existencias SIN TARIMA del material/producto ".$movRow->item->name);
+                    }
+                    else
+                    {
+                      array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name." en la tarima ".$movRow->pallet->pallet);
+                    }
+                    return $aErrors;
+                }
+            }
+        }
+
+        return $aErrors;
+    }
+
+
+    public static function validateStock2($aMovement = [], $iWhsId = 0)
     {
         $aErrors = array();
 
@@ -30,20 +101,21 @@ class SStockUtils
 
         foreach ($aMovement['rows'] as $movRow)
         {
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow['iItemId'];
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow['iUnitId'];
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow['iPalletId'];
+
             if ($movRow['oAuxItem']['is_lot'])
             {
                 if (sizeof($movRow['lotRows']) == 0)
                 {
-                    array_push($aErrors, "El renglón".$movRow['oAuxItem']['name']." no tiene lotes asignados");
+                    array_push($aErrors, "El renglón ".$movRow['oAuxItem']['name']." no tiene lotes asignados");
                 }
                 else
                 {
                   foreach ($movRow['lotRows'] as $lotRow)
                   {
-                      $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow['iItemId'];
-                      $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow['iUnitId'];
                       $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $lotRow['iLotId'];
-                      $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow['iPalletId'];
 
                       if (session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow['dQuantity'])
                       {
@@ -58,6 +130,22 @@ class SStockUtils
                           return $aErrors;
                       }
                   }
+                }
+            }
+            else
+            {
+                if (session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow['dQuantity'])
+                {
+                    if ($movRow['iPalletId'] == 1)
+                    {
+                      array_push($aErrors, "No hay suficientes existencias SIN TARIMA del material/producto ".$movRow['oAuxItem']['name']);
+                    }
+                    else
+                    {
+                      $pallet = SPallet::find($movRow['iPalletId']);
+                      array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow['oAuxItem']['name']." en la tarima ".$pallet->pallet);
+                    }
+                    return $aErrors;
                 }
             }
         }

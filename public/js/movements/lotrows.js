@@ -230,6 +230,6 @@ function addOrUpdateLotRow(idParent, idLot, quantity, price) {
 * Add a new lotRow on the new position
 */
 function addRowOfLot(parent, lot, qty, price) {
-    var lotRow = new SLotRow(movement.getRow(parent).identifier, lot, qty, price);
+    var lotRow = new SLotRow(movement.getRow(parent).idLotRow, lot, qty, price);
     movement.getRow(parent).addLotRow(lotRow);
 }

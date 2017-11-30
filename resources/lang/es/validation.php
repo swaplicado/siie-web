@@ -161,6 +161,12 @@ return [
         'whs_id' => [
             'required' => 'El campo almacén es obligatorio',
         ],
+        'mvt_class_id' => [
+            'required' => 'El campo clase de movimiento es obligatorio',
+        ],
+        'mvt_type_id' => [
+            'required' => 'El campo tipo de movimiento es obligatorio',
+        ],
 
     ],
 

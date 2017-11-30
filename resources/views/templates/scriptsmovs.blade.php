@@ -6,7 +6,8 @@
 <script src="{{ asset('trumbowyg/dist/trumbowyg.min.js') }}"></script>
 <script src="{{ asset('vue/vue.min.js') }}"></script>
 {{-- https://sweetalert.js.org/ --}}
-<script src="{{ asset('sweet-alert/sweetalert.min.js') }}"></script>
+{{-- <script src="{{ asset('sweet-alert/sweetalert.min.js') }}"></script> --}}
+<script src="{{ asset('sweet-alert/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('js/movements/Movements.js')}}"></script>
 <script src="{{ asset('js/movements/movementrows.js')}}"></script>
 <script src="{{ asset('js/movements/lotrows.js')}}"></script>
