@@ -177,9 +177,11 @@
 
 				if (movement.iWhsDes != 0) {
 					document.getElementById('whs_des').value = movement.iWhsDes;
+					$('#whs_des').prop('disabled', true).trigger("chosen:updated");
 				}
 				if (movement.iWhsSrc != 0) {
 					document.getElementById('whs_src').value = movement.iWhsSrc;
+					$('#whs_src').prop('disabled', true).trigger("chosen:updated");
 				}
 
 				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {

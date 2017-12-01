@@ -86,9 +86,18 @@
 			}
 
 			var oData = new Data();
+
+			var mvtTypeId = <?php echo json_encode(isset($folio) ? $folio->mvt_type_id : 0); ?>;
+			var whsId = <?php echo json_encode(isset($folio) ? $folio->aux_whs_id == "" ? 0 : $folio->aux_whs_id : 0); ?>;
+			var locationId = <?php echo json_encode(isset($folio) ? $folio->aux_location_id == "" ? 0 : $folio->aux_location_id : 0); ?>;
 		</script>
 		<script src="{{ asset('js/folios/folios.js')}}"></script>
 		<script>
+				whenChangeClass('mvt_class_id');
 				whenChangeBranch('aux_branch_id');
+
+				document.getElementById('mvt_type_id').value = mvtTypeId;
+				document.getElementById('aux_whs_id').value = whsId;
+				document.getElementById('aux_location_id').value = locationId;
 		</script>
 @endsection

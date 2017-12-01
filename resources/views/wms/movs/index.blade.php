@@ -50,7 +50,7 @@
 								@endif
 								<td align="right">{{ $row->item->unit->code }}</td>
 								<td>{{ $row->movement->branch->name }}</td>
-								<td>{{ $row->movement->whs->name }}</td>
+								<td>{{ $row->movement->warehouse->name }}</td>
 								<td>{{ $row->movement->mvtType->name }}</td>
 								<td>{{ $row->movement->folio }}</td>
 								@if ($row->movement->mvt_trn_type_id != 1)

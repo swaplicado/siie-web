@@ -189,23 +189,24 @@ function validateInput() {
     }
 
     if (iMovType == globalData.MVT_TP_OUT_TRA) {
-      // document.getElementById('whs_des').setAttribute("disabled", "disabled");
       movement.iWhsDes = parseInt(document.getElementById("whs_des").value);
       $('#whs_des').prop('disabled', true).trigger("chosen:updated");
-      // document.getElementById('whs_src').setAttribute("disabled", "disabled");
+      // document.getElementById('whs_des').setAttribute("disabled", "disabled");
+
       movement.iWhsSrc = parseInt(document.getElementById("whs_src").value);
       $('#whs_src').prop('disabled', true).trigger("chosen:updated");
+      // document.getElementById('whs_src').setAttribute("disabled", "disabled");
     }
     else {
       if (globalData.bIsInputMov) {
-        // document.getElementById('whs_des').setAttribute("disabled", "disabled");
-        $('#whs_des').prop('disabled', true).trigger("chosen:updated");
         movement.iWhsDes = parseInt(document.getElementById("whs_des").value);
+        $('#whs_des').prop('disabled', true).trigger("chosen:updated");
+        // document.getElementById('whs_des').setAttribute("disabled", "disabled");
       }
       else {
-        // document.getElementById('whs_src').prop('disabled', true).trigger("chosen:updated");
-        $('#whs_src').prop('disabled', true).trigger("chosen:updated");
         movement.iWhsSrc = parseInt(document.getElementById("whs_src").value);
+        $('#whs_src').prop('disabled', true).trigger("chosen:updated");
+        // document.getElementById('whs_src').prop('disabled', true).trigger("chosen:updated");
       }
     }
 

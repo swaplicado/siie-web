@@ -12,6 +12,15 @@ class SWmsMenu {
         ->link('', '')
         ->route('wms.home', trans('wms.MODULE'))
         ->submenu(
+            Link::to('#', trans('wms.CONFIGURATION').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->route('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS'))
+                ->route('wms.limits.index', trans('userinterface.titles.LIST_LIMITS'))
+        )
+        ->submenu(
             Link::to('#', trans('wms.CATALOGUES').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
@@ -43,7 +52,7 @@ class SWmsMenu {
             \Menu::new()
                 ->addClass('dropdown-menu')
                 ->route('wms.movs.index', trans('wms.WHS_MOVS'))
-                ->route('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS'))
+
         )
         ->submenu(
             Link::to('#', trans('wms.STOCK_QUERY').'<span class="caret"></span>')
@@ -56,6 +65,7 @@ class SWmsMenu {
                 ->route('wms.stock.index', trans('wms.LOT_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT')])
                 ->addIf(session('location_enabled'), Link::toRoute('wms.stock.index', trans('wms.LOC_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION')]))
                 ->route('wms.stock.index', trans('wms.WHS_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE')])
+                ->route('wms.stock.index', trans('wms.BRANCH_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH')])
                 ->route('wms.stock.index', trans('wms.LOT_WHS_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE')])
                 ->route('wms.stock.index', trans('wms.PALLET_LOT_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT')])
         )

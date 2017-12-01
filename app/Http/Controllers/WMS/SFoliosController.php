@@ -176,7 +176,7 @@ class SFoliosController extends Controller
         }
 
         $lClasses = SMvtClass::orderBy('name', 'ASC')->lists('name', 'id_mvt_class');
-        $lTypes = SMvtType::orderBy('name', 'ASC')->lists('name', 'id_mvt_type');
+        $lTypes = SMvtType::orderBy('name', 'ASC')->get();
         $lBranches = SBranch::where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_branch');
         $lWarehouses = SWarehouse::where('is_deleted', false)->get();
         $lLocations = SLocation::where('is_deleted', false)->get();
@@ -207,11 +207,11 @@ class SFoliosController extends Controller
             $folio->container_type_id = \Config::get('scwms.CONTAINERS.COMPANY');
             $folio->container_id = session('partner')->id_partner;
         }
-        elseif ($folio->aux_whs_id == '') {
+        elseif ($folio->aux_whs_id == '0') {
             $folio->container_type_id = \Config::get('scwms.CONTAINERS.BRANCH');
             $folio->container_id = $folio->aux_branch_id;
         }
-        elseif ($folio->aux_location_id == '') {
+        elseif ($folio->aux_location_id == '0') {
             $folio->container_type_id = \Config::get('scwms.CONTAINERS.WAREHOUSE');
             $folio->container_id = $folio->aux_whs_id;
         }

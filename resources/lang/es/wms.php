@@ -13,10 +13,7 @@ return [
           'LOTS' => 'Lotes',
           'BAR_CODES' => 'Códigos de barras',
 
-      'CONFIG' => 'Configuración',
-          'CONFIG' => 'Configuración',
-          'CONFIG' => 'Configuración',
-
+      'CONFIGURATION' => 'Configuración',
 
       'INVENTORY' => 'Inventarios',
           'ITEM_STK' => 'Existencias por material/producto',
@@ -24,6 +21,7 @@ return [
           'PALLET_STK' => 'Existencias por tarima',
           'LOC_STK' => 'Existencias por ubicación',
           'WHS_STK' => 'Existencias por almacén',
+          'BRANCH_STK' => 'Existencias por sucursal',
           'LOT_WHS_STK' => 'Existencias por lote por almacén',
           'PALLET_LOT_STK' => 'Existencias por tarima por lote',
           'MOV_STK' => 'Operaciones',
@@ -45,6 +43,8 @@ return [
                       'CODE' => 'Código',
                       'FOLIO' => 'Folio',
                       'FOLIO_START' => 'Folio inicial',
+                      'MAX' => 'Máximo',
+                      'MIN' => 'Mínimo',
                       'MAT_PROD' => 'Material/producto',
                       'UNIT' => 'Unidad',
                       'LOCATION' => 'Ubicación',
@@ -70,6 +70,7 @@ return [
                           'FOLIO_START' => 'Ingrese folio inicial...',
                           'SELECT_MVT_CLASS' => 'Seleccione clase de movimiento...',
                           'SELECT_MVT_TYPE' => 'Seleccione tipo de movimiento...',
+                          'SELECT_MAT_PROD' => 'Seleccione material/producto...',
                         ],
 
       'buttons'  => [

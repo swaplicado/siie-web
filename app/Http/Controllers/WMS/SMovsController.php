@@ -57,7 +57,7 @@ class SMovsController extends Controller
 
         foreach ($lMovRows as $row) {
             $row->movement->branch;
-            $row->movement->whs;
+            $row->movement->warehouse;
             $row->movement->mvtType;
             $row->movement->trnType;
             $row->movement->adjType;
@@ -255,7 +255,7 @@ class SMovsController extends Controller
         }
 
         $movement->whs_id = $whsId;
-        $movement->branch_id = $movement->whs->branch_id;
+        $movement->branch_id = $movement->warehouse->branch_id;
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
         $movement->auth_status_by_id = 1;
@@ -310,6 +310,18 @@ class SMovsController extends Controller
                           ->withErrors($aErrors)
                           ->withInput();
             }
+          }
+        }
+
+        foreach ($movements as $mov) {
+          $aErrors = SStockUtils::validateLimits($mov);
+
+          if(sizeof($aErrors) > 0)
+          {
+              return redirect()
+                        ->back()
+                        ->withErrors($aErrors)
+                        ->withInput();
           }
         }
 

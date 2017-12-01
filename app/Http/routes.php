@@ -209,6 +209,11 @@ Route::group(['middleware' => ['auth']], function() {
       ]);
 
       /*
+      * Limits
+      **/
+      Route::resource('limits','WMS\SLimitsController');
+
+      /*
       * Iventory movements
       **/
       Route::get('/movs/view/{folio?}', [
