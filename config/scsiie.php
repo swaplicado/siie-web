@@ -31,6 +31,16 @@ return [
                     'SPENDING' => '3',
                   ],
 
+  'ITEM_LINK' => [
+                    'ALL' => '1',
+                    'CLASS' => '2',
+                    'TYPE' => '3',
+                    'FAMILY' => '4',
+                    'GROUP' => '5',
+                    'GENDER' => '6',
+                    'ITEM' => '7',
+                  ],
+
   'FRMT' =>       [
                     'AMT' => '1',
                     'QTY' => '2',

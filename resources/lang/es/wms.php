@@ -64,6 +64,8 @@ return [
                       'PALLET_TO_DIVIDE' => 'Tarima a dividir',
                       'PALLET_TO_FILL' => 'Tarima destino',
                       'ELEMENTS_TO_MOVE' => 'Elementos a mover',
+                      'LEVEL' => 'Nivel',
+                      'REFERENCE' => 'Referencia',
                     ],
 
       'placeholders'  =>  [
@@ -71,6 +73,8 @@ return [
                           'SELECT_MVT_CLASS' => 'Seleccione clase de movimiento...',
                           'SELECT_MVT_TYPE' => 'Seleccione tipo de movimiento...',
                           'SELECT_MAT_PROD' => 'Seleccione material/producto...',
+                          'SELECT_LEVEL' => 'Seleccione nivel...',
+                          'SELECT_REFERENCE' => 'Seleccione referencia...',
                         ],
 
       'buttons'  => [

@@ -126,6 +126,7 @@
 		  this.lPallets = <?php echo json_encode($pallets); ?>;
 			this.lWarehouses = <?php echo json_encode($warehousesObj); ?>;
 		  this.lLocations = <?php echo json_encode($locations); ?>;
+		  this.lItemContainers = <?php echo json_encode($itemContainers); ?>;
 		  this.bIsInputMov = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
 		  this.iMvtClass = <?php echo json_encode($oMovType->mvt_class_id); ?>;
 		  this.iMvtType = <?php echo json_encode($oMovType->id_mvt_type); ?>;
@@ -153,6 +154,20 @@
 
 		  this.PALLET_RECONFIG_IN  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_IN')) ?>;
 		  this.PALLET_RECONFIG_OUT  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_OUT')) ?>;
+
+			this.LINK_ALL = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ALL')); ?>;
+			this.LINK_CLASS = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.CLASS')); ?>;
+			this.LINK_TYPE = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.TYPE')); ?>;
+			this.LINK_FAMILY = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.FAMILY')); ?>;
+			this.LINK_GROUP = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GROUP')); ?>;
+			this.LINK_GENDER = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GENDER')); ?>;
+			this.LINK_ITEM = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ITEM')); ?>;
+
+			this.CONTAINER_NA = <?php echo json_encode(\Config::get('scwms.CONTAINERS.NA')); ?>;
+	    this.CONTAINER_LOCATION = <?php echo json_encode(\Config::get('scwms.CONTAINERS.LOCATION')); ?>;
+	    this.CONTAINER_WAREHOUSE = <?php echo json_encode(\Config::get('scwms.CONTAINERS.WAREHOUSE')); ?>;
+	    this.CONTAINER_BRANCH = <?php echo json_encode(\Config::get('scwms.CONTAINERS.BRANCH')); ?>;
+	    this.CONTAINER_COMPANY = <?php echo json_encode(\Config::get('scwms.CONTAINERS.COMPANY')); ?>;
 
 			var qty = <?php echo json_encode(session('decimals_qty')) ?>;
 			var amt = <?php echo json_encode(session('decimals_amt')) ?>;

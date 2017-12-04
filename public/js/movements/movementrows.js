@@ -45,6 +45,10 @@ function addRow(e) {
 
   var iWhsId = 0;
   var whsStock = 0;
+  var iWhsSrc = 0;
+  var oWarehouseSrc = null;
+  var iWhsDes = 0;
+  var oWarehouseDes = null
   if (globalData.bIsInputMov) {
     iWhsId = document.getElementById("whs_des").value;
   }
@@ -53,7 +57,23 @@ function addRow(e) {
     whsStock = iWhsId;
   }
 
+  if (document.getElementById("whs_src") !== undefined && document.getElementById("whs_src") != null) {
+      iWhsSrc = document.getElementById("whs_src").value;
+  }
+  if (document.getElementById("whs_des") !== undefined && document.getElementById("whs_des") != null) {
+      iWhsDes = document.getElementById("whs_des").value;
+  }
+
   document.getElementById('item').value = '';
+
+  globalData.lWarehouses.forEach(function(whs) {
+    if (iWhsSrc != 0 && whs.id_whs == iWhsSrc) {
+        oWarehouseSrc = whs;
+    }
+    if (iWhsDes != 0 && whs.id_whs == iWhsDes) {
+        oWarehouseDes = whs;
+    }
+  });
 
   //ajax
   $.get('./create/children?parent=' + sItemCode + '&whs=' + whsStock + '&idCls=' + globalData.iMvtClass,
@@ -62,15 +82,21 @@ function addRow(e) {
       $('.dataTables_empty').remove(); // remove the row with the class: dataTables_empty
       var bItemFound = false;
       var bIsItemFromWhs = true;
+      var bisItemContainerValid = true;
 
       $.each(data, function(index, oMovementRow) { // iterate each of the movements
         bItemFound = true;
         bFound = false;
         iRowId = 0;
 
-        if (!validateItemFromWarehouse(globalData.lWarehouses, iWhsId, oMovementRow.item)) {
+        if (oWarehouseDes != null && !validateItemWarehouseType(oWarehouseDes, oMovementRow.item)) {
             bIsItemFromWhs = false;
-            return false;
+            return true;
+        }
+
+        if (oWarehouseDes != null && !validateContainer(oWarehouseDes, oMovementRow.item, globalData.lItemContainers)) {
+            bisItemContainerValid = false;
+            return true;
         }
 
         var iMovType = 0;
@@ -180,6 +206,10 @@ function addRow(e) {
       if (! bItemFound) {
         // alert("No se encontraron resultados");
         swal( "???", "No se encontraron resultados.", "warning");
+      }
+      if (! bisItemContainerValid) {
+        // alert("No se encontraron resultados");
+        swal( "Error", "El almacén destino no está configurado para recibir este material/producto.", "error");
       }
       if (globalData.isPalletReconfiguration &&
               iPalletReconfig == 2) {
@@ -426,8 +456,16 @@ function viewStock(obj) {
     Vue.set(vm.stock, 'available', dAvailable);
 }
 
-function validateItemFromWarehouse(lWarehouses, whsId, item) {
+function validateItemWarehouseType(oWarehouse, item) {
   isValid = false;
+  var CLASS_MATERIAL = 1;
+  var CLASS_PRODUCT = 2;
+  var CLASS_SPENDING = 3;
+
+  var  WHS_TYPE_NA = 1;
+  var  WHS_TYPE_MATERIAL = 2;
+  var  WHS_TYPE_PRODUCTION = 3;
+  var  WHS_TYPE_PRODUCT = 4;
 
   /**
    *  Item classes
@@ -443,36 +481,34 @@ function validateItemFromWarehouse(lWarehouses, whsId, item) {
    *  4 PRODUCT
    */
 
-  lWarehouses.forEach(function(whs) {
-      if (whs.id_whs == whsId) {
-        switch (whs.whs_type.id_whs_type) {
-          case 1:
-                  isValid = true;
-                  return true;
-            break;
-          case 2:
-                  if (item.gender.item_class.id_item_class == 1) {
-                    isValid = true;
-                    return true;
-                  }
-            break;
-          case 3:
-                  if (item.gender.item_class.id_item_class == 2 || item.gender.item_class.id_item_class == 1) {
-                    isValid = true;
-                    return true;
-                  }
-            break;
-          case 4:
-                  if (item.gender.item_class.id_item_class == 2) {
-                    isValid = true;
-                    return true;
-                  }
-            break;
-          default:
 
-        }
-      }
-  });
+    switch (oWarehouse.whs_type.id_whs_type) {
+      case WHS_TYPE_NA:
+              isValid = true;
+              return true;
+        break;
+      case WHS_TYPE_MATERIAL:
+              if (item.gender.item_class.id_item_class == CLASS_MATERIAL) {
+                isValid = true;
+                return true;
+              }
+        break;
+      case WHS_TYPE_PRODUCTION:
+              if (item.gender.item_class.id_item_class == CLASS_PRODUCT || item.gender.item_class.id_item_class == CLASS_MATERIAL) {
+                isValid = true;
+                return true;
+              }
+        break;
+      case WHS_TYPE_PRODUCT:
+              if (item.gender.item_class.id_item_class == CLASS_PRODUCT) {
+                isValid = true;
+                return true;
+              }
+        break;
+      default:
+
+    }
+
 
   if (!isValid) {
       // alert("No puede ingresar este material/producto en este almacén");

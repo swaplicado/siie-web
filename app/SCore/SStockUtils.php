@@ -12,9 +12,11 @@ class SStockUtils
 {
 
     /**
-     * [validateStock description]
-     * @param  string $oMovement [description]
-     * @return [type]            [description]
+     * [validate the stock before the movement is made]
+     *
+     * @param  SMovement $oMovement
+     * @return [array]  [returns an array with the erros description,
+     *                    if the array is empty means that errors not found]
      */
     public static function validateStock($oMovement = '')
     {
@@ -86,6 +88,12 @@ class SStockUtils
         return $aErrors;
     }
 
+    /**
+     * [validateLimits validate max and mins in warehouses, branches and company]
+     * @param  SMovement $oMovement
+     * @return [array]   [returns an array with the erros description,
+     *                    if the array is empty means that errors not found]
+     */
     public static function validateLimits($oMovement = '')
     {
         $aErrors = array();
@@ -130,6 +138,15 @@ class SStockUtils
         return $aErrors;
     }
 
+    /**
+     * [validateMax validate that the movement with input class
+     *                           do not exceed the maximum configured]
+     * @param  [SItem] $oItem
+     * @param  [SWarehouse] $oWarehouse
+     * @param  [double] $dQuantity  [quantity to be added to warehouse]
+     * @return [array]    [returns an array with the erros description,
+     *                    if the array is empty means that errors not found]
+     */
     public static function validateMax($oItem, $oWarehouse, $dQuantity)
     {
        $aErrors = array();
@@ -196,6 +213,15 @@ class SStockUtils
        return $aErrors;
     }
 
+    /**
+     * [validateMin validate that the movement with input class
+     *                           do not exceed the min configured]
+     * @param  [SItem] $oItem
+     * @param  [SWarehouse] $oWarehouse
+     * @param  [double] $dQuantity  [quantity to be subtracted from warehouse]
+     * @return [array]    [returns an array with the erros description,
+     *                    if the array is empty means that errors not found]
+     */
     public static function validateMin($oItem, $oWarehouse, $dQuantity)
     {
        $aErrors = array();
@@ -263,8 +289,10 @@ class SStockUtils
     }
 
     /**
-     * [getPalletLocation description]
-     * @param  integer $iPalletId [description]
+     * [getPalletLocation returns an object of Spallet, if the pallet doesn't found
+     *                    returns and N/A Pallet object]
+     *
+     * @param  integer $iPalletId
      * @return [SLocation]  [object of SLocation type]
      */
     public static function getPalletLocation($iPalletId = 0)

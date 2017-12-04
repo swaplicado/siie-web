@@ -13,3 +13,4 @@
 <script src="{{ asset('js/movements/lotrows.js')}}"></script>
 <script src="{{ asset('js/movements/pallets.js')}}"></script>
 <script src="{{ asset('js/movements/validations.js')}}"></script>
+<script src="{{ asset('js/movements/SContainersValidation.js')}}"></script>

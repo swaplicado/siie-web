@@ -58,5 +58,5 @@
 			@endforeach
 		</tbody>
 	</table>
-
+{!! $limits->render() !!}
 @endsection

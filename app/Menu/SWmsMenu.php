@@ -19,6 +19,7 @@ class SWmsMenu {
                 ->addClass('dropdown-menu')
                 ->route('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS'))
                 ->route('wms.limits.index', trans('userinterface.titles.LIST_LIMITS'))
+                ->route('wms.itemcontainers.index', trans('userinterface.titles.LIST_ITEM_CONTAINERS'))
         )
         ->submenu(
             Link::to('#', trans('wms.CATALOGUES').'<span class="caret"></span>')

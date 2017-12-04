@@ -26,6 +26,7 @@ use App\WMS\SMvtMfgType;
 use App\WMS\SMvtExpType;
 use App\WMS\SWhsType;
 use App\WMS\SWmsLot;
+use App\WMS\SItemContainer;
 use App\ERP\SBranch;
 use App\ERP\SItem;
 use App\SUtils\SProcess;
@@ -92,6 +93,8 @@ class SMovsController extends Controller
         $lots = SWmsLot::where('is_deleted', false)->get();
         $pallets = SPallet::where('is_deleted', false)->get();
 
+        $itemContainers = SItemContainer::where('is_deleted', false)->get();
+
         foreach ($warehousesObj as $whs) {
           $whs->whsType;
         }
@@ -148,7 +151,8 @@ class SMovsController extends Controller
                           ->with('warehousesObj', $warehousesObj)
                           ->with('locations', $locations)
                           ->with('lots', $lots)
-                          ->with('pallets', $pallets);
+                          ->with('pallets', $pallets)
+                          ->with('itemContainers', $itemContainers);
     }
 
     /**
@@ -505,6 +509,7 @@ class SMovsController extends Controller
         $movRow->item_id = $iItemId;
         $movRow->unit_id = $iUnitId;
         $movRow->item->gender->itemClass;
+        $movRow->item->gender->group;
         $movRow->unit;
         $movRow->quantity = $dQuantity;
         $movRow->pallet_id = 1;

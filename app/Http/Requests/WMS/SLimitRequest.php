@@ -31,7 +31,7 @@ class SLimitRequest extends Request
 
         return [
             'max' => 'required|numeric|min:0',
-            'min' => 'required|numeric',
+            'min' => 'required|numeric|min:0',
             // 'aux_branch_id' => 'required|unique_with:siie.'.$branch->getTable().',|exists:siie.'.$branch->getTable().',id_branch',
             // 'aux_warehouse_id' => 'required|exists:siie.'.$whs->getTable().',id_whs',
             // 'aux_location_id' => 'required|exists:siie.'.$loc->getTable().',id_whs_location',

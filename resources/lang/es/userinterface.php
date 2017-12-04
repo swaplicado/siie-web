@@ -96,7 +96,8 @@
 											'WHS_MOVS' => 'Movimientos de inventario',
 											'WHS_STOCK' => 'Existencias',
 											'WHS_MOVEMENTS' => 'Movimientos de inventario',
-											'GENERATION_BARCODE' => 'Generación de Codigos de barras'
+											'GENERATION_BARCODE' => 'Generación de Codigos de barras',
+											'LIST_ITEM_CONTAINERS' => 'Configuración de almacenamiento',
 											],
 
 		'buttons'      	=>  [

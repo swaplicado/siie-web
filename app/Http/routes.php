@@ -214,6 +214,23 @@ Route::group(['middleware' => ['auth']], function() {
       Route::resource('limits','WMS\SLimitsController');
 
       /*
+      * Item containers
+      **/
+      Route::resource('itemcontainers','WMS\SItemContainersController');
+      Route::get('itemcontainers/{id}/destroy',[
+        'uses' => 'WMS\SItemContainersController@Destroy',
+        'as' => 'wms.itemcontainers.destroy'
+      ]);
+      Route::get('itemcontainers/{id}/activate', [
+        'uses' => 'WMS\SItemContainersController@Activate',
+        'as' => 'wms.itemcontainers.activate'
+      ]);
+      Route::get('itemcontainers/{id}/copy', [
+        'uses' => 'WMS\SItemContainersController@Copy',
+        'as' => 'wms.itemcontainers.copy'
+      ]);
+
+      /*
       * Iventory movements
       **/
       Route::get('/movs/view/{folio?}', [

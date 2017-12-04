@@ -7,7 +7,7 @@ use App\WMS\SWarehouse;
 use App\ERP\SBranch;
 use App\ERP\SPartner;
 
-class SContainerItem extends Model {
+class SItemContainer extends Model {
 
     protected $connection = 'siie';
     protected $primaryKey = 'id_container_item';
@@ -21,22 +21,14 @@ class SContainerItem extends Model {
                             'item_link_id',
                             'created_by_id',
                             'updated_by_id',
+                            'aux_location_id',
+                            'aux_whs_id',
+                            'aux_branch_id',
                           ];
 
    protected $auxWarehouse = '';
    protected $auxBranch = '';
    protected $auxCompany = '';
-
-
-    public function mvtClass()
-    {
-      return $this->belongsTo('App\WMS\SMvtClass', 'mvt_class_id');
-    }
-
-    public function mvtType()
-    {
-      return $this->belongsTo('App\WMS\SMvtType', 'mvt_type_id');
-    }
 
     public function getLocation()
     {
@@ -117,21 +109,19 @@ class SContainerItem extends Model {
     {
         switch ($iFilter) {
           case \Config::get('scsys.FILTER.ACTIVES'):
-              return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                          ->where('folio_start', 'LIKE', "%".$folioStart."%");
+              return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
             break;
 
           case \Config::get('scsys.FILTER.DELETED'):
-              return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                            ->where('folio_start', 'LIKE', "%".$folioStart."%");
+              return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
             break;
 
           case \Config::get('scsys.FILTER.ALL'):
-              return $query->where('folio_start', 'LIKE', "%".$folioStart."%");
+              return $query;
             break;
 
           default:
-              return $query->where('folio_start', 'LIKE', "%".$folioStart."%");
+              return $query;
             break;
         }
     }
