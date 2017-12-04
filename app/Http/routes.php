@@ -370,6 +370,10 @@ Route::group(['middleware' => ['auth']], function() {
       **/
 
       Route::resource('branches','ERP\SBranchesController');
+      Route::get('branches/{id}/create',[
+        'uses' => 'ERP\SBranchesController@Create',
+        'as' => 'siie.branches.create'
+      ]);
       Route::get('branches/{id}/destroy',[
         'uses' => 'ERP\SBranchesController@Destroy',
         'as' => 'siie.branches.destroy'
