@@ -116,14 +116,6 @@ Route::group(['middleware' => ['auth']], function() {
     			'uses' => 'SYS\SUserPermissionsController@Creator',
     			'as' => 'admin.userpermissions.creator'
     		]);
-       Route::get('userpermissions/brWhsCreate', [
-    			'uses' => 'SYS\SUserPermissionsController@brWhsCreate',
-    			'as' => 'admin.userpermissions.brWhsCreate'
-    		]);
-   		Route::get('userpermissions/{id}/activate', [
-   			'uses' => 'SYS\SUserPermissionsController@Activate',
-   			'as' => 'admin.userpermissions.activate'
-   		]);
    		Route::get('userpermissions/{id}/destroy',[
    			'uses' => 'SYS\SUserPermissionsController@Destroy',
    			'as' => 'admin.userpermissions.destroy'
@@ -355,7 +347,7 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'ERP\SBranchesController@create',
         'as' => 'siie.branches.edit'
       ]);
-      
+
 
       /*
       * address

@@ -107,7 +107,7 @@ class SUserPermissionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function brWhsCreate()
+    public function brWhsCreate2()
     {
       $id="Admin,,2";
       $Syspermission = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
@@ -138,6 +138,30 @@ class SUserPermissionsController extends Controller
         ->with('selectedNameId', $nameUser)
         ->with('selectedUserId', $idUser);
 
+    }
+
+   /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function brWhsCreate(Request $request)
+    {
+      $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+
+      $branches = SBranch::orderBy('name', 'ASC')->where('partner_id',session('partner')->id_partner)->get();
+      $users = SUserCompany::orderBy('user_id','ASC')->where('company_id',session('company')->id_company)->get();
+      $users->each(function($users){
+            $users->user;
+            $users->company;
+            $users->user->userBranches;
+        });
+
+      return view('userpermissions.brWhsCreate')
+          ->with('branches', $branches)
+          ->with('users', $users)
+          ->with('actualUserPermission', $this->oCurrentUserPermission)
+          ->with('iFilter', $this->iFilter);
     }
 
     /**
