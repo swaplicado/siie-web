@@ -154,6 +154,7 @@ return [
         Styde\Html\HtmlServiceProvider::class,
         Spatie\Menu\Laravel\MenuServiceProvider::class,
         Barryvdh\Debugbar\ServiceProvider::class,
+        Felixkiss\UniqueWithValidator\ServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
 

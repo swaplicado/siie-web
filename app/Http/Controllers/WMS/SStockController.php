@@ -71,6 +71,12 @@ class SStockController extends Controller
           $orderBy1 = 'ws.whs_id';
           $orderBy2 = 'ws.item_id';
           break;
+        case \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'):
+          $select = $select.', '.'eb.name as branch_';
+          $groupBy = ['ws.branch_id','ws.item_id'];
+          $orderBy1 = 'ws.branch_id';
+          $orderBy2 = 'ws.item_id';
+          break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
           $select = $select.', '.'wl.lot AS lot_, ww.name as warehouse';
           $groupBy = ['ws.item_id','ws.lot_id','ws.whs_id'];

@@ -20,6 +20,7 @@ class SStockManagment
                       ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
                       ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
                       ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
+                      ->join('erpu_branches as eb', 'ws.branch_id', '=', 'eb.id_branch')
                       ->select(\DB::raw($sSelect));
 
         return $query;
@@ -111,6 +112,9 @@ class SStockManagment
         }
         if ($aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] != 0) {
             $stock->where('ws.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+        }
+        if ($aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] != 0) {
+            $stock->where('ws.branch_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
         }
 
         $stock = $stock->get();

@@ -29,30 +29,30 @@
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required', ]) !!}
   		</div>
 
-      <div class="form-group">
+      {{-- <div class="form-group">
   			{!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
   			{!! Form::text('folio', null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'required', 'unique']) !!}
-  		</div>
+  		</div> --}}
 
-
-    </div>
-    <div class="col-md-6">
 			<div class="form-group">
   			{!! Form::label('dt_date', trans('userinterface.labels.MVT_DATE').'*') !!}
   			{!! Form::date('dt_date', \Carbon\Carbon::now(), ['class'=>'form-control']) !!}
   		</div>
 
+    </div>
+    <div class="col-md-6">
+
 			<div class="form-group">
 				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_src'))
 						{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
-						{!! Form::select('whs_src', $warehouses, 0, ['class'=>'form-control border_red select-one',
+						{!! Form::select('whs_src', $warehouses, $whs_src, ['class'=>'form-control border_red select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
 				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_des'))
 		  			{!! Form::label('whs_des', ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ?
 							trans('wms.labels.WAREHOUSE') :
 									trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
-						{!! Form::select('whs_des', $warehouses, 0, ['class'=>'form-control select-one',
+						{!! Form::select('whs_des', $warehouses, $whs_des, ['class'=>'form-control select-one',
 																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
 				@endif
 			</div>
@@ -68,7 +68,8 @@
 						  <div class="col-md-3">
 									{!! Form::number('quantity', 1, ['class'=>'form-control', 'id' => 'quantity','onkeypress' => 'addRowByEnter(event)',
 																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
-																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ? 'disabled' : '']) !!}
+																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ||
+																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
 							</div>
 						  <div class="col-md-3">
 									<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
@@ -125,6 +126,7 @@
 		  this.lPallets = <?php echo json_encode($pallets); ?>;
 			this.lWarehouses = <?php echo json_encode($warehousesObj); ?>;
 		  this.lLocations = <?php echo json_encode($locations); ?>;
+		  this.lItemContainers = <?php echo json_encode($itemContainers); ?>;
 		  this.bIsInputMov = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
 		  this.iMvtClass = <?php echo json_encode($oMovType->mvt_class_id); ?>;
 		  this.iMvtType = <?php echo json_encode($oMovType->id_mvt_type); ?>;
@@ -153,6 +155,20 @@
 		  this.PALLET_RECONFIG_IN  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_IN')) ?>;
 		  this.PALLET_RECONFIG_OUT  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_OUT')) ?>;
 
+			this.LINK_ALL = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ALL')); ?>;
+			this.LINK_CLASS = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.CLASS')); ?>;
+			this.LINK_TYPE = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.TYPE')); ?>;
+			this.LINK_FAMILY = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.FAMILY')); ?>;
+			this.LINK_GROUP = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GROUP')); ?>;
+			this.LINK_GENDER = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GENDER')); ?>;
+			this.LINK_ITEM = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ITEM')); ?>;
+
+			this.CONTAINER_NA = <?php echo json_encode(\Config::get('scwms.CONTAINERS.NA')); ?>;
+	    this.CONTAINER_LOCATION = <?php echo json_encode(\Config::get('scwms.CONTAINERS.LOCATION')); ?>;
+	    this.CONTAINER_WAREHOUSE = <?php echo json_encode(\Config::get('scwms.CONTAINERS.WAREHOUSE')); ?>;
+	    this.CONTAINER_BRANCH = <?php echo json_encode(\Config::get('scwms.CONTAINERS.BRANCH')); ?>;
+	    this.CONTAINER_COMPANY = <?php echo json_encode(\Config::get('scwms.CONTAINERS.COMPANY')); ?>;
+
 			var qty = <?php echo json_encode(session('decimals_qty')) ?>;
 			var amt = <?php echo json_encode(session('decimals_amt')) ?>;
 			var loc = <?php echo json_encode(session('location_enabled')) ?>;
@@ -174,6 +190,15 @@
 				console.log(JSON.parse(retrievedObject));
 				movement = setMovement(JSON.parse(retrievedObject));
 
+				if (movement.iWhsDes != 0) {
+					document.getElementById('whs_des').value = movement.iWhsDes;
+					$('#whs_des').prop('disabled', true).trigger("chosen:updated");
+				}
+				if (movement.iWhsSrc != 0) {
+					document.getElementById('whs_src').value = movement.iWhsSrc;
+					$('#whs_src').prop('disabled', true).trigger("chosen:updated");
+				}
+
 				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
 					oPalletRow = movement.auxPalletRow;
 				}
@@ -194,7 +219,7 @@
 						}
 
 				    addRowTr(element.iIdRow, element,
-												(globalData.bIsInputMov ? document.getElementById('whs_des').value : document.getElementById('whs_src').value),
+												(globalData.bIsInputMov ? movement.iWhsDes : movement.iWhsSrc),
 												type);
 				});
 			}

@@ -49,6 +49,7 @@ return [
                   'ITEM_CONFIG' => '003',
                   'CONTAINERS' => '004',
                   'STK_MOVS' => '005',
+                  'STK_MOVS_MANAGE' => '006',
 
                   'ERP' =>  '101',
                   'MMS' =>  '102',

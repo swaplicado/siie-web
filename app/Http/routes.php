@@ -209,9 +209,31 @@ Route::group(['middleware' => ['auth']], function() {
       ]);
 
       /*
+      * Limits
+      **/
+      Route::resource('limits','WMS\SLimitsController');
+
+      /*
+      * Item containers
+      **/
+      Route::resource('itemcontainers','WMS\SItemContainersController');
+      Route::get('itemcontainers/{id}/destroy',[
+        'uses' => 'WMS\SItemContainersController@Destroy',
+        'as' => 'wms.itemcontainers.destroy'
+      ]);
+      Route::get('itemcontainers/{id}/activate', [
+        'uses' => 'WMS\SItemContainersController@Activate',
+        'as' => 'wms.itemcontainers.activate'
+      ]);
+      Route::get('itemcontainers/{id}/copy', [
+        'uses' => 'WMS\SItemContainersController@Copy',
+        'as' => 'wms.itemcontainers.copy'
+      ]);
+
+      /*
       * Iventory movements
       **/
-      Route::get('/movs/view', [
+      Route::get('/movs/view/{folio?}', [
       	'uses' => 'WMS\SMovsController@index',
       	'as' => 'wms.movs.index'
       ]);
@@ -238,6 +260,19 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('/stock/{id}', [
       	'uses' => 'WMS\SStockController@index',
       	'as' => 'wms.stock.index'
+      ]);
+
+      /*
+      * Folios
+      **/
+      Route::resource('folios','WMS\SFoliosController');
+      Route::get('folios/{id}/destroy', [
+        'uses' => 'WMS\SFoliosController@Destroy',
+        'as' => 'wms.folios.destroy'
+      ]);
+      Route::get('locs/{id}/activate', [
+        'uses' => 'WMS\SFoliosController@Activate',
+        'as' => 'wms.folios.activate'
       ]);
 
       /*

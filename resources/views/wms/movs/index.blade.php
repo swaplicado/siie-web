@@ -30,6 +30,7 @@
 		            <th>Sucursal</th>
 		            <th>Almacén</th>
 		            <th>Tipo movimiento</th>
+								<th>Folio</th>
 		            <th>Tipo</th>
 		        </tr>
 		    </thead>
@@ -49,8 +50,9 @@
 								@endif
 								<td align="right">{{ $row->item->unit->code }}</td>
 								<td>{{ $row->movement->branch->name }}</td>
-								<td>{{ $row->movement->whs->name }}</td>
+								<td>{{ $row->movement->warehouse->name }}</td>
 								<td>{{ $row->movement->mvtType->name }}</td>
+								<td>{{ $row->movement->folio }}</td>
 								@if ($row->movement->mvt_trn_type_id != 1)
 									<td>{{ $row->movement->trnType->name }}</td>
 								@elseif($row->movement->mvt_adj_type_id != 1)
@@ -72,6 +74,13 @@
 @section('js')
 	@include('templates.stock.scriptsstock')
 	<script>
-
+			 var folioParameter = <?php echo json_encode($iFolio); ?>;
+			 if (folioParameter != 0) {
+						swal(
+							  'Folio: ' + folioParameter,
+							  'El movimiento ha sido guardado.',
+							  'success'
+							);
+			 }
 	</script>
 @endsection

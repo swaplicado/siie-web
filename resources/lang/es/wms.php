@@ -13,10 +13,7 @@ return [
           'LOTS' => 'Lotes',
           'BAR_CODES' => 'Códigos de barras',
 
-      'CONFIG' => 'Configuración',
-          'CONFIG' => 'Configuración',
-          'CONFIG' => 'Configuración',
-
+      'CONFIGURATION' => 'Configuración',
 
       'INVENTORY' => 'Inventarios',
           'ITEM_STK' => 'Existencias por material/producto',
@@ -24,6 +21,7 @@ return [
           'PALLET_STK' => 'Existencias por tarima',
           'LOC_STK' => 'Existencias por ubicación',
           'WHS_STK' => 'Existencias por almacén',
+          'BRANCH_STK' => 'Existencias por sucursal',
           'LOT_WHS_STK' => 'Existencias por lote por almacén',
           'PALLET_LOT_STK' => 'Existencias por tarima por lote',
           'MOV_STK' => 'Operaciones',
@@ -32,6 +30,7 @@ return [
           'MOV_WHS_TRS_OUT' => 'Traspaso de almacén',
           'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
           'WHS_MOVS' => 'Movimientos de inventario',
+          'WHS_MOVS_FOLIOS' => 'Folios de movimientos de inventario',
           'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
           'PALLET_DIVISION' => 'Dividir tarima',
           'PALLET_ADD' => 'Agregar a tarima',
@@ -42,6 +41,10 @@ return [
 
       'labels'  => [
                       'CODE' => 'Código',
+                      'FOLIO' => 'Folio',
+                      'FOLIO_START' => 'Folio inicial',
+                      'MAX' => 'Máximo',
+                      'MIN' => 'Mínimo',
                       'MAT_PROD' => 'Material/producto',
                       'UNIT' => 'Unidad',
                       'LOCATION' => 'Ubicación',
@@ -54,10 +57,25 @@ return [
                       'LOTS_ASSIGNAMENT' => 'Asignación de lotes',
                       'QTY_FOR_COMPLETE' => 'Cantidad por completar',
                       'WAREHOUSE' => 'Almacén',
+                      'BRANCH' => 'Sucursal',
+                      'COMPANY' => 'Empresa',
+                      'MVT_CLASS' => 'Clase de movimiento',
+                      'MVT_TYPE' => 'Tipo de movimiento',
                       'PALLET_TO_DIVIDE' => 'Tarima a dividir',
                       'PALLET_TO_FILL' => 'Tarima destino',
                       'ELEMENTS_TO_MOVE' => 'Elementos a mover',
+                      'LEVEL' => 'Nivel',
+                      'REFERENCE' => 'Referencia',
                     ],
+
+      'placeholders'  =>  [
+                          'FOLIO_START' => 'Ingrese folio inicial...',
+                          'SELECT_MVT_CLASS' => 'Seleccione clase de movimiento...',
+                          'SELECT_MVT_TYPE' => 'Seleccione tipo de movimiento...',
+                          'SELECT_MAT_PROD' => 'Seleccione material/producto...',
+                          'SELECT_LEVEL' => 'Seleccione nivel...',
+                          'SELECT_REFERENCE' => 'Seleccione referencia...',
+                        ],
 
       'buttons'  => [
                       'ADD_LOT' => 'Agregar lote',

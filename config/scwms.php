@@ -59,6 +59,7 @@ return [
                         'STK_BY_LOT' => '3',
                         'STK_BY_LOCATION' => '4',
                         'STK_BY_WAREHOUSE' => '5',
+                        'STK_BY_BRANCH' => '8',
                         'STK_BY_LOT_BY_WAREHOUSE' => '6',
                         'STK_BY_PALLET_BY_LOT' => '7',
                       ],
@@ -79,5 +80,13 @@ return [
                   'SEGREGATED' => '2',
                   'RELEASED' => '1',
                   'AVAILABLE' => '0',
+                ],
+
+    'CONTAINERS' => [
+                  'NA' => '1',
+                  'LOCATION' => '2',
+                  'WAREHOUSE' => '3',
+                  'BRANCH' => '4',
+                  'COMPANY' => '5',
                 ],
 ];

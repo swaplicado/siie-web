@@ -10,4 +10,5 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('trumbowyg/dist/ui/trumbowyg.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('datatables/datatables.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ asset('sweet-alert/sweetalert2.min.css') }}">
 </head>

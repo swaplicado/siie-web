@@ -6,3 +6,4 @@
 <script src="{{ asset('trumbowyg/dist/trumbowyg.min.js') }}"></script>
 <script src="{{ asset('datatables/datatables.min.js') }}"></script>
 <script src="{{ asset('js/myDataTables.js')}}"></script>
+<script src="{{ asset('sweet-alert/sweetalert2.min.js') }}"></script>

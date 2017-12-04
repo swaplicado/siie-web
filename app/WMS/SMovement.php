@@ -7,7 +7,7 @@ class SMovement extends Model {
   protected $connection = 'siie';
   protected $primaryKey = 'id_mvt';
   protected $table = 'wms_mvts';
-  
+
   public $aAuxRows = [];
 
   protected $fillable = [
@@ -48,7 +48,7 @@ class SMovement extends Model {
     return $this->hasMany('App\WMS\SMovementRow', 'mvt_id', 'id_mvt');
   }
 
-  public function whs()
+  public function warehouse()
   {
     return $this->belongsTo('App\WMS\SWarehouse', 'whs_id');
   }

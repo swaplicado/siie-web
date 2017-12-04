@@ -4,14 +4,181 @@ use App\WMS\SWarehouse;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
+use App\WMS\SFolio;
 
 use App\SCore\SStockUtils;
 
 /**
  * this class manages the movement process
  */
-class SMovsManagment
-{
+class SMovsManagment {
+
+    public static function getNewFolio($oMovement = '')
+    {
+      $baseQuery = \DB::connection(session('db_configuration')->getConnCompany())
+                   ->table('wms_mvts as wm')
+                   ->select(\DB::raw('MAX(folio) as max_folio, count(*) as num_movs'))
+                   ->where('is_deleted', false);
+
+       $lFolios = SFolio::where('is_deleted', false)->get();
+       \Debugbar::info($lFolios);
+
+       $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
+                                                 \Config::get('scwms.CONTAINERS.WAREHOUSE'),
+                                                 $oMovement->whs_id,
+                                                 $oMovement->mvt_whs_class_id,
+                                                 $oMovement->mvt_whs_type_id);
+
+       if ($oRequiredFolio != null)
+       {
+           $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
+                         ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
+                         ->where('branch_id', $oMovement->branch_id)
+                         ->where('whs_id', $oMovement->whs_id)
+                         ->take(1)
+                         ->get();
+
+           if ($lFolios[0]->num_movs > 0)
+           {
+             return $lFolios[0]->max_folio + 1;
+           }
+           else
+           {
+             return $oRequiredFolio->folio_start;
+           }
+       }
+       else
+       {
+           $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
+                                                     \Config::get('scwms.CONTAINERS.BRANCH'),
+                                                     $oMovement->branch_id,
+                                                     $oMovement->mvt_whs_class_id,
+                                                     $oMovement->mvt_whs_type_id);
+
+           if ($oRequiredFolio != null)
+           {
+               $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
+                             ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
+                             ->where('branch_id', $oMovement->branch_id)
+                             ->take(1)
+                             ->get();
+
+               if ($lFolios[0]->num_movs > 0)
+               {
+                 return $lFolios[0]->max_folio + 1;
+               }
+               else
+               {
+                 return $oRequiredFolio->folio_start;
+               }
+           }
+           else
+           {
+               $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
+                                                         0,
+                                                         0,
+                                                         $oMovement->mvt_whs_class_id,
+                                                         $oMovement->mvt_whs_type_id);
+
+               if ($oRequiredFolio != null)
+               {
+                   $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
+                                 ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
+                                 ->take(1)
+                                 ->get();
+
+                   if ($lFolios[0]->num_movs > 0)
+                   {
+                     return $lFolios[0]->max_folio + 1;
+                   }
+                   else
+                   {
+                     return $oRequiredFolio->folio_start;
+                   }
+               }
+               else
+               {
+                   $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
+                                                             0,
+                                                             0,
+                                                             $oMovement->mvt_whs_class_id,
+                                                             0);
+
+                   if ($oRequiredFolio != null)
+                   {
+                       $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
+                                     ->take(1)
+                                     ->get();
+
+                       if ($lFolios[0]->num_movs > 0)
+                       {
+                         return $lFolios[0]->max_folio + 1;
+                       }
+                       else
+                       {
+                         return $oRequiredFolio->folio_start;
+                       }
+                   }
+                   else
+                   {
+                     return 0;
+                   }
+               }
+           }
+       }
+    }
+
+    private static function existsFolioConfiguration($lFolios, $iContainerType, $iContainerId, $iMvtClass, $iMvtType)
+    {
+        $bConfigExists = false;
+        $oRequiredFolio = '';
+        foreach ($lFolios as $oFolio)
+        {
+           if ($oFolio->mvt_class_id == $iMvtClass)
+           {
+              if ($iMvtType != 0)
+              {
+                  if ($oFolio->mvt_type_id == $iMvtType)
+                  {
+                      if ($iContainerType != 0)
+                      {
+                          if ($oFolio->container_type_id == $iContainerType && $oFolio->container_id == $iContainerId)
+                          {
+                            $oRequiredFolio = $oFolio;
+                            $bConfigExists = true;
+                            break;
+                          }
+                      }
+                      else
+                      {
+                        $oRequiredFolio = $oFolio;
+                        $bConfigExists = true;
+                        break;
+                      }
+                  }
+              }
+              else
+              {
+                $oRequiredFolio = $oFolio;
+                $bConfigExists = true;
+                break;
+              }
+
+           }
+        }
+
+        if ($bConfigExists)
+        {
+          return $oRequiredFolio;
+        }
+        else
+        {
+          return null;
+        }
+    }
+
+
+
     /**
      * [processMovement description]
      * @param  [App\WMS\SMovement] $oMovement

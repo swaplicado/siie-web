@@ -29,7 +29,7 @@ class SMovRequest extends Request
         return [
             // 'mvt_whs_type_id' => 'required',
             'mvt_com' => 'required',
-            'folio' => 'required|alpha_dash',
+            // 'folio' => 'required|alpha_dash',
             'whs_src' => 'sometimes|required|exists:siie.'.$whs->getTable().',id_whs',
             'whs_des' => 'sometimes|required|exists:siie.'.$whs->getTable().',id_whs',
           ];

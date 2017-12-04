@@ -26,4 +26,9 @@ class SMovementRowLot extends Model {
   {
     return $this->belongsTo('App\WMS\SMovementRow', 'id_mvt_row', 'mvt_row_id');
   }
+
+  public function lot()
+  {
+    return $this->belongsTo('App\WMS\SWmsLot', 'lot_id');
+  }
 }

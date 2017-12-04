@@ -26,6 +26,7 @@ use App\WMS\SMvtMfgType;
 use App\WMS\SMvtExpType;
 use App\WMS\SWhsType;
 use App\WMS\SWmsLot;
+use App\WMS\SItemContainer;
 use App\ERP\SBranch;
 use App\ERP\SItem;
 use App\SUtils\SProcess;
@@ -51,13 +52,13 @@ class SMovsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $iFolio = 0)
     {
-        $lMovRows = SMovementRow::Search($request->date, $this->iFilter)->orderBy('item_id', 'ASC')->paginate(20);
+        $lMovRows = SMovementRow::Search($request->date, $this->iFilter)->orderBy('item_id', 'ASC')->orderBy('item_id', 'ASC')->paginate(20);
 
         foreach ($lMovRows as $row) {
             $row->movement->branch;
-            $row->movement->whs;
+            $row->movement->warehouse;
             $row->movement->mvtType;
             $row->movement->trnType;
             $row->movement->adjType;
@@ -70,6 +71,7 @@ class SMovsController extends Controller
         //  \Debugbar::info($date);
         // dd($lMovRows);
         return view('wms.movs.index')
+                    ->with('iFolio', $iFolio)
                     ->with('rows', $lMovRows);
     }
 
@@ -90,6 +92,8 @@ class SMovsController extends Controller
         $locations = SLocation::where('is_deleted', false)->get();
         $lots = SWmsLot::where('is_deleted', false)->get();
         $pallets = SPallet::where('is_deleted', false)->get();
+
+        $itemContainers = SItemContainer::where('is_deleted', false)->get();
 
         foreach ($warehousesObj as $whs) {
           $whs->whsType;
@@ -142,10 +146,13 @@ class SMovsController extends Controller
                           ->with('movTypes', $movTypes)
                           ->with('mvtComp', $mvtComp)
                           ->with('warehouses', $warehouses)
+                          ->with('whs_src', 0)
+                          ->with('whs_des', 0)
                           ->with('warehousesObj', $warehousesObj)
                           ->with('locations', $locations)
                           ->with('lots', $lots)
-                          ->with('pallets', $pallets);
+                          ->with('pallets', $pallets)
+                          ->with('itemContainers', $itemContainers);
     }
 
     /**
@@ -193,33 +200,22 @@ class SMovsController extends Controller
         $whsId = 0;
         $whsSrc = 0;
         $whsDes = 0;
-        if ($oData['iMvtType'] == \Config::get('scwms.MVT_TP_OUT_TRA')) {
-            $whsSrc = $oData['iWhsSrc'];
-            $whsDes = $oData['iWhsDes'];
-            $whsId = $oData['iWhsSrc'];
 
-            $aErrors = SStockUtils::validateStock($oData, $whsSrc);
-            if(sizeof($aErrors) > 0)
-            {
-                return redirect()->back()->withErrors($aErrors)->withInput();
-                // return view('wms.index');
-            }
+        if ($oData['iMvtType'] == \Config::get('scwms.MVT_TP_OUT_TRA'))
+        {
+          $whsSrc = $oData['iWhsSrc'];
+          $whsDes = $oData['iWhsDes'];
+          $whsId = $oData['iWhsSrc'];
         }
         else if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
         {
             $whsId = $oData['iWhsSrc'];
-
-            $aErrors = SStockUtils::validateStock($oData, $whsId);
-            if(sizeof($aErrors) > 0)
-            {
-                return redirect()->back()->withErrors($aErrors)->withInput();
-                // return view('wms.index');
-            }
+            $whsSrc = $oData['iWhsSrc'];
         }
         else
         {
-            // $whsId = $request->input('whs_des');
             $whsId = $oData['iWhsDes'];
+            $whsDes = $oData['iWhsDes'];
         }
 
         $movement = new SMovement($request->all());
@@ -263,7 +259,7 @@ class SMovsController extends Controller
         }
 
         $movement->whs_id = $whsId;
-        $movement->branch_id = $movement->whs->branch_id;
+        $movement->branch_id = $movement->warehouse->branch_id;
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
         $movement->auth_status_by_id = 1;
@@ -307,10 +303,40 @@ class SMovsController extends Controller
                                                     $whsDes,
                                                     $oPalletData);
 
+        foreach ($movements as $mov) {
+          if ($mov->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
+            $aErrors = SStockUtils::validateStock($mov);
+
+            if(sizeof($aErrors) > 0)
+            {
+                return redirect()
+                          ->back()
+                          ->withErrors($aErrors)
+                          ->withInput();
+            }
+          }
+        }
+
+        foreach ($movements as $mov) {
+          $aErrors = SStockUtils::validateLimits($mov);
+
+          if(sizeof($aErrors) > 0)
+          {
+              return redirect()
+                        ->back()
+                        ->withErrors($aErrors)
+                        ->withInput();
+          }
+        }
+
+
+        foreach ($movements as $mov) {
+           $mov->folio = SMovsManagment::getNewFolio($mov);
+        }
+
         $this->saveMovement($movements, $request);
 
-        // return redirect()->route('wms.home');
-        return view('wms.index');
+        return redirect()->route('wms.movs.index', $movements[0]->folio);
     }
 
     /**
@@ -483,6 +509,7 @@ class SMovsController extends Controller
         $movRow->item_id = $iItemId;
         $movRow->unit_id = $iUnitId;
         $movRow->item->gender->itemClass;
+        $movRow->item->gender->group;
         $movRow->unit;
         $movRow->quantity = $dQuantity;
         $movRow->pallet_id = 1;

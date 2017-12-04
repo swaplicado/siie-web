@@ -40,6 +40,9 @@
 												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
 			            <th>Almacén</th>
 								@endif
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
+			            <th>Sucursal</th>
+								@endif
 		            <th>Entradas</th>
 		            <th>Salidas</th>
 		            <th>Existencia</th>
@@ -67,6 +70,9 @@
 												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
 													$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
 									<td>{{ $row->warehouse }}</td>
+								@endif
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
+									<td>{{ $row->branch_ }}</td>
 								@endif
 		            <td align="right">{{ session('utils')->formatNumber($row->inputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 		            <td align="right">{{ session('utils')->formatNumber($row->outputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
