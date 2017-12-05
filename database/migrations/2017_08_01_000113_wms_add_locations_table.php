@@ -40,6 +40,7 @@ class WmsAddLocationsTable extends Migration {
           	$table->increments('id_whs_location');
           	$table->char('code', 50)->unique();
           	$table->char('name', 100);
+          	$table->boolean('is_default');
           	$table->boolean('is_deleted');
           	$table->integer('whs_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
@@ -52,7 +53,7 @@ class WmsAddLocationsTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('wmsu_whs_locations')->insert([
-            ['id_whs_location' => '1','code' => 'NA','name' => 'N/A','is_deleted' => '0','whs_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_whs_location' => '1','code' => 'NA','name' => 'N/A','is_default' => '1','is_deleted' => '0','whs_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }

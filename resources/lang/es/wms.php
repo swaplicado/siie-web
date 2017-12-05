@@ -28,6 +28,7 @@ return [
           'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
           'MOV_WHS_TRS_OUT' => 'Traspaso de almacén',
+          'MOV_WHS_PUR_IN' => 'Entrada por compra',
           'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
           'WHS_MOVS' => 'Movimientos de inventario',
           'WHS_MOVS_FOLIOS' => 'Folios de movimientos de inventario',

@@ -359,11 +359,20 @@ Route::group(['middleware' => ['auth']], function() {
 //****************************************/ Siie /*************************
     Route::group(['prefix' => 'siie', 'middleware' => ['mdmanager']], function () {
 
-      Route::get('/home',[
+      Route::get('/home/{imported?}',[
   			'as' => 'siie.home',
   			'uses' => 'ERP\SSiieController@Home'
   		]);
       Route::resource('central','ERP\SSiieController');
+
+      /*
+      * Importation
+      **/
+
+      Route::get('importation',[
+        'uses' => 'ERP\SImportationsController@ImportFromSiie',
+        'as' => 'siie.importation'
+      ]);
 
       /*
       * branches

@@ -193,7 +193,7 @@ class SMovsManagment {
     public static function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $oPalletData)
     {
        // The movement is adjust
-       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ'))
+       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_IN_PUR'))
        {
           return SMovsManagment::createAdjust($oMovement, $aMovementRows);
        }

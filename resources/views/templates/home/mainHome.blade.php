@@ -47,6 +47,7 @@
 		</div>
 
 		@include('templates.scripts')
+		@yield('js')
 
 		</div>
 

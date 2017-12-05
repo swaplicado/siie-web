@@ -38,33 +38,31 @@ class ErpAddItemsTable extends Migration {
 
           Schema::connection($this->sConnection)->create('erpu_items', function (blueprint $table) {
           	$table->increments('id_item');
-          	$table->char('code', 50);
+          	$table->char('code', 50)->unique();
           	$table->char('name', 255);
           	$table->decimal('length', 23,8);
           	$table->decimal('surface', 23,8);
           	$table->decimal('volume', 23,8);
           	$table->decimal('mass', 23,8);
           	$table->integer('external_id');
-            $table->unique('external_id');
           	$table->boolean('is_lot');
           	$table->boolean('is_bulk');
           	$table->boolean('is_deleted');
-          	$table->integer('item_gender_id')->index();
+          	$table->integer('item_gender_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
 
-          	$table->foreign('item_gender_id')->references('external_id')->on('erpu_item_genders')->onDelete('cascade');
+          	$table->foreign('item_gender_id')->references('id_item_gender')->on('erpu_item_genders')->onDelete('cascade');
           	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
-          DB::connection($this->sConnection)->statement('ALTER TABLE erpu_items AUTO_INCREMENT = 0;');
           DB::connection($this->sConnection)->table('erpu_items')->insert([
-          	['id_item' => '0','code' => 'N/A','name' => 'N/A','length' => '0','surface' => '0','volume' => '0',
-            'mass' => '0','is_lot' => '0','is_bulk' => '0','item_gender_id' => '0','unit_id' => '1',
+          	['id_item' => '1','code' => 'N/A','name' => 'N/A','length' => '0','surface' => '0','volume' => '0',
+            'mass' => '0','is_lot' => '0','is_bulk' => '0','item_gender_id' => '1','unit_id' => '1',
             'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }

@@ -8,6 +8,8 @@ class SItemGroup extends Model {
   protected $primaryKey = 'id_item_group';
   protected $table = 'erpu_item_groups';
 
+  public $aux_fam_id = 0;
+
   public function getTable()
   {
     return $this->table;

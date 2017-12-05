@@ -25,8 +25,8 @@ class SSiieController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function home()
+    public function home($isImported = 0)
     {
-        return view('siie.index');
+        return view('siie.index')->with('isImported', $isImported);
     }
 }
