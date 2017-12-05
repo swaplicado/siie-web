@@ -98,13 +98,17 @@ class SMovementRow extends Model {
 
   public function scopeSearch($query, $name, $iFilter)
   {
+      $query->join('erpu_items as ei', $this->table.'.item_id', '=', 'ei.id_item')
+              ->select($this->table.'.*')
+              ->where('ei.is_deleted', false);
+
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
-            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+            return $query->where($this->table.'.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
-            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+            return $query->where($this->table.'.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
           break;
 
         case \Config::get('scsys.FILTER.ALL'):

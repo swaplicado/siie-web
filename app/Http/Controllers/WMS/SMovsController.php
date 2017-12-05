@@ -282,13 +282,16 @@ class SMovsController extends Controller
            $oMvtRow->doc_credit_note_row_id = 1;
 
            $movLotRows = array();
-           foreach ($row['lotRows'] as $lotRow) {
-               $oMovLotRow = new SMovementRowLot();
-               $oMovLotRow->quantity = $lotRow['dQuantity'];
-               $oMovLotRow->amount_unit = $lotRow['dPrice'];
-               $oMovLotRow->lot_id = $lotRow['iLotId'];
+           if (isset($row['lotRows']))
+           {
+             foreach ($row['lotRows'] as $lotRow) {
+                 $oMovLotRow = new SMovementRowLot();
+                 $oMovLotRow->quantity = $lotRow['dQuantity'];
+                 $oMovLotRow->amount_unit = $lotRow['dPrice'];
+                 $oMovLotRow->lot_id = $lotRow['iLotId'];
 
-               array_push($movLotRows, $oMovLotRow);
+                 array_push($movLotRows, $oMovLotRow);
+             }
            }
 
            $oMvtRow->setAuxLots($movLotRows);

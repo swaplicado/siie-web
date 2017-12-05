@@ -149,6 +149,7 @@ return [
 
         Collective\Html\HtmlServiceProvider::class,
         Cviebrock\EloquentSluggable\ServiceProvider::class,
+        Yajra\Datatables\DataTablesServiceProvider::class,
 
         Laracasts\Flash\FlashServiceProvider::class,
         Styde\Html\HtmlServiceProvider::class,
@@ -205,6 +206,7 @@ return [
         'URL'       => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
+        'DataTables' => Yajra\Datatables\Facades\DataTables::class,
 
         'Form'      => Collective\Html\FormFacade::class,
         'Html'      => Collective\Html\HtmlFacade::class,

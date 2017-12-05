@@ -22,6 +22,8 @@ footer
 th { font-size: 90%; }
 td { font-size: 90%; }
 
+td.small { font-size: 82%; }
+
 .button-xlarge {
     color: #FFFFFF;
     height: 25%;

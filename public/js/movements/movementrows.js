@@ -337,7 +337,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
 
     var oTdQUANTITY = document.createElement("td");
     oTdQUANTITY.setAttribute("align", "right");
-    oTdQUANTITY.innerHTML = "<input align='right' class='form-control' type='number' " +
+    oTdQUANTITY.innerHTML = "<input align='right' onKeyUp='updateQtyKey(" + identifier + ")' class='form-control' type='number' " +
                                 (iMovType == globalData.IS_PALLET || iMovType == globalData.IS_LOT || (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='2' value='" +
                                 values[QUANTITY] + "'>";
@@ -379,6 +379,10 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
 function updateRowTr(idRow, quantity) {
   document.getElementById(idRow).children[7].children[0].value = parseFloat(quantity).toFixed(globalData.DEC_QTY);
   movement.getRow(idRow).dQuantity = parseFloat(quantity);
+}
+
+function updateQtyKey(id) {
+    updateRowTr(id, document.getElementById(id).children[7].children[0].value)
 }
 
 /*
