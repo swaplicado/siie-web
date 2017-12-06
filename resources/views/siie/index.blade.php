@@ -28,18 +28,18 @@
       }
 
       function holaFun() {
-        swal({
-            title: 'Espere...',
-            text: 'Se está realizando el proceso de importación.',
-            timer: 25000,
-            onOpen: () => {
-              swal.showLoading()
-            }
-          }).then((result) => {
-            if (result.dismiss === 'timer') {
-              console.log('I was closed by the timer');
-            }
-          });
+        // swal({
+        //     title: 'Espere...',
+        //     text: 'Se está realizando el proceso de importación.',
+        //     timer: 300000,
+        //     onOpen: () => {
+        //       swal.showLoading()
+        //     }
+        //   }).then((result) => {
+        //     if (result.dismiss === 'timer') {
+        //       console.log('I was closed by the timer');
+        //     }
+        //   });
       }
   </script>
 @endsection

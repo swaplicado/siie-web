@@ -12,6 +12,9 @@ use App\SImportations\SImportGroups;
 use App\SImportations\SImportGenders;
 use App\SImportations\SImportUnits;
 use App\SImportations\SImportItems;
+use App\SImportations\SImportPartners;
+use App\SImportations\SImportBranches;
+use App\SImportations\SImportAddresses;
 
 class SImportationsController extends Controller {
 
@@ -30,16 +33,22 @@ class SImportationsController extends Controller {
 
     public function importFromSiie()
     {
-       $go = new SImportFamilies();
-       $go->importFamilies();
-       $group = new SImportGroups();
-       $group->importGroups();
-       $gender = new SImportGenders();
-       $gender->importGenders();
-       $unit = new SImportUnits();
-       $unit->importUnits();
-       $item = new SImportItems();
-       $item->importItems();
+      //  $go = new SImportFamilies();
+      //  $go->importFamilies();
+      //  $group = new SImportGroups();
+      //  $group->importGroups();
+      //  $gender = new SImportGenders();
+      //  $gender->importGenders();
+      //  $unit = new SImportUnits();
+      //  $unit->importUnits();
+      //  $item = new SImportItems();
+      //  $item->importItems();
+      //  $partner = new SImportPartners();
+      //  $partner->importPartners();
+      //  $branch = new SImportBranches();
+      //  $branch->importBranches();
+       $address = new SImportAddresses();
+       $address->importAddresses();
 
        return redirect()->route('siie.home', 1);
     }

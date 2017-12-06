@@ -16,7 +16,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-striped">
+	<table data-toggle="table" class="table table-striped table-condensed">
 		<thead>
 			<th>{{ trans('userinterface.labels.BP') }}</th>
 			<th>{{ trans('userinterface.labels.CODE') }}</th>

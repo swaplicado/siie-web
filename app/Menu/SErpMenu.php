@@ -39,11 +39,10 @@ class SErpMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
-                ->route('siie.branches.index', trans('siie.BRANCHES'))
-                ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('siie.branches.index', trans('siie.ACG_YEAR_PER'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('siie.bps.index', trans('siie.BPS'))
+                ->route('siie.branches.index', trans('siie.BRANCHES'))
         )
         ->route('siie.units.index', trans('siie.UNITS'))
         ->route('siie.units.index', trans('siie.CONVERTIONS'))
