@@ -6,8 +6,7 @@
 
   <div class="row">
     @include('templates.home.rapidaccess')
-    <?php echo createBlock(asset('images/wms/box.gif'), route('siie.importation'), trans('wms.QRY_INVENTORY'), "success3", trans('wms.QRY_INVENTORY_T'));?>
-    <?php echo createBlock(asset('images/wms/movsan.gif'), "#", trans('wms.MOV_WAREHOUSES'), "success3", trans('wms.MOV_WAREHOUSES_T'));?>
+    <?php echo createBlock(asset('images/siie/sync.gif'), route('siie.importation'), trans('siie.SYNC'), "success3", trans('siie.SYNC_T'));?>
   </div>
 
 @endsection
@@ -28,18 +27,18 @@
       }
 
       function holaFun() {
-        // swal({
-        //     title: 'Espere...',
-        //     text: 'Se está realizando el proceso de importación.',
-        //     timer: 300000,
-        //     onOpen: () => {
-        //       swal.showLoading()
-        //     }
-        //   }).then((result) => {
-        //     if (result.dismiss === 'timer') {
-        //       console.log('I was closed by the timer');
-        //     }
-        //   });
+        swal({
+            title: 'Espere...',
+            text: 'Se está realizando el proceso de importación.',
+            timer: 300000,
+            onOpen: () => {
+              swal.showLoading()
+            }
+          }).then((result) => {
+            if (result.dismiss === 'timer') {
+              console.log('I was closed by the timer');
+            }
+          });
       }
   </script>
 @endsection

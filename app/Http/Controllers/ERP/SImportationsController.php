@@ -33,20 +33,20 @@ class SImportationsController extends Controller {
 
     public function importFromSiie()
     {
-      //  $go = new SImportFamilies();
-      //  $go->importFamilies();
-      //  $group = new SImportGroups();
-      //  $group->importGroups();
-      //  $gender = new SImportGenders();
-      //  $gender->importGenders();
-      //  $unit = new SImportUnits();
-      //  $unit->importUnits();
-      //  $item = new SImportItems();
-      //  $item->importItems();
-      //  $partner = new SImportPartners();
-      //  $partner->importPartners();
-      //  $branch = new SImportBranches();
-      //  $branch->importBranches();
+       $go = new SImportFamilies();
+       $go->importFamilies();
+       $group = new SImportGroups();
+       $group->importGroups();
+       $gender = new SImportGenders();
+       $gender->importGenders();
+       $unit = new SImportUnits();
+       $unit->importUnits();
+       $item = new SImportItems();
+       $item->importItems();
+       $partner = new SImportPartners();
+       $partner->importPartners();
+       $branch = new SImportBranches();
+       $branch->importBranches();
        $address = new SImportAddresses();
        $address->importAddresses();
 

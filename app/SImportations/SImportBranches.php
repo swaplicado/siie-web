@@ -30,13 +30,18 @@ class SImportBranches
       $result = $this->webcon->query($sql);
       $lSiieBranches = array();
       $lWebBranches = SBranch::get();
-      $lWebPartners = SPartner::get();
+      $lPartners = SPartner::get();
+      $lWebPartners = array();
       $lBranches = array();
       $lBranchesToWeb = array();
 
       foreach ($lWebBranches as $key => $value)
       {
           $lBranches[$value->external_id] = $value;
+      }
+
+      foreach ($lPartners as $key => $partner) {
+          $lWebPartners[$partner->external_id] = $partner->id_partner;
       }
 
       if ($result->num_rows > 0)
@@ -54,7 +59,7 @@ class SImportBranches
                     $lBranches[$row["id_bpb"]]->external_id = $row["id_bpb"];
                     $lBranches[$row["id_bpb"]]->is_headquarters = $row["b_add_prt"];
                     $lBranches[$row["id_bpb"]]->is_deleted = $row["b_del"];
-                    $lBranches[$row["id_bpb"]]->partner_id = SImportBranches::getPartnerId($lWebPartners, $row["fid_bp"]);
+                    $lBranches[$row["id_bpb"]]->partner_id = $lWebPartners[$row["fid_bp"]];
                     $lBranches[$row["id_bpb"]]->updated_at = $row["ts_edit"];
 
                     array_push($lBranchesToWeb, $lBranches[$row["id_bpb"]]);
@@ -79,7 +84,7 @@ class SImportBranches
 
   }
 
-  private static function siieToSiieWeb($oSiieBranch = '', $lPartners)
+  private static function siieToSiieWeb($oSiieBranch = '', $lWebPartners)
   {
      $oBranch = new SBranch();
      $oBranch->code = $oSiieBranch["code"];
@@ -87,22 +92,12 @@ class SImportBranches
      $oBranch->external_id = $oSiieBranch["id_bpb"];
      $oBranch->is_headquarters = $oSiieBranch["b_add_prt"];
      $oBranch->is_deleted = $oSiieBranch["b_del"];
-     $oBranch->partner_id = SImportBranches::getPartnerId($lPartners, $oSiieBranch["fid_bp"]);
+     $oBranch->partner_id = $lWebPartners[$oSiieBranch["fid_bp"]];
      $oBranch->created_by_id = 1;
      $oBranch->updated_by_id = 1;
      $oBranch->created_at = $oSiieBranch["ts_new"];
      $oBranch->updated_at = $oSiieBranch["ts_edit"];
 
      return $oBranch;
-  }
-
-  private static function getPartnerId($lPartners, $iExternalId)
-  {
-     foreach ($lPartners as $key => $oPartner) {
-       if ($oPartner->external_id == $iExternalId)
-       {
-         return $oPartner->id_partner;
-       }
-     }
   }
 }

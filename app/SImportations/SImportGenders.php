@@ -67,13 +67,18 @@ class SImportGenders
       $result = $this->webcon->query($sql);
       $lSiieGenders = array();
       $lWebGenders = SItemGender::get();
-      $lWebGroups = SItemGroup::get();
+      $lGroups = SItemGroup::get();
+      $lWebGroups = array();
       $lGenders = array();
       $lGendersToWeb = array();
 
       foreach ($lWebGenders as $key => $value)
       {
           $lGenders[$value->external_id] = $value;
+      }
+
+      foreach ($lGroups as $group) {
+          $lWebGroups[$group->external_id] = $group->id_item_group;
       }
 
       if ($result->num_rows > 0)
@@ -97,7 +102,7 @@ class SImportGenders
                     $lGenders[$row["id_igen"]]->is_mass = $row["b_mass"];
                     $lGenders[$row["id_igen"]]->is_mass_var = $row["b_mass_variable"];
                     $lGenders[$row["id_igen"]]->is_deleted = $row["b_del"];
-                    $lGenders[$row["id_igen"]]->item_group_id = SImportGenders::getGroupId($lWebGroups, $row["fid_igrp"]);
+                    $lGenders[$row["id_igen"]]->item_group_id = $lWebGroups[$row["fid_igrp"]];
                     $lGenders[$row["id_igen"]]->item_class_id = SImportGenders::getClassId($this->aCatClass, $row["fid_ct_item"]);
                     $lGenders[$row["id_igen"]]->item_type_id = SImportGenders::getTypeId($this->aTypes, $row["fid_ct_item"], $row["fid_cl_item"], $row["fid_tp_item"]);
                     $lGenders[$row["id_igen"]]->updated_at = $row["ts_edit"];
@@ -137,7 +142,7 @@ class SImportGenders
      $oGender->is_mass = $oSiieGender["b_mass"];
      $oGender->is_mass_var = $oSiieGender["b_mass_variable"];
      $oGender->is_deleted = $oSiieGender["b_del"];
-     $oGender->item_group_id = SImportGenders::getGroupId($lGroups, $oSiieGender["fid_igrp"]);
+     $oGender->item_group_id = $lGroups[$oSiieGender["fid_igrp"]];
      $oGender->item_class_id = SImportGenders::getClassId($lClasses, $oSiieGender["fid_ct_item"]);
      $oGender->item_type_id = SImportGenders::getTypeId($lTypes, $oSiieGender["fid_ct_item"], $oSiieGender["fid_cl_item"], $oSiieGender["fid_tp_item"]);
      $oGender->created_by_id = 1;
@@ -146,16 +151,6 @@ class SImportGenders
      $oGender->updated_at = $oSiieGender["ts_edit"];
 
      return $oGender;
-  }
-
-  private static function getGroupId($lGroups, $iExternalId)
-  {
-     foreach ($lGroups as $key => $oGroup) {
-       if ($oGroup->external_id == $iExternalId)
-       {
-         return $oGroup->id_item_group;
-       }
-     }
   }
 
   private static function getClassId($aClassMap, $iCategoryId = 1)

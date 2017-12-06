@@ -33,4 +33,8 @@ return [
           'MATERIALS' => 'Materiales',
           'PRODUCTS' => 'Productos',
           'SPENDING' => 'Gastos',
+
+    'SYNC' =>  'Sincronizar con ERP',
+    'SYNC_T' =>  'Este proceso se encarga de realizar la sincronización de
+                  materiales/productos y asociados de negocios, puede demorar algunos minutos.',
 ];
