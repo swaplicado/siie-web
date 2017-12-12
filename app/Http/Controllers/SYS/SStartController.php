@@ -15,6 +15,7 @@ use App\Database\Config;
 use App\ERP\SPartner;
 use App\SYS\SUserCompany;
 use App\SCore\SStockManagment;
+use App\SPadLocks\SRecordLock;
 
 class SStartController extends Controller
 {
@@ -33,9 +34,11 @@ class SStartController extends Controller
     {
         $oUtils = new SSessionUtils();
         $oDbConfig = new Config();
+        $oLocks = new SRecordLock();
 
         session(['utils' => $oUtils]);
         session(['db_configuration' => $oDbConfig]);
+        session(['lock' => $oLocks]);
 
         $lUserCompany = SUtil::getUserCompany(\Auth::user());
 
@@ -72,6 +75,7 @@ class SStartController extends Controller
         $oDecAmount = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_AMT'));
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
+        $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oStock = new SStockManagment();
@@ -80,6 +84,7 @@ class SStartController extends Controller
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
+        session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
 
         return SStartController::selectModule();

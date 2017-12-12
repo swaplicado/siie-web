@@ -38,7 +38,7 @@ class ErpAddItemsTable extends Migration {
 
           Schema::connection($this->sConnection)->create('erpu_items', function (blueprint $table) {
           	$table->increments('id_item');
-          	$table->char('code', 50)->unique();
+          	$table->char('code', 50);
           	$table->char('name', 255);
           	$table->decimal('length', 23,8);
           	$table->decimal('surface', 23,8);

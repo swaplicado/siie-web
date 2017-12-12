@@ -8,6 +8,7 @@ return [
                   'DECIMALS_AMT' => '2',
                   'DECIMALS_QTY' => '3',
                   'LOC_ENABLED' => '4',
+                  'LOCK_TIME' => '5',
                 ],
 
   'ATT' => [

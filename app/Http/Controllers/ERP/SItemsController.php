@@ -155,16 +155,17 @@ class SItemsController extends Controller
     public function edit($id)
     {
         $item = SItem::find($id);
-        \Debugbar::info($item);
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $item);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $item->created_by_id)))
+        $error = session('utils')->validateLock($item);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
         $itemClass = session('classIdAux');
 
-        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'item_class_id');
+        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
         $lUnits = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
         $sTitle = '';
@@ -204,7 +205,12 @@ class SItemsController extends Controller
         $item = SItem::find($id);
         $item->fill($request->all());
         $item->updated_by_id = \Auth::user()->id;
-        $item->save();
+
+        $errors = $item->save($item->toArray());
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);
+        }
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
@@ -237,9 +243,12 @@ class SItemsController extends Controller
     {
         $item = SItem::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $item->created_by_id)))
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $item);
+
+        $error = session('utils')->validateLock($item);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
         $item->fill($request->all());
@@ -247,6 +256,7 @@ class SItemsController extends Controller
         $item->updated_by_id = \Auth::user()->id;
 
         $item->save();
+        session('lock')->releaseLock($item);
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -261,17 +271,22 @@ class SItemsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
+        $item = SItem::find($id);
+
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id, $item);
+
+        $error = session('utils')->validateLock($item);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
-        $item = SItem::find($id);
         $item->fill($request->all());
         $item->is_deleted = \Config::get('scsys.STATUS.DEL');
         $item->updated_by_id = \Auth::user()->id;
 
         $item->save();
+        session('lock')->releaseLock($item);
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();

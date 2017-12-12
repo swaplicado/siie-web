@@ -38,7 +38,7 @@ class ErpAddPartnersTable extends Migration {
 
           Schema::connection($this->sConnection)->create('erpu_partners', function (blueprint $table) {
           	$table->increments('id_partner');
-            $table->char('code', 50)->unique();
+            $table->char('code', 50);
           	$table->char('name', 200);
           	$table->char('last_name', 100);
           	$table->char('first_name', 100);

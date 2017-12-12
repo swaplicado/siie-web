@@ -38,7 +38,7 @@ class ErpAddBranchesTable extends Migration {
 
           Schema::connection($this->sConnection)->create('erpu_branches', function (blueprint $table) {
           	$table->increments('id_branch');
-          	$table->char('code', 10)->unique();
+          	$table->char('code', 10);
           	$table->char('name', 100);
           	$table->integer('external_id');
           	$table->boolean('is_headquarters');
