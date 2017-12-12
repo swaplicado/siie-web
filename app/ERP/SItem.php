@@ -1,8 +1,8 @@
 <?php namespace App\ERP;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ERP\NewModel;
 
-class SItem extends Model {
+class SItem extends NewModel {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_item';
