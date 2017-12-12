@@ -128,7 +128,7 @@ class SItemsController extends Controller
         $item->updated_by_id = \Auth::user()->id;
         $item->created_by_id = \Auth::user()->id;
 
-        $item->save();
+        $item->save(); // this method doesn't implements the locks control
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 
@@ -157,6 +157,9 @@ class SItemsController extends Controller
         $item = SItem::find($id);
         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $item);
 
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
         $error = session('utils')->validateLock($item);
         if (sizeof($error) > 0)
         {
@@ -245,18 +248,15 @@ class SItemsController extends Controller
 
         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $item);
 
-        $error = session('utils')->validateLock($item);
-        if (sizeof($error) > 0)
-        {
-          return redirect()->back()->withErrors($error);
-        }
-
         $item->fill($request->all());
         $item->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $item->updated_by_id = \Auth::user()->id;
 
-        $item->save();
-        session('lock')->releaseLock($item);
+        $errors = $item->save($item->toArray());
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);
+        }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -271,22 +271,18 @@ class SItemsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
+
         $item = SItem::find($id);
-
-        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id, $item);
-
-        $error = session('utils')->validateLock($item);
-        if (sizeof($error) > 0)
-        {
-          return redirect()->back()->withErrors($error);
-        }
-
         $item->fill($request->all());
         $item->is_deleted = \Config::get('scsys.STATUS.DEL');
         $item->updated_by_id = \Auth::user()->id;
 
-        $item->save();
-        session('lock')->releaseLock($item);
+        $errors = $item->save($item->toArray());
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);
+        }
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();

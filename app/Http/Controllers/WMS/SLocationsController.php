@@ -87,17 +87,6 @@ class SLocationsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -107,9 +96,15 @@ class SLocationsController extends Controller
     {
         $location = SLocation::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $location->created_by_id)))
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $location);
+
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($location);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
         $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
@@ -131,7 +126,12 @@ class SLocationsController extends Controller
         $location = SLocation::find($id);
         $location->fill($request->all());
         $location->updated_by_id = \Auth::user()->id;
-        $location->save();
+
+        $errors = $location->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.locs.index')->withErrors($errors);
+        }
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
@@ -167,16 +167,17 @@ class SLocationsController extends Controller
     {
         $location = SLocation::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $location->created_by_id)))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $location);
 
         $location->fill($request->all());
         $location->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $location->updated_by_id = \Auth::user()->id;
 
-        $location->save();
+        $errors = $folio->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.locs.index')->withErrors($errors);
+        }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -191,17 +192,18 @@ class SLocationsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $location = SLocation::find($id);
         $location->fill($request->all());
         $location->is_deleted = \Config::get('scsys.STATUS.DEL');
         $location->updated_by_id = \Auth::user()->id;
 
-        $location->save();
+        $errors = $location->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.locs.index')->withErrors($errors);
+        }
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();

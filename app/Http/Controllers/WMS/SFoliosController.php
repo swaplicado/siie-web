@@ -141,9 +141,15 @@ class SFoliosController extends Controller
     {
         $folio = SFolio::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $folio->created_by_id)))
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $folio);
+
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($folio);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
         $folio->aux_branch_id = '';
@@ -233,7 +239,11 @@ class SFoliosController extends Controller
         unset($folio->aux_whs_id);
         unset($folio->aux_location_id);
 
-        $folio->save();
+        $errors = $folio->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.folios.index')->withErrors($errors);
+        }
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
@@ -244,16 +254,17 @@ class SFoliosController extends Controller
     {
         $folio = SFolio::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $folio->created_by_id)))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $folio);
 
         $folio->fill($request->all());
         $folio->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $folio->updated_by_id = \Auth::user()->id;
 
-        $folio->save();
+        $errors = $folio->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.folios.index')->withErrors($errors);
+        }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -268,17 +279,18 @@ class SFoliosController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $folio = SFolio::find($id);
         $folio->fill($request->all());
         $folio->is_deleted = \Config::get('scsys.STATUS.DEL');
         $folio->updated_by_id = \Auth::user()->id;
 
-        $folio->save();
+        $errors = $folio->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.folios.index')->withErrors($errors);
+        }
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();

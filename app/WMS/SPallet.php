@@ -1,8 +1,8 @@
 <?php namespace App\WMS;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ERP\SModel;
 
-class SPallet extends Model {
+class SPallet extends SModel {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_pallet';

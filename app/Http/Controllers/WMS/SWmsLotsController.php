@@ -60,19 +60,17 @@ class SWmsLotsController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-        {
+          if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+          {
+            return redirect()->route('notauthorized');
+          }
+
           $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
           $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
           return view('wms.lots.createEdit')
                         ->with('items', $items)
                         ->with('units', $units);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
     }
 
     /**
@@ -115,14 +113,24 @@ class SWmsLotsController extends Controller
      */
     public function edit($id)
     {
-      $lots = SWmsLot::find($id);
+        $lots = SWmsLot::find($id);
+
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $lots);
+
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($lots);
+        if (sizeof($error) > 0)
+        {
+          return redirect()->back()->withErrors($error);
+        }
+
         $lots->item;
         $lots->unit;
         $lots->userCreation;
         $lots->userUpdate;
 
-      if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $unit->created_by_id))
-      {
         $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
@@ -131,11 +139,6 @@ class SWmsLotsController extends Controller
                       ->with('lots',$lots)
                       ->with('items', $items)
                       ->with('units', $units);
-      }
-      else
-      {
-          return redirect()->route('notauthorized');
-      }
     }
 
     /**
@@ -152,7 +155,11 @@ class SWmsLotsController extends Controller
       $lot->updated_by_id = \Auth::user()->id;
       $lot->created_by_id = \Auth::user()->id;
 
-      $lot->save();
+      $errors = $lot->save();
+      if (sizeof($errors) > 0)
+      {
+         return redirect()->route('wms.lots.index')->withErrors($errors);
+      }
 
       Flash::success(trans('messages.REG_CREATED'))->important();
 
@@ -185,11 +192,17 @@ class SWmsLotsController extends Controller
      {
          $lot = SWmsLot::find($id);
 
+         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $lot);
+
          $lot->fill($request->all());
          $lot->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
          $lot->updated_by_id = \Auth::user()->id;
 
-         $lot->save();
+         $errors = $lot->save();
+         if (sizeof($errors) > 0)
+         {
+            return redirect()->route('wms.lots.index')->withErrors($errors);
+         }
 
          Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -204,22 +217,21 @@ class SWmsLotsController extends Controller
       */
      public function destroy(Request $request, $id)
      {
-         if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-         {
-           $lot = SWmsLot::find($id);
-           $lot->fill($request->all());
-           $lot->is_deleted = \Config::get('scsys.STATUS.DEL');
-           $lot->updated_by_id = \Auth::user()->id;
+         session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
-           $lot->save();
-           #$user->delete();
+         $lot = SWmsLot::find($id);
+         $lot->fill($request->all());
+         $lot->is_deleted = \Config::get('scsys.STATUS.DEL');
+         $lot->updated_by_id = \Auth::user()->id;
 
-           Flash::error(trans('messages.REG_DELETED'))->important();
-           return redirect()->route('wms.lots.index');
-         }
-         else
+         $errors = $lot->save();
+         if (sizeof($errors) > 0)
          {
-           return redirect()->route('notauthorized');
+            return redirect()->route('wms.lots.index')->withErrors($errors);
          }
+         #$user->delete();
+
+         Flash::error(trans('messages.REG_DELETED'))->important();
+         return redirect()->route('wms.lots.index');
      }
 }

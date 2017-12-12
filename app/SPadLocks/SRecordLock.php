@@ -37,6 +37,11 @@ class SRecordLock {
      */
     protected function aquire($iCompanyId, $sTable, $iRecordId, $iUserId)
     {
+        if (is_null($iRecordId))
+        {
+          return -1;
+        }
+        
         $oLock = SLock::where('company_id', $iCompanyId)
                         ->where('table_name', $sTable)
                         ->where('record_id', $iRecordId)

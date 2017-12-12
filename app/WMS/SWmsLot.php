@@ -2,9 +2,9 @@
 
 namespace App\WMS;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ERP\SModel;
 
-class SWmsLot extends Model {
+class SWmsLot extends SModel {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_lot';

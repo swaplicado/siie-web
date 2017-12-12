@@ -60,19 +60,17 @@ class SPalletsController extends Controller
      */
     public function create()
     {
-      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
-          $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
-          $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+          return redirect()->route('notauthorized');
+        }
 
-          return view('wms.pallets.createEdit')
-                        ->with('items', $items)
-                        ->with('units', $units);
-        }
-        else
-        {
-           return redirect()->route('notauthorized');
-        }
+        $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
+        $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+
+        return view('wms.pallets.createEdit')
+                      ->with('items', $items)
+                      ->with('units', $units);
     }
 
     /**
@@ -83,17 +81,17 @@ class SPalletsController extends Controller
      */
     public function store(Request $request)
     {
-      $pallets = new SPallet($request->all());
+        $pallets = new SPallet($request->all());
 
-      $pallets->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-      $pallets->updated_by_id = \Auth::user()->id;
-      $pallets->created_by_id = \Auth::user()->id;
+        $pallets->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $pallets->updated_by_id = \Auth::user()->id;
+        $pallets->created_by_id = \Auth::user()->id;
 
-      $pallets->save();
+        $pallets->save();
 
-      Flash::success(trans('messages.REG_CREATED'))->important();
+        Flash::success(trans('messages.REG_CREATED'))->important();
 
-      return redirect()->route('wms.pallets.index');
+        return redirect()->route('wms.pallets.index');
     }
 
     /**
@@ -115,14 +113,24 @@ class SPalletsController extends Controller
      */
     public function edit($id)
     {
-      $pallets = SPallet::find($id);
+        $pallets = SPallet::find($id);
+
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $pallets);
+
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($pallets);
+        if (sizeof($error) > 0)
+        {
+          return redirect()->back()->withErrors($error);
+        }
+
         $pallets->item;
         $pallets->unit;
         $pallets->userCreation;
         $pallets->userUpdate;
 
-      if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $unit->created_by_id))
-      {
         $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
@@ -131,11 +139,6 @@ class SPalletsController extends Controller
                       ->with('pallets',$pallets)
                       ->with('items', $items)
                       ->with('units', $units);
-      }
-      else
-      {
-          return redirect()->route('notauthorized');
-      }
     }
 
     /**
@@ -152,9 +155,13 @@ class SPalletsController extends Controller
       $pallet->updated_by_id = \Auth::user()->id;
       $pallet->created_by_id = \Auth::user()->id;
 
-      $pallet->save();
+      $errors = $pallet->save();
+      if (sizeof($errors) > 0)
+      {
+         return redirect()->route('wms.pallets.index')->withErrors($errors);
+      }
 
-      Flash::success(trans('messages.REG_CREATED'))->important();
+      Flash::warning(trans('messages.REG_EDITED'))->important();
 
       return redirect()->route('wms.pallets.index');
     }
@@ -163,8 +170,8 @@ class SPalletsController extends Controller
     {
         $pallet = SPallet::find($id);
 
-        $palletCopy = clone $lot;
-        $palletCopy->id_lot = 0;
+        $palletCopy = clone $pallet;
+        $palletCopy->id_pallet = 0;
         $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
@@ -179,11 +186,17 @@ class SPalletsController extends Controller
     {
         $pallet = SPallet::find($id);
 
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $pallet);
+
         $pallet->fill($request->all());
         $pallet->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $pallet->updated_by_id = \Auth::user()->id;
 
-        $pallet->save();
+        $errors = $pallet->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.pallets.index')->withErrors($errors);
+        }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -198,22 +211,21 @@ class SPalletsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-      if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-      {
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
+
         $pallet = SPallet::find($id);
         $pallet->fill($request->all());
         $pallet->is_deleted = \Config::get('scsys.STATUS.DEL');
         $pallet->updated_by_id = \Auth::user()->id;
 
-        $pallet->save();
+        $errors = $pallet->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('wms.pallets.index')->withErrors($errors);
+        }
         #$user->delete();
 
         Flash::error(trans('messages.REG_DELETED'))->important();
         return redirect()->route('wms.pallets.index');
-      }
-      else
-      {
-        return redirect()->route('notauthorized');
-      }
     }
 }

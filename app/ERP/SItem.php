@@ -1,8 +1,8 @@
 <?php namespace App\ERP;
 
-use App\ERP\NewModel;
+use App\ERP\SModel;
 
-class SItem extends NewModel {
+class SItem extends SModel {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_item';

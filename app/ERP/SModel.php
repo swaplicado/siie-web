@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  *
  */
-class NewModel extends Model
+class SModel extends Model
 {
 
     public function save(array $options = array())
