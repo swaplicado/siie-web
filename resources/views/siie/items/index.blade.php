@@ -6,6 +6,21 @@
 
 @section('addfilters')
 	@include('templates.list.search')
+	<span class="input-group-btn">
+		{!! Form::select('filterBulk', [
+										 \Config::get('scsiie.FILTER_BULK.RETAIL') => trans('siie.FILTERS.RETAIL'),
+										 \Config::get('scsiie.FILTER_BULK.BULK') => trans('siie.FILTERS.BULK'),
+										 \Config::get('scsiie.FILTER_BULK.ALL') => trans('siie.FILTERS.ALL'),
+											],
+											$iFilterBulk, ['class' => 'form-control', 'required', 'title' => trans('userinterface.labels.IS_BULK')]) !!}
+		{!! Form::select('filterLot', [
+										 \Config::get('scsiie.FILTER_LOT.NLOT') => trans('siie.FILTERS.NLOT'),
+										 \Config::get('scsiie.FILTER_LOT.LOT') => trans('siie.FILTERS.LOT'),
+										 \Config::get('scsiie.FILTER_LOT.ALL') => trans('siie.FILTERS.ALL'),
+											],
+											$iFilterLot, ['class' => 'form-control', 'required', 'title' => trans('userinterface.labels.IS_LOT') ]) !!}
+		{!! Form::select('filterGender', $genders, $iFilterGender, ['class' => 'form-control', 'required', 'title' => trans('userinterface.labels.GENDER')]) !!}
+	</span>
 @endsection
 
 @section('title', $title)

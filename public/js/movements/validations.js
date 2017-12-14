@@ -74,6 +74,12 @@ function validateMovement(oMovement) {
   var valid = true;
   var rowIndex = 1;
   oMovement.rows.forEach(function(row) {
+      if (row.iPalletId == 0) {
+          swal("Error", "El renglón " + row.oAuxItem.name + " no tiene una tarima seleccionada.", "error");
+          valid = false;
+          return true;
+      }
+
       if (row.oAuxItem.is_lot && row.lotRows.length == 0) {
           swal("Error", "El renglón " + row.oAuxItem.name + " no tiene lotes asignados.", "error");
           valid = false;
@@ -233,9 +239,10 @@ function validateInput() {
 function validateLots(parentId) {
     var total = 0.0;
     var column = 1;
-    var columnLot = 6;
+    var columnLot = 0;
     var bCeros = false;
-    var bLots = false;
+    var bLots = true;
+    var sLotExp = '';
     var bNumber = true;
     var bBulk = true;
 
@@ -264,14 +271,22 @@ function validateLots(parentId) {
       total += parseFloat(valor)
     });
 
-    // $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
-    //
-    //  //get the value from cell
-    //   valor = $(this)[0].children[0].value;
-    //   if (valor == 0 || valor == '') {
-    //     bLots = true;
-    //   }
-    // })
+    if (parentRow.oAuxItem.is_lot) {
+      if ($("#lotsbody tr").find('td:eq(' + columnLot + ')').length <= 0) {
+        bLots = false;
+      }
+    }
+
+    $("#lotsbody tr").find('td:eq(' + columnLot + ')').each(function () {
+        valor = $(this)[0].children[0].value;
+    //     if (valor == '') {
+    //         bLots = false;
+    //         return false;
+    //     }
+    //     else {
+          sLotExp = lotsRotation(valor);
+    //     }
+    });
 
     btnClose = document.getElementById('closeModal');
 
@@ -282,20 +297,25 @@ function validateLots(parentId) {
       return false;
     }
     if (bCeros) {
-      // btnClose.disabled = true;
       swal("Aviso", "No puede haber renglones con cantidad menor o igual a cero.", "warning");
       return false;
     }
     if (!bBulk) {
-      // btnClose.disabled = true;
       swal("Aviso", "No se admiten decimales para este material/producto.", "warning");
       return false;
     }
-    // if (bLots) {
-    //   btnClose.disabled = true;
-    //   alert("No puede haber renglones sin lote");
-    //   return false;
-    // }
+    if (!bLots) {
+      swal("Aviso", "Debe seleccionar un lote.", "warning");
+      return false;
+    }
+    if (sLotExp != '') {
+      var validation = confirm("el lote " + sLotExp + " no es el más próximo a caducar. \n ¿Desea continuar?");
+
+      if (!validation) {
+        return false;
+      }
+    }
+
     var iMovType = document.getElementById('mvt_whs_type_id').value;
 
 
@@ -308,5 +328,30 @@ function validateLots(parentId) {
     }
 
     return true;
+}
 
+function lotsRotation(lotId) {
+  var oLot = null;
+  globalData.lLots.forEach(function(lot) {
+    if (lot.id_lot == lotId) {
+      oLot = lot;
+      return true;
+    }
+  });
+
+  var oBestLot = null
+  globalData.lLots.forEach(function(lot) {
+    if (oLot.unit_id == lot.unit_id && oLot.item_id == lot.item_id) {
+        if (oBestLot == null || lot.dt_expiry < oBestLot.dt_expiry) {
+          oBestLot = lot;
+        }
+    }
+  });
+
+  if (lotId != oBestLot.id_lot) {
+    return oLot.lot;
+  }
+  else {
+    return '';
+  }
 }

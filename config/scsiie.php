@@ -46,4 +46,20 @@ return [
                     'AMT' => '1',
                     'QTY' => '2',
                   ],
+
+  'FILTER_BULK' =>       [
+                    'RETAIL' => '0',
+                    'BULK' => '1',
+                    'ALL' => '2',
+                  ],
+
+  'FILTER_LOT' =>       [
+                    'NLOT' => '0',
+                    'LOT' => '1',
+                    'ALL' => '2',
+                  ],
+
+  'FILTER_GENDER' =>       [
+                    'ALL' => '0',
+                  ],
 ];

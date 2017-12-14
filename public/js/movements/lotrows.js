@@ -17,7 +17,7 @@ $(document).on('click', 'button.buttlots', function () {
       attachRow(row, false);
     }
 
-    validateLots(idParentTr);
+    // validateLots(idParentTr);
     return false;
 });
 
@@ -117,7 +117,9 @@ function createLotRow(row, id, lotId, quantity, price, bPalletReconfiguration) {
     var oTdBTN_DEL = document.createElement("td");
     oTdBTN_DEL.appendChild(document.createTextNode(valuesRow[BTN_DEL]));
     if ((parentRow.iPalletId == 1 || (iMovType != globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1)) && !bPalletReconfiguration ) {
-      oTdBTN_DEL.innerHTML = "<button type='button' onClick='validateLots('" + idParentTr + "')' class='removeLotbutton btn btn-danger btn-xs' title='Quitar renglón'>" +
+      oTdBTN_DEL.innerHTML = "<button type='button' " +
+      // "onClick='validateLots(" + idParentTr + ")'"  +
+      "class='removeLotbutton btn btn-danger btn-xs' title='Quitar renglón'>" +
                         "<li class='glyphicon glyphicon-remove'></li>"
                         "</button>";
     }
@@ -152,7 +154,7 @@ $(document).on('click', 'button.removeLotbutton', function () {
     $(this).closest('tr').remove();
     movement.getRow(idParentTr).removeLotRow(id);
     console.log("removed " + id);
-    validateLots(idParentTr);
+    // validateLots(idParentTr);
     return false;
 });
 

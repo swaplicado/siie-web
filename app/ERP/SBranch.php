@@ -31,23 +31,28 @@ class SBranch extends Model {
 
   public function scopeSearch($query, $name, $iFilter)
   {
+      $query->join('erpu_partners', 'erpu_partners.id_partner', '=', 'erpu_branches.partner_id')
+                ->select('erpu_branches.*')
+                ->where(function ($q) use ($name) {
+                      $q->where('erpu_partners.name', 'LIKE', "%".$name."%")
+                      ->orWhere('erpu_branches.name', 'LIKE', "%".$name."%");
+                  });
+
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
-          return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                      ->where('name', 'LIKE', "%".$name."%");
+          return $query->where('erpu_partners.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
-          return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                        ->where('name', 'LIKE', "%".$name."%");
+          return $query->where('erpu_partners.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
           break;
 
         case \Config::get('scsys.FILTER.ALL'):
-          return $query->where('name', 'LIKE', "%".$name."%");
+          return $query;
           break;
 
         default:
-          return $query->where('name', 'LIKE', "%".$name."%");
+          return $query;
           break;
       }
   }

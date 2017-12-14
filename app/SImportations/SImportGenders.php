@@ -101,6 +101,8 @@ class SImportGenders
                     $lGenders[$row["id_igen"]]->is_volume_var = $row["b_vol_variable"];
                     $lGenders[$row["id_igen"]]->is_mass = $row["b_mass"];
                     $lGenders[$row["id_igen"]]->is_mass_var = $row["b_mass_variable"];
+                    $lGenders[$row["id_igen"]]->is_lot = $row["b_lot"];
+                    $lGenders[$row["id_igen"]]->is_bulk = $row["b_bulk"];
                     $lGenders[$row["id_igen"]]->is_deleted = $row["b_del"];
                     $lGenders[$row["id_igen"]]->item_group_id = $lWebGroups[$row["fid_igrp"]];
                     $lGenders[$row["id_igen"]]->item_class_id = SImportGenders::getClassId($this->aCatClass, $row["fid_ct_item"]);
@@ -141,6 +143,8 @@ class SImportGenders
      $oGender->is_volume_var = $oSiieGender["b_vol_variable"];
      $oGender->is_mass = $oSiieGender["b_mass"];
      $oGender->is_mass_var = $oSiieGender["b_mass_variable"];
+     $oGender->is_lot = $oSiieGender["b_lot"];
+     $oGender->is_bulk = $oSiieGender["b_bulk"];
      $oGender->is_deleted = $oSiieGender["b_del"];
      $oGender->item_group_id = $lGroups[$oSiieGender["fid_igrp"]];
      $oGender->item_class_id = SImportGenders::getClassId($lClasses, $oSiieGender["fid_ct_item"]);

@@ -23,12 +23,16 @@ class SItemsController extends Controller
 {
     private $oCurrentUserPermission;
     private $iFilter;
+    private $iFilterBulk;
 
     public function __construct()
     {
         $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.ITEM_CONFIG'), \Config::get('scsys.MODULES.ERP'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+        $this->iFilterBulk = \Config::get('scsiie.FILTER_BULK.ALL');
+        $this->iFilterLot = \Config::get('scsiie.FILTER_LOT.ALL');
+        $this->iFilterGender = \Config::get('scsiie.FILTER_GENDER.ALL');
     }
 
 
@@ -44,9 +48,15 @@ class SItemsController extends Controller
             $iClassId = (session()->has('classIdAux') ? session('classIdAux') : 1);
         }
         session(['classIdAux' => $iClassId]);
+        $lGenders = SItemGender::where('item_class_id', $iClassId)->where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
+        $lGenders[\Config::get('scsiie.FILTER_GENDER.ALL')] = 'Todos';
+        // array_push($lGenders,'TODOS');
 
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $lItems = SItem::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC')->paginate(20);
+        $this->iFilterBulk = $request->filterBulk == null ? \Config::get('scsiie.FILTER_BULK.ALL') : $request->filterBulk;
+        $this->iFilterLot = $request->filterLot == null ? \Config::get('scsiie.FILTER_LOT.ALL') : $request->filterLot;
+        $this->iFilterGender = $request->filterGender == null ? \Config::get('scsiie.FILTER_GENDER.ALL') : $request->filterGender;
+        $lItems = SItem::Search($request->name, $this->iFilter, $this->iFilterLot, $this->iFilterBulk, $this->iFilterGender, $iClassId)->orderBy('name', 'ASC')->paginate(20);
 
         $sTitle = '';
 
@@ -70,7 +80,11 @@ class SItemsController extends Controller
             ->with('items', $lItems)
             ->with('actualUserPermission', $this->oCurrentUserPermission)
             ->with('title', $sTitle)
-            ->with('iFilter', $this->iFilter);
+            ->with('iFilter', $this->iFilter)
+            ->with('iFilterLot', $this->iFilterLot)
+            ->with('iFilterBulk', $this->iFilterBulk)
+            ->with('iFilterGender', $this->iFilterGender)
+            ->with('genders', $lGenders);
     }
 
     /**
@@ -87,8 +101,8 @@ class SItemsController extends Controller
 
         $itemClass = session('classIdAux');
 
-        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
-        $lUnits = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+        $lGenders = SItemGender::where('item_class_id', $itemClass)->where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
+        $lUnits = SUnit::orderBy('name', 'ASC')->where('is_deleted', false)->lists('name', 'id_unit');
 
         $sTitle = '';
 
@@ -168,8 +182,8 @@ class SItemsController extends Controller
 
         $itemClass = session('classIdAux');
 
-        $lGenders = SItemGender::where('item_class_id', $itemClass)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
-        $lUnits = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+        $lGenders = SItemGender::where('item_class_id', $itemClass)->where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
+        $lUnits = SUnit::orderBy('name', 'ASC')->where('is_deleted', false)->lists('name', 'id_unit');
 
         $sTitle = '';
 

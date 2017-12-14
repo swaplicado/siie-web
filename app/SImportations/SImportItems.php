@@ -62,6 +62,8 @@ class SImportItems
                     $lItems[$row["id_item"]]->volume = $row["vol"];
                     $lItems[$row["id_item"]]->mass = $row["mass"];
                     $lItems[$row["id_item"]]->external_id = $row["id_item"];
+                    $lItems[$row["id_item"]]->is_lot = $row["b_lot"];
+                    $lItems[$row["id_item"]]->is_bulk = $row["b_bulk"];
                     $lItems[$row["id_item"]]->is_deleted = $row["b_del"];
                     $lItems[$row["id_item"]]->unit_id = SImportItems::getUnitId($lWebUnits, $row["fid_unit"]);
                     $lItems[$row["id_item"]]->item_gender_id = SImportItems::getGenderId($lWebGenders, $row["fid_igen"]);
@@ -98,6 +100,8 @@ class SImportItems
      $oItem->volume = $oSiieItem["vol"];
      $oItem->mass = $oSiieItem["mass"];
      $oItem->external_id = $oSiieItem["id_item"];
+     $oItem->is_lot = $oSiieItem["b_lot"];
+     $oItem->is_bulk = $oSiieItem["b_bulk"];
      $oItem->is_deleted = $oSiieItem["b_del"];
      $oItem->unit_id = SImportItems::getUnitId($lWebUnits, $oSiieItem["fid_unit"]);
      $oItem->item_gender_id = SImportItems::getGenderId($lGenders, $oSiieItem["fid_igen"]);

@@ -89,9 +89,18 @@ class SMovsController extends Controller
         $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $mvtType)->lists('name', 'id_mvt_type');
         $warehouses = SWarehouse::where('is_deleted', false)->lists('name', 'id_whs');
         $warehousesObj = SWarehouse::where('is_deleted', false)->get();
-        $locations = SLocation::where('is_deleted', false)->get();
-        $lots = SWmsLot::where('is_deleted', false)->get();
-        $pallets = SPallet::where('is_deleted', false)->get();
+        $locations = SLocation::where(function ($q) {
+                                      $q->where('is_deleted', false)
+                                      ->orWhere('id_whs_location', 1);
+                                  })->get();
+        $lots = SWmsLot::where(function ($q) {
+                                      $q->where('is_deleted', false)
+                                      ->orWhere('id_lot', 1);
+                                  })->get();
+        $pallets = SPallet::where(function ($q) {
+                                      $q->where('is_deleted', false)
+                                      ->orWhere('id_pallet', 1);
+                                  })->get();
 
         $itemContainers = SItemContainer::where('is_deleted', false)->get();
 

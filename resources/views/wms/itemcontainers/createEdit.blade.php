@@ -16,12 +16,12 @@
 			}
 			$aux = $itemcontainer;
 	?>
-	@section('title', trans('userinterface.titles.EDIT_LIMIT'))
+	@section('title', trans('userinterface.titles.EDIT_ITEM_CONTAINER'))
 @else
 	<?php
 		$sRoute='wms.itemcontainers.store';
 	?>
-	@section('title', trans('userinterface.titles.CREATE_LIMIT'))
+	@section('title', trans('userinterface.titles.CREATE_ITEM_CONTAINER'))
 @endif
 	<?php $sRoute2 = 'wms.itemcontainers.index' ?>
 
