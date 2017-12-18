@@ -72,6 +72,8 @@ class SImportUnits
        foreach ($lUnitsToWeb as $key => $unit) {
          $unit->save();
        }
+
+       return true;
   }
 
   private static function siieToSiieWeb($oSiieUnit = '')

@@ -359,7 +359,7 @@ Route::group(['middleware' => ['auth']], function() {
 //****************************************/ Siie /*************************
     Route::group(['prefix' => 'siie', 'middleware' => ['mdmanager']], function () {
 
-      Route::get('/home/{imported?}',[
+      Route::get('/home',[
   			'as' => 'siie.home',
   			'uses' => 'ERP\SSiieController@Home'
   		]);
@@ -369,9 +369,45 @@ Route::group(['middleware' => ['auth']], function() {
       * Importation
       **/
 
-      Route::get('importation',[
-        'uses' => 'ERP\SImportationsController@ImportFromSiie',
+      Route::get('importation/{imported?}',[
+        'uses' => 'ERP\SImportationsController@index',
         'as' => 'siie.importation'
+      ]);
+      Route::get('import/items',[
+        'uses' => 'ERP\SImportationsController@importItems',
+        'as' => 'siie.import.items'
+      ]);
+      Route::get('import/partners',[
+        'uses' => 'ERP\SImportationsController@importPartners',
+        'as' => 'siie.import.partners'
+      ]);
+      Route::get('import/branches',[
+        'uses' => 'ERP\SImportationsController@importBranches',
+        'as' => 'siie.import.branches'
+      ]);
+      Route::get('import/addresses',[
+        'uses' => 'ERP\SImportationsController@importAddresses',
+        'as' => 'siie.import.addresses'
+      ]);
+      Route::get('import/documents',[
+        'uses' => 'ERP\SImportationsController@importDocuments',
+        'as' => 'siie.import.documents'
+      ]);
+      Route::get('import/rows',[
+        'uses' => 'ERP\SImportationsController@importDocumentRows',
+        'as' => 'siie.import.rows'
+      ]);
+      Route::get('import/rows1',[
+        'uses' => 'ERP\SImportationsController@importDocumentRowsLast',
+        'as' => 'siie.import.rows1'
+      ]);
+      Route::get('import/taxes',[
+        'uses' => 'ERP\SImportationsController@importDocumentTaxRows',
+        'as' => 'siie.import.taxes'
+      ]);
+      Route::get('import/taxes1',[
+        'uses' => 'ERP\SImportationsController@importDocumentTaxRowsLast',
+        'as' => 'siie.import.taxes1'
       ]);
 
       /*

@@ -45,8 +45,11 @@ class ErpAddCurrenciesTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('erps_currencies')->insert([
-          	['id_currency' => '1','code' => 'N/A','name' => 'N/A', 'is_deleted' => '0'],
-          ]);	
+          	['id_currency' => '1','code' => 'N/A','name' => 'N/A', 'is_deleted' => '1'],
+          	['id_currency' => '2','code' => 'MXN','name' => 'PESOS MEXICANOS', 'is_deleted' => '0'],
+          	['id_currency' => '3','code' => 'USD','name' => 'US DOLLARS', 'is_deleted' => '0'],
+          	['id_currency' => '4','code' => 'EUR','name' => 'EUROS', 'is_deleted' => '0'],
+          ]);
 
         }
     }

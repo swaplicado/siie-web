@@ -74,6 +74,8 @@ class SImportGroups
       }
 
       $this->webcon->close();
+
+      return true;
   }
 
   private static function siieToSiieWeb($oSiieGroup = '', $lFamilies)

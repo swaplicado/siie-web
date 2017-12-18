@@ -82,6 +82,7 @@ class SImportBranches
          $oBranch->save();
       }
 
+      return true;
   }
 
   private static function siieToSiieWeb($oSiieBranch = '', $lWebPartners)

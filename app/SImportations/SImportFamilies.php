@@ -70,6 +70,8 @@ class SImportFamilies
        foreach ($lFamiliesToWeb as $key => $family) {
          $family->save();
        }
+
+       return true;
   }
 
   private static function siieToSiieWeb($oSiieFamily = '')

@@ -80,6 +80,8 @@ class SImportPartners
        foreach ($lPartnersToWeb as $key => $partner) {
          $partner->save();
        }
+
+       return true;
   }
 
   private static function siieToSiieWeb($oSiiePartner = '')

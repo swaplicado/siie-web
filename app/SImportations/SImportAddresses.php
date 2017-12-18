@@ -137,6 +137,7 @@ class SImportAddresses
          $oAddress->save();
       }
 
+      return true;
   }
 
   private static function siieToSiieWeb($oSiieAddress = '', $lWebBranches, $lWebCountries, $lWebStates)
@@ -157,7 +158,6 @@ class SImportAddresses
      $oAddress->is_deleted = $oSiieAddress["b_del"];
      $oAddress->branch_id = $lWebBranches[$oSiieAddress["id_bpb"]];
      $oAddress->country_id = $lWebCountries[$oSiieAddress["cty_key"]];
-     \Debugbar::info($oSiieAddress["sta_code"]);
      $oAddress->state_id = $lWebStates[$oSiieAddress["sta_code"]];
      $oAddress->created_by_id = 1;
      $oAddress->updated_by_id = 1;

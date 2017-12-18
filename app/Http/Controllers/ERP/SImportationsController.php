@@ -15,6 +15,9 @@ use App\SImportations\SImportItems;
 use App\SImportations\SImportPartners;
 use App\SImportations\SImportBranches;
 use App\SImportations\SImportAddresses;
+use App\SImportations\SImportDocuments;
+use App\SImportations\SImportDocumentRows;
+use App\SImportations\SImportDocumentTaxRows;
 
 class SImportationsController extends Controller {
 
@@ -31,7 +34,14 @@ class SImportationsController extends Controller {
         $this->iFilterBp = \Config::get('scsiie.ATT.ALL');
     }
 
-    public function importFromSiie()
+    public function index($isImported = 0)
+    {
+       return view('siie.imports.importations')
+                              ->with('title', 'Importaciones')
+                              ->with('isImported', $isImported);
+    }
+
+    public function importItems()
     {
        $go = new SImportFamilies();
        $go->importFamilies();
@@ -43,14 +53,65 @@ class SImportationsController extends Controller {
        $unit->importUnits();
        $item = new SImportItems();
        $item->importItems();
-       $partner = new SImportPartners();
-       $partner->importPartners();
-       $branch = new SImportBranches();
-       $branch->importBranches();
-       $address = new SImportAddresses();
-       $address->importAddresses();
 
-       return redirect()->route('siie.home', 1);
+       return redirect()->route('siie.importation', 1);
+    }
+
+    public function importPartners($value='')
+    {
+      $partner = new SImportPartners();
+      $partner->importPartners();
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importBranches($value='')
+    {
+      $branch = new SImportBranches();
+      $branch->importBranches();
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importAddresses($value='')
+    {
+      $address = new SImportAddresses();
+      $address->importAddresses();
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importDocuments($value='')
+    {
+      $documents = new SImportDocuments('erp_universal');
+      $documents->importDocuments(2017);
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importDocumentRows($value='')
+    {
+      $rows = new SImportDocumentRows('erp_universal');
+      $rows->importRows(2017, '<');
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importDocumentRowsLast($value='')
+    {
+      $rows = new SImportDocumentRows('erp_universal');
+      $rows->importRows(2017, '>');
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importDocumentTaxRows($value='')
+    {
+      $taxRows = new SImportDocumentTaxRows('erp_universal');
+      $taxRows->importRows(2017, '<');
+
+      return redirect()->route('siie.importation', 1);
+    }
+    public function importDocumentTaxRowsLast($value='')
+    {
+      $taxRows = new SImportDocumentTaxRows('erp_universal');
+      $taxRows->importRows(2017, '>');
+
+      return redirect()->route('siie.importation', 1);
     }
 
 }

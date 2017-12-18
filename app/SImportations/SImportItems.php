@@ -88,6 +88,8 @@ class SImportItems
       }
 
       $this->webcon->close();
+
+      return true;
   }
 
   private static function siieToSiieWeb($oSiieItem = '', $lGenders, $lWebUnits)

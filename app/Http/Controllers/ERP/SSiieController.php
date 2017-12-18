@@ -27,6 +27,6 @@ class SSiieController extends Controller
      */
     public function home($isImported = 0)
     {
-        return view('siie.index')->with('isImported', $isImported);
+        return view('siie.index');
     }
 }

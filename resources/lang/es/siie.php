@@ -46,4 +46,16 @@ return [
       'ALL' => 'Todos',
     ],
 
+    'SYNCR'     =>  [
+      'ITEMS' => 'ítems',
+      'PARTNERS' => 'Asociados de negocios',
+      'BRANCHES' => 'Sucursales',
+      'ADDRESSES' => 'Direcciones de sucursales',
+      'DOCUMENTS' => 'Documentos',
+      'ROWS1' => 'Renglones parte 1',
+      'ROWS2' => 'Renglones parte 2',
+      'TAXES1' => 'Renglones de impuestos 1',
+      'TAXES2' => 'Renglones de impuestos 2',
+    ],
+
 ];

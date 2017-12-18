@@ -53,8 +53,8 @@ class AddUserPermissionsTable extends Migration
       	$table->foreign('privilege_id')->references('id_privilege')->on('syss_privileges')->onDelete('cascade');
       	$table->foreign('module_id')->references('id_module')->on('syss_modules')->onDelete('cascade');
 
-        $table->foreign('branch_id')->references('id_branch')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'erpu_branches')->onDelete('cascade');
-      	$table->foreign('whs_id')->references('id_whs')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'wmsu_whs')->onDelete('cascade');
+        // $table->foreign('branch_id')->references('id_branch')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'erpu_branches')->onDelete('cascade');
+      	// $table->foreign('whs_id')->references('id_whs')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'wmsu_whs')->onDelete('cascade');
       });
     }
 

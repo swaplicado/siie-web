@@ -128,6 +128,8 @@ class SImportGenders
       }
 
       $this->webcon->close();
+
+      return true;
   }
 
   private static function siieToSiieWeb($oSiieGender = '', $lGroups, $lClasses, $lTypes)
