@@ -401,13 +401,19 @@ Route::group(['middleware' => ['auth']], function() {
         'uses' => 'ERP\SImportationsController@importDocumentRowsLast',
         'as' => 'siie.import.rows1'
       ]);
-      Route::get('import/taxes',[
-        'uses' => 'ERP\SImportationsController@importDocumentTaxRows',
-        'as' => 'siie.import.taxes'
+
+      /*
+      * documents
+      **/
+
+      // Route::resource('docs','ERP\SDocumentsController');
+      Route::get('docs/{category}/{dclass}/{title}/index',[
+        'uses' => 'ERP\SDocumentsController@Index',
+        'as' => 'siie.docs.index'
       ]);
-      Route::get('import/taxes1',[
-        'uses' => 'ERP\SImportationsController@importDocumentTaxRowsLast',
-        'as' => 'siie.import.taxes1'
+      Route::get('docs/{document}/view',[
+        'uses' => 'ERP\SDocumentsController@View',
+        'as' => 'siie.docs.view'
       ]);
 
       /*

@@ -50,6 +50,7 @@
 											'LIST_MATERIALS' => 'Materiales',
 											'LIST_PRODUCTS' => 'Productos',
 											'LIST_SPENDING' => 'Gastos',
+											'LIST_SAL_INVO' => 'Facturas de venta',
 											'CHANGE_PASS' => 'Cambiar contraseña',
 											'CREATE_ADDRESS' => 'Crear dirección',
 											'CREATE_USER_PERMISSION' => 'Otorgar los permisos correspondientes a:',

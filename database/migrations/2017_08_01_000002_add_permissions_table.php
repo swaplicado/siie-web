@@ -37,13 +37,19 @@ class AddPermissionsTable extends Migration
         });
 
         DB::table('syss_permissions')->insert([
-        	['id_permission' => '1','code' => '001','name' => 'Administrador', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '2','code' => '002','name' => 'Configuración central', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '3','code' => '003','name' => 'Configuración de ítems', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '4','code' => '004','name' => 'Contenedores', 'is_deleted' => '0','module_id' => '1'],
-        	['id_permission' => '5','code' => '005','name' => 'Movimientos de inventario', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '1','code' => '001','name' => 'ADMINISTRADOR', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '2','code' => '002','name' => 'CONFIGURACIÓN CENTRAL', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '3','code' => '003','name' => 'CONFIGURACIÓN DE ÍTEMS', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '4','code' => '004','name' => 'CONTENEDORES', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '5','code' => '005','name' => 'MOVIMIENTOS DE INVENTARIO', 'is_deleted' => '0','module_id' => '4'],
+        	['id_permission' => '6','code' => '006','name' => 'ADMINISTRADOR MOVIMIENTOS DE ALMACÉN', 'is_deleted' => '0','module_id' => '4'],
+        	['id_permission' => '7','code' => '007','name' => 'ADMINISTRACIÓN DE DOCUMENTOS', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '8','code' => '101','name' => 'MODULO CENTRAL', 'is_deleted' => '0','module_id' => '1'],
+        	['id_permission' => '9','code' => '102','name' => 'MÓDULO DE PRODUCCIÓN', 'is_deleted' => '0','module_id' => '2'],
+        	['id_permission' => '10','code' => '103','name' => 'MÓDULO DE CALIDAD', 'is_deleted' => '0','module_id' => '3'],
+        	['id_permission' => '11','code' => '104','name' => 'MÓDULO DE ALMACENES', 'is_deleted' => '0','module_id' => '4'],
+        	['id_permission' => '12','code' => '105','name' => 'MÓDULO DE EMBARQUES', 'is_deleted' => '0','module_id' => '5'],
         ]);
-
     }
 
     /**

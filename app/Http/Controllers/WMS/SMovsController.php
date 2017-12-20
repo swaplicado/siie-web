@@ -171,8 +171,6 @@ class SMovsController extends Controller
      */
     public function getTable(Request $request)
     {
-      \Debugbar::info($request->value);
-
       if ($request->value != '') {
         session(['data' => $request->value]);
 
@@ -198,8 +196,6 @@ class SMovsController extends Controller
      */
     public function store(SMovRequest $request)
     {
-        \Debugbar::info('Store');
-
         $oData = session('data');
         $oPalletData = session()->has('pallet') ? session('pallet') : 0;
 
@@ -467,10 +463,8 @@ class SMovsController extends Controller
               $row->amount = $amnt;
               $row->amount_unit = $qty == 0 ? 0 : $amnt/$qty;
               $row->pallet_id = $obj->id_pallet;
-              // \Debugbar::info("antes de location");
-              // \Debugbar::error();
+              
               $location = SStockUtils::getPalletLocation($row->pallet_id);
-              // \Debugbar::info("después de location");
               $row->location_id = $location->id_whs_location;
               $row->pallet;
               $row->location->warehouse;

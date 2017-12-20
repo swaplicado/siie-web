@@ -44,6 +44,17 @@ class SErpMenu {
                 ->route('siie.bps.index', trans('siie.BPS'))
                 ->route('siie.branches.index', trans('siie.BRANCHES'))
         )
+        ->submenu(
+            Link::to('#', trans('siie.DOCUMENTS').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_INVO'),
+                                            [\Config::get('scsiie.DOC_CAT.SALES'),
+                                            \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                            trans('userinterface.titles.LIST_SAL_INVO')])
+        )
         ->route('siie.units.index', trans('siie.UNITS'))
         ->route('siie.units.index', trans('siie.CONVERTIONS'))
         ->wrap('div.collapse.navbar-collapse')

@@ -16,6 +16,13 @@
       			<h2 class="panel-title">@yield('title')</h2>
       		</div>
         <div class="panel-body">
+          <div class="row">
+    				<div class="col-md-2">
+    				</div>
+    				<div class="col-md-10">
+    					@include('templates.list.filter')
+    				</div>
+    			</div>
           <section>
             @include('flash::message')
             @include('templates.error')

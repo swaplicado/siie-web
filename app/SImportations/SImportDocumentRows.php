@@ -41,6 +41,7 @@ class SImportDocumentRows
       $lWebUnits = array();
       $lRows = array();
       $lRowsToWeb = array();
+      $taxRows = new SImportDocumentTaxRows('erp_universal');
 
       $lYears = [
         '1' => '2016',
@@ -116,12 +117,16 @@ class SImportDocumentRows
                     $lRows[$sKey]->created_at = $row["ts_new"];
                     $lRows[$sKey]->updated_at = $row["ts_edit"];
 
+                    $lRows[$sKey]->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
+
                     array_push($lRowsToWeb, $lRows[$sKey]);
                 }
              }
              else
              {
-                array_push($lRowsToWeb, SImportDocumentRows::siieToSiieWeb($row, $lWebDocuments, $lYearsId, $lWebItems, $lWebUnits));
+                $oRow = SImportDocumentRows::siieToSiieWeb($row, $lWebDocuments, $lYearsId, $lWebItems, $lWebUnits);
+                $oRow->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
+                array_push($lRowsToWeb, $oRow);
              }
          }
       }
@@ -133,7 +138,9 @@ class SImportDocumentRows
       $this->webcon->close();
 
       foreach ($lRowsToWeb as $key => $oRow) {
+         $oRowCopy = clone $oRow;
          $oRow->save();
+         $oRow->taxRows()->saveMany($oRowCopy->taxRowsAux);
       }
 
       return true;

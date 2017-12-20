@@ -127,7 +127,6 @@ class SStockController extends Controller
      */
     public function store(Request $request, $oMovement)
     {
-        \Debugbar::error($oMovement);
         foreach ($oMovement->rows as $movRow) {
           if (sizeof($movRow->lotRows) > 0)
           {
@@ -178,9 +177,7 @@ class SStockController extends Controller
               $oStock->mfg_line_id = $oMovement->mfg_line_id;
               $oStock->mfg_job_id = $oMovement->mfg_job_id;
 
-              \Debugbar::info($oStock);
               $oStock->save();
-              \Debugbar::info("guardado");
             }
         }
         else
@@ -231,9 +228,7 @@ class SStockController extends Controller
           $oStock->mfg_line_id = $oMovement->mfg_line_id;
           $oStock->mfg_job_id = $oMovement->mfg_job_id;
 
-          \Debugbar::info($oStock);
           $oStock->save();
-          \Debugbar::info("guardado");
         }
       }
 

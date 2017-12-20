@@ -50,6 +50,7 @@ return [
                   'CONTAINERS' => '004',
                   'STK_MOVS' => '005',
                   'STK_MOVS_MANAGE' => '006',
+                  'DOCUMENTS_MANAGE' => '007',
 
                   'ERP' =>  '101',
                   'MMS' =>  '102',

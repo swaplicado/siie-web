@@ -99,19 +99,18 @@ class SImportationsController extends Controller {
 
       return redirect()->route('siie.importation', 1);
     }
-    public function importDocumentTaxRows($value='')
-    {
-      $taxRows = new SImportDocumentTaxRows('erp_universal');
-      $taxRows->importRows(2017, '<');
-
-      return redirect()->route('siie.importation', 1);
-    }
-    public function importDocumentTaxRowsLast($value='')
-    {
-      $taxRows = new SImportDocumentTaxRows('erp_universal');
-      $taxRows->importRows(2017, '>');
-
-      return redirect()->route('siie.importation', 1);
-    }
+    // public function importDocumentTaxRows($value='')
+    // {
+    //   $taxRows = new SImportDocumentTaxRows('erp_universal');
+    //   $taxRows->importRows(2017, '<');
+    //
+    //   return redirect()->route('siie.importation', 1);
+    // }
+    // public function importDocumentTaxRowsLast($value='')
+    // {
+    //
+    //
+    //   return redirect()->route('siie.importation', 1);
+    // }
 
 }

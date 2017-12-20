@@ -41,6 +41,16 @@ class SDocument extends SModel {
     return $this->hasmany('App\ERP\SDocumentRow', 'document_id');
   }
 
+  public function partner()
+  {
+    return $this->belongsTo('App\ERP\SPartner', 'partner_id');
+  }
+
+  public function currency()
+  {
+    return $this->belongsTo('App\ERP\SCurrency', 'currency_id');
+  }
+
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
@@ -51,9 +61,11 @@ class SDocument extends SModel {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
-  public function scopeSearch($query, $iFilter)
+  public function scopeSearch($query, $iDocCategory, $iDocumentClass)
   {
-
+      $query->join('erpu_partners', 'erpu_documents.partner_id', '=', 'erpu_partners.id_partner')
+                  ->where('doc_category_id', $iDocCategory)
+                  ->where('doc_class_id', $iDocumentClass);
   }
 
 }

@@ -44,8 +44,6 @@ class SStockManagment
                            ei.name as item,
                            eu.code as unit';
 
-        \Debugbar::info($select);
-
         $stock = SStockManagment::getStockBaseQuery($select)
                       ->groupBy(['ws.lot_id', 'ws.item_id', 'ws.unit_id'])
                       ->orderBy('ws.lot_id')
@@ -59,8 +57,6 @@ class SStockManagment
         }
 
         $stock = $stock->get();
-
-         \Debugbar::info($stock);
 
         return $stock;
     }
@@ -91,7 +87,6 @@ class SStockManagment
                            ws.pallet_id,
                            ws.location_id
                            ';
-        \Debugbar::info($select);
 
         $stock = SStockManagment::getStockBaseQuery($select)
                       ->groupBy(['ws.item_id', 'ws.unit_id'])

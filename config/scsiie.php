@@ -42,6 +42,20 @@ return [
                     'ITEM' => '7',
                   ],
 
+  'DOC_CAT' => [
+                    'PURCHASES' => '1',
+                    'SALES' => '2',
+                  ],
+
+  'DOC_CLS' => [
+                    'QUOTE' => '1',
+                    'ORDER' => '2',
+                    'DOCUMENT' => '3',
+                    'TRANSFER' => '4',
+                    'ADJUST' => '5',
+                  ],
+
+
   'FRMT' =>       [
                     'AMT' => '1',
                     'QTY' => '2',

@@ -302,7 +302,6 @@ class SStockUtils
                       sum(ws.output) as outputs,
                       (sum(ws.input) - sum(ws.output)) as stock';
 
-        \Debugbar::info($select);
         try
         {
           $stock = \DB::connection(session('db_configuration')->getConnCompany())

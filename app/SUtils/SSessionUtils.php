@@ -48,7 +48,6 @@ class SSessionUtils {
             $iDecimals = 1;
             break;
         }
-        \Debugbar::info($iDecimals);
         return number_format($value, $iDecimals, '.', ',');
 
       }

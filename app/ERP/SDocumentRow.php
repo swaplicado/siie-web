@@ -40,9 +40,16 @@ class SDocumentRow extends SModel {
                           'updated_by_id',
                       ];
 
+  public $taxRowsAux = array();
+
   public function document()
   {
     return $this->belongsTo('App\ERP\SDocument', 'id_document', 'document_id');
+  }
+
+  public function unit()
+  {
+    return $this->belongsTo('App\ERP\SUnit', 'unit_id');
   }
 
   public function taxRows()

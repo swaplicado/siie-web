@@ -21,7 +21,6 @@ class SMovsManagment {
                    ->where('is_deleted', false);
 
        $lFolios = SFolio::where('is_deleted', false)->get();
-       \Debugbar::info($lFolios);
 
        $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
                                                  \Config::get('scwms.CONTAINERS.WAREHOUSE'),

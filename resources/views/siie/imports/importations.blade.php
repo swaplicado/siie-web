@@ -31,10 +31,10 @@
               <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.rows') }}">6. {{ trans('siie.SYNCR.ROWS1') }}</a>
               <br />
               <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.rows1') }}">7. {{ trans('siie.SYNCR.ROWS2') }}</a>
-              <br />
+              {{-- <br />
               <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.taxes') }}">8. {{ trans('siie.SYNCR.TAXES1') }}</a>
               <br />
-              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.taxes1') }}">9. {{ trans('siie.SYNCR.TAXES2') }}</a>
+              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.taxes1') }}">9. {{ trans('siie.SYNCR.TAXES2') }}</a> --}}
           </div>
         </div>
       </div>
