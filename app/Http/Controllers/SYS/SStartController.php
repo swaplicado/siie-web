@@ -24,7 +24,7 @@ class SStartController extends Controller
 
     public function __construct()
     {
-        session()->forget('company');
+
     }
 
     /**
