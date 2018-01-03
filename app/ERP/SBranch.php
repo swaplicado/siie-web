@@ -42,7 +42,6 @@ class SBranch extends Model {
   public function scopeSearch($query, $name, $iFilter)
   {
       $query->join('erpu_partners', 'erpu_partners.id_partner', '=', 'erpu_branches.partner_id')
-                ->select('erpu_branches.*')
                 ->where(function ($q) use ($name) {
                       $q->where('erpu_partners.name', 'LIKE', "%".$name."%")
                       ->orWhere('erpu_branches.name', 'LIKE', "%".$name."%");

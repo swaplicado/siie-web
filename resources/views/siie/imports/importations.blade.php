@@ -49,6 +49,14 @@
           </div>
           <div class="row">
             <div class="col-md-6">
+              {!! Form::label('year', 'Base de datos origen') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::text('db_name', session('db_import'), ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
               {!! Form::label('year', 'Documentos') !!}
             </div>
             <div class="col-md-6">

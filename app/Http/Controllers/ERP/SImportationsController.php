@@ -70,19 +70,19 @@ class SImportationsController extends Controller {
       $address = new SImportAddresses();
       $address->importAddresses();
     }
-    public function importDocuments($iYear = '2017')
+    public function importDocuments($sDbName, $iYear = '2017')
     {
-      $documents = new SImportDocuments('erp_universal');
+      $documents = new SImportDocuments($sDbName);
       $documents->importDocuments($iYear);
     }
-    public function importDocumentRows($iYear = '2017')
+    public function importDocumentRows($sDbName, $iYear = '2017')
     {
-      $rows = new SImportDocumentRows('erp_universal');
+      $rows = new SImportDocumentRows($sDbName);
       $rows->importRows($iYear, '<');
     }
-    public function importDocumentRowsLast($iYear = '2017')
+    public function importDocumentRowsLast($sDbName, $iYear = '2017')
     {
-      $rows = new SImportDocumentRows('erp_universal');
+      $rows = new SImportDocumentRows($sDbName);
       $rows->importRows($iYear, '>');
     }
 
@@ -93,6 +93,7 @@ class SImportationsController extends Controller {
        $bBranches = $request->input('branches');
        $bAddresses = $request->input('addresses');
        $iYear = $request->input('year');
+       $sDbName = $request->input('db_name');
        $bDocs = $request->input('docs');
        $bRows1 = $request->input('rows1');
        $bRows2 = $request->input('rows2');
@@ -110,13 +111,13 @@ class SImportationsController extends Controller {
           $this->importAddresses();
        }
        if (! is_null($bDocs)) {
-          $this->importDocuments($iYear);
+          $this->importDocuments($sDbName, $iYear);
        }
        if (! is_null($bRows1)) {
-          $this->importDocumentRows($iYear);
+          $this->importDocumentRows($sDbName, $iYear);
        }
        if (! is_null($bRows2)) {
-          $this->importDocumentRowsLast($iYear);
+          $this->importDocumentRowsLast($sDbName, $iYear);
        }
 
        return redirect()->route('siie.importation', 1);

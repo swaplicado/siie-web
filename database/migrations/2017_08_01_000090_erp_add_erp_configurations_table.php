@@ -57,6 +57,7 @@ class ErpAddErpConfigurationsTable extends Migration {
           	['id_configuration' => '3','code' => '003','name' => 'DECIMALES CANTIDAD','val_boolean' => '0','val_int' => '5','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           	['id_configuration' => '4','code' => '004','name' => 'HABILITAR UBICACIONES','val_boolean' => '0','val_int' => '0','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           	['id_configuration' => '5','code' => '005','name' => 'TIEMPO DE CANDADO MINUTOS (ENTERO)','val_boolean' => '0','val_int' => '5','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '6','code' => '006','name' => 'BASE DE DATOS ORIGEN','val_boolean' => '0','val_int' => '0','val_text' => 'erp_universal','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
 
         }

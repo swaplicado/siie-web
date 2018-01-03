@@ -11,8 +11,8 @@
         </li>
       @endif
 
-      <li><a href="{{ route('start.branchwhs') }}">{{"Sucursal :"}}<?php echo session('branch')->name ?></a></li>
-      <li><a href="{{ route('start.selectwhs') }}">{{"Almacen :"}}<?php echo session('whs')->name ?></a></li>
+      <li><a href="{{ route('start.branchwhs') }}">{{"Sucursal :"}}<?php echo session()->has('branch') ? session('branch')->name : '' ?></a></li>
+      <li><a href="{{ route('start.selectwhs') }}">{{"Almacen :"}}<?php echo session()->has('whs') ? session('whs')->name : '' ?></a></li>
       <li><a href="{{ route('auth.logout') }}">{{ trans('userinterface.EXIT') }}</a></li>
 
     </ul>

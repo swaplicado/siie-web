@@ -14,7 +14,7 @@
 
 @section('content')
   @section('thefilters')
-		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $title], 'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
+		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $iViewType, $title], 'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 		    <div class="input-group">
 					@include('templates.list.search')

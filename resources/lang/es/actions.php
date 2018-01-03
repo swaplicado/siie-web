@@ -11,6 +11,7 @@
 		'ADD' => 'Agregar',
 		'FREEZE' => 'Congelar',
 		'CLOSE' => 'Cerrar',
+		'IMPORT' => 'Importar',
 
 
     ];

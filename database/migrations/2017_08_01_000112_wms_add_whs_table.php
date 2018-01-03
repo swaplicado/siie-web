@@ -55,6 +55,8 @@ class WmsAddWhsTable extends Migration {
 
           DB::connection($this->sConnection)->table('wmsu_whs')->insert([
             ['id_whs' => '1','code' => 'NA','name' => 'N/A','is_deleted' => '0','branch_id' => '1','whs_type_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_whs' => '2','code' => 'DEF','name' => 'DEFAULT','is_deleted' => '0','branch_id' => '2','whs_type_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_whs' => '3','code' => 'DEFA','name' => 'DEFAULT','is_deleted' => '0','branch_id' => '3','whs_type_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
 
         }
