@@ -45,13 +45,16 @@
 		            <th>Mon.</th>
 		            <th>Status</th>
 		            <th>Ver</th>
+		            <th>Surtir</th>
 		        </tr>
 		    </thead>
 		    <tbody>
 					@foreach ($documents as $doc)
 						<tr>
-                <td class="small">{{ \Carbon\Carbon::parse($doc->dt_date)->format('d-m-Y') }}</td>
-                <td class="small">{{ \Carbon\Carbon::parse($doc->dt_doc)->format('d-m-Y') }}</td>
+                {{-- <td class="small">{{ \Carbon\Carbon::parse($doc->dt_date)->format('d-m-Y') }}</td>
+                <td class="small">{{ \Carbon\Carbon::parse($doc->dt_doc)->format('d-m-Y') }}</td> --}}
+                <td class="small">{{ $doc->dt_date }}</td>
+                <td class="small">{{ $doc->dt_doc }}</td>
 		            <td class="small">{{ $doc->name }}</td>
 		            <td class="small">{{ $doc->fiscal_id }}</td>
 		            <td class="small">{{ $doc->num }}</td>
@@ -73,6 +76,13 @@
 									<a href="{{ route('siie.docs.view', $doc->id_document) }}" title="Ver documento"
 																															class="btn btn-info btn-sm">
 										<span class=" glyphicon glyphicon-eye-open" aria-hidden = "true"/>
+									</a>
+								</td>
+								<td>
+									{{-- {{ dd($doc->id_document) }} --}}
+									<a href="{{ route('wms.movs.supply', [\Config::get('scwms.MVT_TP_IN_PUR'), $doc->id_document]) }}" title="Surtir documento"
+																															class="btn btn-default btn-sm">
+										<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 									</a>
 								</td>
 		        </tr>

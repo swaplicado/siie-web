@@ -47,7 +47,7 @@ class WmsAddMvtRowLotsTable extends Migration {
           	$table->decimal('mass', 23,8);
           	$table->bigInteger('mvt_row_id')->unsigned();
           	$table->integer('lot_id')->unsigned();
-
+          	
           	$table->foreign('mvt_row_id')->references('id_mvt_row')->on('wms_mvt_rows')->onDelete('cascade');
           	$table->foreign('lot_id')->references('id_lot')->on('wms_lots')->onDelete('cascade');
           });

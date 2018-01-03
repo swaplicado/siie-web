@@ -76,11 +76,12 @@ function addRow(e) {
   });
 
   //ajax
-  $.get('./create/children?parent=' + sItemCode + '&whs=' + whsStock + '&idCls=' + globalData.iMvtClass,
+  $.get('./' + (globalData.oDocument != 0 ? 'supply' : 'create' ) + '/children?parent=' + sItemCode + '&whs=' + whsStock + '&idCls=' + globalData.iMvtClass,
    function(data) { // executes the method children of controller
       // data is the "data" that the controller returns
       $('.dataTables_empty').remove(); // remove the row with the class: dataTables_empty
       var bItemFound = false;
+      var bItemOfDocument = false;
       var bIsItemFromWhs = true;
       var bisItemContainerValid = true;
 
@@ -88,6 +89,20 @@ function addRow(e) {
         bItemFound = true;
         bFound = false;
         iRowId = 0;
+
+        if (globalData.oDocument != 0) {
+          globalData.oDocument.rows.forEach(function(oDocRow) {
+            if (oDocRow.item_id == oMovementRow.item_id && oDocRow.unit_id == oMovementRow.unit_id)
+            {
+              bItemOfDocument = true;
+              return true;
+            }
+          });
+
+          if (! bItemOfDocument) {
+            return true;
+          }
+        }
 
         if (oWarehouseDes != null && !validateItemWarehouseType(oWarehouseDes, oMovementRow.item)) {
             bIsItemFromWhs = false;
@@ -138,6 +153,27 @@ function addRow(e) {
         // If the definition of the platform has an assigned amount, this is set, if the user's input is not set
         ojsMovRow.dQuantity = oMovementRow.quantity > 0 ? parseFloat(oMovementRow.quantity) * dInputQuantity : dInputQuantity;
         ojsMovRow.dPrice = oMovementRow.amount_unit >= 0 ? parseFloat(oMovementRow.amount_unit) : 0;
+
+        if (iWmsMvtType == globalData.MVT_TP_IN_PUR) {
+            if (globalData.oDocument != 0) {
+              try {
+                globalData.oDocument.rows.forEach(function(element) {
+                  if (element.item_id == ojsMovRow.iItemId && element.unit_id == ojsMovRow.iUnitId) {
+                      ojsMovRow.dPrice = parseFloat(element.price_unit_cur, 10);
+                      ojsMovRow.dQuantity = parseFloat(element.quantity, 10);
+                      ojsMovRow.iDocOrderRowId = parseInt(element.id_document_row, 10);
+                      throw BreakException;
+                  }
+                });
+              }
+              catch (e) {
+                console.log("continue");
+              }
+            }
+        }
+        else {
+          ojsMovRow.dQuantity = parseFloat((iWmsMvtType == globalData.PALLET_RECONFIG_IN && iMovType == globalData.IS_PALLET ? 1 : ojsMovRow.dQuantity), 10);
+        }
 
         //pallets reconfiguration
         if (iPalletReconfig == 3) {
@@ -201,11 +237,18 @@ function addRow(e) {
             updatePallet(palletRow);
             oReconfigurationMov = new SMovement()
         }
+
+        if (globalData.oDocument != 0) {
+          updateProgressbar();
+        }
       });
 
       if (! bItemFound) {
         // alert("No se encontraron resultados");
         swal( "???", "No se encontraron resultados.", "warning");
+      }
+      if (! bItemOfDocument && globalData.oDocument != 0) {
+        swal("Error", "No puede surtir material que no esté en el documento.", "error");
       }
       if (! bisItemContainerValid) {
         // alert("No se encontraron resultados");
@@ -287,8 +330,8 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
                 "",
                 "  Lotes",
                 "",
-                parseFloat(jsRow.dPrice).toFixed(globalData.DEC_AMT),
-                parseFloat(iWmsMvtType == globalData.PALLET_RECONFIG_IN && iMovType == globalData.IS_PALLET ? 1 : jsRow.dQuantity).toFixed(globalData.DEC_QTY),
+                parseFloat(jsRow.dPrice, 10).toFixed(globalData.DEC_AMT),
+                parseFloat(jsRow.dQuantity, 10).toFixed(globalData.DEC_QTY),
                 "",
                 parseInt(jsRow.iItemId),
                 parseInt(jsRow.iUnitId),
@@ -306,6 +349,7 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
     oTdFIRST.appendChild(document.createTextNode(values[FIRST]));
 
     var oTdITEM_CODE = document.createElement("td");
+    oTdITEM_CODE.setAttribute("class", "c_item_code");
     oTdITEM_CODE.appendChild(document.createTextNode(values[ITEM_CODE]));
 
     var oTdITEM_NAME = document.createElement("td");
@@ -330,16 +374,21 @@ function addRowTr(identifier, jsRow, iWhsId, iMovType, iWmsMvtType) {
 
     var oTdPRICE = document.createElement("td");
     oTdPRICE.setAttribute("align", "right");
-    oTdPRICE.innerHTML = "<input align='right' class='form-control' type='number' " +
-                                (iMovType == globalData.IS_PALLET || iMovType == globalData.IS_LOT || (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
+    oTdPRICE.innerHTML = "<input style='text-align: right;' class='form-control' type='number' " +
+                                (iMovType == globalData.IS_PALLET ||
+                                  iMovType == globalData.IS_LOT ||
+                                  (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot)
+                                  || iWmsMvtType == globalData.MVT_TP_IN_PUR ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
                                 values[PRICE] + "'>";
 
     var oTdQUANTITY = document.createElement("td");
     oTdQUANTITY.setAttribute("align", "right");
-    oTdQUANTITY.innerHTML = "<input align='right' onKeyUp='updateQtyKey(" + identifier + ")' class='form-control' type='number' " +
-                                (iMovType == globalData.IS_PALLET || iMovType == globalData.IS_LOT || (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
-                                " placeholder='1.00' step='0.01' min='0' maxlength='15' size='2' value='" +
+    oTdQUANTITY.innerHTML = "<input style='text-align: right;' onKeyUp='updateQtyKey(" + identifier + ")' class='form-control inqty' type='number' " +
+                                ((iMovType == globalData.IS_PALLET && jsRow.oAuxItem.is_lot) ||
+                                  iMovType == globalData.IS_LOT ||
+                                  (iMovType == globalData.IS_ITEM && jsRow.oAuxItem.is_lot) ? "readonly='readonly'" : "") +
+                                " placeholder='1.00' step=" + (jsRow.oAuxItem.is_bulk ? '0.01' : '1') + " min='0' maxlength='15' size='2' value='" +
                                 values[QUANTITY] + "'>";
 
     var oTdLOTS = document.createElement("td");
@@ -382,7 +431,8 @@ function updateRowTr(idRow, quantity) {
 }
 
 function updateQtyKey(id) {
-    updateRowTr(id, document.getElementById(id).children[7].children[0].value)
+    updateRowTr(id, document.getElementById(id).children[7].children[0].value);
+    updateProgressbar();
 }
 
 /*
@@ -392,6 +442,7 @@ function updateQtyKey(id) {
 $(document).on('click', 'button.removebutton', function () {
     movement.removeRow($(this).closest('tr').attr('id'));
     $(this).closest('tr').remove();
+    updateProgressbar();
     return false;
 });
 
@@ -458,66 +509,4 @@ function viewStock(obj) {
     Vue.set(vm.stock, 'released', dReleased);
     Vue.set(vm.stock, 'segregated', dSegregated);
     Vue.set(vm.stock, 'available', dAvailable);
-}
-
-function validateItemWarehouseType(oWarehouse, item) {
-  isValid = false;
-  var CLASS_MATERIAL = 1;
-  var CLASS_PRODUCT = 2;
-  var CLASS_SPENDING = 3;
-
-  var  WHS_TYPE_NA = 1;
-  var  WHS_TYPE_MATERIAL = 2;
-  var  WHS_TYPE_PRODUCTION = 3;
-  var  WHS_TYPE_PRODUCT = 4;
-
-  /**
-   *  Item classes
-   *  1	MATERIAL
-   *  2	PRODUCT
-   *  3	SPENDING
-   */
-  /**
-   *  Whs types
-   *  1 N/A
-   *  2 MATERIAL
-   *  3 PRODUCTION
-   *  4 PRODUCT
-   */
-
-
-    switch (oWarehouse.whs_type.id_whs_type) {
-      case WHS_TYPE_NA:
-              isValid = true;
-              return true;
-        break;
-      case WHS_TYPE_MATERIAL:
-              if (item.gender.item_class.id_item_class == CLASS_MATERIAL) {
-                isValid = true;
-                return true;
-              }
-        break;
-      case WHS_TYPE_PRODUCTION:
-              if (item.gender.item_class.id_item_class == CLASS_PRODUCT || item.gender.item_class.id_item_class == CLASS_MATERIAL) {
-                isValid = true;
-                return true;
-              }
-        break;
-      case WHS_TYPE_PRODUCT:
-              if (item.gender.item_class.id_item_class == CLASS_PRODUCT) {
-                isValid = true;
-                return true;
-              }
-        break;
-      default:
-
-    }
-
-
-  if (!isValid) {
-      // alert("No puede ingresar este material/producto en este almacén");
-      swal("Error", "No puede ingresar este material/producto en este almacén.", "error");
-  }
-
-  return isValid;
 }

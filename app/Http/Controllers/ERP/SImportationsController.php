@@ -53,51 +53,73 @@ class SImportationsController extends Controller {
        $unit->importUnits();
        $item = new SImportItems();
        $item->importItems();
-
-       return redirect()->route('siie.importation', 1);
     }
 
-    public function importPartners($value='')
+    public function importPartners()
     {
       $partner = new SImportPartners();
       $partner->importPartners();
-
-      return redirect()->route('siie.importation', 1);
     }
-    public function importBranches($value='')
+    public function importBranches()
     {
       $branch = new SImportBranches();
       $branch->importBranches();
-
-      return redirect()->route('siie.importation', 1);
     }
-    public function importAddresses($value='')
+    public function importAddresses()
     {
       $address = new SImportAddresses();
       $address->importAddresses();
-
-      return redirect()->route('siie.importation', 1);
     }
-    public function importDocuments($value='')
+    public function importDocuments($iYear = '2017')
     {
       $documents = new SImportDocuments('erp_universal');
-      $documents->importDocuments(2017);
-
-      return redirect()->route('siie.importation', 1);
+      $documents->importDocuments($iYear);
     }
-    public function importDocumentRows($value='')
+    public function importDocumentRows($iYear = '2017')
     {
       $rows = new SImportDocumentRows('erp_universal');
-      $rows->importRows(2017, '<');
-
-      return redirect()->route('siie.importation', 1);
+      $rows->importRows($iYear, '<');
     }
-    public function importDocumentRowsLast($value='')
+    public function importDocumentRowsLast($iYear = '2017')
     {
       $rows = new SImportDocumentRows('erp_universal');
-      $rows->importRows(2017, '>');
+      $rows->importRows($iYear, '>');
+    }
 
-      return redirect()->route('siie.importation', 1);
+    public function importationDocuments(Request $request)
+    {
+       $bItems = $request->input('items');
+       $bPartners = $request->input('partners');
+       $bBranches = $request->input('branches');
+       $bAddresses = $request->input('addresses');
+       $iYear = $request->input('year');
+       $bDocs = $request->input('docs');
+       $bRows1 = $request->input('rows1');
+       $bRows2 = $request->input('rows2');
+
+       if (! is_null($bItems)) {
+          $this->importItems();
+       }
+       if (! is_null($bPartners)) {
+          $this->importPartners();
+       }
+       if (! is_null($bBranches)) {
+          $this->importBranches();
+       }
+       if (! is_null($bAddresses)) {
+          $this->importAddresses();
+       }
+       if (! is_null($bDocs)) {
+          $this->importDocuments($iYear);
+       }
+       if (! is_null($bRows1)) {
+          $this->importDocumentRows($iYear);
+       }
+       if (! is_null($bRows2)) {
+          $this->importDocumentRowsLast($iYear);
+       }
+
+       return redirect()->route('siie.importation', 1);
     }
     // public function importDocumentTaxRows($value='')
     // {

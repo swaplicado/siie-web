@@ -14,7 +14,11 @@ use App\SCore\SMovsManagment;
 use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
+use App\SUtils\SProcess;
 use App\SUtils\SValidation;
+use App\ERP\SBranch;
+use App\ERP\SItem;
+use App\ERP\SDocument;
 use App\WMS\SWarehouse;
 use App\WMS\SLocation;
 use App\WMS\SPallet;
@@ -27,9 +31,6 @@ use App\WMS\SMvtExpType;
 use App\WMS\SWhsType;
 use App\WMS\SWmsLot;
 use App\WMS\SItemContainer;
-use App\ERP\SBranch;
-use App\ERP\SItem;
-use App\SUtils\SProcess;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
@@ -80,11 +81,37 @@ class SMovsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $mvtType = 0)
+    public function create(Request $request, $mvtType, $iDocId = 0)
     {
         $movement = new SMovement();
 
-        // $movClasses = SMvtClass::where('is_deleted', false)->lists('name', 'id_mvt_class');
+        if ($iDocId != 0)
+        {
+            $oDocument = SDocument::find($iDocId);
+            $oDocument->rows;
+
+            switch ($oDocument->doc_class_id) {
+              case \Config::get('scsiie.DOC_CLS.ORDER'):
+                $lSuppliedMovs = SMovement::where('doc_order_id', $oDocument->id_document)
+                                            ->where('is_deleted', false)
+                                            ->get();
+                break;
+
+              case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
+                $lSuppliedMovs = SMovement::where('doc_invoice_id', $oDocument->id_document)
+                                          ->where('is_deleted', false)
+                                          ->get();
+                break;
+
+              default:
+                # code...
+                break;
+            }
+        }
+        else
+        {
+            $oDocument = 0;
+        }
         $oMovType = SMvtType::find($mvtType);
         $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $mvtType)->lists('name', 'id_mvt_type');
         $warehouses = SWarehouse::where('is_deleted', false)->lists('name', 'id_whs');
@@ -152,6 +179,7 @@ class SMovsController extends Controller
 
         return view('wms.movs.whsmovs')
                           ->with('oMovType', $oMovType)
+                          ->with('oDocument', $oDocument)
                           ->with('movTypes', $movTypes)
                           ->with('mvtComp', $mvtComp)
                           ->with('warehouses', $warehouses)
@@ -267,6 +295,7 @@ class SMovsController extends Controller
         $movement->branch_id = $movement->warehouse->branch_id;
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
+        $movement = SMovsManagment::assignForeignDoc($movement, $movement->mvt_whs_type_id, $oData['iDocumentId']);
         $movement->auth_status_by_id = 1;
         $movement->closed_shipment_by_id = 1;
         $movement->created_by_id = \Auth::user()->id;
@@ -281,10 +310,8 @@ class SMovsController extends Controller
            $oMvtRow->unit_id = $row['iUnitId'];
            $oMvtRow->pallet_id = $row['iPalletId'];
            $oMvtRow->location_id = $row['iLocationId'];
-           $oMvtRow->doc_order_row_id =1;
-           $oMvtRow->doc_invoice_row_id = 1;
-           $oMvtRow->doc_debit_note_row_id = 1;
-           $oMvtRow->doc_credit_note_row_id = 1;
+
+           $oMvtRow = SMovsManagment::assignForeignRow($oMvtRow, $movement->mvt_whs_type_id, $row['iDocOrderRowId']);
 
            $movLotRows = array();
            if (isset($row['lotRows']))
@@ -339,7 +366,20 @@ class SMovsController extends Controller
 
 
         foreach ($movements as $mov) {
-           $mov->folio = SMovsManagment::getNewFolio($mov);
+           $iFolio = SMovsManagment::getNewFolio($mov);
+           if ($iFolio > 0)
+           {
+              $mov->folio = $iFolio;
+           }
+           else
+           {
+             $aErrors[0] = "No hay un folio asignado para este tipo de movimiento";
+
+             return redirect()
+                       ->back()
+                       ->withErrors($aErrors)
+                       ->withInput();
+           }
         }
 
         $this->saveMovement($movements, $request);
@@ -463,7 +503,7 @@ class SMovsController extends Controller
               $row->amount = $amnt;
               $row->amount_unit = $qty == 0 ? 0 : $amnt/$qty;
               $row->pallet_id = $obj->id_pallet;
-              
+
               $location = SStockUtils::getPalletLocation($row->pallet_id);
               $row->location_id = $location->id_whs_location;
               $row->pallet;

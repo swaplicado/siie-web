@@ -27,9 +27,11 @@
     			</div>
           <section>
             <br />
+            @yield('progressbar')
+            @yield('docrows')
             <br />
             @include('flash::message')
-            <br />
+            
             @include('templates.error')
 
             <div class="col-md-12">

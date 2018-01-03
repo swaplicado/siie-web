@@ -89,4 +89,10 @@ return [
                   'BRANCH' => '4',
                   'COMPANY' => '5',
                 ],
+
+    'DOC_VIEW' => [
+                  'NA' => '1',
+                  'NORMAL' => '2',
+                  'DETAIL' => '3',
+                ],
 ];

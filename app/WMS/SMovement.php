@@ -48,6 +48,16 @@ class SMovement extends Model {
     return $this->hasMany('App\WMS\SMovementRow', 'mvt_id', 'id_mvt');
   }
 
+  public function invoice()
+  {
+    return $this->belongsTo('App\ERP\SDocument', 'doc_invoice_id');
+  }
+
+  public function order()
+  {
+    return $this->belongsTo('App\ERP\SDocument', 'doc_order_id');
+  }
+
   public function warehouse()
   {
     return $this->belongsTo('App\WMS\SWarehouse', 'whs_id');

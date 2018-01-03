@@ -5,38 +5,82 @@
 @section('content')
 
   <div class="row">
-      <div class="col-md-3">
-        <div class="row">
-          <div class="col-md-9 col-md-offset-3">
-            <a class="btn btn-primary btn-lg" onclick="holaFun()" href="{{ route('siie.import.items') }}" style="display:block;">1. {{ trans('siie.SYNCR.ITEMS') }}</a>
+      <div class="col-md-7 col-md-offset-2">
+        {!! Form::open(['route' => 'siie.import.docs']) !!}
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'ítems') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('items', 'items', true, ['class' => 'form-control']) !!}
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="row">
-          <div class="col-md-9 col-md-offset-3">
-            <a class="btn btn-success btn-lg" onclick="holaFun()" href="{{ route('siie.import.partners') }}">2. {{ trans('siie.SYNCR.PARTNERS') }}</a>
-            <br />
-            <a class="btn btn-success btn-lg" onclick="holaFun()" href="{{ route('siie.import.branches') }}">3. {{ trans('siie.SYNCR.BRANCHES') }}</a>
-            <br />
-            <a class="btn btn-success btn-lg" onclick="holaFun()" href="{{ route('siie.import.addresses') }}">4. {{ trans('siie.SYNCR.ADDRESSES') }}</a>
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Asociados de negocios') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('partners', 'partners', true, ['class' => 'form-control']) !!}
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="row">
-          <div class="col-md-7 col-md-offset-5">
-              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.documents') }}">5. {{ trans('siie.SYNCR.DOCUMENTS') }}</a>
-              <br />
-              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.rows') }}">6. {{ trans('siie.SYNCR.ROWS1') }}</a>
-              <br />
-              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.rows1') }}">7. {{ trans('siie.SYNCR.ROWS2') }}</a>
-              {{-- <br />
-              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.taxes') }}">8. {{ trans('siie.SYNCR.TAXES1') }}</a>
-              <br />
-              <a class="btn btn-info btn-lg" onclick="holaFun()" href="{{ route('siie.import.taxes1') }}">9. {{ trans('siie.SYNCR.TAXES2') }}</a> --}}
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Sucursales') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('branches', 'branches', true, ['class' => 'form-control']) !!}
+            </div>
           </div>
-        </div>
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Direcciones de sucursales') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('addresses', 'addresses', true, ['class' => 'form-control']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Año a importar') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::number('year', '2018', ['class' => 'form-control', 'style' => 'text-align: center;']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Documentos') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('docs', 'docs', true, ['class' => 'form-control']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Documentos parte 1') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('rows1', 'rows1', true, ['class' => 'form-control']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              {!! Form::label('year', 'Documentos parte 2') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::checkbox('rows2', 'rows2', true, ['class' => 'form-control']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-7 col-md-offset-6">
+              <div class="form-group" align="right">
+            		{!! Form::submit(trans('actions.IMPORT'), ['id' => 'submitBtn','class' => 'btn btn-primary', 'onClick' => 'holaFun()']) !!}
+              </div>
+            </div>
+          </div>
+        {!! Form::close() !!}
       </div>
   </div>
 

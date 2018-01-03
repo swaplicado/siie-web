@@ -41,6 +41,16 @@ class SDocument extends SModel {
     return $this->hasmany('App\ERP\SDocumentRow', 'document_id');
   }
 
+  public function movementsOfOrder()
+  {
+    return $this->hasmany('App\WMS\SMovement', 'doc_order_id');
+  }
+
+  public function movementsOfInvoice()
+  {
+    return $this->hasmany('App\WMS\SMovement', 'doc_invoice_id');
+  }
+
   public function partner()
   {
     return $this->belongsTo('App\ERP\SPartner', 'partner_id');

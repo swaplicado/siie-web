@@ -8,6 +8,7 @@
 @section('title', trans('userinterface.titles.GENERATION_BARCODE'))
 
 @section('content')
+	<?php $sRoute="wms.index"?>
   <div class="row">
 
     <div class="form-group">

@@ -55,7 +55,8 @@ return [
 
   'FILTER' => ['DELETED' => '1',
                 'ACTIVES' => '2',
-                'ALL' => '3'],
+                'ALL' => '3',
+                'MONTH' => '01/01/2018 - 31/01/2018'],
 
   'OPTIONS' => [
                 'EDIT' => '001',

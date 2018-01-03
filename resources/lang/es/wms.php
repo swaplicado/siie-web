@@ -29,12 +29,14 @@ return [
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
           'MOV_WHS_TRS_OUT' => 'Traspaso de almacén',
           'MOV_WHS_PUR_IN' => 'Entrada por compra',
-          'WHS_MOVS_QUERY' => 'Consulta de movimientos de inventario',
+          'WHS_MOVS_QUERY' => 'Movimientos de inventario',
           'WHS_MOVS' => 'Movimientos de inventario',
           'WHS_MOVS_FOLIOS' => 'Folios de movimientos de inventario',
           'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
           'PALLET_DIVISION' => 'Dividir tarima',
           'PALLET_ADD' => 'Agregar a tarima',
+
+      'DOCS' => 'Documentos',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',

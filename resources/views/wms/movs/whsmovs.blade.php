@@ -10,6 +10,47 @@
 
 @section('title', trans('userinterface.titles.WHS_MOVS'))
 
+@if (is_object($oDocument))
+	@section('progressbar')
+		<div class="row">
+			<div class="col-md-6  col-md-offset-5">
+					Porcentaje de surtido
+			</div>
+		</div>
+		<div class="progress">
+		  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"></div>
+		</div>
+	@endsection
+	@section('docrows')
+		<div class="row">
+			<div class="col-md-10 col-md-offset-1">
+				<table id="docTable" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="50%">
+				    <thead>
+				        <tr class="titlerow">
+				            <th>Cve</th>
+				            <th>Concepto</th>
+				            <th>Cant.</th>
+										<th>Un.</th>
+				            <th>P.U.$</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+							@foreach ($oDocument->rows as $row)
+								<tr>
+				            <td class="small">{{ $row->concept_key }}</td>
+				            <td class="small">{{ $row->concept }}</td>
+										<td class="small" align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
+				            <td class="small">{{ $row->unit->code }}</td>
+				            <td class="small" align="right">{{ session('utils')->formatNumber($row->price_unit_cur, \Config::get('scsiie.FRMT.AMT')) }}</td>
+				        </tr>
+							@endforeach
+				    </tbody>
+				</table>
+			</div>
+		</div>
+	@endsection
+@endif
+
 @section('content')
 {!! Form::open(
 	['route' => 'wms.movs.store', 'method' => 'POST', 'id' => 'theForm']
@@ -122,6 +163,7 @@
 	<script>
 
 		function GlobalData () {
+		  this.oDocument = <?php echo json_encode($oDocument); ?>;
 		  this.lLots = <?php echo json_encode($lots); ?>;
 		  this.lPallets = <?php echo json_encode($pallets); ?>;
 			this.lWarehouses = <?php echo json_encode($warehousesObj); ?>;
@@ -179,6 +221,7 @@
 		}
 
 		var globalData = new GlobalData();
+		movement.iDocumentId = globalData.oDocument != 0 ? globalData.oDocument.id_document : 0;
 
 		if (localStorage.getItem('movement') !== null) {
 			var errors = <?php echo json_encode($errors->all()) ?>;
@@ -222,6 +265,9 @@
 												(globalData.bIsInputMov ? movement.iWhsDes : movement.iWhsSrc),
 												type);
 				});
+
+				unfreeze();
+				updateProgressbar();
 			}
 
 			localStorage.removeItem('movement');
