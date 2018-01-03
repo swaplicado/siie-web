@@ -57,6 +57,11 @@ class ErpAddAccessBranch extends Migration
      */
     public function down()
     {
-        //
+      foreach ($this->lDatabases as $base) {
+        $this->sDataBase = $base;
+        SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+
+        Schema::connection($this->sConnection)->drop('erpu_access_branch');
+      }
     }
 }
