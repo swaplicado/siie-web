@@ -77,19 +77,22 @@ class SUserBranchesController extends Controller
     public function update(Request $request, $id)
     {
         $request_data = $request->All();
-        $branches = SBranch::orderBy('name', 'ASC')->get();
 
-        SUserBranch::where('user_id', $id)->delete();
+          $branches = SBranch::orderBy('name', 'ASC')->get();
 
-        foreach ($branches as $branch) {
-          if (isset($request_data[$branch->id_branch]))
-          {
-            $userBranch = new SUserBranch();
-            $userBranch->user_id = $id;
-            $userBranch->branch_id = $branch->id_branch;
-            $userBranch->is_universal = 0;
-            $userBranch->save();
-          }
+          SUserBranch::where('user_id', $id)->delete();
+
+          foreach ($branches as $branch) {
+            if (isset($request_data[$branch->id_branch]))
+            {
+              $userBranch = new SUserBranch();
+              $userBranch->user_id = $id;
+              $userBranch->branch_id = $branch->id_branch;
+              $userBranch->is_universal = 0;
+              $userBranch->save();
+            }
+
+
         }
 
         Flash::warning(trans('messages.REG_EDITED'))->important();

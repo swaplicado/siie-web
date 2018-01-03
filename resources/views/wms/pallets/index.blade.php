@@ -23,6 +23,7 @@
       <th>{{ 'Cantidad' }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
+			<th>{{'Etiqueta'}}</th>
 		</thead>
 		<tbody>
 			@foreach($pallets as $pallet)
@@ -49,6 +50,9 @@
 								];
 						?>
 						@include('templates.list.options')
+					</td>
+					<td>
+							<a href="{{ route('wms.pallets.barcode', $pallet->id_pallet) }}" class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 					</td>
 				</tr>
 			@endforeach

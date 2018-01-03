@@ -14,6 +14,8 @@ use App\ERP\SErpConfiguration;
 use App\Database\Config;
 use App\ERP\SPartner;
 use App\SYS\SUserCompany;
+use App\ERP\SBranch;
+use App\WMS\SWarehouse;
 use App\SCore\SStockManagment;
 use App\SPadLocks\SRecordLock;
 
@@ -48,6 +50,59 @@ class SStartController extends Controller
 
         return view('start.select')
                             ->with('lUserCompany', $lUserCompany);
+    }
+
+    public function branchwhs(){
+      SConnectionUtils::reconnectCompany();
+      $branch = SBranch::select('id_branch','name')
+                      ->where('partner_id',session('partner')->id_partner)
+                      ->get();
+
+      return view('start.branchwhs')
+                ->with('branch',$branch);
+      // return SStartController::selectModule();
+    }
+
+    public function branch(Request $request)
+    {
+
+
+        SConnectionUtils::reconnectCompany();
+        $BranchId =  $_COOKIE['BranchId'];
+        $oBranch = SBranch::find($BranchId);
+
+        // $oConfiguration = SConfiguration::find(1);
+
+        session(['branch' => $oBranch]);
+        // session(['configuration' => $oConfiguration]);
+
+        return SStartController::selectwhs();
+    }
+
+    public function selectwhs(){
+
+        SConnectionUtils::reconnectCompany();
+
+      $whs = SWarehouse::select('id_whs','name')
+                      ->where('branch_id',session('branch')->id_branch)
+                      ->get();
+
+      return view('start.whs')
+                ->with('whs',$whs);
+    }
+
+    public function whs(){
+
+      SConnectionUtils::reconnectCompany();
+      $WarehouseId =  $_COOKIE['WarehouseId'];
+      $oWarehouse = SWarehouse::find($WarehouseId);
+
+      // $oConfiguration = SConfiguration::find(1);
+
+      session(['whs' => $oWarehouse]);
+      // session(['configuration' => $oConfiguration]);
+
+      return SStartController::selectModule();
     }
 
     /**
@@ -87,7 +142,7 @@ class SStartController extends Controller
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
 
-        return SStartController::selectModule();
+        return SStartController::branchwhs();
     }
 
     /**

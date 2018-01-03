@@ -85,6 +85,11 @@ class User extends Model implements AuthenticatableContract,
       return $this->hasMany('App\SYS\SUserCompany');
     }
 
+    public function userBranches()
+    {
+      return $this->hasMany('App\ERP\SUserBranch');
+    }
+
     public function userCreation()
     {
       return $this->belongsTo('App\User', 'created_by_id');

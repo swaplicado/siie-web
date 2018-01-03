@@ -23,6 +23,7 @@
 			<th>{{ trans('userinterface.labels.UNIT') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
+			<th>{{'Etiqueta'}}</th>
 		</thead>
 		<tbody>
 			@foreach($lots as $lot)
@@ -49,6 +50,9 @@
 								];
 						?>
 						@include('templates.list.options')
+					</td>
+					<td>
+							<a href="{{ route('wms.lots.barcode', $lot->id_lot) }}" class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 					</td>
 				</tr>
 			@endforeach

@@ -47,6 +47,11 @@ class SWarehouse extends Model {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  public function userWhs()
+  {
+    return $this->hasMany('App\ERP\SUserWhs');
+  }
+
   public function getDefaultLocation()
   {
      return (SLocation::where('whs_id', $this->id_whs)->where('is_default', true)->get())[0];

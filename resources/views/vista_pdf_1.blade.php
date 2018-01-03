@@ -1,9 +1,10 @@
-<div class="container text-center" style="border: 1px solid #a1a1a1;padding: 15px;width: 40%;">
+<div style="font-size:25px; margin-top:0px;">
   <center><b>{{session('company')->name}}</b></center>
-  <b>Id Tarima:</b>{{$data->id_pallet}}<br> <b>Producto:</b> {{$data->item->name}}
+  <b>Id Tarima:</b>{{$data->id_pallet}}<br> <b>Producto:</b> {{$data->item->name}}<br>
   <b>Unidad:</b>{{$data->unit->name}}
   <br>
-  <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" />
   <br>
-  <span>{{$barcode}}</span>
+  <center><img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" /></center>
+  <br>
+  <center><span>{{$barcode}}</span></center>
 </div>

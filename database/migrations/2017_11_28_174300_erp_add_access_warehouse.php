@@ -2,12 +2,11 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Database\OTF;
-use App\Database\Config;
-use App\SUtils\SConnectionUtils;
+uy
 
-class ErpAddAccessBranch extends Migration
+class ErpAddAccessWarehouse extends Migration
 {
+
   private $lDatabases;
   private $sConnection;
   private $sDataBase;
@@ -37,15 +36,13 @@ class ErpAddAccessBranch extends Migration
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-        Schema::connection($this->sConnection)->create('erpu_access_branch', function (blueprint $table) {
-          $table->increments('id_access_branch');
+        Schema::connection($this->sConnection)->create('erpu_access_whs', function (blueprint $table) {
+          $table->increments('id_access_whs');
           $table->integer('user_id')->unsigned();
-          $table->integer('branch_id')->unsigned();
-          $table->boolean('is_universal');
-          $table->timestamps();
+          $table->integer('whs_id')->unsigned();
 
           $table->foreign('user_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
-          $table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
+          $table->foreign('whs_id')->references('id_whs')->on('wmsu_whs')->onDelete('cascade');
         });
       }
     }
