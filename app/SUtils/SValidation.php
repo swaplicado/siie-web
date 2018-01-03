@@ -203,6 +203,19 @@ class SValidation {
       return false;
   }
 
+  public static function canAccessToBranch($oUser, $iIdBranch)
+  {
+      foreach ($oUser->userBranches as $access)
+      {
+        if ($access->branch_id == $iIdBranch)
+        {
+          return true;
+        }
+      }
+
+      return false;
+  }
+
   /**
    * [getUserTypeByArea description]
    * @return [type] [description]

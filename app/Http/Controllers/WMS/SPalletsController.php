@@ -14,8 +14,12 @@ use App\ERP\SBranch;
 use App\SUtils\SProcess;
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
+use App\WMS\SLocation;
 use App\ERP\SItem;
 use App\ERP\SUnit;
+use App\SBarcode\SBarcode;
+use App\WMS\SComponetBarcode;
+use PDF;
 
 class SPalletsController extends Controller
 {
@@ -67,10 +71,12 @@ class SPalletsController extends Controller
 
         $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+        $locs = SLocation::orderBy('name', 'ASC')->lists('name', 'id_whs_location');
 
         return view('wms.pallets.createEdit')
                       ->with('items', $items)
-                      ->with('units', $units);
+                      ->with('units', $units)
+                      ->with('locs', $locs);
     }
 
     /**
@@ -227,5 +233,24 @@ class SPalletsController extends Controller
 
         Flash::error(trans('messages.REG_DELETED'))->important();
         return redirect()->route('wms.pallets.index');
+    }
+
+    public function barcode($id){
+      $dataBarcode = SComponetBarcode::select('digits','id_component')
+                                      ->where('type_barcode','Tarima')
+                                      ->get()->lists('digits','id_component');
+
+      $data = SPallet::find($id);
+      $data->item;
+      $data->unit;
+
+      $barcode = SBarcode::generatePalletBarcode($dataBarcode,$data);
+
+      view()->share('barcode',$barcode);
+      view()->share('data',$data);
+      $pdf = PDF::loadView('vista_pdf_1');
+      $paper_size = array(0,0,431,287);
+      $pdf->setPaper($paper_size);
+      return $pdf->download('etiqueta.pdf');
     }
 }

@@ -16,7 +16,7 @@
 	?>
 	@section('title', trans('userinterface.titles.CREATE_ASSIGNAMENT'))
 @endif
-	<?php $sRoute2='admin.userPermissions.index' ?>
+	<?php $sRoute2='admin.userpermissions.index' ?>
 
 @section('content')
 

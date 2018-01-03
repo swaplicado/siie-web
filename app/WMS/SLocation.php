@@ -25,6 +25,11 @@ class SLocation extends SModel {
     return $this->belongsTo('App\WMS\SWarehouse', 'whs_id');
   }
 
+  public function pallet()
+  {
+    return $this->hasmany('App\WMS\SPallet');
+  }
+
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');

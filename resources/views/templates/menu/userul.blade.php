@@ -10,7 +10,11 @@
             <a href="{{ route('plantilla.admin') }}">{{ trans('userinterface.ADMINISTRATOR') }}</a>
         </li>
       @endif
+
+      <li><a href="{{ route('start.branchwhs') }}">{{"Sucursal :"}}<?php echo session('branch')->name ?></a></li>
+      <li><a href="{{ route('start.selectwhs') }}">{{"Almacen :"}}<?php echo session('whs')->name ?></a></li>
       <li><a href="{{ route('auth.logout') }}">{{ trans('userinterface.EXIT') }}</a></li>
+
     </ul>
   </li>
 </ul>

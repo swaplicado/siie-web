@@ -15,6 +15,9 @@ use App\SUtils\SProcess;
 use App\WMS\SWmsLot;
 use App\ERP\SItem;
 use App\ERP\SUnit;
+use App\SBarcode\SBarcode;
+use App\WMS\SComponetBarcode;
+use PDF;
 
 class SWmsLotsController extends Controller
 {
@@ -60,17 +63,19 @@ class SWmsLotsController extends Controller
      */
     public function create()
     {
-          if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-          {
-            return redirect()->route('notauthorized');
-          }
-
+      if (SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
           $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
           $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
           return view('wms.lots.createEdit')
                         ->with('items', $items)
                         ->with('units', $units);
+        }
+        else
+        {
+           return redirect()->route('notauthorized');
+        }
     }
 
     /**
@@ -113,24 +118,14 @@ class SWmsLotsController extends Controller
      */
     public function edit($id)
     {
-        $lots = SWmsLot::find($id);
-
-        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $lots);
-
-        /*
-          This method tries to get the lock, if not is obtained returns an array of errors
-         */
-        $error = session('utils')->validateLock($lots);
-        if (sizeof($error) > 0)
-        {
-          return redirect()->back()->withErrors($error);
-        }
-
+      $lots = SWmsLot::find($id);
         $lots->item;
         $lots->unit;
         $lots->userCreation;
         $lots->userUpdate;
 
+      if (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $unit->created_by_id))
+      {
         $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
@@ -139,6 +134,11 @@ class SWmsLotsController extends Controller
                       ->with('lots',$lots)
                       ->with('items', $items)
                       ->with('units', $units);
+      }
+      else
+      {
+          return redirect()->route('notauthorized');
+      }
     }
 
     /**
@@ -155,11 +155,7 @@ class SWmsLotsController extends Controller
       $lot->updated_by_id = \Auth::user()->id;
       $lot->created_by_id = \Auth::user()->id;
 
-      $errors = $lot->save();
-      if (sizeof($errors) > 0)
-      {
-         return redirect()->route('wms.lots.index')->withErrors($errors);
-      }
+      $lot->save();
 
       Flash::success(trans('messages.REG_CREATED'))->important();
 
@@ -192,17 +188,11 @@ class SWmsLotsController extends Controller
      {
          $lot = SWmsLot::find($id);
 
-         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $lot);
-
          $lot->fill($request->all());
          $lot->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
          $lot->updated_by_id = \Auth::user()->id;
 
-         $errors = $lot->save();
-         if (sizeof($errors) > 0)
-         {
-            return redirect()->route('wms.lots.index')->withErrors($errors);
-         }
+         $lot->save();
 
          Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -217,21 +207,41 @@ class SWmsLotsController extends Controller
       */
      public function destroy(Request $request, $id)
      {
-         session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
-
-         $lot = SWmsLot::find($id);
-         $lot->fill($request->all());
-         $lot->is_deleted = \Config::get('scsys.STATUS.DEL');
-         $lot->updated_by_id = \Auth::user()->id;
-
-         $errors = $lot->save();
-         if (sizeof($errors) > 0)
+         if (SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
          {
-            return redirect()->route('wms.lots.index')->withErrors($errors);
-         }
-         #$user->delete();
+           $lot = SWmsLot::find($id);
+           $lot->fill($request->all());
+           $lot->is_deleted = \Config::get('scsys.STATUS.DEL');
+           $lot->updated_by_id = \Auth::user()->id;
 
-         Flash::error(trans('messages.REG_DELETED'))->important();
-         return redirect()->route('wms.lots.index');
+           $lot->save();
+           #$user->delete();
+
+           Flash::error(trans('messages.REG_DELETED'))->important();
+           return redirect()->route('wms.lots.index');
+         }
+         else
+         {
+           return redirect()->route('notauthorized');
+         }
+     }
+
+     public function barcode($id){
+       $dataBarcode = SComponetBarcode::select('digits','id_component')
+                                       ->where('type_barcode','Item')
+                                       ->get()->lists('digits','id_component');
+
+       $data = SwmsLot::find($id);
+       $data->item;
+       $data->unit;
+
+       $barcode = SBarcode::generateItemBarcode($dataBarcode,$data);
+
+       view()->share('barcode',$barcode);
+       view()->share('data',$data);
+       $pdf = PDF::loadView('vista_pdf');
+       $paper_size = array(0,0,215,141);
+       $pdf->setPaper($paper_size);
+       return $pdf->download('etiqueta.pdf');
      }
 }

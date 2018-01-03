@@ -52,15 +52,15 @@ class SBranchesController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function create($iBpId)
+    public function create()
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
           return redirect()->route('notauthorized');
         }
-
-        $partner = SPartner::find($iBpId);
-        $this->iAuxBP = $iBpId;
+          $partner = SPartner::orderBy('name', 'ASC')->lists('name', 'id_partner');
+        // $partner = SPartner::find($iBpId);
+        // $this->iAuxBP = $iBpId;
 
         return view('siie.branches.createEdit')
                       ->with('partner', $partner);
@@ -77,7 +77,7 @@ class SBranchesController extends Controller {
         $branch = new SBranch($request->all());
 
         $branch->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-        $branch->partner_id = $request['partner_id'];
+        $branch->partner_id = $request['partnername'];
         $branch->updated_by_id = \Auth::user()->id;
         $branch->created_by_id = \Auth::user()->id;
 

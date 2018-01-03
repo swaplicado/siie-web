@@ -14,6 +14,11 @@ class SBranch extends Model {
     return $this->belongsTo('App\ERP\SPartner');
   }
 
+  public function warehouse()
+  {
+    return $this->hasmany('App\WMS\SWarehouse');
+  }
+
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
@@ -27,6 +32,11 @@ class SBranch extends Model {
   public function partner()
   {
     return $this->belongsTo('App\ERP\SPartner', 'partner_id');
+  }
+
+  public function userBranches()
+  {
+    return $this->hasMany('App\ERP\SUserBranch');
   }
 
   public function scopeSearch($query, $name, $iFilter)

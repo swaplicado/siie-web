@@ -86,6 +86,28 @@
 
 			</div>
 
+			<div class="form-group">
+
+				<div class="col-md-12">
+
+					<div class="form-group row">
+
+            {!! Form::label('loc_id', 'Localizacion'.'*',['class'=>'col-md-1 control-label']) !!}
+
+						<div class="col-md-2">
+
+						 {!! Form::select('loc_id', $locs, isset($pallets) ? $pallets->loc->id_whs_location : null , ['class'=>'form-control select-loc', 'placeholder' => 'Seleccione Localizacion...', 'required']) !!}
+
+					 </div>
+
+
+					</div>
+
+				</div>
+
+			</div>
+
+
 
 
 
@@ -98,6 +120,9 @@
 		});
 		$('.select-unit').chosen({
 			placeholder_select_single: 'Seleccione una unidad...'
+		});
+		$('.select-loc').chosen({
+			placeholder_select_single: 'Seleccione localizacion...'
 		});
 
 	</script>

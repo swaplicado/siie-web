@@ -16,6 +16,7 @@ use App\ERP\SItem;
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
 use App\SBarcode\SBarcode;
+use App\SCore\SStockManagment;
 use App\WMS\SComponetBarcode;
 use PDF;
 
@@ -85,6 +86,8 @@ class SCodesController extends Controller
         view()->share('barcode',$barcode);
         view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf_1');
+        $paper_size = array(0,0,431,287);
+        $pdf->setPaper($paper_size);
         return $pdf->download('etiqueta.pdf');
       }
       if($request->etiqueta==1){
@@ -101,6 +104,8 @@ class SCodesController extends Controller
         view()->share('barcode',$barcode);
         view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf');
+        $paper_size = array(0,0,215,141);
+        $pdf->setPaper($paper_size);
         return $pdf->download('etiqueta.pdf');
       }
 
@@ -121,10 +126,24 @@ class SCodesController extends Controller
       $data->unit;
       $type = substr($request->codigo, 0 , 1 );
 
+      if($type == 1){
 
-        return view('wms.codes.info')
-                  ->with('info',$data)
-                  ->with('type',$type);
+        $stock=SStockManagment::getStock($data->item,$data->unit,$data->id_lot,0,0,0,0);
+
+      }
+
+      if($type == 2){
+
+        $stock=SStockManagment::getStock($data->item,$data->unit,0,$data->id_pallet,0,0,0);
+        $lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,0);
+
+      }
+
+      return view('wms.codes.info')
+              ->with('info',$data)
+              ->with('type',$type)
+              ->with('stock',$stock)
+              ->with('lotStock',$lotStock);
 
     }
 

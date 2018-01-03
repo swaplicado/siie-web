@@ -42,6 +42,7 @@ class WmsAddPalletsTable extends Migration {
           	$table->boolean('is_deleted');
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
+            $table->integer('loc_id')->unsigned();
             $table->decimal('quantity', 23,8);
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
@@ -49,12 +50,13 @@ class WmsAddPalletsTable extends Migration {
 
           	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
           	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
-          	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+            $table->foreign('loc_id')->references('id_whs_location')->on('wmsu_whs_locations')->onDelete('cascade');
+            $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('wms_pallets')->insert([
-          	['id_pallet' => '1','pallet' => 'N/A','is_deleted' => '0','item_id' => '1','unit_id' => '1','quantity' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_pallet' => '1','pallet' => 'N/A','is_deleted' => '0','item_id' => '1','unit_id' => '1','loc_id'=>'1','quantity' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }

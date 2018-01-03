@@ -29,10 +29,7 @@
 
 		<div class="form-group">
 			{!! Form::label('partnername', trans('userinterface.labels.BP')) !!}
-			{!! Form::text('partnername',
-				isset($partner) ? $partner->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
-																										'required', 'readonly']) !!}
-			{!! Form::hidden('partner_id', $partner->id_partner) !!}
+			{!! Form::select('partnername', $partner, session('partner')->id_partner, ['class'=>'form-control select-partnername','required','placeholder'=>'Seleccione Asociado...','readonly']) !!}
 		</div>
 
 		<div class="form-group">
@@ -55,3 +52,14 @@
 		</div>
 
 @endsection
+
+@section('js')
+	<script type="text/javascript">
+		$('.select-partnername').chosen({
+			placeholder_select_single: 'Seleccione un item...'
+		});
+
+	</script>
+
+
+	@endsection

@@ -96,6 +96,13 @@
 
           </div>
 
+					{!! Form::label('existencia', 'Existencias',['class'=>'col-md-2 control-label']) !!}
+
+					<div class="col-md-3">
+
+						{!! Form::text('existencia', $stock[0], ['class'=>'form-control' , 'disabled']) !!}
+
+					</div>
         </div>
 
       </div>
@@ -212,6 +219,14 @@
 					{!! Form::text('unit_id', $info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
 
 				</div>
+
+				{!! Form::label('existencia', 'Existencias',['class'=>'col-md-2 control-label']) !!}
+
+				<div class="col-md-3">
+
+					{!! Form::text('existencia', $stock[0], ['class'=>'form-control' , 'disabled']) !!}
+
+				</div> 
 
 			</div>
 

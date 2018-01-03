@@ -17,10 +17,10 @@
 
 			</div>
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-md-6">
 					@yield('create')
 				</div>
-				<div class="col-md-10">
+				<div class="col-md-6">
 					@include('templates.list.filter')
 				</div>
 			</div>
@@ -41,6 +41,8 @@
 	</div>
 	</div>
 @include('templates.scripts')
+
+@yield('js')
 </body>
 <br />
 <br />

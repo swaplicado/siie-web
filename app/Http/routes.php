@@ -33,15 +33,31 @@ Route::group(['middleware' => ['auth']], function() {
 
 //****************************************/ Start/*************************
 
-	Route::resource('start','SYS\SStartController');
-	Route::get('/start',[
-		'as' => 'start',
-		'uses' => 'SYS\SStartController@index'
-	]);
-	Route::post('/start/in',[
-		'as' => 'start.getIn',
-		'uses' => 'SYS\SStartController@GetIn'
-	]);
+Route::get('/start/branchwhs',[
+'as' => 'start.branchwhs',
+'uses' => 'SYS\SStartController@branchwhs'
+]);
+Route::get('/start/selectwhs',[
+'as' => 'start.selectwhs',
+'uses' => 'SYS\SStartController@selectwhs'
+]);
+Route::resource('start','SYS\SStartController');
+Route::get('/start',[
+  'as' => 'start',
+  'uses' => 'SYS\SStartController@index'
+]);
+Route::post('/start/in',[
+  'as' => 'start.getIn',
+  'uses' => 'SYS\SStartController@GetIn'
+]);
+Route::post('/start/branch',[
+  'as' => 'start.branch',
+  'uses' => 'SYS\SStartController@branch'
+]);
+Route::post('/start/whs',[
+  'as' => 'start.whs',
+  'uses' => 'SYS\SStartController@whs'
+]);
 
 //****************************************/ Admin/*************************
 	Route::group(['middleware' => ['mdadmin']], function() {
@@ -432,6 +448,15 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('branches/{id}/edit', [
         'uses' => 'ERP\SBranchesController@create',
         'as' => 'siie.branches.edit'
+      ]);
+
+      Route::resource('userBranches','ERP\SUserBranchesController');
+
+      Route::get('userwhs/findWhs','ERP\SUserWhsController@findWhs');
+      Route::resource('userwhs','ERP\SUserWhsController');
+      Route::get('userwhs/{id}/edit', [
+        'uses' => 'ERP\SUserWhsController@edit',
+        'as' => 'siie.userwhs.edit'
       ]);
 
 

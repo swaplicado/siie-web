@@ -33,6 +33,11 @@ class SPallet extends SModel {
     return $this->belongsTo('App\ERP\SUnit');
   }
 
+  public function loc()
+  {
+    return $this->belongsTo('App\WMS\SLocation');
+  }
+
 
   public function userCreation()
   {

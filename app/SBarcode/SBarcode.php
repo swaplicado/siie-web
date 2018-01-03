@@ -5,6 +5,7 @@ use App\WMS\SComponetBarcode;
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
 use Laracasts\Flash\Flash;
+use PDF;
 
   class SBarcode
   {
@@ -67,6 +68,8 @@ use Laracasts\Flash\Flash;
       return $barcode;
 
   }
+
+
 
   public static function generatePalletBarcode($dataBarcode,$data){
       $auxPallet = "";
@@ -165,7 +168,7 @@ use Laracasts\Flash\Flash;
       $Unit = SBarcode::remove($numUnit,$idUnit);
 
       $answer = SPallet::find($Pallet);
-      
+
       if($answer != null){
 
         if($answer->item_id == $Item && $answer->unit_id == $Unit)

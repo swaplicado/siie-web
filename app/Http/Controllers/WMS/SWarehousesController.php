@@ -12,6 +12,7 @@ use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\WMS\SWarehouse;
 use App\WMS\SLocation;
+use App\ERP\SBranch;
 use App\WMS\SWhsType;
 use App\SUtils\SProcess;
 
@@ -61,10 +62,13 @@ class SWarehousesController extends Controller
         }
 
         $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_whs_type');
-        $lBranches = SUtil::companyBranchesArray();
-
+        // $lBranches = SUtil::companyBranchesArray();
+        $branch = SBranch::where('partner_id', session('partner')->id_partner)
+                    ->where('is_deleted', false)
+                    ->orderBy('name', 'ASC')
+                    ->lists('name', 'id_branch');
         return view('wms.whs.createEdit')
-                      ->with('branches', $lBranches)
+                      ->with('branches', $branch)
                       ->with('types', $lTypes);
     }
 
@@ -87,7 +91,6 @@ class SWarehousesController extends Controller
       $location = new SLocation();
       $location->code = 'def'.$whs->id_whs;
       $location->name = 'default';
-      $location->is_default = true;
       $location->is_deleted = false;
       $location->whs_id = $whs->id_whs;
       $location->created_by_id = 1;
