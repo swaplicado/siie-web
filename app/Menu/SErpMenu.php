@@ -50,10 +50,28 @@ class SErpMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
-                ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_INVO'),
-                                            [\Config::get('scsiie.DOC_CAT.SALES'),
-                                            \Config::get('scsiie.DOC_CLS.DOCUMENT'),
-                                            trans('userinterface.titles.LIST_SAL_INVO')])
+                ->submenu(
+                    Link::to('#', trans('siie.DOCS_PUR').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_PUR_ORD'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    trans('userinterface.titles.LIST_PUR_ORD')])
+                )
+                ->submenu(
+                    Link::to('#', trans('siie.DOCS_SAL').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_INVO'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    trans('userinterface.titles.LIST_SAL_INVO')])
+                )
         )
         ->route('siie.units.index', trans('siie.UNITS'))
         ->route('siie.units.index', trans('siie.CONVERTIONS'))

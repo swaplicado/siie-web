@@ -176,6 +176,46 @@ class SMovsManagment {
         }
     }
 
+    public static function assignForeignDoc($oMovement, $iMvtType, $iDocumentId)
+    {
+      $oMovement->doc_order_id = 1;
+      $oMovement->doc_invoice_id = 1;
+      $oMovement->doc_debit_note_id = 1;
+      $oMovement->doc_credit_note_id = 1;
+
+      switch ($iMvtType) {
+        case \Config::get('scwms.MVT_TP_IN_PUR'):
+          $oMovement->doc_order_id = $iDocumentId;
+          break;
+
+        default:
+          # code...
+          break;
+      }
+
+      return $oMovement;
+    }
+
+    public static function assignForeignRow($oMovementRow, $iMvtType, $iDocRowId)
+    {
+      $oMovementRow->doc_order_row_id = 1;
+      $oMovementRow->doc_invoice_row_id = 1;
+      $oMovementRow->doc_debit_note_row_id = 1;
+      $oMovementRow->doc_credit_note_row_id = 1;
+
+      switch ($iMvtType) {
+        case \Config::get('scwms.MVT_TP_IN_PUR'):
+          $oMovementRow->doc_order_row_id = $iDocRowId;
+          break;
+
+        default:
+          # code...
+          break;
+      }
+
+      return $oMovementRow;
+    }
+
 
 
     /**
@@ -191,10 +231,10 @@ class SMovsManagment {
      */
     public static function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $oPalletData)
     {
-       // The movement is adjust
+       // The movement is adjust or input by purchases
        if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_IN_PUR'))
        {
-          return SMovsManagment::createAdjust($oMovement, $aMovementRows);
+          return SMovsManagment::createTheMovement($oMovement, $aMovementRows);
        }
        // The movement is trasfer
        else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA'))
@@ -219,7 +259,7 @@ class SMovsManagment {
      * @param  [type] $aMovementRows [description]
      * @return [type]                [description]
      */
-    public static function createAdjust($oMovement, $aMovementRows)
+    public static function createTheMovement($oMovement, $aMovementRows)
     {
         $aMovements = array();
 

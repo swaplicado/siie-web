@@ -37,9 +37,9 @@ class WmsAddMvtsTable extends Migration {
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->create('wms_mvts', function (blueprint $table) {
-            $table->bigIncrements('id_mvt');
+          	$table->bigIncrements('id_mvt');
           	$table->date('dt_date');
-            $table->char('folio', 50);
+          	$table->integer('folio');
           	$table->decimal('total_amount', 17,2);
           	$table->decimal('total_length', 23,8);
           	$table->decimal('total_surface', 23,8);
@@ -57,10 +57,10 @@ class WmsAddMvtsTable extends Migration {
           	$table->integer('whs_id')->unsigned();
           	$table->integer('auth_status_id')->unsigned();
           	$table->bigInteger('src_mvt_id')->unsigned();
-          	$table->integer('doc_order_id')->unsigned();
-          	$table->integer('doc_invoice_id')->unsigned();
-          	$table->integer('doc_debit_note_id')->unsigned();
-          	$table->integer('doc_credit_note_id')->unsigned();
+          	$table->bigInteger('doc_order_id')->unsigned();
+          	$table->bigInteger('doc_invoice_id')->unsigned();
+          	$table->bigInteger('doc_debit_note_id')->unsigned();
+          	$table->bigInteger('doc_credit_note_id')->unsigned();
           	$table->integer('mfg_dept_id')->unsigned();
           	$table->integer('mfg_line_id')->unsigned();
           	$table->integer('mfg_job_id')->unsigned();
@@ -82,6 +82,10 @@ class WmsAddMvtsTable extends Migration {
           	$table->foreign('whs_id')->references('id_whs')->on('wmsu_whs')->onDelete('cascade');
           	$table->foreign('auth_status_id')->references('id_auth_status')->on('erps_auth_status')->onDelete('cascade');
           	$table->foreign('src_mvt_id')->references('id_mvt')->on('wms_mvts')->onDelete('cascade');
+          	$table->foreign('doc_order_id')->references('id_document')->on('erpu_documents')->onDelete('cascade');
+          	$table->foreign('doc_invoice_id')->references('id_document')->on('erpu_documents')->onDelete('cascade');
+          	$table->foreign('doc_debit_note_id')->references('id_document')->on('erpu_documents')->onDelete('cascade');
+          	$table->foreign('doc_credit_note_id')->references('id_document')->on('erpu_documents')->onDelete('cascade');
           	$table->foreign('auth_status_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('closed_shipment_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');

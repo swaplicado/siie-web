@@ -17,12 +17,13 @@ return [
       'PERIODS'  => 'Periodos',
       'BPS'  => 'Asociados de negocios',
       'DOCUMENTS'  => 'Documentos',
+      'DOCS_PUR'  => 'Documentos de compra',
+      'DOCS_SAL'  => 'Documentos de venta',
 
       'ACCESS' => [
             'PERMITTED' => 'Permitido',
             'RESTRICTED' => 'Restringido'
       ],
-
 
       'UNITS' => 'Unidades',
 

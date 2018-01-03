@@ -61,10 +61,10 @@ class WmsAddStockTable extends Migration {
           	$table->integer('unit_id')->unsigned();
           	$table->integer('lot_id')->unsigned();
           	$table->integer('pallet_id')->unsigned();
-          	$table->integer('doc_order_row_id')->unsigned();
-          	$table->integer('doc_invoice_row_id')->unsigned();
-          	$table->integer('doc_debit_note_row_id')->unsigned();
-          	$table->integer('doc_credit_note_row_id')->unsigned();
+          	$table->bigInteger('doc_order_row_id')->unsigned();
+          	$table->bigInteger('doc_invoice_row_id')->unsigned();
+          	$table->bigInteger('doc_debit_note_row_id')->unsigned();
+          	$table->bigInteger('doc_credit_note_row_id')->unsigned();
           	$table->integer('mfg_dept_id')->unsigned();
           	$table->integer('mfg_line_id')->unsigned();
           	$table->integer('mfg_job_id')->unsigned();
@@ -85,6 +85,10 @@ class WmsAddStockTable extends Migration {
           	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
           	$table->foreign('lot_id')->references('id_lot')->on('wms_lots')->onDelete('cascade');
           	$table->foreign('pallet_id')->references('id_pallet')->on('wms_pallets')->onDelete('cascade');
+            $table->foreign('doc_order_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
+            $table->foreign('doc_invoice_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
+            $table->foreign('doc_debit_note_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
+            $table->foreign('doc_credit_note_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('wms_stock')->insert([

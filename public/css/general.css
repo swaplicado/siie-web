@@ -115,3 +115,13 @@ td.small { font-size: 82%; }
 .displayNone{
   display:none;
 }
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}

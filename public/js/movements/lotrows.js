@@ -99,13 +99,13 @@ function createLotRow(row, id, lotId, quantity, price, bPalletReconfiguration) {
                            " onChange='setLot(this.value, this)' class='form-control'>" + options + "</select>";
 
     var oTdQTY = document.createElement("td");
-    oTdQTY.innerHTML = "<input align='right' class='form-control' type='number' " +
+    oTdQTY.innerHTML = "<input style='text-align: right;' class='form-control' type='number' " +
                                 ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) || bPalletReconfiguration ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
                                 valuesRow[QTY] + "'>";
 
     var oTdPRICE = document.createElement("td");
-    oTdPRICE.innerHTML = "<input align='right' class='form-control' type='number' " +
+    oTdPRICE.innerHTML = "<input style='text-align: right;' class='form-control' type='number' " +
                                 ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) || bPalletReconfiguration ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
                                 valuesRow[PRICE] + "'>";

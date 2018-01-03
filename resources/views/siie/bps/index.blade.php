@@ -48,15 +48,14 @@
 					<td>
 						@if ($bpartner->is_company)
 								<span class="label label-success">{{ trans('userinterface.labels.IS_COMP') }}</span>
-						@endif
-						@if ($bpartner->is_supplier)
+						@elseif ($bpartner->is_supplier)
 								<span class="label label-default">{{ trans('userinterface.labels.IS_SUPP') }}</span>
-						@endif
-						@if ($bpartner->is_customer)
+						@elseif ($bpartner->is_customer)
 								<span class="label label-primary">{{ trans('userinterface.labels.IS_CUST') }}</span>
-						@endif
-						@if ($bpartner->is_related_party)
+						@elseif ($bpartner->is_related_party)
 								<span class="label label-info">{{ trans('userinterface.labels.IS_PART') }}</span>
+						@else
+								<span class="label label-danger">{{ trans('userinterface.labels.OTHER') }}</span>
 						@endif
 					</td>
 					<td>

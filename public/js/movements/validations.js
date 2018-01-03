@@ -8,6 +8,8 @@ function unfreeze() {
   var item = document.getElementById("item"); // item field
   var qty = document.getElementById("quantity"); // quantity field
   var sBut = document.getElementById("saveButton"); // save button
+  var lQtyis = document.getElementsByClassName('inqty');
+  var lFCodes = document.getElementsByClassName('c_item_code');
 
   if (fre.firstChild.data == "Congelar") {
     if (globalData.isPalletReconfiguration) {
@@ -22,6 +24,10 @@ function unfreeze() {
         item.disabled = true;
         qty.disabled = true;
         sBut.disabled = false;
+
+        for (var i = 0; i < lQtyis.length; i++) {
+          lQtyis[i].disabled = true;
+        }
 
         $(function(){
           $("button.removebutton").attr("disabled", true);
@@ -45,12 +51,36 @@ function unfreeze() {
     qty.disabled = false;
     sBut.disabled = true;
 
+    // for (var i = 0; i < lQtyis.length; i++) {
+    //   lQtyis[i].disabled = false;
+    // }
+
+    var table = document.getElementById("example");
+    for (var i = 1, row; row = table.rows[i]; i++) {
+       //iterate through rows
+       //rows would be accessed using the "row" variable assigned in the for loop
+       for (var j = 1, col; col = row.cells[j]; j++) {
+         //iterate through columns
+         //columns would be accessed using the "col" variable assigned in the for loop
+         if (j == 1) {
+            var code = col.textContent;
+            var isLot = isItemLot(code);
+            if (isLot) {
+              row.cells[8].children[0].disabled = false;
+            }
+            else {
+              row.cells[7].children[0].disabled = false;
+            }
+         }
+       }
+    }
+
     $(function() {
       $("button.removebutton").attr("disabled", false);
       if (globalData.iMvtType != globalData.MVT_TP_OUT_TRA && !globalData.isPalletReconfiguration) {
         $("select.selPallet").attr("disabled", false);
       }
-      $("button.buttlots").attr("disabled", false);
+      // $("button.buttlots").attr("disabled", false);
       // $("button.butstk").attr("disabled", false);
 
     });
@@ -156,7 +186,89 @@ function validateMovement(oMovement) {
       });
   }
 
+  if (oMovement.iMvtType == globalData.MVT_TP_IN_PUR) {
+    if (globalData.oDocument != 0) {
+        var itemsDoc = new Map();
+        var dQuantItem = 0;
+        globalData.oDocument.rows.forEach(function(docRow) {
+
+          dQuantItem =  parseFloat(docRow.quantity, 10);
+
+          if (itemsDoc.has('' + docRow.item_id + '-' + docRow.unit_id)) {
+              itemsDoc.get('' + docRow.item_id + '-' + docRow.unit_id).dQuantity + dQuantItem;
+          }
+          else {
+              itemsDoc.set('' + docRow.item_id + '-' + docRow.unit_id, new QtyItemAux(dQuantItem, docRow.concept));
+          }
+        });
+
+        var itemsMov = new Map();
+        var dItemMQty = 0;
+        movement.rows.forEach(function(element) {
+          dItemMQty = 0;
+            if (element.lotRows.length > 0) {
+                movement.rows.forEach(function(lotRow) {
+                  dItemMQty += parseFloat(lotRow.dQuantity, 10);
+                });
+            }
+            else {
+              dItemMQty += parseFloat(element.dQuantity, 10);
+            }
+
+            if (itemsMov.has('' + element.iItemId + '-' + element.iUnitId)) {
+                itemsMov.get('' + element.iItemId + '-' + element.iUnitId).dQuantity + dItemMQty;
+            }
+            else {
+                itemsMov.set('' + element.iItemId + '-' + element.iUnitId, new QtyItemAux(dItemMQty, element.oAuxItem.name));
+            }
+        });
+
+        for (var [key, value] of itemsDoc) {
+           if (!itemsMov.has(key)) {
+            //  swal("Error", "No ha agregado " + value.sItem + " al movimiento.", "error");
+            //  valid = false;
+            //  break;
+           }
+           else {
+             if (itemsMov.get(key).dQuantity > value.dQuantity) {
+               swal("Error", "No puede surtir una mayor cantidad de  " + value.sItem +
+                                  " mov: " + itemsMov.get(key).dQuantity +
+                                  " doc: " +  value.dQuantity + ".", "error");
+               valid = false;
+               break;
+             }
+             else if (itemsMov.get(key).dQuantity < value.dQuantity) {
+              //  swal("Error", "No puede surtir una menor cantidad de " + value.sItem +
+              //                   "\n mov: " + itemsMov.get(key).dQuantity +
+              //                   "\n doc: " + value.dQuantity + ".", "error");
+              //  valid = false;
+              //  break;
+             }
+           }
+        }
+    }
+  }
+
   return valid;
+}
+
+class QtyItemAux {
+   constructor(quantity, item) {
+     this.dQuantity = quantity;
+     this.sItem = item;
+   }
+}
+
+function isItemLot(sItemCode) {
+    var isLot = false;
+    movement.rows.forEach(function(element) {
+      if (sItemCode == element.oAuxItem.code) {
+        isLot = element.oAuxItem.is_lot;
+        return true;
+      }
+    });
+
+    return isLot;
 }
 
 /*

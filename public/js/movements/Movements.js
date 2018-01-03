@@ -7,6 +7,7 @@ class SMovement {
       this.iMvtType = 0;
       this.iWhsSrc = 0;
       this.iWhsDes = 0;
+      this.iDocumentId = 0;
       this.rows = [];
       this.auxPalletRow = '';
     }
@@ -66,6 +67,10 @@ class SMovementRow {
       this.oAuxUnit = '';
       this.oAuxPallet = '';
       this.oAuxLocation = '';
+      this.iDocOrderRowId = 1;
+      this.iDocInvoiceRowId = 1;
+      this.iDocDebitNoteRowId = 1;
+      this.iDocCreditNoteRowId = 1;
 
       this.lotRows = [];
       this.aStock = [];
@@ -180,7 +185,7 @@ function setData(data) {
     var data = { value : data };
       $.ajax({
         type: "POST",
-        url: './create/storetable',
+        url: './' + (globalData.oDocument != 0 ? 'supply' : 'create') + '/storetable',
         data: data,
         headers: {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

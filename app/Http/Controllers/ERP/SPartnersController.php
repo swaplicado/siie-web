@@ -37,7 +37,7 @@ class SPartnersController extends Controller {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
       $this->iFilterBp = $request->filterBp == null ? \Config::get('scsiie.ATT.ALL') : $request->filterBp;
 
-      $lBPartners = SPartner::Search($request->name, $this->iFilter, $this->iFilterBp)->orderBy('name', 'ASC')->paginate(10);
+      $lBPartners = SPartner::Search($request->name, $this->iFilter, $this->iFilterBp)->orderBy('name', 'ASC')->paginate(20);
 
       return view('siie.bps.index')
           ->with('bps', $lBPartners)

@@ -257,17 +257,29 @@ Route::post('/start/whs',[
       	'uses' => 'WMS\SMovsController@store',
       	'as' => 'wms.movs.store'
       ]);
-      Route::get('/movs/{id?}/create', [
+      Route::get('/movs/{id}/create', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'
       ]);
       Route::get('/movs/{id?}/create/children', [
-      	'uses' => 'WMS\SMovsController@children',
-      	'as' => 'wms.movs.create.children'
+        'uses' => 'WMS\SMovsController@children',
+        'as' => 'wms.movs.create.children'
       ]);
       Route::post('/movs/{id?}/create/storetable', [
-      	'uses' => 'WMS\SMovsController@getTable',
-      	'as' => 'wms.movs.create.storetable'
+        'uses' => 'WMS\SMovsController@getTable',
+        'as' => 'wms.movs.create.storetable'
+      ]);
+      Route::get('/movs/{id}/{doc}/supply', [
+      	'uses' => 'WMS\SMovsController@create',
+      	'as' => 'wms.movs.supply'
+      ]);
+      Route::get('/movs/{id}/{doc}/supply/children', [
+        'uses' => 'WMS\SMovsController@children',
+        'as' => 'wms.movs.create.children'
+      ]);
+      Route::post('/movs/{id}/{doc}/supply/storetable', [
+        'uses' => 'WMS\SMovsController@getTable',
+        'as' => 'wms.movs.create.storetable'
       ]);
 
       /*
@@ -360,6 +372,14 @@ Route::post('/start/whs',[
         'as'   => 'wms.pallets.barcode'
       ]);
 
+      /*
+      * documents
+      **/
+      Route::get('docs/{category}/{dclass}/{vtype}/{title}/index',[
+        'uses' => 'WMS\SDocsBySuppController@ViewDocs',
+        'as' => 'wms.docs.index'
+      ]);
+
   });
 
 
@@ -389,33 +409,9 @@ Route::post('/start/whs',[
         'uses' => 'ERP\SImportationsController@index',
         'as' => 'siie.importation'
       ]);
-      Route::get('import/items',[
-        'uses' => 'ERP\SImportationsController@importItems',
-        'as' => 'siie.import.items'
-      ]);
-      Route::get('import/partners',[
-        'uses' => 'ERP\SImportationsController@importPartners',
-        'as' => 'siie.import.partners'
-      ]);
-      Route::get('import/branches',[
-        'uses' => 'ERP\SImportationsController@importBranches',
-        'as' => 'siie.import.branches'
-      ]);
-      Route::get('import/addresses',[
-        'uses' => 'ERP\SImportationsController@importAddresses',
-        'as' => 'siie.import.addresses'
-      ]);
-      Route::get('import/documents',[
-        'uses' => 'ERP\SImportationsController@importDocuments',
-        'as' => 'siie.import.documents'
-      ]);
-      Route::get('import/rows',[
-        'uses' => 'ERP\SImportationsController@importDocumentRows',
-        'as' => 'siie.import.rows'
-      ]);
-      Route::get('import/rows1',[
-        'uses' => 'ERP\SImportationsController@importDocumentRowsLast',
-        'as' => 'siie.import.rows1'
+      Route::post('import/docs',[
+        'uses' => 'ERP\SImportationsController@importationDocuments',
+        'as' => 'siie.import.docs'
       ]);
 
       /*

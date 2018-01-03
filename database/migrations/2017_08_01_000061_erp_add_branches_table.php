@@ -53,6 +53,11 @@ class ErpAddBranchesTable extends Migration {
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
+          DB::connection($this->sConnection)->table('erpu_branches')->insert([
+          	['id_branch' => '1','code' => 'N/A','name' => 'N/A','external_id' => 'N/A','is_headquarters' => '1','partner_id' => '1', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_branch' => '2','code' => '001','name' => 'MATRIZ','external_id' => '0','is_headquarters' => '1','partner_id' => '2', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_branch' => '3','code' => '002','name' => 'MATRIZ','external_id' => '0','is_headquarters' => '1','partner_id' => '3', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
         }
     }
 

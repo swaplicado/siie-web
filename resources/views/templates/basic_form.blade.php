@@ -20,7 +20,8 @@
     				<div class="col-md-2">
     				</div>
     				<div class="col-md-10">
-    					@include('templates.list.filter')
+              @yield('filters')
+    					{{-- @include('templates.list.filter') --}}
     				</div>
     			</div>
           <section>

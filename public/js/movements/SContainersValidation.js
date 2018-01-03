@@ -50,3 +50,66 @@ function validateContainer(oWarehouse, oItem, lItemContainers) {
     return isValid;
 
 }
+
+
+function validateItemWarehouseType(oWarehouse, item) {
+  isValid = false;
+  var CLASS_MATERIAL = 1;
+  var CLASS_PRODUCT = 2;
+  var CLASS_SPENDING = 3;
+
+  var  WHS_TYPE_NA = 1;
+  var  WHS_TYPE_MATERIAL = 2;
+  var  WHS_TYPE_PRODUCTION = 3;
+  var  WHS_TYPE_PRODUCT = 4;
+
+  /**
+   *  Item classes
+   *  1	MATERIAL
+   *  2	PRODUCT
+   *  3	SPENDING
+   */
+  /**
+   *  Whs types
+   *  1 N/A
+   *  2 MATERIAL
+   *  3 PRODUCTION
+   *  4 PRODUCT
+   */
+
+
+    switch (oWarehouse.whs_type.id_whs_type) {
+      case WHS_TYPE_NA:
+              isValid = true;
+              return true;
+        break;
+      case WHS_TYPE_MATERIAL:
+              if (item.gender.item_class.id_item_class == CLASS_MATERIAL) {
+                isValid = true;
+                return true;
+              }
+        break;
+      case WHS_TYPE_PRODUCTION:
+              if (item.gender.item_class.id_item_class == CLASS_PRODUCT || item.gender.item_class.id_item_class == CLASS_MATERIAL) {
+                isValid = true;
+                return true;
+              }
+        break;
+      case WHS_TYPE_PRODUCT:
+              if (item.gender.item_class.id_item_class == CLASS_PRODUCT) {
+                isValid = true;
+                return true;
+              }
+        break;
+      default:
+
+    }
+
+
+  if (!isValid) {
+      // alert("No puede ingresar este material/producto en este almacén");
+      swal("Error", "No puede ingresar este material/producto en este almacén.", "error");
+  }
+
+  return isValid;
+}
