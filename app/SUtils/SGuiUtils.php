@@ -105,4 +105,10 @@ class SGuiUtils {
            break;
        }
     }
+
+    public static function getNameOfMonth($iMonth){
+       setlocale(LC_TIME, 'spanish');
+       $sName = strftime("%B", mktime(0, 0, 0, $iMonth, 1, 2000));
+       return $sName;
+    }
 }

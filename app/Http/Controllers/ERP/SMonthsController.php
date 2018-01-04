@@ -32,6 +32,7 @@ class SMonthsController extends Controller
     public function index(Request $request, $iYearId = 0)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+      $oYear = SYear::find($iYearId);
       $lMonths = SMonth::Search($this->iFilter, $iYearId)
                                               ->orderBy('month', 'ASC')
                                               ->paginate(12);
@@ -39,6 +40,7 @@ class SMonthsController extends Controller
       return view('siie.months.index')
           ->with('months', $lMonths)
           ->with('actualUserPermission', $this->oCurrentUserPermission)
+          ->with('iYear', $oYear->year)
           ->with('iFilter', $this->iFilter);
     }
 

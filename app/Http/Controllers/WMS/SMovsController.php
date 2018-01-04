@@ -114,7 +114,9 @@ class SMovsController extends Controller
         }
         $oMovType = SMvtType::find($mvtType);
         $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $mvtType)->lists('name', 'id_mvt_type');
-        $warehouses = SWarehouse::where('is_deleted', false)->lists('name', 'id_whs');
+        $warehouses = SWarehouse::where('is_deleted', false)
+                                ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                ->lists('warehouse', 'id_whs');
         $warehousesObj = SWarehouse::where('is_deleted', false)->get();
         $locations = SLocation::where(function ($q) {
                                       $q->where('is_deleted', false)

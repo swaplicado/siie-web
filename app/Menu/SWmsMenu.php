@@ -62,17 +62,33 @@ class SWmsMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
-                ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_PUR_BY_SUPP'),
-                                            [\Config::get('scsiie.DOC_CAT.PURCHASES'),
-                                            \Config::get('scsiie.DOC_CLS.ORDER'),
-                                            \Config::get('scwms.DOC_VIEW.NORMAL'),
-                                            trans('userinterface.titles.LIST_OR_PUR_BY_SUPP')])
-                ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_PUR_BY_SUPP_DET'),
-                                            [\Config::get('scsiie.DOC_CAT.PURCHASES'),
-                                            \Config::get('scsiie.DOC_CLS.ORDER'),
-                                            \Config::get('scwms.DOC_VIEW.DETAIL'),
-                                            trans('userinterface.titles.LIST_OR_PUR_BY_SUPP_DET')])
-
+                ->submenu(
+                    Link::to('#', trans('siie.DOCS_PUR').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_PUR_BY_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_OR_PUR_BY_SUPP')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_PUR_BY_SUPP_DET'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                    trans('userinterface.titles.LIST_OR_PUR_BY_SUPP_DET')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP_DET'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                    trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP_DET')])
+                )
         )
         ->submenu(
             Link::to('#', trans('wms.STOCK_QUERY').'<span class="caret"></span>')

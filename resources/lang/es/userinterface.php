@@ -54,6 +54,8 @@
 											'LIST_PUR_ORD' => 'Pedidos de compra',
 											'LIST_OR_PUR_BY_SUPP' => 'Pedidos de compra por surtir',
 											'LIST_OR_PUR_BY_SUPP_DET' => 'Pedidos de compra por surtir a detalle',
+											'LIST_INVS_PUR_BY_SUPP' => 'Facturas de compra por surtir',
+											'LIST_INVS_PUR_BY_SUPP_DET' => 'Facturas de compra por surtir a detalle',
 											'CHANGE_PASS' => 'Cambiar contraseña',
 											'CREATE_ADDRESS' => 'Crear dirección',
 											'CREATE_USER_PERMISSION' => 'Otorgar los permisos correspondientes a:',
