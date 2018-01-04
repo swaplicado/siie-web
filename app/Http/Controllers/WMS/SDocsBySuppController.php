@@ -30,7 +30,7 @@ class SDocsBySuppController extends Controller {
      * @param  [type] $iDocClass    [description]
      * @return [type]               [description]
      */
-    private function getBaseQuery($iDocCategory, $iDocClass)
+    private function getBaseQuery($iDocCategory, $iDocClass, $iDocType)
     {
        $sub = $this->getSubQuery();
        $query = \DB::connection(session('db_configuration')->getConnCompany())
@@ -47,7 +47,8 @@ class SDocsBySuppController extends Controller {
                        })
                      ->mergeBindings($sub)
                      ->where('doc_category_id', $iDocCategory)
-                     ->where('doc_class_id', $iDocClass);
+                     ->where('doc_class_id', $iDocClass)
+                     ->where('doc_type_id', $iDocType);
 
        return $query;
     }
@@ -128,12 +129,12 @@ class SDocsBySuppController extends Controller {
      * @param  string  $sTitle
      * @return view  wms.docs.index
      */
-    public function viewDocs(Request $request, $iDocCategory, $iDocClass, $iViewType, $sTitle)
+    public function viewDocs(Request $request, $iDocCategory, $iDocClass, $iDocType, $iViewType, $sTitle)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $sFilterDate = $request->filterDate == null ? \Config::get('scsys.FILTER.MONTH') : $request->filterDate;
 
-        $lDocuments = $this->getBaseQuery($iDocCategory, $iDocClass);
+        $lDocuments = $this->getBaseQuery($iDocCategory, $iDocClass, $iDocType);
 
         if ($iViewType == \Config::get('scwms.DOC_VIEW.NORMAL')) {
             $lDocuments =  $lDocuments->select('id_document',
@@ -189,6 +190,7 @@ class SDocsBySuppController extends Controller {
                               ->with('sFilterDate', $sFilterDate)
                               ->with('iDocCategory', $iDocCategory)
                               ->with('iDocClass', $iDocClass)
+                              ->with('iDocType', $iDocType)
                               ->with('actualUserPermission', $this->oCurrentUserPermission)
                               ->with('documents', $lDocuments)
                               ->with('iViewType', $iViewType)

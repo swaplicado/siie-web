@@ -375,7 +375,7 @@ Route::post('/start/whs',[
       /*
       * documents
       **/
-      Route::get('docs/{category}/{dclass}/{vtype}/{title}/index',[
+      Route::get('docs/{category}/{dclass}/{dtype}/{vtype}/{title}/index',[
         'uses' => 'WMS\SDocsBySuppController@ViewDocs',
         'as' => 'wms.docs.index'
       ]);
@@ -419,7 +419,7 @@ Route::post('/start/whs',[
       **/
 
       // Route::resource('docs','ERP\SDocumentsController');
-      Route::get('docs/{category}/{dclass}/{title}/index',[
+      Route::get('docs/{category}/{dclass}/{dtype}/{title}/index',[
         'uses' => 'ERP\SDocumentsController@Index',
         'as' => 'siie.docs.index'
       ]);

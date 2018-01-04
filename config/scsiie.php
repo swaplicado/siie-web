@@ -56,6 +56,18 @@ return [
                     'ADJUST' => '5',
                   ],
 
+  'DOC_TYPE' => [
+                    'QUOTE' => '1',
+                    'CONTRACT' => '2',
+                    'ORDER' => '1',
+                    'INVOICE' => '1',
+                    'REMISSION' => '2',
+                    'SALE_NOTE' => '3',
+                    'TICKET' => '4',
+                    'LETTER' => '1',
+                    'CREDIT_NOTE' => '1',
+                  ],
+
 
   'FRMT' =>       [
                     'AMT' => '1',

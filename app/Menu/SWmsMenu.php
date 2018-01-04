@@ -71,23 +71,39 @@ class SWmsMenu {
                         ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_PUR_BY_SUPP'),
                                                     [\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                     \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
                                                     \Config::get('scwms.DOC_VIEW.NORMAL'),
                                                     trans('userinterface.titles.LIST_OR_PUR_BY_SUPP')])
                         ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_PUR_BY_SUPP_DET'),
                                                     [\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                     \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
                                                     \Config::get('scwms.DOC_VIEW.DETAIL'),
                                                     trans('userinterface.titles.LIST_OR_PUR_BY_SUPP_DET')])
                         ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP'),
                                                     [\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                     \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
                                                     \Config::get('scwms.DOC_VIEW.NORMAL'),
                                                     trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP')])
                         ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP_DET'),
                                                     [\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                     \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
                                                     \Config::get('scwms.DOC_VIEW.DETAIL'),
                                                     trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP_DET')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_CN_PUR_BY_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_CN_PUR_BY_SUPP')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_CN_PUR_BY_SUPP_DET'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                    trans('userinterface.titles.LIST_CN_PUR_BY_SUPP_DET')])
                 )
         )
         ->submenu(
