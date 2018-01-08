@@ -132,6 +132,7 @@ class SStartController extends Controller
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
         $oDbImport = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_IMPORT'));
+        $oDbHost = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_HOST'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oStock = new SStockManagment();
@@ -142,6 +143,7 @@ class SStartController extends Controller
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['db_import' => $oDbImport->val_text]);
+        session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
 
         return SStartController::branchwhs();

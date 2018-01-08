@@ -14,7 +14,8 @@
 
 @section('content')
   @section('thefilters')
-		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $iViewType, $title], 'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
+		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $iDocType, $iViewType, $title],
+										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 		    <div class="input-group">
 					@include('templates.list.search')
@@ -49,7 +50,11 @@
 			            <th>Cant. pendiente</th>
 									<th>Status</th>
 									<th>Ver</th>
-									<th>Surtir</th>
+									@if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'))
+										<th>Devolver</th>
+									@else
+										<th>Surtir</th>
+									@endif
 								@else
 									<th>Cve m/p</th>
 									<th>Mat/Prod</th>
@@ -92,7 +97,25 @@
 									</td>
 									<td>
 										{{-- {{ dd($doc->id_document) }} --}}
-										<a href="{{ route('wms.movs.supply', [\Config::get('scwms.MVT_TP_IN_PUR'), $doc->id_document]) }}" title="Surtir documento"
+											<?php
+												if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+														if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
+																$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_PUR');
+														}
+														else {
+																$iMvtInvType = \Config::get('scwms.MVT_TP_IN_PUR');
+														}
+												}
+												else {
+														if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
+																$iMvtInvType = \Config::get('scwms.MVT_TP_IN_SAL');
+														}
+														else {
+																$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_SAL');
+														}
+												}
+										 ?>
+										<a href="{{ route('wms.movs.supply', [$iMvtInvType, $doc->id_document]) }}" title="Surtir documento"
 																																class="btn btn-default btn-sm">
 											<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 										</a>

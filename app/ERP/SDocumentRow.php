@@ -47,6 +47,11 @@ class SDocumentRow extends SModel {
     return $this->belongsTo('App\ERP\SDocument', 'id_document', 'document_id');
   }
 
+  public function item()
+  {
+    return $this->belongsTo('App\ERP\SItem', 'item_id');
+  }
+
   public function unit()
   {
     return $this->belongsTo('App\ERP\SUnit', 'unit_id');

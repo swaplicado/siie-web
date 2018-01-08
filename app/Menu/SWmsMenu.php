@@ -20,13 +20,7 @@ class SWmsMenu {
                 ->route('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS'))
                 ->route('wms.limits.index', trans('userinterface.titles.LIST_LIMITS'))
                 ->route('wms.itemcontainers.index', trans('userinterface.titles.LIST_ITEM_CONTAINERS'))
-        )
-        ->submenu(
-            Link::to('#', trans('wms.CATALOGUES').'<span class="caret"></span>')
-                ->addClass('dropdown-toggle')
-                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
-            \Menu::new()
-                ->addClass('dropdown-menu')
+                ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('wms.whs.index', trans('wms.WAREHOUSES'))
                 ->addIf(session('location_enabled'), Link::toRoute('wms.locs.index', trans('wms.LOCATIONS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
@@ -35,11 +29,13 @@ class SWmsMenu {
                 ->route('wms.codes.start', trans('wms.BAR_CODES'))
         )
         ->submenu(
-            Link::to('#', trans('wms.MOV_STK').'<span class="caret"></span>')
+            Link::to('#', trans('wms.WHS_MOVS_QUERY').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
+                ->route('wms.movs.index', trans('wms.WHS_MOVS'))
+                ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_WHS_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA')])
@@ -48,22 +44,13 @@ class SWmsMenu {
                 ->route('wms.movs.create', trans('wms.PALLET_ADD'), [\Config::get('scwms.PALLET_RECONFIG_OUT')])
         )
         ->submenu(
-            Link::to('#', trans('wms.WHS_MOVS_QUERY').'<span class="caret"></span>')
-                ->addClass('dropdown-toggle')
-                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
-            \Menu::new()
-                ->addClass('dropdown-menu')
-                ->route('wms.movs.index', trans('wms.WHS_MOVS'))
-
-        )
-        ->submenu(
-            Link::to('#', trans('wms.DOCS').'<span class="caret"></span>')
+            Link::to('#', trans('wms.PUR_DOCS').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
                 ->submenu(
-                    Link::to('#', trans('siie.DOCS_PUR').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                    Link::to('#', trans('actions.SUPPLY').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
                         ->addClass('test'),
                     \Menu::new()
                         ->addParentClass('dropdown-submenu')
@@ -92,6 +79,13 @@ class SWmsMenu {
                                                     \Config::get('scsiie.DOC_TYPE.INVOICE'),
                                                     \Config::get('scwms.DOC_VIEW.DETAIL'),
                                                     trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP_DET')])
+                )
+                ->submenu(
+                    Link::to('#', trans('actions.DEVOLVE').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
                         ->route('wms.docs.index', trans('userinterface.titles.LIST_CN_PUR_BY_SUPP'),
                                                     [\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                     \Config::get('scsiie.DOC_CLS.ADJUST'),
@@ -104,6 +98,63 @@ class SWmsMenu {
                                                     \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
                                                     \Config::get('scwms.DOC_VIEW.DETAIL'),
                                                     trans('userinterface.titles.LIST_CN_PUR_BY_SUPP_DET')])
+                )
+        )
+        ->submenu(
+            Link::to('#', trans('wms.SAL_DOCS').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->submenu(
+                    Link::to('#', trans('actions.SUPPLY').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_SAL_BY_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_OR_SAL_BY_SUPP')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_SAL_BY_SUPP_DET'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
+                                                    \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                    trans('userinterface.titles.LIST_OR_SAL_BY_SUPP_DET')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_SAL_BY_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_INVS_SAL_BY_SUPP')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_SAL_BY_SUPP_DET'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                    trans('userinterface.titles.LIST_INVS_SAL_BY_SUPP_DET')])
+                )
+                ->submenu(
+                    Link::to('#', trans('actions.DEVOLVE').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_CN_SAL_BY_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_CN_SAL_BY_SUPP')])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_CN_SAL_BY_SUPP_DET'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                    trans('userinterface.titles.LIST_CN_SAL_BY_SUPP_DET')])
                 )
         )
         ->submenu(

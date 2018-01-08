@@ -37,6 +37,8 @@ return [
           'PALLET_ADD' => 'Agregar a tarima',
 
       'DOCS' => 'Documentos',
+      'PUR_DOCS' => 'Documentos de compra',
+      'SAL_DOCS' => 'Documentos de venta',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',

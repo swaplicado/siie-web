@@ -25,6 +25,7 @@ class SImportationsController extends Controller {
     private $iFilter;
     private $iFilterBp;
     private $sClassNav;
+    private $sHost;
 
     public function __construct()
     {
@@ -43,46 +44,46 @@ class SImportationsController extends Controller {
 
     public function importItems()
     {
-       $go = new SImportFamilies();
+       $go = new SImportFamilies($this->sHost);
        $go->importFamilies();
-       $group = new SImportGroups();
+       $group = new SImportGroups($this->sHost);
        $group->importGroups();
-       $gender = new SImportGenders();
+       $gender = new SImportGenders($this->sHost);
        $gender->importGenders();
-       $unit = new SImportUnits();
+       $unit = new SImportUnits($this->sHost);
        $unit->importUnits();
-       $item = new SImportItems();
+       $item = new SImportItems($this->sHost);
        $item->importItems();
     }
 
     public function importPartners()
     {
-      $partner = new SImportPartners();
+      $partner = new SImportPartners($this->sHost);
       $partner->importPartners();
     }
     public function importBranches()
     {
-      $branch = new SImportBranches();
+      $branch = new SImportBranches($this->sHost);
       $branch->importBranches();
     }
     public function importAddresses()
     {
-      $address = new SImportAddresses();
+      $address = new SImportAddresses($this->sHost);
       $address->importAddresses();
     }
     public function importDocuments($sDbName, $iYear = '2017')
     {
-      $documents = new SImportDocuments($sDbName);
+      $documents = new SImportDocuments($this->sHost, $sDbName);
       $documents->importDocuments($iYear);
     }
     public function importDocumentRows($sDbName, $iYear = '2017')
     {
-      $rows = new SImportDocumentRows($sDbName);
+      $rows = new SImportDocumentRows($this->sHost, $sDbName);
       $rows->importRows($iYear, '<');
     }
     public function importDocumentRowsLast($sDbName, $iYear = '2017')
     {
-      $rows = new SImportDocumentRows($sDbName);
+      $rows = new SImportDocumentRows($this->sHost, $sDbName);
       $rows->importRows($iYear, '>');
     }
 
@@ -94,9 +95,12 @@ class SImportationsController extends Controller {
        $bAddresses = $request->input('addresses');
        $iYear = $request->input('year');
        $sDbName = $request->input('db_name');
+       $sDbHost = $request->input('db_host');
        $bDocs = $request->input('docs');
        $bRows1 = $request->input('rows1');
        $bRows2 = $request->input('rows2');
+
+       $this->sHost = $sDbHost;
 
        if (! is_null($bItems)) {
           $this->importItems();

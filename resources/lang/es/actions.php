@@ -12,6 +12,8 @@
 		'FREEZE' => 'Congelar',
 		'CLOSE' => 'Cerrar',
 		'IMPORT' => 'Importar',
+		'SUPPLY' => 'Surtir',
+		'DEVOLVE' => 'Devolver',
 
 
     ];

@@ -9,6 +9,14 @@
         {!! Form::open(['route' => 'siie.import.docs']) !!}
           <div class="row">
             <div class="col-md-6">
+              {!! Form::label('year', 'Host base de datos') !!}
+            </div>
+            <div class="col-md-6">
+              {!! Form::text('db_host', session('db_host'), ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
               {!! Form::label('year', 'ítems') !!}
             </div>
             <div class="col-md-6">

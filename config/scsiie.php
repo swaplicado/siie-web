@@ -10,6 +10,7 @@ return [
                   'LOC_ENABLED' => '4',
                   'LOCK_TIME' => '5',
                   'DB_IMPORT' => '6',
+                  'DB_HOST' => '7',
                 ],
 
   'ATT' => [
