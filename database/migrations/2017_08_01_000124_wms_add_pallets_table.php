@@ -46,7 +46,6 @@ class WmsAddPalletsTable extends Migration {
             $table->decimal('quantity', 23,8);
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
-          	$table->timestamps();
 
           	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
           	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');

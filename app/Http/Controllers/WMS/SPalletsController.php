@@ -69,8 +69,12 @@ class SPalletsController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
-        $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+        $items = SItem::select('id_item', \DB::raw("CONCAT(code, ' - ', name)as item"))
+                        ->where('is_deleted', false)
+                        ->lists('item','id_item');
+        $units = SUnit::select('id_unit', \DB::raw("CONCAT(code,' - ', name)as unit"))
+                        ->where('is_deleted', false)
+                        ->lists('unit','id_unit');
         $locs = SLocation::orderBy('name', 'ASC')->lists('name', 'id_whs_location');
 
         return view('wms.pallets.createEdit')
