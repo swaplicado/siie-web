@@ -90,12 +90,33 @@ class SMovsController extends Controller
             $oDocument = SDocument::find($iDocId);
             $oDocument->rows;
 
+<<<<<<< HEAD
+            switch ($oDocument->doc_class_id) {
+              case \Config::get('scsiie.DOC_CLS.ORDER'):
+                $lSuppliedMovs = SMovement::where('doc_order_id', $oDocument->id_document)
+                                            ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                            ->where('is_deleted', false)
+                                            ->get();
+                break;
+
+              case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
+                $lSuppliedMovs = SMovement::where('doc_invoice_id', $oDocument->id_document)
+                                          ->where('is_deleted', false)
+                                          ->get();
+                break;
+
+              default:
+                # code...
+                break;
+            }
+=======
             $FilterDel = \Config::get('scsys.FILTER.ACTIVES');
             $sFilterDate = null;
             $iViewType = \Config::get('scwms.DOC_VIEW.DETAIL');
 
             $lDocData = session('stock')::getSupplied($oDocument->doc_category_id, $oDocument->doc_class_id,
                                             $oDocument->doc_type_id, $FilterDel, $sFilterDate, $iViewType, $iDocId);
+>>>>>>> a0257c77733bd9e56015dc4cbab3d0ec00a522bd
         }
         else
         {

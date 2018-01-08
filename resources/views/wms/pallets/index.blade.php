@@ -29,8 +29,8 @@
 			@foreach($pallets as $pallet)
 				<tr>
 					<td>{{ $pallet->pallet }}</td>
-					<td>{{ $pallet->item->name }}</td>
-					<td>{{ $pallet->unit->name }}</td>
+					<td>{{$pallet->item->code.'-'}}{{ $pallet->item->name }}</td>
+					<td>{{ $pallet->unit->code.'-' }}{{ $pallet->unit->name }}</td>
           <td>{{ $pallet->quantity }}</td>
 					<td>
 						@if (! $pallet->is_deleted)
