@@ -5,6 +5,8 @@ use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
 use App\WMS\SFolio;
+use App\ERP\SDocument;
+use App\ERP\SDocumentRow;
 
 use App\SCore\SStockUtils;
 
@@ -178,42 +180,65 @@ class SMovsManagment {
 
     public static function assignForeignDoc($oMovement, $iMvtType, $iDocumentId)
     {
-      $oMovement->doc_order_id = 1;
-      $oMovement->doc_invoice_id = 1;
-      $oMovement->doc_debit_note_id = 1;
-      $oMovement->doc_credit_note_id = 1;
+        $oMovement->doc_order_id = 1;
+        $oMovement->doc_invoice_id = 1;
+        $oMovement->doc_debit_note_id = 1;
+        $oMovement->doc_credit_note_id = 1;
 
-      switch ($iMvtType) {
-        case \Config::get('scwms.MVT_TP_IN_PUR'):
-          $oMovement->doc_order_id = $iDocumentId;
-          break;
+        $oDocument = SDocument::find($iDocumentId);
 
-        default:
-          # code...
-          break;
-      }
+        if (\Config::get('scsiie.DOC_CLS.ORDER') == $oDocument->doc_class_id &&
+                \Config::get('scsiie.DOC_TYPE.ORDER') == $oDocument->doc_type_id) {
+            $oMovement->doc_order_id = $iDocumentId;
+        }
+        if (\Config::get('scsiie.DOC_CLS.DOCUMENT') == $oDocument->doc_class_id &&
+              \Config::get('scsiie.DOC_TYPE.INVOICE') == $oDocument->doc_type_id) {
+            $oMovement->doc_invoice_id = $iDocumentId;
+        }
+        if (\Config::get('scsiie.DOC_CAT.PURCHASES') == $oDocument->doc_category_id &&
+            \Config::get('scsiie.DOC_CLS.ADJUST') == $oDocument->doc_class_id &&
+            \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $oDocument->doc_type_id) {
+              $oMovement->doc_debit_note_id = $iDocumentId;
+        }
+        if (\Config::get('scsiie.DOC_CAT.SALES') == $oDocument->doc_category_id &&
+            \Config::get('scsiie.DOC_CLS.ADJUST') == $oDocument->doc_class_id &&
+            \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $oDocument->doc_type_id) {
+              $oMovement->doc_credit_note_id = $iDocumentId;
+        }
 
-      return $oMovement;
+        return $oMovement;
     }
 
     public static function assignForeignRow($oMovementRow, $iMvtType, $iDocRowId)
     {
-      $oMovementRow->doc_order_row_id = 1;
-      $oMovementRow->doc_invoice_row_id = 1;
-      $oMovementRow->doc_debit_note_row_id = 1;
-      $oMovementRow->doc_credit_note_row_id = 1;
+        $oMovementRow->doc_order_row_id = 1;
+        $oMovementRow->doc_invoice_row_id = 1;
+        $oMovementRow->doc_debit_note_row_id = 1;
+        $oMovementRow->doc_credit_note_row_id = 1;
 
-      switch ($iMvtType) {
-        case \Config::get('scwms.MVT_TP_IN_PUR'):
-          $oMovementRow->doc_order_row_id = $iDocRowId;
-          break;
+        $oRow = SDocumentRow::find($iDocRowId);
+        $oDocument = $oRow->document;
 
-        default:
-          # code...
-          break;
-      }
+        if (\Config::get('scsiie.DOC_CLS.ORDER') == $oDocument->doc_class_id &&
+                \Config::get('scsiie.DOC_TYPE.ORDER') == $oDocument->doc_type_id) {
+            $oMovement->doc_order_row_id = $iDocRowId;
+        }
+        if (\Config::get('scsiie.DOC_CLS.DOCUMENT') == $oDocument->doc_class_id &&
+              \Config::get('scsiie.DOC_TYPE.INVOICE') == $oDocument->doc_type_id) {
+            $oMovement->doc_invoice_row_id = $iDocRowId;
+        }
+        if (\Config::get('scsiie.DOC_CAT.PURCHASES') == $oDocument->doc_category_id &&
+            \Config::get('scsiie.DOC_CLS.ADJUST') == $oDocument->doc_class_id &&
+            \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $oDocument->doc_type_id) {
+              $oMovement->doc_debit_note_row_id = $iDocRowId;
+        }
+        if (\Config::get('scsiie.DOC_CAT.SALES') == $oDocument->doc_category_id &&
+            \Config::get('scsiie.DOC_CLS.ADJUST') == $oDocument->doc_class_id &&
+            \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $oDocument->doc_type_id) {
+              $oMovement->doc_credit_note_row_id = $iDocRowId;
+        }
 
-      return $oMovementRow;
+        return $oMovementRow;
     }
 
 
