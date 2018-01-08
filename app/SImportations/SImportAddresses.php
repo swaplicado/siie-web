@@ -10,15 +10,15 @@ use App\ERP\SState;
  */
 class SImportAddresses
 {
-  protected $webhost        = 'localhost';
+  // protected $webhost        = 'localhost';
   protected $webusername    = 'root';
   protected $webpassword    = 'msroot';
   protected $webdbname      = 'erp';
   protected $webcon         = '';
 
-  function __construct()
+  function __construct($sHost)
   {
-      $this->webcon = mysqli_connect($this->webhost, $this->webusername, $this->webpassword, $this->webdbname);
+      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno())
       {

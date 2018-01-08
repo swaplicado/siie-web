@@ -24,7 +24,7 @@
 		<tbody>
 			@foreach($years as $year)
 				<tr>
-					<td>{{ $year->id_year }}</td>
+					<td>{{ $year->year }}</td>
 					<td>
 						@if (!$year->is_closed)
 								<span class="label label-success">{{ trans('userinterface.labels.OPENED') }}</span>

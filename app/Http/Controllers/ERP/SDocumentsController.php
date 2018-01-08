@@ -23,7 +23,7 @@ class SDocumentsController extends Controller {
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
 
-    public function index(Request $request, $iDocCategory, $iDocClass, $sTitle)
+    public function index(Request $request, $iDocCategory, $iDocClass, $iDocType, $sTitle)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
@@ -33,6 +33,7 @@ class SDocumentsController extends Controller {
                       ->join('erps_currencies AS ec', 'ed.currency_id', '=', 'ec.id_currency')
                       ->where('doc_category_id', $iDocCategory)
                       ->where('doc_class_id', $iDocClass)
+                      ->where('doc_type_id', $iDocType)
                       ->select('id_document',
                               'dt_date',
                               'dt_doc',
@@ -80,6 +81,7 @@ class SDocumentsController extends Controller {
                               ->with('iFilter', $this->iFilter)
                               ->with('iDocCategory', $iDocCategory)
                               ->with('iDocClass', $iDocClass)
+                              ->with('iDocType', $iDocType)
                               ->with('actualUserPermission', $this->oCurrentUserPermission)
                               ->with('documents', $lDocuments)
                               ->with('title', $sTitle);

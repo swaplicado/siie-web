@@ -3,7 +3,7 @@
 	@include('templates.menu.menumodules')
 @endsection
 
-@section('title', trans('userinterface.titles.LIST_MONTHS'))
+@section('title', trans('userinterface.titles.LIST_MONTHS').' '.$iYear)
 
 @section('content')
 	<?php $sRoute="siie.months"?>
@@ -11,13 +11,12 @@
 		<thead>
 			<th>{{ trans('userinterface.labels.MONTH') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
-			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 		</thead>
 		<tbody>
 			@foreach($months as $month)
 				<tr>
-					<td>{{ $month->month }}</td>
+					<td>{{ App\SUtils\SGuiUtils::getNameOfMonth($month->month) }}</td>
 					<td>
 						@if (!$month->is_closed)
 								<span class="label label-success">{{ trans('userinterface.labels.OPENED') }}</span>
@@ -36,5 +35,4 @@
 			@endforeach
 		</tbody>
 	</table>
-	{!! $months->render() !!}
 @endsection

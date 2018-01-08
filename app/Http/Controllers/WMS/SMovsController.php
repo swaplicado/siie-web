@@ -90,6 +90,7 @@ class SMovsController extends Controller
             $oDocument = SDocument::find($iDocId);
             $oDocument->rows;
 
+<<<<<<< HEAD
             switch ($oDocument->doc_class_id) {
               case \Config::get('scsiie.DOC_CLS.ORDER'):
                 $lSuppliedMovs = SMovement::where('doc_order_id', $oDocument->id_document)
@@ -108,14 +109,26 @@ class SMovsController extends Controller
                 # code...
                 break;
             }
+=======
+            $FilterDel = \Config::get('scsys.FILTER.ACTIVES');
+            $sFilterDate = null;
+            $iViewType = \Config::get('scwms.DOC_VIEW.DETAIL');
+
+            $lDocData = session('stock')::getSupplied($oDocument->doc_category_id, $oDocument->doc_class_id,
+                                            $oDocument->doc_type_id, $FilterDel, $sFilterDate, $iViewType, $iDocId);
+>>>>>>> a0257c77733bd9e56015dc4cbab3d0ec00a522bd
         }
         else
         {
             $oDocument = 0;
         }
+
         $oMovType = SMvtType::find($mvtType);
+        $iMvtSubType = 1;
         $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $mvtType)->lists('name', 'id_mvt_type');
-        $warehouses = SWarehouse::where('is_deleted', false)->lists('name', 'id_whs');
+        $warehouses = SWarehouse::where('is_deleted', false)
+                                ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                ->lists('warehouse', 'id_whs');
         $warehousesObj = SWarehouse::where('is_deleted', false)->get();
         $locations = SLocation::where(function ($q) {
                                       $q->where('is_deleted', false)
@@ -144,6 +157,7 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_TP_OUT_SAL'):
           case \Config::get('scwms.MVT_TP_OUT_PUR'):
             $mvtComp = SMvtTrnType::where('is_deleted', false)->lists('name', 'id_mvt_trn_type');
+            $iMvtSubType = \Config::get('scwms.MVT_SPT_TP_STK_RET');
             break;
 
           case \Config::get('scwms.MVT_TP_IN_ADJ'):
@@ -180,7 +194,9 @@ class SMovsController extends Controller
 
         return view('wms.movs.whsmovs')
                           ->with('oMovType', $oMovType)
+                          ->with('iMvtSubType', $iMvtSubType)
                           ->with('oDocument', $oDocument)
+                          ->with('lDocData', $lDocData)
                           ->with('movTypes', $movTypes)
                           ->with('mvtComp', $mvtComp)
                           ->with('warehouses', $warehouses)

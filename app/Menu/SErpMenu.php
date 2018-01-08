@@ -39,7 +39,7 @@ class SErpMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
                 ->addClass('dropdown-menu')
-                ->route('siie.branches.index', trans('siie.ACG_YEAR_PER'))
+                ->route('siie.years.index', trans('siie.ACG_YEAR_PER'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('siie.bps.index', trans('siie.BPS'))
                 ->route('siie.branches.index', trans('siie.BRANCHES'))
@@ -59,7 +59,18 @@ class SErpMenu {
                         ->route('siie.docs.index', trans('userinterface.titles.LIST_PUR_ORD'),
                                                     [\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                     \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
                                                     trans('userinterface.titles.LIST_PUR_ORD')])
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_PUR_INV'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    trans('userinterface.titles.LIST_PUR_INV')])
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_PUR_CN'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    trans('userinterface.titles.LIST_PUR_CN')])
                 )
                 ->submenu(
                     Link::to('#', trans('siie.DOCS_SAL').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
@@ -67,10 +78,21 @@ class SErpMenu {
                     \Menu::new()
                         ->addParentClass('dropdown-submenu')
                         ->addClass('dropdown-menu')
-                        ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_INVO'),
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_ORD'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
+                                                    trans('userinterface.titles.LIST_SAL_ORD')])
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_INV'),
                                                     [\Config::get('scsiie.DOC_CAT.SALES'),
                                                     \Config::get('scsiie.DOC_CLS.DOCUMENT'),
-                                                    trans('userinterface.titles.LIST_SAL_INVO')])
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    trans('userinterface.titles.LIST_SAL_INV')])
+                        ->route('siie.docs.index', trans('userinterface.titles.LIST_SAL_CN'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    trans('userinterface.titles.LIST_SAL_CN')])
                 )
         )
         ->route('siie.units.index', trans('siie.UNITS'))

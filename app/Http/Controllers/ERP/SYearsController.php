@@ -78,6 +78,7 @@ class SYearsController extends Controller
             for ($i = 1; $i <= 12; $i++)
             {
               $oMonth = new SMonth($i, $oYear->id_year);
+              $oMonth->is_closed = true;
               $oYear->months()->save($oMonth);
             }
 
@@ -145,6 +146,8 @@ class SYearsController extends Controller
          $oYear = SYear::find($id);
          $oYear->fill($request->all());
          $oYear->updated_by_id = \Auth::user()->id;
+
+
 
          $oYear->save();
 

@@ -10,6 +10,7 @@ return [
                   'LOC_ENABLED' => '4',
                   'LOCK_TIME' => '5',
                   'DB_IMPORT' => '6',
+                  'DB_HOST' => '7',
                 ],
 
   'ATT' => [
@@ -54,6 +55,18 @@ return [
                     'DOCUMENT' => '3',
                     'TRANSFER' => '4',
                     'ADJUST' => '5',
+                  ],
+
+  'DOC_TYPE' => [
+                    'QUOTE' => '1',
+                    'CONTRACT' => '2',
+                    'ORDER' => '1',
+                    'INVOICE' => '1',
+                    'REMISSION' => '2',
+                    'SALE_NOTE' => '3',
+                    'TICKET' => '4',
+                    'LETTER' => '1',
+                    'CREDIT_NOTE' => '1',
                   ],
 
 

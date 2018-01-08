@@ -14,7 +14,7 @@
 
 @section('content')
   @section('thefilters')
-		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass], 'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
+		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $iDocType, $title], 'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 		    <div class="input-group">
 					@include('templates.list.search')
@@ -31,21 +31,21 @@
 		<table id="docTable" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-		            <th data-priority="2">Fecha</th>
-		            <th data-priority="1">Fecha documento</th>
-		            <th data-priority="1">Asociado de negocios</th>
-		            <th data-priority="2">RFC</th>
-		            <th data-priority="1">Núm.</th>
-		            <th data-priority="2">ID ERP</th>
-		            <th>Subtotal</th>
-		            <th>Total</th>
-		            <th>TC</th>
-		            <th>Subotal $</th>
-		            <th>Total $</th>
-		            <th>Mon.</th>
-		            <th>Status</th>
-		            <th>Ver</th>
-		            <th>Surtir</th>
+		            <th data-priority="2">{{ trans('siie.labels.DATE') }}</th>
+		            <th data-priority="1">{{ trans('siie.labels.DATE_DOC') }}</th>
+		            <th data-priority="1">{{ trans('siie.labels.PARTNER') }}</th>
+		            <th data-priority="2">{{ trans('siie.labels.FISCAL_ID') }}</th>
+		            <th data-priority="1">{{ trans('siie.labels.NUM') }}</th>
+		            <th data-priority="2">{{ trans('siie.labels.ID_ERP') }}</th>
+		            <th>{{ trans('siie.labels.SUB_TOTAL') }}</th>
+		            <th>{{ trans('siie.labels.TOTAL') }}</th>
+		            <th>{{ trans('siie.labels.EX_RATE') }}</th>
+		            <th>{{ trans('siie.labels.SUB_TOTAL').' $' }}</th>
+		            <th>{{ trans('siie.labels.TOTAL').' $' }}</th>
+		            <th>{{ trans('siie.labels.CUR_ABB') }}</th>
+		            <th>{{ trans('siie.labels.STATUS') }}</th>
+		            <th>{{ trans('siie.labels.SEE') }}</th>
+		            <th>{{ trans('siie.labels.SUPPLY') }}</th>
 		        </tr>
 		    </thead>
 		    <tbody>

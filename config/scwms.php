@@ -25,10 +25,11 @@ return [
     'PALLET_RECONFIG_OUT'  =>  '16',
 
     // applies only for sales and purchases
-    'MVT_SPT_TP_STK_RET' => '1', // supply (surtido) and return
-    'MVT_SPT_TP_CHA' => '2', // change
-    'MVT_SPT_TP_WAR' => '3', // warranty
-    'MVT_SPT_TP_CON' => '4', // consignment
+    'N_A' => '1', // supply (surtido) and return
+    'MVT_SPT_TP_STK_RET' => '2', // supply (surtido) and return
+    'MVT_SPT_TP_CHA' => '3', // change
+    'MVT_SPT_TP_WAR' => '4', // warranty
+    'MVT_SPT_TP_CON' => '5', // consignment
 
     // applies only for production
     'MVT_MFG_TP_MAT' => '1', // materials

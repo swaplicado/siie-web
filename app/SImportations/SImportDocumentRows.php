@@ -16,8 +16,9 @@ class SImportDocumentRows
   protected $webdbname      = '';
   protected $webcon         = '';
 
-  function __construct($sDbName)
+  function __construct($sHost, $sDbName)
   {
+      $this->webhost = $sHost;
       $this->webdbname = $sDbName;
       $this->webcon = mysqli_connect($this->webhost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
@@ -41,7 +42,7 @@ class SImportDocumentRows
       $lWebUnits = array();
       $lRows = array();
       $lRowsToWeb = array();
-      $taxRows = new SImportDocumentTaxRows('erp_universal');
+      $taxRows = new SImportDocumentTaxRows($this->webhost, $this->webdbname);
 
       $lYears = [
         '1' => '2016',
@@ -83,8 +84,6 @@ class SImportDocumentRows
                 if ($row["ts_edit"] > $lRows[$sKey]->updated_at ||
                       $row["ts_del"] > $lRows[$sKey]->updated_at)
                 {
-                    $lRows[$sKey]->code = $row["code"];
-
                     $lRows[$sKey]->concept_key = $row["concept_key"];
                     $lRows[$sKey]->concept = $row["concept"];
                     $lRows[$sKey]->reference = $row["ref"];

@@ -29,18 +29,22 @@
 				        <tr class="titlerow">
 				            <th>Cve</th>
 				            <th>Concepto</th>
+				            <th>Clase</th>
 				            <th>Cant.</th>
+				            <th>Pendiente</th>
 										<th>Un.</th>
 				            <th>P.U.$</th>
 				        </tr>
 				    </thead>
 				    <tbody>
-							@foreach ($oDocument->rows as $row)
+							@foreach ($lDocData as $row)
 								<tr>
 				            <td class="small">{{ $row->concept_key }}</td>
 				            <td class="small">{{ $row->concept }}</td>
-										<td class="small" align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
-				            <td class="small">{{ $row->unit->code }}</td>
+				            <td class="small">{{ $row->class_name }}</td>
+										<td class="small" align="right">{{ session('utils')->formatNumber($row->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
+										<td class="small" align="right">{{ session('utils')->formatNumber($row->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
+				            <td class="small">{{ $row->unit }}</td>
 				            <td class="small" align="right">{{ session('utils')->formatNumber($row->price_unit_cur, \Config::get('scsiie.FRMT.AMT')) }}</td>
 				        </tr>
 							@endforeach
@@ -66,7 +70,7 @@
 
       <div class="form-group">
   			{!! Form::label('mvt_com', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_com', $mvtComp, 1, ['class'=>'form-control select-one',
+				{!! Form::select('mvt_com', $mvtComp, $iMvtSubType, ['class'=>'form-control select-one',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required', ]) !!}
   		</div>
 
