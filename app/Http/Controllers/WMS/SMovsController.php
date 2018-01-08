@@ -93,6 +93,7 @@ class SMovsController extends Controller
             switch ($oDocument->doc_class_id) {
               case \Config::get('scsiie.DOC_CLS.ORDER'):
                 $lSuppliedMovs = SMovement::where('doc_order_id', $oDocument->id_document)
+                                            ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
                                             ->where('is_deleted', false)
                                             ->get();
                 break;
