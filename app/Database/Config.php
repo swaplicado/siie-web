@@ -13,13 +13,13 @@
      */
     public static function getDataBases()
     {
-      $lDataBases = array();
+        $lDataBases = array();
 
-      $i = 0;
-      $lDataBases[$i++] = 'siie_cartro';
-      $lDataBases[$i++] = 'siie_aeth';
+        $i = 0;
+        $lDataBases[$i++] = 'siie_saporis';
+        $lDataBases[$i++] = 'siie_gs';
 
-      return $lDataBases;
+        return $lDataBases;
     }
 
     /**
@@ -29,7 +29,7 @@
      */
     public static function getConnSys()
     {
-      return 'ssystem';
+        return 'ssystem';
     }
 
     /**
@@ -39,6 +39,6 @@
      */
     public static function getConnCompany()
     {
-      return 'siie';
+        return 'siie';
     }
   }

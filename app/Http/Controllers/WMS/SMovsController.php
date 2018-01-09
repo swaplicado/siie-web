@@ -106,6 +106,7 @@ class SMovsController extends Controller
         $iMvtSubType = 1;
         $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $mvtType)->lists('name', 'id_mvt_type');
         $warehouses = SWarehouse::where('is_deleted', false)
+                                ->where('branch_id', session('branch')->id_branch)
                                 ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
                                 ->lists('warehouse', 'id_whs');
         $warehousesObj = SWarehouse::where('is_deleted', false)->get();
@@ -300,6 +301,7 @@ class SMovsController extends Controller
         $movementRows = array();
         foreach ($oData['rows'] as $row) {
            $oMvtRow = new SMovementRow();
+
            $oMvtRow->quantity = $row['dQuantity'];
            $oMvtRow->amount_unit = $row['dPrice'];
            $oMvtRow->item_id = $row['iItemId'];

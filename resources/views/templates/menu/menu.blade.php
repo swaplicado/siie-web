@@ -7,7 +7,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <img style="padding-bottom: -5; padding-top: 5px;  padding-bottom: -5; height: 45px;" width="50" height="50" src="{{ asset('images/logo.jpg') }}">
+      <img style="padding-bottom: -5; padding-top: 5px;  padding-bottom: -5; height: 45px;" width="50" height="50"
+              src="{{ asset('images/companies/'.(session()->has('company') ? session('company')->database_name : 'siie').'.jpg') }}">
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <!-- Collect the nav links, forms, and other content for toggling -->

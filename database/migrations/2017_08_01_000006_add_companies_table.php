@@ -30,8 +30,8 @@ class AddCompaniesTable extends Migration
         });
 
         DB::table('sysu_companies')->insert([
-        	['id_company' => '1','name' => 'Cartro','database_name' => 'siie_cartro','dbms_host' => 'localhost','dbms_port' => '3306','user_name' => 'root','user_password' => 'msroot', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-        	['id_company' => '2','name' => 'AETH','database_name' => 'siie_aeth','dbms_host' => 'localhost','dbms_port' => '3306','user_name' => 'root','user_password' => 'msroot', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+        	['id_company' => '1','name' => 'Saporis Comercial, S.A. de C.V.','database_name' => 'siie_saporis','dbms_host' => 'localhost','dbms_port' => '3306','user_name' => 'root','user_password' => 'msroot', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+        	['id_company' => '2','name' => 'GS Alimentos de México, S.A. de C.V.','database_name' => 'siie_gs','dbms_host' => 'localhost','dbms_port' => '3306','user_name' => 'root','user_password' => 'msroot', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
         ]);
     }
 

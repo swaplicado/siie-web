@@ -6,8 +6,8 @@ DROP DATABASE siie_aeth;
 DROP DATABASE ssystem;
 
 CREATE SCHEMA `ssystem` ;
-CREATE SCHEMA `siie_aeth` ;
-CREATE SCHEMA `siie_cartro` ;
+CREATE SCHEMA `siie_saporis` ;
+CREATE SCHEMA `siie_gs` ;
 
 
 # Correr migraciones

@@ -221,21 +221,21 @@ class SMovsManagment {
 
         if (\Config::get('scsiie.DOC_CLS.ORDER') == $oDocument->doc_class_id &&
                 \Config::get('scsiie.DOC_TYPE.ORDER') == $oDocument->doc_type_id) {
-            $oMovement->doc_order_row_id = $iDocRowId;
+            $oMovementRow->doc_order_row_id = $iDocRowId;
         }
         if (\Config::get('scsiie.DOC_CLS.DOCUMENT') == $oDocument->doc_class_id &&
               \Config::get('scsiie.DOC_TYPE.INVOICE') == $oDocument->doc_type_id) {
-            $oMovement->doc_invoice_row_id = $iDocRowId;
+            $oMovementRow->doc_invoice_row_id = $iDocRowId;
         }
         if (\Config::get('scsiie.DOC_CAT.PURCHASES') == $oDocument->doc_category_id &&
             \Config::get('scsiie.DOC_CLS.ADJUST') == $oDocument->doc_class_id &&
             \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $oDocument->doc_type_id) {
-              $oMovement->doc_debit_note_row_id = $iDocRowId;
+            $oMovementRow->doc_debit_note_row_id = $iDocRowId;
         }
         if (\Config::get('scsiie.DOC_CAT.SALES') == $oDocument->doc_category_id &&
             \Config::get('scsiie.DOC_CLS.ADJUST') == $oDocument->doc_class_id &&
             \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $oDocument->doc_type_id) {
-              $oMovement->doc_credit_note_row_id = $iDocRowId;
+            $oMovementRow->doc_credit_note_row_id = $iDocRowId;
         }
 
         return $oMovementRow;

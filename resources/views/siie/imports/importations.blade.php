@@ -73,7 +73,7 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              {!! Form::label('year', 'Documentos parte 1') !!}
+              {!! Form::label('year', trans('siie.SYNCR.ROWS1')) !!}
             </div>
             <div class="col-md-6">
               {!! Form::checkbox('rows1', 'rows1', true, ['class' => 'form-control']) !!}
@@ -81,7 +81,7 @@
           </div>
           <div class="row">
             <div class="col-md-6">
-              {!! Form::label('year', 'Documentos parte 2') !!}
+              {!! Form::label('year', trans('siie.SYNCR.ROWS2')) !!}
             </div>
             <div class="col-md-6">
               {!! Form::checkbox('rows2', 'rows2', true, ['class' => 'form-control']) !!}

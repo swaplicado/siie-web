@@ -6,10 +6,10 @@
 			<div class="row">
 				<div class="panel panel-default">
 				<div class="panel-heading col-md-12">
-					<div class="col-md-10">
+					<div class="col-md-8">
 						<h2 class="panel-title">@yield('title')</h2>
 					</div>
-					<div style="text-align: right;" class="dropdown col-md-2">
+					<div style="text-align: right;" class="dropdown col-md-4">
 						<button class="btn btn-default dropdown-toggle"
 												type="button" id="dropdownMenu1"
 												data-toggle="dropdown"
