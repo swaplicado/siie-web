@@ -92,9 +92,13 @@ class SMovsController extends Controller
             $FilterDel = \Config::get('scsys.FILTER.ACTIVES');
             $sFilterDate = null;
             $iViewType = \Config::get('scwms.DOC_VIEW.DETAIL');
+            $bWithPending = true;
 
-            $lDocData = session('stock')::getSupplied($oDocument->doc_category_id, $oDocument->doc_class_id,
-                                            $oDocument->doc_type_id, $FilterDel, $sFilterDate, $iViewType, $iDocId);
+            $lDocData = session('stock')::getSupplied($oDocument->doc_category_id,
+                                            $oDocument->doc_class_id,
+                                            $oDocument->doc_type_id, $FilterDel,
+                                            $sFilterDate, $iViewType, $iDocId,
+                                            $bWithPending);
 
         }
         else

@@ -42,8 +42,12 @@ class SDocsBySuppController extends Controller {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $sFilterDate = $request->filterDate == null ? \Config::get('scsys.FILTER.MONTH') : $request->filterDate;
         $iDocId = 0;
+        $bWithPending = false;
 
-        $lDocuments = session('stock')->getSupplied($iDocCategory, $iDocClass, $iDocType, $this->iFilter, $sFilterDate, $iViewType, $iDocId);
+        $lDocuments = session('stock')->getSupplied($iDocCategory, $iDocClass,
+                                                    $iDocType, $this->iFilter,
+                                                    $sFilterDate, $iViewType,
+                                                    $iDocId, $bWithPending);
 
         return view('wms.docs.index')
                               ->with('iFilter', $this->iFilter)

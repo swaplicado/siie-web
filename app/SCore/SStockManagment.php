@@ -136,7 +136,9 @@ class SStockManagment
         return $aStock;
     }
 
-    public static function getSupplied($iDocCategory, $iDocClass, $iDocType, $FilterDel, $sFilterDate, $iViewType, $iDocId)
+    public static function getSupplied($iDocCategory, $iDocClass, $iDocType,
+                                        $FilterDel, $sFilterDate, $iViewType,
+                                        $iDocId, $bWithPending)
     {
         $lDocuments = SStockManagment::getBaseQuery($iDocCategory, $iDocClass, $iDocType);
 
@@ -194,6 +196,11 @@ class SStockManagment
         if ($iDocId != 0)
         {
             $lDocuments = $lDocuments->where('id_document', $iDocId);
+        }
+
+        if (!$bWithPending)
+        {
+            $lDocuments = $lDocuments->havingRaw('pending > 0');
         }
 
         $lDocuments = SStockManagment::filterActives($lDocuments, $FilterDel);
