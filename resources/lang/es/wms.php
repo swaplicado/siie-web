@@ -87,20 +87,20 @@ return [
                     ],
 
       'QRY_INVENTORY' =>  'Consulta de inventarios',
-      'QRY_INVENTORY_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'QRY_INVENTORY_T' =>  'Apartado en el que se pueden consultar las existencias de la empresa por diferentes niveles y agrupaciones.',
 
       'MOV_WAREHOUSES' =>  'Movimientos de inventarios',
-      'MOV_WAREHOUSES_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'MOV_WAREHOUSES_T' =>  'Consulta de los movimientos de inventarios realizados en la empresa por períodos.',
 
       'LBL_GENERATION' =>  'Generación de etiquetas',
-      'LBL_GENERATION_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'LBL_GENERATION_T' =>  'En este apartado se generan las etiquetas para lotes y tarimas.',
 
       'DOC_ASSORTMENT' =>  'Surtido de documentos',
-      'DOC_ASSORTMENT_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'DOC_ASSORTMENT_T' =>  'Aquí se podrán surtir documentos importados de compras y de ventas.',
 
       'DOC_RETURNS' =>  'Devoluciones',
-      'DOC_RETURNS_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'DOC_RETURNS_T' =>  'En este apartado se podrá realizar la devolución de materiales/productos de clientes o a proveedores.',
 
-      'REPORTS_T' =>  'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'REPORTS_T' =>  'Aquí se encuentran los reportes que puede generar el sistema y que pueden ser impresos.',
 
 ];
