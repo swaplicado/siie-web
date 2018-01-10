@@ -6,12 +6,24 @@
 
   <div class="row">
     @include('templates.home.rapidaccess')
-    <?php echo createBlock(asset('images/wms/box.gif'), "#", trans('wms.QRY_INVENTORY'), "success3",trans('wms.QRY_INVENTORY_T'));?>
-    <?php echo createBlock(asset('images/wms/movsan.gif'), "#", trans('wms.MOV_WAREHOUSES'), "success3", trans('wms.MOV_WAREHOUSES_T'));?>
+    <?php echo createBlock(asset('images/wms/box.gif'), route('wms.stock.index', \Config::get('scwms.STOCK_TYPE.STK_BY_ITEM')), trans('wms.QRY_INVENTORY'), "success3",trans('wms.QRY_INVENTORY_T'));?>
+    <?php echo createBlock(asset('images/wms/movsan.gif'), route('wms.movs.index'), trans('wms.MOV_WAREHOUSES'), "success3", trans('wms.MOV_WAREHOUSES_T'));?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/wms/monta.gif'), "#", trans('wms.DOC_ASSORTMENT'), "success3", trans('wms.DOC_ASSORTMENT_T'));?>
-    <?php echo createBlock(asset('images/wms/movss.gif'), "#", trans('wms.DOC_RETURNS'), "success3", trans('wms.DOC_RETURNS_T'));?>
+    <?php echo createBlock(asset('images/wms/monta.gif'), route('wms.docs.index',
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP')]),
+                                                    trans('wms.DOC_ASSORTMENT'), "success3", trans('wms.DOC_ASSORTMENT_T'));?>
+    <?php echo createBlock(asset('images/wms/movss.gif'), route('wms.docs.index',
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.ADJUST'),
+                                                    \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    trans('userinterface.titles.LIST_CN_PUR_BY_SUPP')]),
+                                                    trans('wms.DOC_RETURNS'), "success3", trans('wms.DOC_RETURNS_T'));?>
   </div>
   <div class="row">
     <?php echo createBlock(asset('images/wms/barcode.gif'), "codes/start", trans('wms.LBL_GENERATION'), "success3", trans('wms.LBL_GENERATION_T'));?>
