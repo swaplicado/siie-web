@@ -52,12 +52,14 @@ class SCodesController extends Controller
     public function findProductName(Request $request){
       if($request->id==0){
         $data = SPallet::select('id_pallet','pallet')
+                        ->where('is_deleted',0)
                         ->get();
         return response()->json($data);
       }
       if($request->id==1){
         $data = SItem::select('wms_lots.id_lot','erpu_items.name')
                       ->join('wms_lots','wms_lots.item_id','=','erpu_items.id_item')
+                      ->where('wms_lots.is_deleted',0)
                       ->get();
         //$data=SItem::select('name', 'id_item')->take(100)->get();
         //$data=SItem::orderBy('name','ASC')->lists('name','id_item');
@@ -135,15 +137,15 @@ class SCodesController extends Controller
       if($type == 2){
 
         $stock=SStockManagment::getStock($data->item,$data->unit,0,$data->id_pallet,0,0,0);
-        $lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,0);
+        //$lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,0);
 
       }
 
       return view('wms.codes.info')
               ->with('info',$data)
               ->with('type',$type)
-              ->with('stock',$stock)
-              ->with('lotStock',$lotStock);
+              ->with('stock',$stock);
+              //->with('lotStock',$lotStock);
 
     }
 

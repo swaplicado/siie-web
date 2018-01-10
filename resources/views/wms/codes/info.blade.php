@@ -92,7 +92,7 @@
 
           <div class="col-md-3">
 
-            {!! Form::text('unit_id', $info->unit->code.' - '$info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
+            {!! Form::text('unit_id', $info->unit->code.' - '.$info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
 
           </div>
 
@@ -192,7 +192,7 @@
 
 				<div class="col-md-3">
 
-					{!! Form::text('item_id', $info->item->code.' - '$info->item->name, ['class'=>'form-control' , 'disabled']) !!}
+					{!! Form::text('item_id', $info->item->code.' - '.$info->item->name, ['class'=>'form-control' , 'disabled']) !!}
 
 				</div>
 
@@ -216,7 +216,7 @@
 
 				<div class="col-md-3">
 
-					{!! Form::text('unit_id', $info->unit->code.' - '$info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
+					{!! Form::text('unit_id', $info->unit->code.' - '.$info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
 
 				</div>
 
