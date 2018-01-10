@@ -18,5 +18,5 @@
 <!--
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table.css') }}">
 -->
-
+	@include('templates.menu.info')
 </head>

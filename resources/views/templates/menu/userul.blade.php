@@ -13,6 +13,7 @@
 
       <li><a href="{{ route('start.branchwhs') }}">{{"Sucursal :"}}<?php echo session()->has('branch') ? session('branch')->name : '' ?></a></li>
       <li><a href="{{ route('start.selectwhs') }}">{{"Almacen :"}}<?php echo session()->has('whs') ? session('whs')->name : '' ?></a></li>
+      <li><a type='button' data-toggle='modal' data-target='#myModal' href="#">Info</a></li>
       <li><a href="{{ route('auth.logout') }}">{{ trans('userinterface.EXIT') }}</a></li>
 
     </ul>
