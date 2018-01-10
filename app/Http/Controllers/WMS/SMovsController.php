@@ -83,6 +83,7 @@ class SMovsController extends Controller
     public function create(Request $request, $mvtType, $iDocId = 0)
     {
         $movement = new SMovement();
+        $lDocData = array();
 
         if ($iDocId != 0)
         {

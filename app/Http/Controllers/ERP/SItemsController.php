@@ -102,7 +102,10 @@ class SItemsController extends Controller
         $itemClass = session('classIdAux');
 
         $lGenders = SItemGender::where('item_class_id', $itemClass)->where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
-        $lUnits = SUnit::orderBy('name', 'ASC')->where('is_deleted', false)->lists('name', 'id_unit');
+        $lUnits = SUnit::orderBy('name', 'ASC')
+                        ->where('is_deleted', false)
+                        ->select('id_unit', \DB::raw("CONCAT(code, '-', name) as name"))
+                        ->lists('name', 'id_unit');
 
         $sTitle = '';
 
@@ -182,8 +185,14 @@ class SItemsController extends Controller
 
         $itemClass = session('classIdAux');
 
-        $lGenders = SItemGender::where('item_class_id', $itemClass)->where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
-        $lUnits = SUnit::orderBy('name', 'ASC')->where('is_deleted', false)->lists('name', 'id_unit');
+        $lGenders = SItemGender::where('item_class_id', $itemClass)
+                                ->where('is_deleted', false)
+                                ->orderBy('name', 'ASC')
+                                ->lists('name', 'id_item_gender');
+        $lUnits = SUnit::orderBy('name', 'ASC')
+                        ->select('id_unit', \DB::raw("CONCAT(code, '-', name) as name"))
+                        ->where('is_deleted', false)
+                        ->lists('name', 'id_unit');
 
         $sTitle = '';
 
