@@ -50,7 +50,7 @@ class SImportFamilies
                     $lFamilies[$row["id_ifam"]]->name = $row["ifam"];
                     $lFamilies[$row["id_ifam"]]->external_id = $row["id_ifam"];
                     $lFamilies[$row["id_ifam"]]->is_deleted = $row["b_del"];
-                    $lFamilies[$row["id_ifam"]]->updated_at = $row["ts_edit"];
+                    $lFamilies[$row["id_ifam"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lFamiliesToWeb, $lFamilies[$row["id_ifam"]]);
                 }
@@ -71,7 +71,7 @@ class SImportFamilies
          $family->save();
        }
 
-       return true;
+       return sizeof($lFamiliesToWeb);
   }
 
   private static function siieToSiieWeb($oSiieFamily = '')

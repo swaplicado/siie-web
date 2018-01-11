@@ -143,7 +143,7 @@ class SStartController extends Controller
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['db_import' => $oDbImport->val_text]);
-        //session(['db_host' => $oDbHost->val_text]);
+        session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
 
         return SStartController::branchwhs();

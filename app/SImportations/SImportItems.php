@@ -67,7 +67,7 @@ class SImportItems
                     $lItems[$row["id_item"]]->is_deleted = $row["b_del"];
                     $lItems[$row["id_item"]]->unit_id = SImportItems::getUnitId($lWebUnits, $row["fid_unit"]);
                     $lItems[$row["id_item"]]->item_gender_id = SImportItems::getGenderId($lWebGenders, $row["fid_igen"]);
-                    $lItems[$row["id_item"]]->updated_at = $row["ts_edit"];
+                    $lItems[$row["id_item"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lItemsToWeb, $lItems[$row["id_item"]]);
                 }
@@ -89,7 +89,7 @@ class SImportItems
 
       $this->webcon->close();
 
-      return true;
+      return sizeof($lItemsToWeb);
   }
 
   private static function siieToSiieWeb($oSiieItem = '', $lGenders, $lWebUnits)

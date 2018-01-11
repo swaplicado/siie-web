@@ -114,7 +114,7 @@ class SImportAddresses
                     $lAddresses[$rowId]->branch_id = $lWebBranches[$rowId];
                     $lAddresses[$rowId]->country_id = $lWebCountries[$row["cty_key"]];
                     $lAddresses[$rowId]->state_id = $lWebStates[$row["sta_code"]];
-                    $lAddresses[$rowId]->updated_at = $row["ts_edit"];
+                    $lAddresses[$rowId]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lAddressesToWeb, $lAddresses[$rowId]);
                 }
@@ -137,7 +137,7 @@ class SImportAddresses
          $oAddress->save();
       }
 
-      return true;
+      return sizeof($lAddressesToWeb);
   }
 
   private static function siieToSiieWeb($oSiieAddress = '', $lWebBranches, $lWebCountries, $lWebStates)

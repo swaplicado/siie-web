@@ -69,6 +69,8 @@ class SImportDocuments
             fid_ct_dps,
             fid_cl_dps,
             fid_tp_dps,
+            fid_src_year_n,
+            fid_src_doc_n,
             fid_cur,
             fid_bp_r,
             ts_new,
@@ -92,6 +94,11 @@ class SImportDocuments
           $lDocuments[$value->external_id] = $value;
       }
 
+      foreach ($lWebDocuments as $key => $value)
+      {
+          $lDocsYear[$value->external_id.$value->year_id] = $value;
+      }
+
       foreach ($lPartners as $key => $partner) {
           $lWebPartners[$partner->external_id] = $partner->id_partner;
       }
@@ -106,6 +113,7 @@ class SImportDocuments
                 if ($row["ts_edit"] > $lDocuments[$row["id_doc"]]->updated_at ||
                       $row["ts_del"] > $lDocuments[$row["id_doc"]]->updated_at)
                 {
+
                     $lDocuments[$row["id_doc"]]->dt_date = $row["dt"];
                     $lDocuments[$row["id_doc"]]->dt_doc = $row["dt_doc"];
                     $lDocuments[$row["id_doc"]]->num = $row["num"];
@@ -126,20 +134,27 @@ class SImportDocuments
                     $lDocuments[$row["id_doc"]]->doc_category_id = $row["fid_ct_dps"];
                     $lDocuments[$row["id_doc"]]->doc_class_id = $row["fid_cl_dps"];
                     $lDocuments[$row["id_doc"]]->doc_type_id = $row["fid_tp_dps"];
+                    try
+                    {
+                      $src_id = $lDocsYear[$row["fid_src_doc_n"].$lYears[$row["fid_src_year_n"]]]->id_document;
+                    }
+                    catch (\ErrorException $e) {
+                      $src_id = 1;
+                    }
+                    $lDocuments[$row["id_doc"]]->doc_src_id = is_numeric($src_id) ? $src_id : 1;
                     $lDocuments[$row["id_doc"]]->doc_status_id = 1;
                     $lDocuments[$row["id_doc"]]->currency_id = $lCurrencies[$row["fid_cur"]];
                     $lDocuments[$row["id_doc"]]->partner_id = $lWebPartners[$row["fid_bp_r"]];
                     $lDocuments[$row["id_doc"]]->created_by_id = 1;
                     $lDocuments[$row["id_doc"]]->updated_by_id = 1;
-                    $lDocuments[$row["id_doc"]]->created_at = $row["ts_new"];
-                    $lDocuments[$row["id_doc"]]->updated_at = $row["ts_edit"];
+                    $lDocuments[$row["id_doc"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lDocumentsToWeb, $lDocuments[$row["id_doc"]]);
                 }
              }
              else
              {
-                array_push($lDocumentsToWeb, SImportDocuments::siieToSiieWeb($row, $lYears, $lWebPartners, $lCurrencies));
+                array_push($lDocumentsToWeb, SImportDocuments::siieToSiieWeb($row, $lYears, $lWebPartners, $lCurrencies, $lDocsYear));
              }
          }
       }
@@ -153,10 +168,10 @@ class SImportDocuments
          $document->save();
        }
 
-       return true;
+       return sizeof($lDocumentsToWeb);
   }
 
-  private static function siieToSiieWeb($oSiieDocument = '', $lYears, $lWebPartners, $lCurrencies)
+  private static function siieToSiieWeb($oSiieDocument = '', $lYears, $lWebPartners, $lCurrencies, $lDocsYear)
   {
      $oDocument = new SDocument();
      $oDocument->dt_date = $oSiieDocument["dt"];
@@ -179,6 +194,16 @@ class SImportDocuments
      $oDocument->doc_category_id = $oSiieDocument["fid_ct_dps"];
      $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
      $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
+     try
+     {
+       $src_id = $lDocsYear[$oSiieDocument["fid_src_doc_n"].$lYears[$oSiieDocument["fid_src_year_n"]]]->id_document;
+     }
+     catch (\ErrorException $e) {
+       $src_id = 1;
+     }
+
+
+     $oDocument->doc_src_id = $src_id;
      $oDocument->doc_status_id = 1;
      $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
      $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];

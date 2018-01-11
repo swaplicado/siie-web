@@ -406,7 +406,7 @@ Route::post('/start/whs',[
       * Importation
       **/
 
-      Route::get('importation/{imported?}',[
+      Route::get('importation/{imported}/{items}/{partners}/{branches}/{adds}/{docs}/{rows1}/{rows2}',[
         'uses' => 'ERP\SImportationsController@index',
         'as' => 'siie.importation'
       ]);

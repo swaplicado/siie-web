@@ -107,7 +107,7 @@ class SImportGenders
                     $lGenders[$row["id_igen"]]->item_group_id = $lWebGroups[$row["fid_igrp"]];
                     $lGenders[$row["id_igen"]]->item_class_id = SImportGenders::getClassId($this->aCatClass, $row["fid_ct_item"]);
                     $lGenders[$row["id_igen"]]->item_type_id = SImportGenders::getTypeId($this->aTypes, $row["fid_ct_item"], $row["fid_cl_item"], $row["fid_tp_item"]);
-                    $lGenders[$row["id_igen"]]->updated_at = $row["ts_edit"];
+                    $lGenders[$row["id_igen"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lGendersToWeb, $lGenders[$row["id_igen"]]);
                 }
@@ -129,7 +129,7 @@ class SImportGenders
 
       $this->webcon->close();
 
-      return true;
+      return sizeof($lGendersToWeb);
   }
 
   private static function siieToSiieWeb($oSiieGender = '', $lGroups, $lClasses, $lTypes)

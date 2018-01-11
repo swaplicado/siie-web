@@ -53,7 +53,7 @@ class SImportGroups
                     $lGroups[$row["id_igrp"]]->external_id = $row["id_igrp"];
                     $lGroups[$row["id_igrp"]]->is_deleted = $row["b_del"];
                     $lGroups[$row["id_igrp"]]->item_family_id = SImportGroups::getFamilyId($lWebFamilies, $row["fid_ifam"]);
-                    $lGroups[$row["id_igrp"]]->updated_at = $row["ts_edit"];
+                    $lGroups[$row["id_igrp"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lGroupsToWeb, $lGroups[$row["id_igrp"]]);
                 }
@@ -75,7 +75,7 @@ class SImportGroups
 
       $this->webcon->close();
 
-      return true;
+      return sizeof($lGroupsToWeb);
   }
 
   private static function siieToSiieWeb($oSiieGroup = '', $lFamilies)

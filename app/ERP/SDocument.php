@@ -30,6 +30,7 @@ class SDocument extends SModel {
                           'doc_class_id',
                           'doc_type_id',
                           'doc_status_id',
+                          'doc_src_id',
                           'currency_id',
                           'partner_id',
                           'created_by_id',
@@ -54,6 +55,11 @@ class SDocument extends SModel {
   public function partner()
   {
     return $this->belongsTo('App\ERP\SPartner', 'partner_id');
+  }
+
+  public function sourceDocument()
+  {
+    return $this->belongsTo('App\ERP\SDocument', 'doc_src_id');
   }
 
   public function currency()

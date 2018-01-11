@@ -35,56 +35,73 @@ class SImportationsController extends Controller {
         $this->iFilterBp = \Config::get('scsiie.ATT.ALL');
     }
 
-    public function index($isImported = 0)
+    public function index($isImported = 0, $items, $partners, $branches, $adds, $docs, $rows1, $rows2)
     {
        return view('siie.imports.importations')
                               ->with('title', 'Importaciones')
+                              ->with('items', $items)
+                              ->with('partners', $partners)
+                              ->with('branches', $branches)
+                              ->with('adds', $adds)
+                              ->with('docs', $docs)
+                              ->with('rows1', $rows1)
+                              ->with('rows2', $rows2)
                               ->with('isImported', $isImported);
     }
 
     public function importItems()
     {
-       $go = new SImportFamilies($this->sHost);
-       $go->importFamilies();
-       $group = new SImportGroups($this->sHost);
-       $group->importGroups();
-       $gender = new SImportGenders($this->sHost);
-       $gender->importGenders();
-       $unit = new SImportUnits($this->sHost);
-       $unit->importUnits();
-       $item = new SImportItems($this->sHost);
-       $item->importItems();
+       $importations = 0;
+
+       try {
+
+         $unit = new SImportUnits($this->sHost);
+         $importations += $unit->importUnits();
+         $familiy = new SImportFamilies($this->sHost);
+         $importations += $familiy->importFamilies();
+         $group = new SImportGroups($this->sHost);
+         $importations += $group->importGroups();
+         $gender = new SImportGenders($this->sHost);
+         $importations += $gender->importGenders();
+         $item = new SImportItems($this->sHost);
+         $importations += $item->importItems();
+
+       } catch (\Exception $e) {
+          return $importations;
+       }
+
+       return $importations;
     }
 
     public function importPartners()
     {
       $partner = new SImportPartners($this->sHost);
-      $partner->importPartners();
+      return $partner->importPartners();
     }
     public function importBranches()
     {
       $branch = new SImportBranches($this->sHost);
-      $branch->importBranches();
+      return $branch->importBranches();
     }
     public function importAddresses()
     {
       $address = new SImportAddresses($this->sHost);
-      $address->importAddresses();
+      return $address->importAddresses();
     }
     public function importDocuments($sDbName, $iYear = '2017')
     {
       $documents = new SImportDocuments($this->sHost, $sDbName);
-      $documents->importDocuments($iYear);
+      return $documents->importDocuments($iYear);
     }
     public function importDocumentRows($sDbName, $iYear = '2017')
     {
       $rows = new SImportDocumentRows($this->sHost, $sDbName);
-      $rows->importRows($iYear, '<');
+      return $rows->importRows($iYear, '<');
     }
     public function importDocumentRowsLast($sDbName, $iYear = '2017')
     {
       $rows = new SImportDocumentRows($this->sHost, $sDbName);
-      $rows->importRows($iYear, '>');
+      return $rows->importRows($iYear, '>');
     }
 
     public function importationDocuments(Request $request)
@@ -101,30 +118,37 @@ class SImportationsController extends Controller {
        $bRows2 = $request->input('rows2');
 
        $this->sHost = $sDbHost;
+       $items = 0;
+       $partners = 0;
+       $branches = 0;
+       $adds = 0;
+       $docs = 0;
+       $rows1 = 0;
+       $rows2 = 0;
 
        if (! is_null($bItems)) {
-          $this->importItems();
+          $items = $this->importItems();
        }
        if (! is_null($bPartners)) {
-          $this->importPartners();
+          $partners = $this->importPartners();
        }
        if (! is_null($bBranches)) {
-          $this->importBranches();
+          $branches = $this->importBranches();
        }
        if (! is_null($bAddresses)) {
-          $this->importAddresses();
+          $adds = $this->importAddresses();
        }
        if (! is_null($bDocs)) {
-          $this->importDocuments($sDbName, $iYear);
+          $docs = $this->importDocuments($sDbName, $iYear);
        }
        if (! is_null($bRows1)) {
-          $this->importDocumentRows($sDbName, $iYear);
+          $rows1 = $this->importDocumentRows($sDbName, $iYear);
        }
        if (! is_null($bRows2)) {
-          $this->importDocumentRowsLast($sDbName, $iYear);
+          $rows2 = $this->importDocumentRowsLast($sDbName, $iYear);
        }
 
-       return redirect()->route('siie.importation', 1);
+       return redirect()->route('siie.importation', [1, $items, $partners, $branches, $adds, $docs, $rows1, $rows2]);
     }
     // public function importDocumentTaxRows($value='')
     // {

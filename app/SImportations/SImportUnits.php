@@ -52,7 +52,7 @@ class SImportUnits
                     $lUnits[$row["id_unit"]]->external_id = $row["id_unit"];
                     $lUnits[$row["id_unit"]]->base_unit_equivalence_opt = $row["unit_base_equiv"];
                     $lUnits[$row["id_unit"]]->is_deleted = $row["b_del"];
-                    $lUnits[$row["id_unit"]]->updated_at = $row["ts_edit"];
+                    $lUnits[$row["id_unit"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lUnitsToWeb, $lUnits[$row["id_unit"]]);
                 }
@@ -73,7 +73,7 @@ class SImportUnits
          $unit->save();
        }
 
-       return true;
+       return sizeof($lUnitsToWeb);
   }
 
   private static function siieToSiieWeb($oSiieUnit = '')

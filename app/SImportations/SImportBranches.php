@@ -60,7 +60,7 @@ class SImportBranches
                     $lBranches[$row["id_bpb"]]->is_headquarters = $row["b_add_prt"];
                     $lBranches[$row["id_bpb"]]->is_deleted = $row["b_del"];
                     $lBranches[$row["id_bpb"]]->partner_id = $lWebPartners[$row["fid_bp"]];
-                    $lBranches[$row["id_bpb"]]->updated_at = $row["ts_edit"];
+                    $lBranches[$row["id_bpb"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lBranchesToWeb, $lBranches[$row["id_bpb"]]);
                 }
@@ -82,7 +82,7 @@ class SImportBranches
          $oBranch->save();
       }
 
-      return true;
+      return sizeof($lBranchesToWeb);
   }
 
   private static function siieToSiieWeb($oSiieBranch = '', $lWebPartners)

@@ -10,11 +10,11 @@
        </div>
        <div class="modal-body">
          <p>{{ trans('userinterface.labels.COMPANY') }}</p>
-         <div class="well well-sm"><b>{{ session('company')->name }}</b></div>
+         <div class="well well-sm"><b>{{ session()->has('company') ? session('company')->name : '' }}</b></div>
          <p>{{ trans('userinterface.labels.BRANCH') }}</p>
-         <div class="well well-sm"><b>{{ session('branch')->name }}</b></div>
+         <div class="well well-sm"><b>{{ session()->has('branch') ? session('branch')->name : '' }}</b></div>
          <p>{{ trans('userinterface.labels.WAREHOUSE') }}</p>
-         <div class="well well-sm"><b>{{ session('whs')->name }}</b></div>
+         <div class="well well-sm"><b>{{ session()->has('whs') ? session('whs')->name : '' }}</b></div>
          <p>{{ trans('userinterface.labels.USER') }}</p>
          <div class="well well-sm"><b>{{ Auth::check() ? Auth::user()->username : '' }}</b></div>
        </div>

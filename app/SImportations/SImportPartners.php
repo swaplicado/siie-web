@@ -61,6 +61,7 @@ class SImportPartners
                     $lPartners[$row["id_bp"]]->is_customer = $row["b_cus"];
                     $lPartners[$row["id_bp"]]->is_supplier = $row["b_sup"];
                     $lPartners[$row["id_bp"]]->is_related_party = $row["b_att_rel_pty"];
+                    $lPartners[$row["id_bp"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     array_push($lPartnersToWeb, $lPartners[$row["id_bp"]]);
                 }
@@ -81,7 +82,7 @@ class SImportPartners
          $partner->save();
        }
 
-       return true;
+       return sizeof($lPartnersToWeb);
   }
 
   private static function siieToSiieWeb($oSiiePartner = '')

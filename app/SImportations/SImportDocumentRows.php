@@ -78,7 +78,9 @@ class SImportDocumentRows
          // output data of each row
          while($row = $result->fetch_assoc())
          {
-             $sKey = ''.$lWebDocuments[$row["id_doc"]].$row["id_year"].$row["id_ety"];
+            if (array_key_exists($row["id_doc"], $lWebDocuments)) {
+                $sKey = ''.$lWebDocuments[$row["id_doc"]].$row["id_year"].$row["id_ety"];
+
              if (array_key_exists($sKey, $lRows))
              {
                 if ($row["ts_edit"] > $lRows[$sKey]->updated_at ||
@@ -113,8 +115,7 @@ class SImportDocumentRows
                     $lRows[$sKey]->document_id = $lWebDocuments[$row["id_doc"]];
                     $lRows[$sKey]->created_by_id = 1;
                     $lRows[$sKey]->updated_by_id = 1;
-                    $lRows[$sKey]->created_at = $row["ts_new"];
-                    $lRows[$sKey]->updated_at = $row["ts_edit"];
+                    $lRows[$sKey]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
                     $lRows[$sKey]->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
 
@@ -127,6 +128,7 @@ class SImportDocumentRows
                 $oRow->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
                 array_push($lRowsToWeb, $oRow);
              }
+           }
          }
       }
       else
@@ -142,7 +144,7 @@ class SImportDocumentRows
          $oRow->taxRows()->saveMany($oRowCopy->taxRowsAux);
       }
 
-      return true;
+      return sizeof($lRowsToWeb);
   }
 
   private static function siieToSiieWeb($oSiieRow = '', $lWebDocuments, $lYearsId, $lWebItems, $lWebUnits)

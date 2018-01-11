@@ -8,89 +8,133 @@
       <div class="col-md-7 col-md-offset-2">
         {!! Form::open(['route' => 'siie.import.docs']) !!}
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+              Elementos importados
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
               {!! Form::label('year', 'Host base de datos') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::text('db_host', session('db_host'), ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'ítems') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('items', 'items', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($items > 0)
+              <div class="col-md-4">
+                    {{ $items.' '.'ítems' }}
+              </div>
+            @endif
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'Asociados de negocios') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('partners', 'partners', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($partners > 0)
+              <div class="col-md-4">
+                    {{ $partners.' '.'Asociados de negocios' }}
+              </div>
+            @endif
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'Sucursales') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('branches', 'branches', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($branches > 0)
+              <div class="col-md-4">
+                    {{ $branches.' '.'Sucursales' }}
+              </div>
+            @endif
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'Direcciones de sucursales') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('addresses', 'addresses', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($adds > 0)
+              <div class="col-md-4">
+                    {{ $adds.' '.'Direcciones de sucursales' }}
+              </div>
+            @endif
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'Año a importar') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::number('year', '2018', ['class' => 'form-control', 'style' => 'text-align: center;']) !!}
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'Base de datos origen') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::text('db_name', session('db_import'), ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
             </div>
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', 'Documentos') !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('docs', 'docs', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($docs > 0)
+              <div class="col-md-4">
+                    {{ $docs.' '.'Documentos' }}
+              </div>
+            @endif
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', trans('siie.SYNCR.ROWS1')) !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('rows1', 'rows1', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($rows1 > 0)
+              <div class="col-md-4">
+                    {{ $rows1.' '.trans('siie.SYNCR.ROWS1') }}
+              </div>
+            @endif
           </div>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::label('year', trans('siie.SYNCR.ROWS2')) !!}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               {!! Form::checkbox('rows2', 'rows2', true, ['class' => 'form-control']) !!}
             </div>
+            @if ($rows2 > 0)
+              <div class="col-md-4">
+                    {{ $rows2.' '.trans('siie.SYNCR.ROWS2') }}
+              </div>
+            @endif
           </div>
           <div class="row">
             <div class="col-md-1">
             </div>
-            <div class="col-md-7 col-md-offset-6">
+            <div class="col-md-7 col-md-offset-4">
               <div class="form-group" align="right">
             		{!! Form::submit(trans('actions.IMPORT'), ['id' => 'submitBtn','class' => 'btn btn-primary', 'onClick' => 'holaFun()']) !!}
               </div>
