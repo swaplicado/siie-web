@@ -231,9 +231,9 @@ class SStockManagment
                      ->join('erps_item_classes AS eic', 'eig.item_class_id', '=', 'eic.id_item_class')
                      ->join('erpu_partners AS ep', 'ed.partner_id', '=', 'ep.id_partner')
                      ->leftJoin('wms_mvt_rows AS wmr',
-                       function($join) use ($sub)
+                       function($join) use ($sub, $iDocClass)
                        {
-                         $join->on('wmr.doc_order_row_id', '=', 'edr.id_document_row')
+                         $join->on('wmr.'.SStockManagment::getJoin($iDocClass), '=', 'edr.id_document_row')
                               ->on('edr.document_id', '=', \DB::raw("({$sub->toSql()})"));
                        })
                      ->mergeBindings($sub)
@@ -242,6 +242,18 @@ class SStockManagment
                      ->where('doc_type_id', $iDocType);
 
        return $query;
+    }
+
+    private static function getJoin($iDocClass)
+    {
+       if ($iDocClass == \Config::get('scsiie.DOC_CLS.DOCUMENT'))
+       {
+          return 'doc_invoice_row_id';
+       }
+       else
+       {
+         return 'doc_order_row_id';
+       }
     }
 
     /**
