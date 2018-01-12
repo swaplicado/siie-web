@@ -59,7 +59,7 @@ class ErpAddDocumentsTables extends Migration {
           	$table->integer('doc_class_id')->unsigned();
           	$table->integer('doc_type_id')->unsigned();
           	$table->integer('doc_status_id')->unsigned();
-          	$table->bigInteger('doc_status_id')->unsigned();
+          	$table->bigInteger('doc_src_id')->unsigned();
           	$table->integer('currency_id')->unsigned();
           	$table->integer('partner_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();

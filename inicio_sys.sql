@@ -1,8 +1,8 @@
 # Configurar nombres de bases de datos en App\Database\Config.php******************
 # Configurar PHP max_execution_time=300 y memory_limit=512
 
-DROP DATABASE siie_cartro;
-DROP DATABASE siie_aeth;
+DROP DATABASE siie_saporis;
+DROP DATABASE siie_gs;
 DROP DATABASE ssystem;
 
 CREATE SCHEMA `ssystem` ;
