@@ -5,7 +5,7 @@
   <b>Item:</b>{{$data->item->name}}
   <b>Unidad:</b> {{$data->unit->name}}
   <br>
-  <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" />
+  <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" width="90%" height="90%" />
   <br>
   <span>{{$barcode}}</span>
 </div>
