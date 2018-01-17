@@ -102,25 +102,25 @@
 				@endif
 			</div>
 
-      	<div class="form-group">
-	  			{!! Form::label('item', trans('userinterface.labels.WHS_ITM').'*') !!}
-						<div class="row">
-						  <div class="col-md-6">
-									{!! Form::text('item',
-										isset($whs) ? $whs->code : null , ['class'=>'form-control', 'id' => 'item', 'placeholder' => trans('userinterface.placeholders.CODE'),
-																												'onkeypress' => 'addRowByEnter(event)', 'required']) !!}
-							</div>
-						  <div class="col-md-3">
-									{!! Form::number('quantity', 1, ['class'=>'form-control', 'id' => 'quantity','onkeypress' => 'addRowByEnter(event)',
-																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
-																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ||
-																												$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
-							</div>
-						  <div class="col-md-3">
-									<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
-							</div>
+    	<div class="form-group">
+  			{!! Form::label('item', trans('userinterface.labels.WHS_ITM').'*') !!}
+					<div class="row">
+					  <div class="col-md-6">
+								{!! Form::text('item',
+									isset($whs) ? $whs->code : null , ['class'=>'form-control', 'id' => 'item', 'placeholder' => trans('userinterface.placeholders.CODE'),
+																											'onkeypress' => 'addRowByEnter(event)', 'required']) !!}
 						</div>
-  			</div>
+					  <div class="col-md-3">
+								{!! Form::number('quantity', 1, ['class'=>'form-control', 'id' => 'quantity','onkeypress' => 'addRowByEnter(event)',
+																											'placeholder' => trans('userinterface.placeholders.QUANTITY'),
+																											$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ||
+																											$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
+						</div>
+					  <div class="col-md-3">
+								<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
+						</div>
+					</div>
+			</div>
     </div>
   </div>
 	@if (App\SUtils\SGuiUtils::showPallet($oMovType->id_mvt_type))

@@ -44,4 +44,13 @@
 			{!! Form::select('whs_type_id', $types, isset($whs) ?  $whs->whs_type_id : null , ['class'=>'form-control select-one', 'placeholder' => trans('userinterface.placeholders.WHS_TYPE')]) !!}
 		</div>
 
+		<div class="form-group">
+			<div class="col-md-2">
+			{!! Form::label('is_quality', trans('userinterface.labels.IS_QUALITY').'*') !!}
+			</div>
+			<div class="col-md-1">
+				{!! Form::checkbox('is_quality', 1, isset($whs) ? $whs->is_quality : false, ['class' => 'form-control', 'align' => 'left']) !!}
+			</div>
+		</div>
+
 @endsection

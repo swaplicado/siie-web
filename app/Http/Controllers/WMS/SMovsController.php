@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
+use App\Http\Controllers\WMS\SSegregationsController;
 use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SCore\SStockUtils;
@@ -429,12 +430,18 @@ class SMovsController extends Controller
 
                 $stkController = new SStockController();
                 $stkController->store($request, $movement);
+
+                if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+                  if ($movement->warehouse->is_quality) {
+                      $oSegregations = new SSegregationsController();
+                      $oSegregations->segregate($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
+                  }
+                }
             }
           }
           catch (\Exception $e)
           {
-              \Debugbar::warning('Not saved!');
-              \Debugbar::error($e);
+              dd($e);
           }
        });
     }

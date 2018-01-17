@@ -381,6 +381,20 @@ Route::post('/start/whs',[
         'as' => 'wms.docs.index'
       ]);
 
+      /*
+      * segregations
+      **/
+      // Route::resource('segregations','WMS\SSegregationsController');
+      Route::get('segregations/{title}/{segType}/index',[
+        'uses' => 'WMS\SSegregationsController@index',
+        'as' => 'wms.segregations.index'
+      ]);
+
+      Route::post('segregations/{title}/{segType}/index/process',[
+        'uses' => 'WMS\SSegregationsController@Process',
+        'as' => 'wms.segregations.index.process'
+      ]);
+
   });
 
 

@@ -17,6 +17,7 @@ class SWarehouse extends Model {
   protected $fillable = [
                           'code',
                           'name',
+                          'is_quality',
                           'is_deleted',
                           'branch_id',
                           'whs_type_id',

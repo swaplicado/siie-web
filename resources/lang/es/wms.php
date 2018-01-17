@@ -24,6 +24,8 @@ return [
           'BRANCH_STK' => 'Existencias por sucursal',
           'LOT_WHS_STK' => 'Existencias por lote por almacén',
           'PALLET_LOT_STK' => 'Existencias por tarima por lote',
+          'STK_SEGREGATIONS' => 'Existencias segregadas',
+          'STK_SEG_QLTY' => 'Existencias en calidad',
           'MOV_STK' => 'Operaciones',
           'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
