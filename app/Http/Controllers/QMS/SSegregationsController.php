@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers\WMS;
+<?php namespace App\Http\Controllers\QMS;
 
 use Illuminate\Http\Request;
 
@@ -20,7 +20,7 @@ class SSegregationsController extends Controller
 
     public function __construct()
     {
-       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.SEGREGATIONS'), \Config::get('scsys.MODULES.WMS'));
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.SEGREGATIONS'), \Config::get('scsys.MODULES.QMS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }

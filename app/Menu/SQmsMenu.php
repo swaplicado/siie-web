@@ -11,17 +11,7 @@ class SQmsMenu {
         ->addClass('nav navbar-nav')
         ->link('', '')
         ->route('qms.home', trans('mms.MODULE'))
-        ->link('/two', 'Two')
-        ->submenu(
-            Link::to('#', 'Dropdown <span class="caret"></span>')
-                ->addClass('dropdown-toggle')
-                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
-            \Menu::new()
-                ->addClass('dropdown-menu')
-                ->link('#', 'Action')
-                ->link('#', 'Another action')
-                ->html('', ['role' => 'separator', 'class' => 'divider'])
-        )
+        ->route('qms.segregations.index', trans('wms.STK_SEG_QLTY'), [trans('wms.STK_SEG_QLTY'), \Config::get('scqms.SEGREGATION_TYPE.QUALITY')])
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
     });

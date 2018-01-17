@@ -176,11 +176,28 @@ Route::post('/start/whs',[
 		Route::resource('mms','MMS\SProductionController');
 
 //****************************************/ Quality Module /*************************
-		Route::get('/qms/home',[
-			'as' => 'qms.home',
-			'uses' => 'QMS\SQualityController@Home'
-		]);
-		Route::resource('qms','QMS\SQualityController');
+
+Route::group(['prefix' => 'qms'], function () {
+  		Route::get('/home',[
+  			'as' => 'qms.home',
+  			'uses' => 'QMS\SQualityController@Home'
+  		]);
+  		Route::resource('qms','QMS\SQualityController');
+
+      /*
+      * segregations
+      **/
+      // Route::resource('segregations','WMS\SSegregationsController');
+      Route::get('segregations/{title}/{segType}/index',[
+        'uses' => 'QMS\SSegregationsController@index',
+        'as' => 'qms.segregations.index'
+      ]);
+
+      Route::post('segregations/{title}/{segType}/index/process',[
+        'uses' => 'QMS\SSegregationsController@Process',
+        'as' => 'qms.segregations.index.process'
+      ]);
+  });
 
 //****************************************/ Warehouses Module/*************************
 
@@ -393,20 +410,6 @@ Route::post('/start/whs',[
       Route::get('docs/{category}/{dclass}/{dtype}/{vtype}/{title}/index',[
         'uses' => 'WMS\SDocsBySuppController@ViewDocs',
         'as' => 'wms.docs.index'
-      ]);
-
-      /*
-      * segregations
-      **/
-      // Route::resource('segregations','WMS\SSegregationsController');
-      Route::get('segregations/{title}/{segType}/index',[
-        'uses' => 'WMS\SSegregationsController@index',
-        'as' => 'wms.segregations.index'
-      ]);
-
-      Route::post('segregations/{title}/{segType}/index/process',[
-        'uses' => 'WMS\SSegregationsController@Process',
-        'as' => 'wms.segregations.index.process'
       ]);
 
   });

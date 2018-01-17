@@ -6,11 +6,11 @@
 
   <div class="row">
     @include('templates.home.rapidaccess')
-    <?php echo createBlock(asset('images/wms/box.gif'), "#", trans('qms.QRY_BY_STATUS'), "warning3", trans('wms.QRY_INVENTORY_T'));?>
+    <?php echo createBlock(asset('images/wms/box.gif'), route('qms.segregations.index', [trans('wms.STK_SEG_QLTY'), \Config::get('scqms.SEGREGATION_TYPE.QUALITY')]), trans('qms.QRY_BY_STATUS'), "warning3", trans('wms.QRY_INVENTORY_T'));?>
     <?php echo createBlock(asset('images/qms/boxtime.png'), "#", trans('qms.IN_INSPECTION'), "warning3", trans('wms.MOV_WAREHOUSES_T'));?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/qms/inspection.gif'), "#", trans('qms.CLASSIFICATION'), "warning3", trans('wms.DOC_ASSORTMENT_T'));?>
+    <?php echo createBlock(asset('images/qms/inspection.gif'), route('qms.segregations.index', [trans('wms.STK_SEG_QLTY'), \Config::get('scqms.SEGREGATION_TYPE.QUALITY')]), trans('qms.CLASSIFICATION'), "warning3", trans('wms.DOC_ASSORTMENT_T'));?>
     <?php echo createBlock(asset('images/qms/lots.gif'), "#", trans('qms.LOTS'), "warning3", trans('wms.DOC_RETURNS_T'));?>
   </div>
   <div class="row">
