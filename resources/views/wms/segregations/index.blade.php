@@ -32,7 +32,7 @@
 		            <th>-</th>
 		            <th data-priority="1">Clave</th>
 		            <th>Item</th>
-		            <th>Unidad</th>
+		            <th data-priority="1">Unidad</th>
 		            <th>Lote</th>
 		            <th>Tarima</th>
 		            <th data-priority="1">Segregado</th>
