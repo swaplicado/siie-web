@@ -31,8 +31,8 @@
 		            <th>-</th>
 		            <th>-</th>
 		            <th data-priority="1">Clave</th>
-		            <th data-priority="1">Item</th>
-		            <th data-priority="1">Unidad</th>
+		            <th>Item</th>
+		            <th>Unidad</th>
 		            <th>Lote</th>
 		            <th>Tarima</th>
 		            <th data-priority="1">Segregado</th>
