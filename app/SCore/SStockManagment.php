@@ -239,7 +239,8 @@ class SStockManagment
                      ->mergeBindings($sub)
                      ->where('doc_category_id', $iDocCategory)
                      ->where('doc_class_id', $iDocClass)
-                     ->where('doc_type_id', $iDocType);
+                     ->where('doc_type_id', $iDocType)
+                     ->where('eic.id_item_class', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'));
 
        return $query;
     }

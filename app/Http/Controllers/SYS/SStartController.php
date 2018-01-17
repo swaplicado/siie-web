@@ -17,6 +17,7 @@ use App\SYS\SUserCompany;
 use App\ERP\SBranch;
 use App\WMS\SWarehouse;
 use App\SCore\SStockManagment;
+use App\SCore\SSegregationCore;
 use App\SPadLocks\SRecordLock;
 
 class SStartController extends Controller
@@ -136,6 +137,7 @@ class SStartController extends Controller
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oStock = new SStockManagment();
+        $oSegregations = new SSegregationCore();
 
         session(['partner' => $oPartner]);
         session(['decimals_amt' => $oDecAmount->val_int]);
@@ -145,6 +147,7 @@ class SStartController extends Controller
         session(['db_import' => $oDbImport->val_text]);
         //session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
+        session(['segregation' => $oSegregations]);
 
         return SStartController::branchwhs();
     }

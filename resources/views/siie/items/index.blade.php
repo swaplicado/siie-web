@@ -38,6 +38,7 @@
 			<th>{{ trans('userinterface.labels.IS_LOT') }}</th>
 			<th>{{ trans('userinterface.labels.IS_BULK') }}</th>
 			<th>{{ trans('userinterface.labels.GENDER') }}</th>
+			<th>{{ trans('userinterface.labels.CLASS') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 		</thead>
@@ -62,6 +63,7 @@
 						@endif
 					</td>
 					<td class="small">{{ $item->gender->name }}</td>
+					<td class="small">{{ $item->gender->itemClass->name }}</td>
 					<td class="small">
 						@if (! $item->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>

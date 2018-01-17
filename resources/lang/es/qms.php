@@ -13,4 +13,8 @@ return [
       'CLASSIFICATION_T' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
       'LOTS' => 'Generación de lotes',
       'LOTS_T' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+
+      'placeholders'  =>  [
+                            'SELECT_STATUS' => 'Seleccione status',
+                          ],
 ];

@@ -111,4 +111,51 @@ class SGuiUtils {
        $sName = strftime("%B", mktime(0, 0, 0, $iMonth, 1, 2000));
        return $sName;
     }
+
+    public static function getClassOfStatus($iStatusQlty)
+    {
+      $sClass = '';
+
+      switch ($iStatusQlty) {
+        case \Config::get('scqms.TO_EVALUATE'):
+          $sClass = 'label label-default';
+          break;
+        case \Config::get('scqms.REJECTED'):
+          $sClass = 'label label-danger';
+          break;
+        case \Config::get('scqms.QUARANTINE'):
+          $sClass = 'label label-danger';
+          break;
+        case \Config::get('scqms.PARTIAL_RELEASED'):
+          $sClass = 'label label-primary';
+          break;
+        case \Config::get('scqms.RELEASED'):
+          $sClass = 'label label-success';
+          break;
+        case \Config::get('scqms.RELEASED_EARLY'):
+          $sClass = 'label label-info';
+          break;
+        case \Config::get('scqms.RET_TO_EVALUATE'):
+          $sClass = 'label label-default';
+          break;
+        case \Config::get('scqms.RECONDITIONING'):
+          $sClass = 'label label-default';
+          break;
+        case \Config::get('scqms.REWORK'):
+          $sClass = 'label label-default';
+          break;
+        case \Config::get('scqms.DESTROY'):
+          $sClass = 'label label-danger';
+          break;
+        case \Config::get('scqms.TO_EVALUATE'):
+          $sClass = 'label label-default';
+          break;
+
+        default:
+          # code...
+          break;
+      }
+
+      return $sClass;
+    }
 }

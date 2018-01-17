@@ -51,6 +51,8 @@ return [
                   'STK_MOVS' => '005',
                   'STK_MOVS_MANAGE' => '006',
                   'DOCUMENTS_MANAGE' => '007',
+                  'SEGREGATIONS' => '008',
+                  'QUALITY' => '009',
 
                   'ERP' =>  '101',
                   'MMS' =>  '102',

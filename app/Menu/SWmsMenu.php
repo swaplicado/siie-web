@@ -171,6 +171,8 @@ class SWmsMenu {
                 ->route('wms.stock.index', trans('wms.BRANCH_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH')])
                 ->route('wms.stock.index', trans('wms.LOT_WHS_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE')])
                 ->route('wms.stock.index', trans('wms.PALLET_LOT_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT')])
+                ->html('', ['role' => 'separator', 'class' => 'divider'])
+                ->route('wms.segregations.index', trans('wms.STK_SEG_QLTY'), [trans('wms.STK_SEG_QLTY'), \Config::get('scqms.SEGREGATION_TYPE.QUALITY')])
         )
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();

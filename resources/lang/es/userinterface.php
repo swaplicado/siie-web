@@ -292,6 +292,7 @@
 											'IS_PART' => 'Socio',
 											'IS_LOT' => 'Aplica lote',
 											'IS_BULK' => 'Granel',
+											'IS_QUALITY' => 'De calidad',
 											'WAREHOUSE' => 'Almacén',
 											'WEB' => 'Web',
 											'ZIP_CODE' => 'Código postal',
