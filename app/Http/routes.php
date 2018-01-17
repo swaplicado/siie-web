@@ -314,6 +314,9 @@ Route::post('/start/whs',[
         'as'   => 'wms.codes.start'
       ]);
 
+      Route::get('/codes/findWhs','WMS\SCodesController@findWhs');
+
+
       Route::get('/codes/findProductName','WMS\SCodesController@findProductName');
 
       Route::post('/codes/generate', [
@@ -326,9 +329,20 @@ Route::post('/start/whs',[
         'as' => 'wms.codes.consult'
       ]);
 
+      Route::get('/codes/consultwithbranch',[
+        'uses' => 'WMS\SCodesController@consultwithbranch',
+        'as' => 'wms.codes.withbranch'
+      ]);
+
+
       Route::post('/codes/decode', [
         'uses' => 'WMS\SCodesController@decode',
         'as' => 'wms.codes.decode'
+      ]);
+
+      Route::post('/codes/decodewith', [
+        'uses' => 'WMS\SCodesController@decodeWith',
+        'as' => 'wms.codes.decodewith'
       ]);
 
       /*

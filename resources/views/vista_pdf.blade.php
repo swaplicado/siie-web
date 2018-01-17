@@ -1,8 +1,7 @@
-<div style="font-size:10px; margin-top:0px;">
-  <center><b>{{session('company')->name}}</b></center>
+<div style="font-size:9px; margin-top:0px;">
+  <center><b style="font-size:10px;">{{session('company')->name}}</b></center>
   <b>Id:</b> {{$data->id_lot}}
   <b>Lote:</b> {{$data->lot}}
-  <br>
   <b>Item:</b>{{$data->item->name}}
   <b>Unidad:</b> {{$data->unit->name}}
   <br>

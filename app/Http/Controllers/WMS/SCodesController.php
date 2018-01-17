@@ -11,6 +11,7 @@ use Laracasts\Flash\Flash;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
 use App\ERP\SBranch;
+use App\WMS\SWarehouse;
 use App\SUtils\SProcess;
 use App\ERP\SItem;
 use App\WMS\SWmsLot;
@@ -66,6 +67,7 @@ class SCodesController extends Controller
         return response()->json($data);
       }
     }
+
 
     public function prodfunct(){
 
@@ -130,13 +132,13 @@ class SCodesController extends Controller
 
       if($type == 1){
 
-        $stock=SStockManagment::getStock($data->item,$data->unit,$data->id_lot,0,0,0,0);
+        $stock=SStockManagment::getStock($data->item,$data->unit,$data->id_lot,0,0,session('whs')->name ,session('branch')->id_branch);
 
       }
 
       if($type == 2){
 
-        $stock=SStockManagment::getStock($data->item,$data->unit,0,$data->id_pallet,0,0,0);
+        $stock=SStockManagment::getStock($data->item,$data->unit,0,$data->id_pallet,0, session('whs')->name ,session('branch')->id_branch);
         //$lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,0);
 
       }
@@ -149,9 +151,62 @@ class SCodesController extends Controller
 
     }
 
+    public function decodeWith(Request $request){
+      $data = SBarcode::decodeBarcode($request->codigo);
+      if($data == null)
+      {
+        Flash::error('No existe el producto');
+        return redirect()->route('wms.codes.consult');
+      }
+      $data->item;
+      $data->unit;
+      $type = substr($request->codigo, 0 , 1 );
+
+      if($type == 1){
+
+        $stock=SStockManagment::getStock($data->item,$data->unit,$data->id_lot,0,0,$request->branch ,$request->whs);
+
+      }
+
+      if($type == 2){
+
+        $stock=SStockManagment::getStock($data->item,$data->unit,0,$data->id_pallet,0, $request->branch ,$request->whs);
+        //$lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,0);
+
+      }
+
+      return view('wms.codes.info')
+              ->with('info',$data)
+              ->with('type',$type)
+              ->with('stock',$stock);
+              //->with('lotStock',$lotStock);
+
+
+    }
+
     public function consultBarcode(){
 
         return view('wms.codes.consult');
     }
+
+    public function consultwithbranch(){
+    $branch = SBranch::orderBy('name','ASC')
+                      ->where('partner_id',session('partner')->id_partner)
+                      ->lists('name','id_branch');
+
+      return view('wms.codes.withbranch')
+                  ->with('branch',$branch);
+    }
+
+    public function findWhs(Request $request){
+
+      $data = SWarehouse::select('id_whs','name')
+                          ->where('branch_id',$request->id)
+                          ->get();
+
+        return response()->json($data);
+      }
+
+
 
 }
