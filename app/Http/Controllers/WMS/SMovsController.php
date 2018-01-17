@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
-use App\Http\Controllers\WMS\SSegregationsController;
+use App\Http\Controllers\QMS\SSegregationsController;
 use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SCore\SStockUtils;

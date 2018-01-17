@@ -21,16 +21,16 @@
 		<table id="table_id" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-								<th>Fecha</th>
-		            <th>Clave</th>
-		            <th>Item</th>
-								<th>Entradas</th>
-								<th>Salidas</th>
-								<th>Unidad</th>
+								<th data-priority="1">Fecha</th>
+		            <th data-priority="1">Clave</th>
+		            <th data-priority="1">Item</th>
+								<th data-priority="1">Entradas</th>
+								<th data-priority="1">Salidas</th>
+								<th data-priority="1">Unidad</th>
 		            <th>Sucursal</th>
 		            <th>Almacén</th>
 		            <th>Tipo movimiento</th>
-								<th>Folio</th>
+								<th data-priority="1">Folio</th>
 		            <th>Tipo</th>
 		        </tr>
 		    </thead>

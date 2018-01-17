@@ -11,7 +11,7 @@
               </div>
               <div class='col-md-5'>
                 <div class='row'>
-                  <a href='".$route."' onClick='holaFun()' class='btn btn-".$class."' style='display:block;'>".$button."</a>
+                  <a href='".$route."' onClick='holaFun()' class='btn btn-".$class."' style='display:inline;'>".$button."</a>
                 </div>
                 <div class='row'>
                   <div class='bs-callout bs-callout-info'>

@@ -30,14 +30,14 @@
 		            <th>-</th>
 		            <th>-</th>
 		            <th>-</th>
-		            <th>Clave</th>
-		            <th>Item</th>
-		            <th>Unidad</th>
+		            <th data-priority="1">Clave</th>
+		            <th data-priority="1">Item</th>
+		            <th data-priority="1">Unidad</th>
 		            <th>Lote</th>
 		            <th>Tarima</th>
-		            <th>Segregado</th>
+		            <th data-priority="1">Segregado</th>
 		            <th>Almacén</th>
-		            <th>{{ trans('userinterface.labels.STATUS') }}</th>
+		            <th data-priority="1">{{ trans('userinterface.labels.STATUS') }}</th>
 		            <th>Doc</th>
 		            <th>-</th>
 		        </tr>

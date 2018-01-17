@@ -40,9 +40,9 @@
 		        <tr class="titlerow">
 								<th data-priority="1">Folio</th>
 		            <th data-priority="2">Fecha</th>
-								<th data-priority="2">ID ERP</th>
+								<th>ID ERP</th>
 		            <th data-priority="1">Asociado de negocios</th>
-		            <th data-priority="1">Cve AN</th>
+		            <th>Cve AN</th>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
 									<th>Cantidad</th>
 			            <th>Cant. procesada</th>
@@ -51,9 +51,9 @@
 									<th>Status</th>
 									<th>Ver</th>
 									@if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'))
-										<th>Devolver</th>
+										<th data-priority="1">Devolver</th>
 									@else
-										<th>Surtir</th>
+										<th data-priority="1">Surtir</th>
 									@endif
 								@else
 									<th>Cve m/p</th>
