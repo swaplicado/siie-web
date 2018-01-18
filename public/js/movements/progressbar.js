@@ -1,7 +1,7 @@
 function updateProgressbar() {
   var dQtyToSup = 0;
-  globalData.oDocument.rows.forEach(function(oDocRow) {
-     dQtyToSup += parseFloat(oDocRow.quantity, 10);
+  globalData.lDocData.forEach(function(oDocRow) {
+     dQtyToSup += parseFloat(oDocRow.pending, 10);
   });
 
   var dQtySupp = 0;

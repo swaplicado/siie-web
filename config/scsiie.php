@@ -11,6 +11,7 @@ return [
                   'LOCK_TIME' => '5',
                   'DB_IMPORT' => '6',
                   'DB_HOST' => '7',
+                  'PERCENT_SUPPLY' => '8',
                 ],
 
   'ATT' => [

@@ -223,6 +223,7 @@
 			this.DEC_AMT = parseInt(amt);
 			this.LOCATION_ENABLED = (parseInt(loc) == 1);
 			this.isPalletReconfiguration = this.iMvtType == this.PALLET_RECONFIG_IN || this.iMvtType == this.PALLET_RECONFIG_OUT;
+			this.dPerSupp = <?php echo json_encode(($dPerSupp/100)); ?>; //percentage of supply permitted
 		}
 
 		var globalData = new GlobalData();

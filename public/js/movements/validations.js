@@ -190,9 +190,9 @@ function validateMovement(oMovement) {
     if (globalData.oDocument != 0) {
         var itemsDoc = new Map();
         var dQuantItem = 0;
-        globalData.oDocument.rows.forEach(function(docRow) {
+        globalData.lDocData.forEach(function(docRow) {
 
-          dQuantItem =  parseFloat(docRow.quantity, 10);
+          dQuantItem =  parseFloat(docRow.pending, 10);
 
           if (itemsDoc.has('' + docRow.item_id + '-' + docRow.unit_id)) {
               itemsDoc.get('' + docRow.item_id + '-' + docRow.unit_id).dQuantity + dQuantItem;
@@ -230,19 +230,21 @@ function validateMovement(oMovement) {
             //  break;
            }
            else {
-             if (itemsMov.get(key).dQuantity > value.dQuantity) {
+             if (itemsMov.get(key).dQuantity > (value.dQuantity * (1 + globalData.dPerSupp))) {
                swal("Error", "No puede surtir una mayor cantidad de  " + value.sItem +
                                   " mov: " + itemsMov.get(key).dQuantity +
-                                  " doc: " +  value.dQuantity + ".", "error");
+                                  " doc: " +  value.dQuantity + " (Más del " +
+                                  (globalData.dPerSupp * 100) + "%).", "error");
                valid = false;
                break;
              }
-             else if (itemsMov.get(key).dQuantity < value.dQuantity) {
-              //  swal("Error", "No puede surtir una menor cantidad de " + value.sItem +
-              //                   "\n mov: " + itemsMov.get(key).dQuantity +
-              //                   "\n doc: " + value.dQuantity + ".", "error");
-              //  valid = false;
-              //  break;
+             else if (itemsMov.get(key).dQuantity < (value.dQuantity * (1 - globalData.dPerSupp))) {
+               swal("Error", "No puede surtir una menor cantidad de " + value.sItem +
+                                "\n mov: " + itemsMov.get(key).dQuantity +
+                                "\n doc: " + value.dQuantity + " (Menos del " +
+                                (globalData.dPerSupp * 100) + "%).", "error");
+               valid = false;
+               break;
              }
            }
         }

@@ -39,7 +39,7 @@ function attachRow(row, bPalletReconfiguration) {
 
 
 function addRowAux() {
-    $('#lotsbody').append(createLotRow(null, 0, 0, 0, 0, false));
+    $('#lotsbody').append(createLotRow(movement.getRow(idParentTr), 0, 0, 0, 0, false));
 }
 
 /*
@@ -71,7 +71,8 @@ function createLotRow(row, id, lotId, quantity, price, bPalletReconfiguration) {
     });
 
     var iDefaultLot = lotId != 0 ? lotId : firstLot;
-    var quantity = quantity != 0 ? quantity : 1;
+    var dPrice = row.dPrice > 0 ? row.dPrice : price;
+    var dQuantity = quantity > 0 ? quantity : 1;
 
     const LOT = 0;
     const QTY = 1;
@@ -83,9 +84,9 @@ function createLotRow(row, id, lotId, quantity, price, bPalletReconfiguration) {
 
     var valuesRow = [
                 "",
-                parseFloat(quantity).toFixed(globalData.DEC_QTY),
-                parseFloat(price).toFixed(globalData.DEC_AMT),
-                parseFloat(quantity * price).toFixed(globalData.DEC_AMT),
+                parseFloat(dQuantity).toFixed(globalData.DEC_QTY),
+                parseFloat(dPrice).toFixed(globalData.DEC_AMT),
+                parseFloat(dQuantity * dPrice).toFixed(globalData.DEC_AMT),
                 "",
                 id,
                 iDefaultLot
@@ -106,7 +107,9 @@ function createLotRow(row, id, lotId, quantity, price, bPalletReconfiguration) {
 
     var oTdPRICE = document.createElement("td");
     oTdPRICE.innerHTML = "<input style='text-align: right;' class='form-control' type='number' " +
-                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) || bPalletReconfiguration ? "readonly='readonly'" : "") +
+                                ((iMovType == globalData.MVT_TP_OUT_TRA && parentRow.iPalletId != 1) ||
+                                bPalletReconfiguration ||
+                                row.dPrice > 0 ? "readonly='readonly'" : "") +
                                 " placeholder='1.00' step='0.01' min='0' maxlength='15' size='5' value='" +
                                 valuesRow[PRICE] + "'>";
 
@@ -183,6 +186,7 @@ $('#closeModal').on('click', function(e) {
     });
 
     updateRowTr(idParentTr, qty);
+    updateProgressbar();
 });
 
 /*

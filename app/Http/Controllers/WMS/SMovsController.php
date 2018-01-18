@@ -10,6 +10,7 @@ use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SCore\SStockUtils;
 use App\SCore\SMovsManagment;
+use App\ERP\SErpConfiguration;
 
 use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
@@ -178,6 +179,8 @@ class SMovsController extends Controller
             break;
         }
 
+        $oDbPerSupply = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PERCENT_SUPPLY'));
+
         return view('wms.movs.whsmovs')
                           ->with('oMovType', $oMovType)
                           ->with('iMvtSubType', $iMvtSubType)
@@ -192,6 +195,7 @@ class SMovsController extends Controller
                           ->with('locations', $locations)
                           ->with('lots', $lots)
                           ->with('pallets', $pallets)
+                          ->with('dPerSupp', $oDbPerSupply->val_decimal)
                           ->with('itemContainers', $itemContainers);
     }
 

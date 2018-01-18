@@ -43,7 +43,7 @@ class ErpAddErpConfigurationsTable extends Migration {
           	$table->boolean('val_boolean');
           	$table->integer('val_int');
           	$table->char('val_text', 50);
-          	$table->decimal('val_decimal', 10,10);
+          	$table->decimal('val_decimal', 23,8);
           	$table->boolean('is_deleted');
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
@@ -59,6 +59,7 @@ class ErpAddErpConfigurationsTable extends Migration {
           	['id_configuration' => '5','code' => '005','name' => 'TIEMPO DE CANDADO MINUTOS (ENTERO)','val_boolean' => '0','val_int' => '5','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
             ['id_configuration' => '6','code' => '006','name' => 'BASE DE DATOS ORIGEN','val_boolean' => '0','val_int' => '0','val_text' => 'erp_aeth','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
             ['id_configuration' => '7','code' => '007','name' => 'HOST BASE DE DATOS ORIGEN','val_boolean' => '0','val_int' => '0','val_text' => '192.168.1.233','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '8','code' => '008','name' => '% SURTIDO PERMITIDO','val_boolean' => '0','val_int' => '0','val_text' => ' ','val_decimal' => '10', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
 
         }
