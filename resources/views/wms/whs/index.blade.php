@@ -21,6 +21,7 @@
 			<th>{{ trans('userinterface.labels.WAREHOUSE') }}</th>
 			<th>{{ trans('userinterface.labels.TYPE') }}</th>
 			<th>{{ trans('userinterface.labels.BRANCH') }}</th>
+			<th>{{ trans('userinterface.labels.IS_QUALITY') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 		</thead>
@@ -31,6 +32,13 @@
 					<td>{{ $whs->name }}</td>
 					<td>{{ $whs->whsType->name }}</td>
 					<td>{{ $whs->branch->name }}</td>
+					<td>
+						@if ($whs->is_quality)
+								<span class="label label-warning">{{ trans('userinterface.labels.IS_QUALITY') }}</span>
+						@else
+								<span class="label label-default">{{ trans('userinterface.labels.IS_NOT_QUALITY') }}</span>
+						@endif
+					</td>
 					<td>
 						@if (! $whs->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
