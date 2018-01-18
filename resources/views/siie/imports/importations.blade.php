@@ -165,7 +165,7 @@
         swal({
             title: 'Espere...',
             text: 'Se está realizando el proceso de importación.',
-            timer: 300000,
+            timer: 500000,
             onOpen: () => {
               swal.showLoading()
             }
