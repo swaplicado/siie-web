@@ -21,7 +21,7 @@
               {!! Form::label('year', 'Host base de datos') !!}
             </div>
             <div class="col-md-4">
-              {!! Form::text('db_host', session('db_host'), ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
+              {!! Form::text('db_host', $db_host, ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
             </div>
           </div>
           <div class="row">
@@ -89,7 +89,7 @@
               {!! Form::label('year', 'Base de datos origen') !!}
             </div>
             <div class="col-md-4">
-              {!! Form::text('db_name', session('db_import'), ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
+              {!! Form::text('db_name', $db_import, ['class' => 'form-control', 'style' => 'text-align: center;', 'readonly']) !!}
             </div>
           </div>
           <div class="row">

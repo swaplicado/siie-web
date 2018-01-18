@@ -20,7 +20,8 @@ class SMovsManagment {
       $baseQuery = \DB::connection(session('db_configuration')->getConnCompany())
                    ->table('wms_mvts as wm')
                    ->select(\DB::raw('MAX(folio) as max_folio, count(*) as num_movs'))
-                   ->where('is_deleted', false);
+                   ->where('is_deleted', false)
+                   ->orderBy('max_folio', 'desc');
 
        $lFolios = SFolio::where('is_deleted', false)->get();
 
@@ -36,6 +37,7 @@ class SMovsManagment {
                          ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
                          ->where('branch_id', $oMovement->branch_id)
                          ->where('whs_id', $oMovement->whs_id)
+                         ->where('folio', '>=', $oRequiredFolio->folio_start)
                          ->take(1)
                          ->get();
 
@@ -61,6 +63,7 @@ class SMovsManagment {
                $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
                              ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
                              ->where('branch_id', $oMovement->branch_id)
+                             ->where('folio', '>=', $oRequiredFolio->folio_start)
                              ->take(1)
                              ->get();
 
@@ -85,6 +88,7 @@ class SMovsManagment {
                {
                    $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
                                  ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
+                                 ->where('folio', '>=', $oRequiredFolio->folio_start)
                                  ->take(1)
                                  ->get();
 
@@ -108,6 +112,7 @@ class SMovsManagment {
                    if ($oRequiredFolio != null)
                    {
                        $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
+                                     ->where('folio', '>=', $oRequiredFolio->folio_start)
                                      ->take(1)
                                      ->get();
 
@@ -158,12 +163,12 @@ class SMovsManagment {
                       }
                   }
               }
-              else
-              {
-                $oRequiredFolio = $oFolio;
-                $bConfigExists = true;
-                break;
-              }
+              // else
+              // {
+              //   $oRequiredFolio = $oFolio;
+              //   $bConfigExists = true;
+              //   break;
+              // }
 
            }
         }
@@ -186,6 +191,11 @@ class SMovsManagment {
         $oMovement->doc_credit_note_id = 1;
 
         $oDocument = SDocument::find($iDocumentId);
+
+        if (is_null($oDocument))
+        {
+          return $oMovement;
+        }
 
         if (\Config::get('scsiie.DOC_CLS.ORDER') == $oDocument->doc_class_id &&
                 \Config::get('scsiie.DOC_TYPE.ORDER') == $oDocument->doc_type_id) {

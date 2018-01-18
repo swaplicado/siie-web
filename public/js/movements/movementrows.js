@@ -157,10 +157,10 @@ function addRow(e) {
         if (iWmsMvtType == globalData.MVT_TP_IN_PUR) {
             if (globalData.oDocument != 0) {
               try {
-                globalData.oDocument.rows.forEach(function(element) {
+                globalData.lDocData.forEach(function(element) {
                   if (element.item_id == ojsMovRow.iItemId && element.unit_id == ojsMovRow.iUnitId) {
                       ojsMovRow.dPrice = parseFloat(element.price_unit_cur, 10);
-                      ojsMovRow.dQuantity = parseFloat(element.quantity, 10);
+                      ojsMovRow.dQuantity = parseFloat(element.pending, 10);
                       ojsMovRow.iDocOrderRowId = parseInt(element.id_document_row, 10);
                       throw BreakException;
                   }

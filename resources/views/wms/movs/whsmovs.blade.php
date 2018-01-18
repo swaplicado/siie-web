@@ -138,7 +138,7 @@
 										<th style="display:none;"></th>
 										<th>{{ trans('wms.labels.CODE') }}</th>
 										<th>{{ trans('wms.labels.MAT_PROD') }}</th>
-										<th>{{ trans('wms.labels.UNIT') }}</th>
+										<th>{{ trans('wms.labels.UN') }}</th>
 										<th>{{ trans('wms.labels.LOCATION') }}</th>
 										<th>{{ trans('wms.labels.PALLET') }}</th>
 										<th>{{ trans('wms.labels.PRICE') }}</th>
@@ -168,6 +168,7 @@
 
 		function GlobalData () {
 		  this.oDocument = <?php echo json_encode($oDocument); ?>;
+		  this.lDocData = <?php echo json_encode($lDocData); ?>;
 		  this.lLots = <?php echo json_encode($lots); ?>;
 		  this.lPallets = <?php echo json_encode($pallets); ?>;
 			this.lWarehouses = <?php echo json_encode($warehousesObj); ?>;

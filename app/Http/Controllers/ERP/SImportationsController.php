@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SProcess;
 
+use App\ERP\SErpConfiguration;
 use App\SImportations\SImportFamilies;
 use App\SImportations\SImportGroups;
 use App\SImportations\SImportGenders;
@@ -37,6 +38,10 @@ class SImportationsController extends Controller {
 
     public function index($isImported = 0, $items, $partners, $branches, $adds, $docs, $rows1, $rows2)
     {
+
+      $oDbImport = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_IMPORT'));
+      $oDbHost = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_HOST'));
+
        return view('siie.imports.importations')
                               ->with('title', 'Importaciones')
                               ->with('items', $items)
@@ -46,7 +51,9 @@ class SImportationsController extends Controller {
                               ->with('docs', $docs)
                               ->with('rows1', $rows1)
                               ->with('rows2', $rows2)
-                              ->with('isImported', $isImported);
+                              ->with('isImported', $isImported)
+                              ->with('db_import', $oDbImport->val_text)
+                              ->with('db_host', $oDbHost->val_text);
     }
 
     public function importItems()
