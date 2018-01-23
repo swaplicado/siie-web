@@ -12,7 +12,8 @@
       <div class="list-group">
         @foreach($whs as $userCompanyRow)
             <a href="" id="{{ $userCompanyRow->id_whs }}" class="list-group-item {{ $i == 0 ? 'active' : '' }}">
-              {{ $userCompanyRow->name }}
+              <?php if($flag=0){ echo $userCompanyRow->name;}
+                else{ echo $userCompanyRow->warehouses->name;} ?>
             </a>
           <?php $i++; ?>
         @endforeach
