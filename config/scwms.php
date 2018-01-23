@@ -75,9 +75,11 @@ return [
                         'LOCATION' => '4',
                         'WHS' => '5',
                         'BRANCH' => '6',
+                        'ID_YEAR' => '7',
                       ],
 
     'STOCK' => [
+                  'GROSS' => '3',
                   'SEGREGATED' => '2',
                   'RELEASED' => '1',
                   'AVAILABLE' => '0',

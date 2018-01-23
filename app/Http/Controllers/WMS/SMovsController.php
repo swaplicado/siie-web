@@ -300,6 +300,7 @@ class SMovsController extends Controller
 
         $movement->whs_id = $whsId;
         $movement->branch_id = $movement->warehouse->branch_id;
+        $movement->year_id = session('work_year');
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
         $movement = SMovsManagment::assignForeignDoc($movement, $movement->mvt_whs_type_id, $oData['iDocumentId']);
@@ -437,10 +438,19 @@ class SMovsController extends Controller
 
                 if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
                   if ($movement->warehouse->is_quality) {
+                  // if ($movement->warehouse->is_quality &&
+                  //       $movement->mvt_whs_type_id != \Config::get('scwms.PALLET_RECONFIG_IN') &&
+                  //       $movement->mvt_whs_type_id != \Config::get('scwms.PALLET_RECONFIG_OUT') ) {
                       $oSegregations = new SSegregationsController();
                       $oSegregations->segregate($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
                   }
                 }
+                // else {
+                //   if ($movement->warehouse->is_quality) {
+                //       $oSegregations = new SSegregationsController();
+                //       $oSegregations->release($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'), \Config::get('scqms.RELEASED'));
+                //   }
+                // }
             }
           }
           catch (\Exception $e)
@@ -473,6 +483,7 @@ class SMovsController extends Controller
                 $row = $this->createMovement($item->id_item, $item->unit_id, 0);
 
                 $aParameters = array();
+                $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $item->id_item;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $item->unit_id;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
@@ -493,6 +504,7 @@ class SMovsController extends Controller
               $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
 
               $aParameters = array();
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
               $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $obj->item_id;
               $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $obj->unit_id;
               $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
@@ -533,6 +545,7 @@ class SMovsController extends Controller
               $row->aux_lot_id = $obj->id_lot;
 
               $aParameters = array();
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
               $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $obj->item_id;
               $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $obj->unit_id;
               $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $obj->id_lot;

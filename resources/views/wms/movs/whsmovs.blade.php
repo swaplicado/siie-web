@@ -248,8 +248,14 @@
 					$('#whs_src').prop('disabled', true).trigger("chosen:updated");
 				}
 
-				if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
-					oPalletRow = movement.auxPalletRow;
+				if (globalData.isPalletReconfiguration) {
+					if (localStorage.getItem('pallet') !== null) {
+						var oPalletSaved = localStorage.getItem('pallet');
+						console.log(JSON.parse(oPalletSaved));
+
+						oPalletRow = JSON.parse(oPalletSaved);
+						updatePallet(oPalletRow, globalData.iMvtType);
+					}
 				}
 				else {
 					oPalletRow = '';

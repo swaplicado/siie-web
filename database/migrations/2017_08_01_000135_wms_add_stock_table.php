@@ -68,6 +68,7 @@ class WmsAddStockTable extends Migration {
           	$table->integer('mfg_dept_id')->unsigned();
           	$table->integer('mfg_line_id')->unsigned();
           	$table->integer('mfg_job_id')->unsigned();
+            $table->integer('year_id')->unsigned();
 
           	$table->foreign('mvt_whs_class_id')->references('id_mvt_class')->on('wmss_mvt_classes')->onDelete('cascade');
           	$table->foreign('mvt_whs_type_id')->references('id_mvt_type')->on('wmss_mvt_types')->onDelete('cascade');
@@ -89,15 +90,19 @@ class WmsAddStockTable extends Migration {
             $table->foreign('doc_invoice_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
             $table->foreign('doc_debit_note_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
             $table->foreign('doc_credit_note_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
+            $table->foreign('year_id')->references('id_year')->on('erpu_years')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('wms_stock')->insert([
-            ['id_stock' => '1','dt_date' => '2017-01-01','input' => '0','output' => '0','cost_unit' => '0',
-            'debit' => '0','credit' => '0','is_deleted' => '0','mvt_whs_class_id' => '1','mvt_whs_type_id' => '1',
-            'mvt_trn_type_id' => '1','mvt_adj_type_id' => '1','mvt_mfg_type_id' => '1','mvt_exp_type_id' => '1',
-            'branch_id' => '1','whs_id' => '1','location_id' => '1','mvt_id' => '1','mvt_row_id' => '1','mvt_row_lot_id' => '1',
-            'item_id' => '1','unit_id' => '1','lot_id' => '1','pallet_id' => '1','doc_order_row_id' => '1','doc_invoice_row_id' => '1',
-            'doc_debit_note_row_id' => '1','doc_credit_note_row_id' => '1','mfg_dept_id' => '1','mfg_line_id' => '1','mfg_job_id' => '1'],
+            ['id_stock' => '1','dt_date' => '2017-01-01','input' => '0','output' => '0',
+            'cost_unit' => '0','debit' => '0','credit' => '0','is_deleted' => '0','mvt_whs_class_id' => '1',
+            'mvt_whs_type_id' => '1','mvt_trn_type_id' => '1','mvt_adj_type_id' => '1',
+            'mvt_mfg_type_id' => '1','mvt_exp_type_id' => '1','branch_id' => '1',
+            'whs_id' => '1','location_id' => '1','mvt_id' => '1','mvt_row_id' => '1',
+            'mvt_row_lot_id' => '1','item_id' => '1','unit_id' => '1','lot_id' => '1',
+            'pallet_id' => '1','doc_order_row_id' => '1','doc_invoice_row_id' => '1',
+            'doc_debit_note_row_id' => '1','doc_credit_note_row_id' => '1','mfg_dept_id' => '1',
+            'mfg_line_id' => '1','mfg_job_id' => '1','year_id' => '1'],
           ]);
 
         }

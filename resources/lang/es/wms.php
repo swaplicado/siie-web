@@ -54,6 +54,7 @@ return [
                       'MIN' => 'Mínimo',
                       'MAT_PROD' => 'Material/producto',
                       'UNIT' => 'Unidad',
+                      'UN' => 'Un',
                       'LOCATION' => 'Ubicación',
                       'LOT' => 'Lote',
                       'STOCK' => 'Existencia',

@@ -4,6 +4,9 @@ use App\WMS\SWmsLot;
 use App\WMS\SPallet;
 use App\WMS\SLocation;
 use App\WMS\SLimit;
+use App\ERP\SYear;
+
+use Carbon\Carbon;
 
 /**
  * this class manages the stock of company
@@ -29,6 +32,7 @@ class SStockUtils
         }
 
         $aParameters = array();
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
@@ -38,6 +42,7 @@ class SStockUtils
 
         foreach ($oMovement->aAuxRows as $movRow)
         {
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow->item_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow->unit_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow->pallet_id;
@@ -55,10 +60,14 @@ class SStockUtils
                   {
                       $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $lotRow->lot_id;
 
-                      if (session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow->quantity)
+                      $oStock = session('stock')->getStock($aParameters);
+                      if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow->quantity)
                       {
                           if ($movRow->pallet_id == 1) {
-                            array_push($aErrors, "No hay suficientes existencias SIN TARIMA del lote ".$lotRow->lot->lot);
+                            array_push($aErrors, "No hay suficientes existencias SIN TARIMA del lote ".$lotRow->lot->lot."\n
+                                                  Total: ".$oStock[\Config::get('scwms.STOCK.GROSS')]."\n
+                                                  Segregadas: ".$oStock[\Config::get('scwms.STOCK.SEGREGATED')]."\n
+                                                  Disponibles: ".$oStock[\Config::get('scwms.STOCK.AVAILABLE')]);
                           }
                           else {
                             array_push($aErrors, "No hay suficientes existencias del lote ".$lotRow->lot->lot." en la tarima ".$movRow->pallet->pallet);
@@ -70,11 +79,16 @@ class SStockUtils
             }
             else
             {
-                if (session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow->quantity)
+                $oStock = session('stock')->getStock($aParameters);
+                if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow->quantity)
                 {
                     if ($movRow->pallet_id == 1)
                     {
-                      array_push($aErrors, "No hay suficientes existencias SIN TARIMA del material/producto ".$movRow->item->name);
+                      array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
+                                              material/producto ".$movRow->item->name."\n
+                                              Total:".$oStock[\Config::get('scwms.STOCK.GROSS')]."\n
+                                              Segregadas:".$oStock[\Config::get('scwms.STOCK.SEGREGATED')]."\n
+                                              Disponibles:".$oStock[\Config::get('scwms.STOCK.AVAILABLE')]);
                     }
                     else
                     {
@@ -177,7 +191,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oWarehouse->id_whs;
 
-                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')];
+                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
                 if (($dStock + $dQuantity) > $oLimit->max)
                 {
                    array_push($aErrors, 'El material/producto '.$oItem->name.' excede los límites permitidos en el almacén '.$oWarehouse->name);
@@ -190,7 +204,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oWarehouse->branch_id;
 
-                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')];
+                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
                 if (($dStock + $dQuantity) > $oLimit->max)
                 {
                    array_push($aErrors, 'El material/producto '.$oItem->name.' excede los límites permitidos en la sucursal '.$oWarehouse->branch->name);
@@ -202,7 +216,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oItem->id_item;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
 
-                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')];
+                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
                 if (($dStock + $dQuantity) > $oLimit->max)
                 {
                    array_push($aErrors, 'El material/producto '.$oItem->name.' excede los límites permitidos en la empresa actual.');
@@ -252,7 +266,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oWarehouse->id_whs;
 
-                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')];
+                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
                 if (($dStock - $dQuantity) < $oLimit->min)
                 {
                    array_push($aErrors, 'La existencia del material/producto '.$oItem->name.' estaría por debajo del mínimo permitido en el almacén '.$oWarehouse->name);
@@ -265,7 +279,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oWarehouse->branch_id;
 
-                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')];
+                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
                 if (($dStock - $dQuantity) < $oLimit->min)
                 {
                    array_push($aErrors, 'La existencia del material/producto '.$oItem->name.' estaría por debajo del mínimo permitido en la sucursal '.$oWarehouse->branch->name);
@@ -277,7 +291,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oItem->id_item;
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
 
-                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.AVAILABLE')];
+                $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
                 if (($dStock - $dQuantity) < $oLimit->min)
                 {
                    array_push($aErrors, 'La existencia del material/producto '.$oItem->name.' estaría por debajo del mínimo permitido en la empresa actual.');

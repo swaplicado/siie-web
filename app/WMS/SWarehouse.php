@@ -55,7 +55,10 @@ class SWarehouse extends Model {
 
   public function getDefaultLocation()
   {
-     return (SLocation::where('whs_id', $this->id_whs)->where('is_default', true)->get())[0];
+     $oLocation = SLocation::where('whs_id', $this->id_whs)
+                            ->where('is_default', true)
+                            ->first();
+     return $oLocation;
   }
 
   public function scopeSearch($query, $name, $iFilter)

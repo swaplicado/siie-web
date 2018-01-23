@@ -6,7 +6,9 @@
                 <th>{{ trans('wms.labels.CODE') }}</th>
                 <th>{{ trans('wms.labels.MAT_PROD') }}</th>
                 <th>{{ trans('wms.labels.UNIT') }}</th>
-                <th>{{ trans('wms.labels.LOCATION') }}</th>
+                @if (session('location_enabled'))
+                  <th>{{ trans('wms.labels.LOCATION') }}</th>
+                @endif
                 <th>{{ trans('wms.labels.PALLET') }}</th>
                 <th>{{ trans('wms.labels.QTY') }}</th>
                 <th>{{ trans('wms.labels.LOT') }}</th>
@@ -17,7 +19,9 @@
               <th align="right">@{{ sPallet.code }}</th>
               <th align="right">@{{ sPallet.item }}</th>
               <th align="right">@{{ sPallet.unit }}</th>
-              <th align="right">@{{ sPallet.location }}</th>
+              @if (session('location_enabled'))
+                <th align="right">@{{ sPallet.location }}</th>
+              @endif
               <th align="right">@{{ sPallet.pallet }}</th>
               <th align="right">@{{ sPallet.quantity }}</th>
               <th align="right">

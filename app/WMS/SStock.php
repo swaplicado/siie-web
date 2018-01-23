@@ -41,6 +41,7 @@ class SStock extends Model {
                           'mfg_dept_id',
                           'mfg_line_id',
                           'mfg_job_id',
+                          'year_id',
                         ];
 
   public function getTable()

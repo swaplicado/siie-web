@@ -171,7 +171,18 @@ function validateMovement(oMovement) {
         });
       });
 
-      if (totalQuantity > oMovement.auxPalletRow.dQuantity) {
+      var dPalletQty = 0;
+
+      if (oMovement.auxPalletRow.oAuxItem.is_lot) {
+          oMovement.auxPalletRow.lotRows.forEach(function(lotRow) {
+              dPalletQty += lotRow.dQuantity;
+          });
+      }
+      else {
+          dPalletQty = oMovement.auxPalletRow.dQuantity;
+      }
+
+      if (totalQuantity > dPalletQty) {
         swal("Error", "No puede mover más unidades de las que contiene la tarima.", "error");
         valid = false;
         return false;
@@ -258,6 +269,13 @@ class QtyItemAux {
    constructor(quantity, item) {
      this.dQuantity = quantity;
      this.sItem = item;
+   }
+}
+
+class LotRow {
+   constructor(lot, quantity) {
+     this.iLotId = lot;
+     this.dQuantity = quantity;
    }
 }
 

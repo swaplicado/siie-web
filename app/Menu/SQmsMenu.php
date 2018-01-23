@@ -10,7 +10,7 @@ class SQmsMenu {
       return \Menu::new()
         ->addClass('nav navbar-nav')
         ->link('', '')
-        ->route('qms.home', trans('mms.MODULE'))
+        ->route('qms.home', trans('qms.MODULE'))
         ->route('qms.segregations.index', trans('wms.STK_SEG_QLTY'), [trans('wms.STK_SEG_QLTY'), \Config::get('scqms.SEGREGATION_TYPE.QUALITY')])
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();

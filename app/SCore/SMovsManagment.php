@@ -318,7 +318,7 @@ class SMovsManagment {
         $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
         $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
         $oMirrorMovement->whs_id = $iWhsDes;
-        $oMirrorMovement->branch_id = $oMirrorMovement->whs->branch_id;
+        $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
 
         $iWhsSrcDefLocation = 0;
         $iWhsDesDefLocation = 0;
@@ -377,7 +377,7 @@ class SMovsManagment {
       $oMirrorMovement->mvt_mfg_type_id = 1;
       $oMirrorMovement->mvt_exp_type_id = 1;
 
-      $movementRows = array();
+
        $oMvtPallet = new SMovementRow();
        // transform the pallet row to row of mirror movement
        $oMvtPallet->quantity = $oPalletData['dQuantity'];
@@ -404,9 +404,10 @@ class SMovsManagment {
        }
 
        $oMvtPallet->setAuxLots($movLotRows); // set the auxiliar array of lots to movement row
-       array_push($movementRows, $oMvtPallet); // add row of pallet to movement rows
-       $oMovement->aAuxRows = $aMovementRows; // set the auxiliar array of movements to principal movement
-       $oMirrorMovement->aAuxRows = $movementRows; // set the auxiliar array of movements to mirror movement
+       $movementPalletRows = array();
+       array_push($movementPalletRows, $oMvtPallet); // add row of pallet to movement rows
+       $oMovement->aAuxRows = $movementRows; // set the auxiliar array of movements to principal movement
+       $oMirrorMovement->aAuxRows = $movementPalletRows; // set the auxiliar array of movements to mirror movement
 
        array_push($aMovements, $oMovement); // add the principal movement
        array_push($aMovements, $oMirrorMovement); // add the mirror movement
