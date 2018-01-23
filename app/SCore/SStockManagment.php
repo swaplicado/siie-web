@@ -185,19 +185,23 @@ class SStockManagment
                       // ->addBinding($aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')])
                       // ->addBinding($aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')]);
 
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters))
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters) &&
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] <> '0')
         {
             $sub = $sub->whereRaw('wsr.branch_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
         }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters))
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters) &&
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] <> '0')
         {
             $sub = $sub->whereRaw('wsr.whs_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
         }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.PALLET'), $aParameters))
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.PALLET'), $aParameters) &&
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] <> '0')
         {
             $sub = $sub->whereRaw('wsr.pallet_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')]);
         }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOT'), $aParameters))
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOT'), $aParameters) &&
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] <> '0')
         {
             $sub = $sub->whereRaw('wslr.lot_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
         }

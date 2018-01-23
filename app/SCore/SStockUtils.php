@@ -38,6 +38,7 @@ class SStockUtils
         $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
 
         foreach ($oMovement->aAuxRows as $movRow)
@@ -46,7 +47,7 @@ class SStockUtils
             $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow->item_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow->unit_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow->pallet_id;
-            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $movRow->whs_id;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
 
             if ($movRow->item->is_lot)
             {
