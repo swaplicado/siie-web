@@ -14,6 +14,8 @@ use App\ERP\SErpConfiguration;
 use App\Database\Config;
 use App\ERP\SPartner;
 use App\SYS\SUserCompany;
+use App\ERP\SUserBranch;
+use App\ERP\SUserWhs;
 use App\ERP\SBranch;
 use App\WMS\SWarehouse;
 use App\SCore\SStockManagment;
@@ -55,12 +57,48 @@ class SStartController extends Controller
 
     public function branchwhs(){
       SConnectionUtils::reconnectCompany();
-      $branch = SBranch::select('id_branch','name')
-                      ->where('partner_id',session('partner')->id_partner)
-                      ->get();
 
-      return view('start.branchwhs')
-                ->with('branch',$branch);
+      $lUserBranch = array();
+
+      if (session('utils')->isSuperUser(\Auth::user()))
+      {
+        $lBranch = SBranch::where('is_deleted', 0)->where('partner_id', '=', session('partner')->id_partner )->paginate(10);
+
+        $i = 0;
+        foreach ($lBranch as $oBranch) {
+          $oUserBranch = new SUserBranch();
+          $oUserBranch->branch_id = $oBranch->id_branch;
+          $lUserBranch[$i] = $oUserBranch;
+          $i++;
+        }
+
+        foreach($lUserBranch as $UB) {
+          $UB->branch;
+        }
+
+        return view('start.branchwhs')
+                  ->with('branch',$lUserBranch)
+                  ->with('flag',0);
+      }
+      else
+      {
+        // $lUserBranch = SUserBranch::where('user_id', '=', (\Auth::user()))
+        //                             ->paginate(10);
+        $lUserBranch = \DB::table('erpu_access_branch')
+                            ->join('erpu_branches', 'branch_id', '=', 'erpu_branches.id_branch')
+                            ->where('erpu_branches.partner_id',session('partner')->id_partner)
+                            ->get();
+
+        return view('start.branchwhs')
+                  ->with('branch',$lUserBranch)
+                  ->with('flag',1);
+        //dd($lUserBranch);
+      }
+
+
+      //dd($lUserBranch);
+      // return view('start.branchwhs')
+      //           ->with('branch',$lUserBranch);
       // return SStartController::selectModule();
     }
 
@@ -84,14 +122,43 @@ class SStartController extends Controller
 
         SConnectionUtils::reconnectCompany();
 
-      $whs = SWarehouse::select('id_whs','name')
-                      ->where('branch_id',session('branch')->id_branch)
-                      ->get();
 
-      return view('start.whs')
-                ->with('whs',$whs);
+                $lUserWhs = array();
+
+                if (session('utils')->isSuperUser(\Auth::user()))
+                {
+                  $lWhs = SWarehouse::where('is_deleted', 0)->where('branch_id', '=', session('branch')->id_branch )->paginate(10);
+
+                  $i = 0;
+                  foreach ($lWhs as $oWhs) {
+                    $oUserWhs = new SUserWhs();
+                    $oUserWhs->whs_id = $oWhs->id_whs;
+                    $lUserWhs[$i] = $oUserWhs;
+                    $i++;
+                  }
+
+                  foreach($lUserWhs as $UB) {
+                    $UB->warehouses;
+                  }
+
+                  return view('start.whs')
+                            ->with('whs',$lUserWhs)
+                            ->with('flag',0);
+                }
+                else
+                {
+                  // $lUserBranch = SUserBranch::where('user_id', '=', (\Auth::user()))
+                  //                             ->paginate(10);
+                  $lUserWhs = \DB::table('erpu_access_whs')
+                                      ->join('wmsu_whs', 'whs_id', '=', 'wmsu_whs.id_whs')
+                                      ->where('wmsu_whs.branch_id',session('branch')->id_branch)
+                                      ->get();
+
+                  return view('start.whs')
+                            ->with('whs',$lUserWhs)
+                            ->with('flag',1);
     }
-
+  }
     public function whs(){
 
       SConnectionUtils::reconnectCompany();
@@ -132,6 +199,8 @@ class SStartController extends Controller
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
+        $oDbImport = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_IMPORT'));
+        $oDbHost = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_HOST'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oStock = new SStockManagment();
@@ -142,6 +211,8 @@ class SStartController extends Controller
         session(['decimals_qty' => $oDecQuantity->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
+        session(['db_import' => $oDbImport->val_text]);
+        //session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
 

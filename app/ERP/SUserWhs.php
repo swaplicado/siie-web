@@ -19,7 +19,7 @@ class SUserWhs extends Model
 
   public function warehouses()
   {
-      return $this->belongsTo('App\ERP\SWarehouse');
+      return $this->belongsTo('App\WMS\SWarehouse','whs_id');
   }
 
   public function scopeSearch($query, $iFilter)
