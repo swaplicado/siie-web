@@ -181,6 +181,9 @@ function setMovement(obj) {
 function setData(data) {
     // var table = $('#example').tableToJSON();
     console.log(data);
+    if (data.auxPalletRow != null && data.auxPalletRow != "") {
+      localStorage.setItem('pallet', JSON.stringify(data.auxPalletRow));
+    }
     localStorage.setItem('movement', JSON.stringify(data));
     var data = { value : data };
       $.ajax({

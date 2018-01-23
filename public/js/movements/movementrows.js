@@ -494,8 +494,8 @@ function viewStock(obj) {
 
     if (movement.getRow(idRow)) {
         sUnit = movement.getRow(idRow).oAuxUnit.code;
-        dReleased = parseFloat(movement.getRow(idRow).aStock[2]).toFixed(globalData.DEC_QTY);
-        dSegregated = parseFloat(movement.getRow(idRow).aStock[1]).toFixed(globalData.DEC_QTY);
+        dReleased = parseFloat(movement.getRow(idRow).aStock[1]).toFixed(globalData.DEC_QTY);
+        dSegregated = parseFloat(movement.getRow(idRow).aStock[2]).toFixed(globalData.DEC_QTY);
         dAvailable = parseFloat(movement.getRow(idRow).aStock[0]).toFixed(globalData.DEC_QTY);
     }
     else {

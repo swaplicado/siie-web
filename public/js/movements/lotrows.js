@@ -5,7 +5,7 @@ var vue = '';
 */
 $(document).on('click', 'button.buttlots', function () {
     idParentTr = $(this).closest('tr').attr('id');
-
+    document.getElementById('closeModal').disabled = false;
     // document.getElementById("qtyComplete").value = parseFloat(movement.getRow(idParentTr).dQuantity).toFixed(globalData.DEC_QTY);
 
     // $('#lotsbody').empty();

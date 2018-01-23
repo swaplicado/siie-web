@@ -64,5 +64,12 @@ class SSegregationCore
       return $query;
   }
 
+  public function isRelease($iStatus)
+  {
+      return $iStatus == \Config::get('scqms.PARTIAL_RELEASED') ||
+              $iStatus == \Config::get('scqms.RELEASED') ||
+                $iStatus == \Config::get('scqms.RELEASED_EARLY');
+  }
+
 
 }

@@ -55,6 +55,7 @@ class WmsAddMvtsTable extends Migration {
           	$table->integer('mvt_exp_type_id')->unsigned();
           	$table->integer('branch_id')->unsigned();
           	$table->integer('whs_id')->unsigned();
+            $table->integer('year_id')->unsigned();
           	$table->integer('auth_status_id')->unsigned();
           	$table->bigInteger('src_mvt_id')->unsigned();
           	$table->bigInteger('doc_order_id')->unsigned();
@@ -80,6 +81,7 @@ class WmsAddMvtsTable extends Migration {
           	$table->foreign('mvt_exp_type_id')->references('id_mvt_exp_type')->on('wmss_mvt_exp_types')->onDelete('cascade');
           	$table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
           	$table->foreign('whs_id')->references('id_whs')->on('wmsu_whs')->onDelete('cascade');
+            $table->foreign('year_id')->references('id_year')->on('erpu_years')->onDelete('cascade');
           	$table->foreign('auth_status_id')->references('id_auth_status')->on('erps_auth_status')->onDelete('cascade');
           	$table->foreign('src_mvt_id')->references('id_mvt')->on('wms_mvts')->onDelete('cascade');
           	$table->foreign('doc_order_id')->references('id_document')->on('erpu_documents')->onDelete('cascade');
@@ -93,14 +95,16 @@ class WmsAddMvtsTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('wms_mvts')->insert([
-            ['id_mvt' => '1','dt_date' => '2017-01-01','folio' => 'N/A','total_amount' => '0','total_length' => '0',
-            'total_surface' => '0','total_volume' => '0','total_mass' => '0','is_closed_shipment' => '1','is_deleted' => '1',
-            'mvt_whs_class_id' => '1','mvt_whs_type_id' => '1','mvt_trn_type_id' => '1','mvt_adj_type_id' => '1',
-            'mvt_mfg_type_id' => '1','mvt_exp_type_id' => '1','branch_id' => '1','whs_id' => '1','auth_status_id' => '1','src_mvt_id' => '1',
-            'doc_order_id' => '1','doc_invoice_id' => '1','doc_debit_note_id' => '1','doc_credit_note_id' => '1','mfg_dept_id' => '1',
-            'mfg_line_id' => '1','mfg_job_id' => '1','auth_status_by_id' => '1','closed_shipment_by_id' => '1','created_by_id' => '1',
-            'updated_by_id' => '1','ts_auth_status' => '2017-01-01','ts_closed_shipment' => '2017-01-01'],
-
+            ['id_mvt' => '1','dt_date' => '2017-01-01','folio' => 'N/A','total_amount' => '0',
+            'total_length' => '0','total_surface' => '0','total_volume' => '0','total_mass' => '0',
+            'is_closed_shipment' => '1','is_deleted' => '1','mvt_whs_class_id' => '1',
+            'mvt_whs_type_id' => '1','mvt_trn_type_id' => '1','mvt_adj_type_id' => '1',
+            'mvt_mfg_type_id' => '1','mvt_exp_type_id' => '1','branch_id' => '1','whs_id' => '1',
+            'year_id' => '1','auth_status_id' => '1','src_mvt_id' => '1','doc_order_id' => '1',
+            'doc_invoice_id' => '1','doc_debit_note_id' => '1','doc_credit_note_id' => '1',
+            'mfg_dept_id' => '1','mfg_line_id' => '1','mfg_job_id' => '1','auth_status_by_id' => '1',
+            'closed_shipment_by_id' => '1','created_by_id' => '1','updated_by_id' => '1',
+            'ts_auth_status' => '2017-01-01','ts_closed_shipment' => '2017-01-01'],
           ]);
 
         }

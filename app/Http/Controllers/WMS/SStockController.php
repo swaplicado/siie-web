@@ -41,6 +41,11 @@ class SStockController extends Controller
                          ei.name as item,
                          eu.code as unit';
 
+     $aParameters = array();
+     $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 'ei.id_item';
+     $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 'eu.id_unit';
+     $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = ''.session('work_year');
+
       switch ($iStockType) {
         case \Config::get('scwms.STOCK_TYPE.STK_BY_ITEM'):
           $groupBy = 'ws.item_id';
@@ -52,42 +57,54 @@ class SStockController extends Controller
           $groupBy = ['ws.pallet_id','ws.item_id','ws.whs_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.item_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'):
           $select = $select.', '.'wl.lot as lot_';
           $groupBy = ['ws.lot_id','ws.item_id'];
           $orderBy1 = 'ws.lot_id';
           $orderBy2 = 'ws.item_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
           $select = $select.', '.'wwl.name as location';
           $groupBy = ['ws.location_id','ws.item_id'];
           $orderBy1 = 'ws.location_id';
           $orderBy2 = 'ws.item_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE'):
           $select = $select.', '.'ww.name as warehouse';
           $groupBy = ['ws.whs_id','ws.item_id'];
           $orderBy1 = 'ws.whs_id';
           $orderBy2 = 'ws.item_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'):
           $select = $select.', '.'eb.name as branch_';
           $groupBy = ['ws.branch_id','ws.item_id'];
           $orderBy1 = 'ws.branch_id';
           $orderBy2 = 'ws.item_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
           $select = $select.', '.'wl.lot AS lot_, ww.name as warehouse';
           $groupBy = ['ws.item_id','ws.lot_id','ws.whs_id'];
           $orderBy1 = 'ws.item_id';
           $orderBy2 = 'ws.lot_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
           $select = $select.', '.'wp.pallet as pallet, wl.lot AS lot_';
           $groupBy = ['ws.pallet_id','ws.lot_id','ws.item_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.lot_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
           break;
 
         default:
@@ -95,8 +112,12 @@ class SStockController extends Controller
           break;
       }
 
+      $sub = session('stock')->getSubSegregated($aParameters);
+      $select = $select.', ('.($sub->toSql()).') as segregated';
+
       $stock = SStockManagment::getStockBaseQuery($select)
-                    ->select(\DB::raw($select))
+                    // ->select(\DB::raw($select))
+                    // ->mergeBindings($sub)
                     ->where('ws.is_deleted', false)
                     ->groupBy($groupBy)
                     ->orderBy($orderBy1)
@@ -176,6 +197,7 @@ class SStockController extends Controller
               $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
               $oStock->mfg_line_id = $oMovement->mfg_line_id;
               $oStock->mfg_job_id = $oMovement->mfg_job_id;
+              $oStock->year_id = session('work_year');
 
               $oStock->save();
             }
@@ -227,6 +249,7 @@ class SStockController extends Controller
           $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
           $oStock->mfg_line_id = $oMovement->mfg_line_id;
           $oStock->mfg_job_id = $oMovement->mfg_job_id;
+          $oStock->year_id = session('work_year');
 
           $oStock->save();
         }

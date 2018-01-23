@@ -92,6 +92,7 @@ class SWarehousesController extends Controller
       $location->code = 'def'.$whs->id_whs;
       $location->name = 'default';
       $location->is_deleted = false;
+      $location->is_default = true;
       $location->whs_id = $whs->id_whs;
       $location->created_by_id = 1;
       $location->updated_by_id = 1;

@@ -28,6 +28,7 @@ class SMovement extends Model {
                     'mvt_exp_type_id',
                     'branch_id',
                     'whs_id',
+                    'year_id',
                     'auth_status_id',
                     'src_mvt_id',
                     'doc_order_id',

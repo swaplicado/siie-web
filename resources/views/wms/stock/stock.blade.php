@@ -21,7 +21,7 @@
 		<table id="table_id" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-		            <th>Clave</th>
+		            <th data-priority="1">Clave</th>
 		            <th>Item</th>
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'))
@@ -45,8 +45,10 @@
 								@endif
 		            <th>Entradas</th>
 		            <th>Salidas</th>
-		            <th>Existencia</th>
-								<th>Unidad</th>
+		            <th data-priority="1">Existencia</th>
+		            <th data-priority="1">Segregado</th>
+		            <th data-priority="1">Disponible</th>
+								<th data-priority="1">Unidad</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -77,6 +79,8 @@
 		            <td align="right">{{ session('utils')->formatNumber($row->inputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 		            <td align="right">{{ session('utils')->formatNumber($row->outputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 		            <td align="right">{{ session('utils')->formatNumber($row->stock, \Config::get('scsiie.FRMT.QTY')) }}</td>
+		            <td align="right">{{ session('utils')->formatNumber($row->segregated, \Config::get('scsiie.FRMT.QTY')) }}</td>
+		            <td align="right">{{ session('utils')->formatNumber(($row->stock - $row->segregated), \Config::get('scsiie.FRMT.QTY')) }}</td>
 								<td align="right">{{ $row->unit }}</td>
 		        </tr>
 					@endforeach
@@ -87,7 +91,4 @@
 
 @section('js')
 	@include('templates.stock.scriptsstock')
-	<script>
-
-	</script>
 @endsection
