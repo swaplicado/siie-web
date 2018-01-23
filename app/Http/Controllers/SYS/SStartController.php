@@ -1,19 +1,21 @@
 <?php namespace App\Http\Controllers\SYS;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Database\Config;
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
 use App\SUtils\SSessionUtils;
 use App\SUtils\SConnectionUtils;
 use App\SYS\SCompany;
 use App\SYS\SConfiguration;
-use App\ERP\SErpConfiguration;
-use App\Database\Config;
-use App\ERP\SPartner;
 use App\SYS\SUserCompany;
+use App\ERP\SErpConfiguration;
+use App\ERP\SYear;
+use App\ERP\SPartner;
 use App\ERP\SUserBranch;
 use App\ERP\SUserWhs;
 use App\ERP\SBranch;
@@ -215,6 +217,13 @@ class SStartController extends Controller
         //session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
+
+        session(['work_date' => Carbon::now()]);
+        $iYear = Carbon::now()->year;
+        $oYear = SYear::where('year', $iYear)
+                        ->where('is_deleted', false)
+                        ->first();
+        session(['work_year' => $oYear->id_year]);
 
         return SStartController::branchwhs();
     }
