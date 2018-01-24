@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\SYS;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -17,6 +18,7 @@ use App\SYS\SUserCompany;
 use App\ERP\SUserBranch;
 use App\ERP\SUserWhs;
 use App\ERP\SBranch;
+use App\ERP\SYear;
 use App\WMS\SWarehouse;
 use App\SCore\SStockManagment;
 use App\SCore\SSegregationCore;
