@@ -11,8 +11,9 @@
   <div class="form-group">
       <div class="list-group">
         @foreach($branch as $userCompanyRow)
-            <a href="" id="{{ $userCompanyRow->branch_id }}" class="list-group-item {{ $i == 0 ? 'active' : '' }}">
-              <?php if($flag=0){ echo $userCompanyRow->name;}
+            <a href="" id= <?php if($flag==1){ echo $userCompanyRow->branch_id;}
+              else{ echo $userCompanyRow->branch->id_branch;} ?>  class="list-group-item {{ $i == 0 ? 'active' : '' }}">
+              <?php if($flag==1){ echo $userCompanyRow->name;}
                 else{ echo $userCompanyRow->branch->name;} ?>
             </a>
           <?php $i++; ?>
