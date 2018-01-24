@@ -1,6 +1,7 @@
 <?php namespace App\WMS;
 
 use Illuminate\Database\Eloquent\Model;
+use App\SUtils\SGuiUtils;
 
 class SMovementRow extends Model {
 
@@ -96,11 +97,15 @@ class SMovementRow extends Model {
     return $this->aAuxStock;
   }
 
-  public function scopeSearch($query, $name, $iFilter)
+  public function scopeSearch($query, $name, $iFilter, $sDtFilter)
   {
+      $aDates = SGuiUtils::getDatesOfFilter($sDtFilter);
+
       $query->join('erpu_items as ei', $this->table.'.item_id', '=', 'ei.id_item')
+              ->join('wms_mvts as wm', $this->table.'.mvt_id', '=', 'wm.id_mvt')
               ->select($this->table.'.*')
-              ->where('ei.is_deleted', false);
+              ->where('ei.is_deleted', false)
+              ->whereBetween('wm.dt_date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):

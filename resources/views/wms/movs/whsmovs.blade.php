@@ -81,7 +81,7 @@
 
 			<div class="form-group">
   			{!! Form::label('dt_date', trans('userinterface.labels.MVT_DATE').'*') !!}
-  			{!! Form::date('dt_date', \Carbon\Carbon::now(), ['class'=>'form-control']) !!}
+  			{!! Form::date('dt_date', session('work_date'), ['class'=>'form-control']) !!}
   		</div>
 
     </div>

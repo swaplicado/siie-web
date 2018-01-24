@@ -1,5 +1,7 @@
 <?php namespace App\SUtils;
 
+use Carbon\Carbon;
+
 use App\ERP\SItemClass;
 use App\ERP\SItemType;
 use App\ERP\SItemFamily;
@@ -106,7 +108,8 @@ class SGuiUtils {
        }
     }
 
-    public static function getNameOfMonth($iMonth){
+    public static function getNameOfMonth($iMonth)
+    {
        setlocale(LC_TIME, 'spanish');
        $sName = strftime("%B", mktime(0, 0, 0, $iMonth, 1, 2000));
        return $sName;
@@ -157,5 +160,24 @@ class SGuiUtils {
       }
 
       return $sClass;
+    }
+
+    public static function getDatesOfFilter($sDtFilter = '')
+    {
+        $sFilterDate = $sDtFilter == null ? \Config::get('scsys.FILTER.MONTH') : $sDtFilter;
+        $aDates = array();
+
+        if (! is_null($sFilterDate) && $sFilterDate != '') {
+            $sStartDate = substr($sFilterDate, 0, 10);
+            $sStartDate = str_replace('/', '-', $sStartDate);
+            $sEndDate = substr($sFilterDate, -10, 10);
+            $sEndDate = str_replace('/', '-', $sEndDate);
+            $dt = Carbon::parse($sStartDate);
+            $dtF = Carbon::parse($sEndDate);
+
+            array_push($aDates, $dt, $dtF);
+        }
+
+        return $aDates;
     }
 }

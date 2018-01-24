@@ -297,6 +297,7 @@
 											'WAREHOUSE' => 'Almacén',
 											'WEB' => 'Web',
 											'ZIP_CODE' => 'Código postal',
+											'WORK_DATE' => 'Fecha de trabajo',
 										]
 
 	];

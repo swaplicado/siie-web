@@ -9,6 +9,8 @@
          <h4 class="modal-title">{{ trans('siie.SESSION_INFO') }}</h4>
        </div>
        <div class="modal-body">
+         <p>{{ trans('userinterface.labels.WORK_DATE') }}</p>
+         <div class="well well-sm"><b>{{ session()->has('work_date') ? session('work_date')->format('d-m-Y') : '' }}</b></div>
          <p>{{ trans('userinterface.labels.COMPANY') }}</p>
          <div class="well well-sm"><b>{{ session()->has('company') ? session('company')->name : '' }}</b></div>
          <p>{{ trans('userinterface.labels.BRANCH') }}</p>

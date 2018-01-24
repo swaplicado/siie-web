@@ -56,7 +56,8 @@ class SMovsController extends Controller
      */
     public function index(Request $request, $iFolio = 0)
     {
-        $lMovRows = SMovementRow::Search($request->date, $this->iFilter)->orderBy('item_id', 'ASC')->orderBy('item_id', 'ASC')->paginate(20);
+        $sFilterDate = $request->filterDate == null ? \Config::get('scsys.FILTER.MONTH') : $request->filterDate;
+        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate)->orderBy('item_id', 'ASC')->orderBy('item_id', 'ASC')->paginate(20);
 
         foreach ($lMovRows as $row) {
             $row->movement->branch;
@@ -74,6 +75,8 @@ class SMovsController extends Controller
         // dd($lMovRows);
         return view('wms.movs.index')
                     ->with('iFolio', $iFolio)
+                    ->with('iFilter', $this->iFilter)
+                    ->with('sFilterDate', $sFilterDate)
                     ->with('rows', $lMovRows);
     }
 

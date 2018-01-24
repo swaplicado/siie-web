@@ -218,8 +218,11 @@ class SStartController extends Controller
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
 
-        session(['work_date' => Carbon::now()]);
-        $iYear = Carbon::now()->year;
+        $sWorkDate =  $_COOKIE['tWorkDate'];
+        $oWorkDate = Carbon::parse($sWorkDate);
+        session(['work_date' => $oWorkDate]);
+
+        $iYear = $oWorkDate->year;
         $oYear = SYear::where('year', $iYear)
                         ->where('is_deleted', false)
                         ->first();

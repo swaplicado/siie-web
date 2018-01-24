@@ -1,6 +1,7 @@
 <?php namespace App\SCore;
 
 use Carbon\Carbon;
+use App\SUtils\SGuiUtils;
 
 /**
  * this class manages the stock of company
@@ -409,17 +410,9 @@ class SStockManagment
      */
     public static function filterDate($lDocuments, $sDtFilter = '')
     {
-        $sFilterDate = $sDtFilter == null ? \Config::get('scsys.FILTER.MONTH') : $sDtFilter;
+        $aDates = SGuiUtils::getDatesOfFilter($sDtFilter);
+        $lDocuments =  $lDocuments->whereBetween('dt_doc', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
-        if (! is_null($sFilterDate) && $sFilterDate != '') {
-            $sStartDate = substr($sFilterDate, 0, 10);
-            $sStartDate = str_replace('/', '-', $sStartDate);
-            $sEndDate = substr($sFilterDate, -10, 10);
-            $sEndDate = str_replace('/', '-', $sEndDate);
-            $dt = Carbon::parse($sStartDate);
-            $dtF = Carbon::parse($sEndDate);
-            $lDocuments =  $lDocuments->whereBetween('dt_doc', [$dt->toDateString(), $dtF->toDateString()]);
-        }
 
         return $lDocuments;
     }

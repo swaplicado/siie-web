@@ -10,12 +10,27 @@
 
 @section('title', trans('userinterface.titles.WHS_MOVEMENTS'))
 
-<?php $sRoute="wms.stock"?>
+<?php $sRoute="wms.movs"?>
 
 @section('content')
-	{{-- <div class="row">
-			@include('templates.stock.filterstock')
-	</div> --}}
+	@section('thefilters')
+		{!! Form::open(['route' => [$sRoute.'.index'],
+										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
+			<div class="form-group">
+				<div class="input-group">
+					@include('templates.list.search')
+					<span class="input-group-btn">
+						{!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
+					</span>
+					<span class="input-group-btn">
+							<button id="searchbtn" type="submit" class="form-control">
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+					</span>
+				</div>
+			</div>
+		{!! Form::close() !!}
+	@endsection
 	<br />
 	<div class="row">
 		<table id="table_id" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
@@ -73,6 +88,8 @@
 
 @section('js')
 	@include('templates.stock.scriptsstock')
+	<script src="{{ asset('moment/moment.js') }}"></script>
+	<script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
 	<script>
 			 var folioParameter = <?php echo json_encode($iFolio); ?>;
 			 if (folioParameter != 0) {
@@ -82,5 +99,18 @@
 							  'success'
 							);
 			 }
+
+			 $(function() {
+				 $('input[id="filterDate"]').daterangepicker({
+					 locale: {
+									format: 'DD/MM/YYYY'
+							}
+				 });
+			 });
+
+			 $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
+				 console.log(picker.startDate.format('YYYY-MM-DD'));
+				 console.log(picker.endDate.format('YYYY-MM-DD'));
+			 });
 	</script>
 @endsection
