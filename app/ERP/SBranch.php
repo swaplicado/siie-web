@@ -41,11 +41,13 @@ class SBranch extends Model {
 
   public function scopeSearch($query, $name, $iFilter)
   {
+      $select = 'erpu_branches.*';
       $query->join('erpu_partners', 'erpu_partners.id_partner', '=', 'erpu_branches.partner_id')
                 ->where(function ($q) use ($name) {
                       $q->where('erpu_partners.name', 'LIKE', "%".$name."%")
                       ->orWhere('erpu_branches.name', 'LIKE', "%".$name."%");
-                  });
+                  })
+                  ->select(\DB::raw($select));
 
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
