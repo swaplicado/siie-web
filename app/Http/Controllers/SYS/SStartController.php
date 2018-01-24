@@ -216,7 +216,7 @@ class SStartController extends Controller
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
 
-	  $sWorkDate =  $_COOKIE['tWorkDate'];
+	      $sWorkDate =  $_COOKIE['tWorkDate'];
         $oWorkDate = Carbon::parse($sWorkDate);
         session(['work_date' => $oWorkDate]);
 
