@@ -14,11 +14,24 @@ class SItemFamily extends Model {
                           'is_deleted',
                         ];
 
+  /**
+   * [groups description]
+   * Return object SItemGroup
+   * @return SItemGroup
+   */
   public function groups()
   {
     return $this->hasMany('App\ERP\SItemGroup');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    variable for where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

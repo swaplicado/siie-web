@@ -23,36 +23,71 @@ class SWarehouse extends Model {
                           'whs_type_id',
                         ];
 
+  /**
+   * [whsType description]
+   * Return object SWhsType
+   * @return SWhsType
+   */
   public function whsType()
   {
     return $this->belongsTo('App\WMS\SWhsType', 'whs_type_id');
   }
 
+  /**
+   * [branch description]
+   * Return object SBranch
+   * @return SBranch
+   */
   public function branch()
   {
     return $this->belongsTo('App\ERP\SBranch', 'branch_id');
   }
 
+  /**
+   * [locations description]
+   * Return object SLocation
+   * @return SLocation
+   */
   public function locations()
   {
     return $this->hasMany('App\ERP\SLocation');
   }
 
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [userWhs description]
+   * Return object SUserWhs
+   * @return SUserWhs
+   */
   public function userWhs()
   {
     return $this->hasMany('App\ERP\SUserWhs');
   }
 
+  /**
+   * [getDefaultLocation description]
+   * Return object SLocation
+   * @return SLocation
+   */
   public function getDefaultLocation()
   {
      $oLocation = SLocation::where('whs_id', $this->id_whs)
@@ -61,6 +96,14 @@ class SWarehouse extends Model {
      return $oLocation;
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

@@ -23,7 +23,8 @@
 				 <input type="hidden" value="<?php echo $users->id; ?>" name="user" id="user"></input>
       </td>
       <td>
-        <select class="form-control select-branch branch" name="branch" id="branch" placeholder="Seleccione ...">
+        <select class="form-control select-branch branch" name="branch" id="branch">
+					<option>Seleccione una sucursal</option>
 			@foreach($branches as $branch)
 		      <option value="<?php echo $branch->branch->id_branch ?>" ><?php echo $branch->branch->name ?></option>
 			@endforeach
@@ -70,7 +71,7 @@
 											flag=false;
 											if(arrayJS[j]==data[i].id_whs)
 											{
-												flag=true;
+												flag=true;break;
 											}
 										}
 										if(flag==true){

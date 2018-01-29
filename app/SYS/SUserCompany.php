@@ -10,16 +10,33 @@ class SUserCompany extends Model
   public $timestamps = false;
   protected $fillable = ['id_user_access','user_id','company_id'];
 
+  /**
+   * [user description]
+   * Return object User
+   * @return User
+   */
   public function user()
   {
       return $this->belongsTo('App\User');
   }
 
+  /**
+   * [company description]
+   * Return object SCompany
+   * @return SCompany
+   */
   public function company()
   {
       return $this->belongsTo('App\SYS\SCompany', 'company_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $iFilter)
     {
       switch ($iFilter) {

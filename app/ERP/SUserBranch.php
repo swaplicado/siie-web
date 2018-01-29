@@ -12,16 +12,33 @@ class SUserBranch extends Model
   public $timestamps = false;
   protected $fillable = ['id_access_branch','user_id','branch_id','is_universal'];
 
+  /**
+   * [user description]
+   * Return object User
+   * @return User
+   */
   public function user()
   {
       return $this->belongsTo('App\User');
   }
 
+  /**
+   * [branch description]
+   * Return object SBranch
+   * @return SBranch
+   */
   public function branch()
   {
       return $this->belongsTo('App\ERP\SBranch');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $iFilter)
     {
       switch ($iFilter) {

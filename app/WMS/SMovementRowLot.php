@@ -22,11 +22,21 @@ class SMovementRowLot extends Model {
                           'lot_id'
                         ];
 
+  /**
+   * [row description]
+   * Return object SMovementRow
+   * @return SMovementRow
+   */
   public function row()
   {
     return $this->belongsTo('App\WMS\SMovementRow', 'id_mvt_row', 'mvt_row_id');
   }
 
+  /**
+   * [lot description]
+   * Return object SWmsLot
+   * @return SWmsLot
+   */
   public function lot()
   {
     return $this->belongsTo('App\WMS\SWmsLot', 'lot_id');

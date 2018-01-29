@@ -28,17 +28,35 @@ class SPartner extends Model {
                           'is_related_party',
                           'is_deleted',
                         ];
-
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return objct User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query     query to do
+   * @param  string $bpName    business partner name
+   * @param  integer  $iFilter   type of filter
+   * @param  integer $iFilterBp type of filter business partner
+   * @return query
+   */
   public function scopeSearch($query, $bpName, $iFilter, $iFilterBp)
   {
       $bAtt = true;

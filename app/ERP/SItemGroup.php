@@ -22,16 +22,34 @@ class SItemGroup extends Model {
                           'item_family_id',
                         ];
 
+  /**
+   * [genders description]
+   * Return object SItemGender
+   * @return SItemGender
+   */
   public function genders()
   {
     return $this->hasMany('App\ERP\SItemGender');
   }
 
+  /**
+   * [family description]
+   * Return object SItemFamily
+   * @return SItemFamily
+   */
   public function family()
   {
     return $this->belongsTo('App\ERP\SItemFamily', 'item_family_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    variable for where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

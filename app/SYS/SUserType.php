@@ -9,6 +9,11 @@ class SUserType extends Model
   protected $table = 'syss_user_types';
   protected $fillable = ['id_user_type','name'];
 
+  /**
+   * [user description]
+   * Return object User
+   * @return [type] [description]
+   */
   public function user()
   {
       return $this->hasMany('App\User');

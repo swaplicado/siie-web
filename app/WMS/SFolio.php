@@ -35,17 +35,31 @@ class SFolio extends SModel {
    protected $auxBranch = '';
    protected $auxCompany = '';
 
-
+   /**
+    * [mvtClass description]
+    * Return object SMvtClass
+    * @return SMvtClass
+    */
     public function mvtClass()
     {
       return $this->belongsTo('App\WMS\SMvtClass', 'mvt_class_id');
     }
 
+    /**
+     * [mvtType description]
+     * Return object SMvtType
+     * @return SMvtType
+     */
     public function mvtType()
     {
       return $this->belongsTo('App\WMS\SMvtType', 'mvt_type_id');
     }
 
+    /**
+     * [getLocation description]
+     * Return object SLocation
+     * @return SLocation
+     */
     public function getLocation()
     {
        if ($this->container_type_id == \Config::get('scwms.CONTAINERS.LOCATION'))
@@ -64,6 +78,11 @@ class SFolio extends SModel {
        }
     }
 
+    /**
+     * [getWarehouse description]
+     * Return object SWarehouse
+     * @return SWarehouse
+     */
     public function getWarehouse()
     {
       if ($this->auxWarehouse != '')
@@ -85,6 +104,11 @@ class SFolio extends SModel {
        }
     }
 
+    /**
+     * [getBranch description]
+     * Return object SBranch
+     * @return SBranch
+     */
     public function getBranch()
     {
         if ($this->auxBranch != '')
@@ -105,6 +129,11 @@ class SFolio extends SModel {
        }
     }
 
+    /**
+     * [getCompany description]
+     * Return object SPartner
+     * @return SPartner
+     */
     public function getCompany()
     {
         if ($this->auxCompany != '')
@@ -121,6 +150,14 @@ class SFolio extends SModel {
        }
     }
 
+    /**
+     * [scopeSearch description]
+     * To search in a query
+     * @param  string $query      query to do
+     * @param  integer $folioStart in what folio start to search
+     * @param  integer $iFilter    type of filter
+     * @return string             query
+     */
     public function scopeSearch($query, $folioStart, $iFilter)
     {
         switch ($iFilter) {

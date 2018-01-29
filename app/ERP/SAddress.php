@@ -28,21 +28,44 @@ class SAddress extends Model {
                           'state_id',
                           ];
 
+  /**
+   * [branch description]
+   * Return object SBranch
+   * @return SBranch
+   */
   public function branch()
   {
     return $this->belongsTo('App\ERP\SBranch', 'branch_id');
   }
 
+  /**
+   * [country description]
+   * Return object SCountry
+   * @return SCountry
+   */
   public function country()
   {
     return $this->belongsTo('App\ERP\SCountry', 'country_id');
   }
 
+  /**
+   * [state description]
+   * Return object SState
+   * @return SState
+   */
   public function state()
   {
     return $this->belongsTo('App\ERP\SState', 'state_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * @param  string $query   query to do
+   * @param  string $name    variable for where clause
+   * @param  integer $iFilter type of filter
+   * @param  boolean $iBranchId if have filter of branch
+   * @return [type]            [description]
+   */
   public function scopeSearch($query, $name, $iFilter, $iBranchId)
   {
       if ($iBranchId == NULL) {

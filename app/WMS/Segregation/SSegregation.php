@@ -17,7 +17,11 @@ class SSegregation extends SModel {
                           'updated_by_id',
                           ];
 
-
+    /**
+     * [rows description]
+     * Return object SSegregartionRow
+     * @return SSegregationRow
+     */
     public function rows()
     {
       return $this->hasmany('App\WMS\Segregation\SSegregationRow', 'segregation_id', 'id_segregation');

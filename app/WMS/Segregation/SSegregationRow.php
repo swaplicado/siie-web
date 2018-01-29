@@ -23,11 +23,21 @@ class SSegregationRow extends SModel {
                             'quality_status_id',
                           ];
 
+    /**
+     * [segregation description]
+     * Return object SSegregation
+     * @return SSegregation
+     */
     public function segregation()
     {
       return $this->belongsTo('App\WMS\Segregation\SSegregation');
     }
 
+    /**
+     * [lotRows description]
+     * Return object SSegregationRow
+     * @return SSegregationRow
+     */
     public function lotRows()
     {
       return $this->hasmany('App\WMS\Segregation\SSegregationRow', 'segregation_row_id', 'id_segregation_row');

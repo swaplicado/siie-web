@@ -26,32 +26,64 @@ class SPallet extends SModel {
     return $this->table;
   }
 
+  /**
+   * [item description]
+   * Return Object SItem
+   * @return SItem
+   */
   public function item()
   {
     return $this->belongsTo('App\ERP\SItem');
   }
 
+  /**
+   * [unit description]
+   * Return Object SUnit
+   * @return SUnit
+   */
   public function unit()
   {
     return $this->belongsTo('App\ERP\SUnit');
   }
 
+  /**
+   * [loc description]
+   * Return object SLocation
+   * @return SLocation
+   */
   public function loc()
   {
     return $this->belongsTo('App\WMS\SLocation');
   }
 
-
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

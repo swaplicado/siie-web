@@ -15,11 +15,22 @@ class SItemType extends Model {
                           'item_class_id',
                         ];
 
+  /**
+   * [class description]
+   * Return object SItemClass
+   * @return SItemClass
+   */
   public function class()
   {
     return $this->belongsTo('App\ERP\SItemClass');
   }
 
+  /**
+   * [classTypes description]
+   * To search te item type
+   * @param  integer $idClass where clause
+   * @return SItemType
+   */
   public function classTypes($idClass)
   {
     return SItemType::where('item_class_id', '=', $idClass)->get();

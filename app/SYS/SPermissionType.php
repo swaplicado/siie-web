@@ -9,11 +9,24 @@ class SPermissionType extends Model {
     protected $table = "syss_permission_types";
     protected $fillable = ['id_permission_type', 'name'];
 
+    /**
+     * [permissions description]
+     * Return object SPermission
+     * @return [type] [description]
+     */
     public function permissions()
     {
       return $this->hasMany('App\ERP\SPermission');
     }
 
+    /**
+     * [scopeSearch description]
+     * To search in a query
+     * @param  string $query   query to do
+     * @param  string $name    variable for where clause
+     * @param  integer $iFilter type of filter
+     * @return string          query
+     */
     public function scopeSearch($query, $name, $iFilter)
     {
         switch ($iFilter) {

@@ -9,11 +9,24 @@ class SPrivilege extends Model
   protected $table = "syss_privileges";
   protected $fillable = ['id_privilege','name'];
 
+  /**
+   * [userPermission description]
+   * Return object SUserPermission
+   * @return SUserPermission
+   */
   public function userPermission()
   {
       return $this->hasMany('App\SYS\SUserPermission');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
     {
       switch ($iFilter) {

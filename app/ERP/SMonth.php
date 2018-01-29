@@ -9,7 +9,12 @@ class SMonth extends Model {
   protected $table = "erpu_months";
   protected $fillable = ['id_month', 'month', 'is_closed', 'is_deleted', 'year_id', 'created_by_id', 'updated_by_id'];
 
-
+    /**
+     * [__construct description]
+     *
+     * @param integer $iMonth  initializate mounth
+     * @param integer $iYearId initializate year
+     */
     public function __construct($iMonth = 0, $iYearId = 0)
     {
         $attributes = array();
@@ -23,21 +28,44 @@ class SMonth extends Model {
         parent::__construct($attributes);
     }
 
+  /**
+   * [year description]
+   * Return object SYear
+   * @return SYear
+   */
   public function year()
   {
     return $this->belongsTo('App\ERP\SYear');
   }
 
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  integer $iFilter type of filter
+   * @param  integer $iYearId where clause
+   * @return query          
+   */
   public function scopeSearch($query, $iFilter, $iYearId)
   {
       switch ($iFilter) {

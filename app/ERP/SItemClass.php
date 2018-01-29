@@ -18,6 +18,11 @@ class SItemClass extends Model {
                           'is_deleted',
                         ];
 
+  /**
+   * [types description]
+   * Return object SItemType
+   * @return SItemType
+   */
   public function types()
   {
     return $this->hasMany('App\ERP\SItemType');

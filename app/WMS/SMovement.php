@@ -44,51 +44,101 @@ class SMovement extends Model {
                     'ts_closed_shipment'
                         ];
 
+  /**
+   * [rows description]
+   * Return object SMovementRow
+   * @return SMovementRow
+   */
   public function rows()
   {
     return $this->hasMany('App\WMS\SMovementRow', 'mvt_id', 'id_mvt');
   }
 
+  /**
+   * [invoice description]
+   * Return object SDocument
+   * @return SDocument
+   */
   public function invoice()
   {
     return $this->belongsTo('App\ERP\SDocument', 'doc_invoice_id');
   }
 
+  /**
+   * [order description]
+   * Return object SDocument
+   * @return SDocument
+   */
   public function order()
   {
     return $this->belongsTo('App\ERP\SDocument', 'doc_order_id');
   }
 
+  /**
+   * [warehouse description]
+   * Return object SWarehouse
+   * @return SWarehouse
+   */
   public function warehouse()
   {
     return $this->belongsTo('App\WMS\SWarehouse', 'whs_id');
   }
 
+  /**
+   * [branch description]
+   * Return object SBranch
+   * @return SBranch
+   */
   public function branch()
   {
     return $this->belongsTo('App\ERP\SBranch', 'branch_id');
   }
 
+  /**
+   * [mvtType description]
+   * Return object SMvtType
+   * @return SMvtType
+   */
   public function mvtType()
   {
     return $this->belongsTo('App\WMS\SMvtType', 'mvt_whs_type_id');
   }
 
+  /**
+   * [trnType description]
+   * Return object SMvtTrnType
+   * @return SMvtTrnType
+   */
   public function trnType()
   {
     return $this->belongsTo('App\WMS\SMvtTrnType', 'mvt_trn_type_id');
   }
 
+  /**
+   * [adjType description]
+   * Return object SMvtAdjType
+   * @return SMvtAdjType
+   */
   public function adjType()
   {
     return $this->belongsTo('App\WMS\SMvtAdjType', 'mvt_adj_type_id');
   }
 
+  /**
+   * [mfgType description]
+   * Return object SMvtMfgType
+   * @return SMvtMfgType
+   */
   public function mfgType()
   {
     return $this->belongsTo('App\WMS\SMvtMfgType', 'mvt_mfg_type_id');
   }
 
+  /**
+   * [expType description]
+   * Return object SMvtExpType
+   * @return SMvtExpType
+   */
   public function expType()
   {
     return $this->belongsTo('App\WMS\SMvtExpType', 'mvt_exp_type_id');

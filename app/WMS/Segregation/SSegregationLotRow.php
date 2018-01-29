@@ -21,6 +21,11 @@ class SSegregationLotRow extends SModel {
                             'quality_status_id',
                           ];
 
+  /**
+   * [rows description]
+   * Return object SSegregartionRow
+   * @return SSegregationRow
+  */
     public function row()
     {
       return $this->belongsTo('App\WMS\Segregation\SSegregationRow');

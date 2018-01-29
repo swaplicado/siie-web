@@ -23,26 +23,57 @@ class SItem extends SModel {
                           'unit_id',
                         ];
 
+  /**
+   * [gender description]
+   * Return object SItemGender
+   * @return SItemGender
+   */
   public function gender()
   {
     return $this->belongsTo('App\ERP\SItemGender', 'item_gender_id');
   }
 
+  /**
+   * [unit description]
+   * Return object SUnit
+   * @return SUnit
+   */
   public function unit()
   {
     return $this->belongsTo('App\ERP\SUnit');
   }
 
+  /**
+   * [lot description]
+   * Return object SWmsLot
+   * @return SWmsLot
+   */
   public function lot()
   {
     return $this->hasmany('App\WMS\SWmsLot');
   }
 
+  /**
+   * [pallet description]
+   * Return object SPallet
+   * @return SPallet
+   */
   public function pallet()
   {
     return $this->hasmany('App\WMS\SPallet');
   }
 
+  /**
+   * [scopeSearch description]
+   * @param  string $query         query to do
+   * @param  string $name          variable for where clause
+   * @param  integer $iFilter       type of filter
+   * @param  integer $iFilterLot    filter for lots
+   * @param  integer $iFilterBulk   filter for bulk
+   * @param  integer $iFilterGender filter for gender
+   * @param  integer $idClass       variable for where clause
+   * @return string                query
+   */
   public function scopeSearch($query, $name, $iFilter, $iFilterLot, $iFilterBulk, $iFilterGender, $idClass)
   {
       $query->join('erpu_item_genders', 'erpu_items.item_gender_id', '=', 'erpu_item_genders.id_item_gender')

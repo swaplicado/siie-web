@@ -19,7 +19,7 @@
 				<tr>
 					<td>{{ $user->user->username }}</td>
 					<td>
-						<a href="{{ route('siie.userwhs.edit', $user->user->id) }}" class="btn btn-warning"><span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span></a>
+						<a href="{{ route('siie.userwhs.edit', $user->user->id) }}" class="btn btn-info"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
 					</td>
 
 				</tr>

@@ -10,6 +10,13 @@ use PDF;
   class SBarcode
   {
 
+  /**
+   * [fill description]
+   * To have a certain size string
+   * @param  integer $lower  start of string
+   * @param  integer $higher end of string
+   * @return string        string with certain size
+   */
   public static function fill($lower,$higher)
     {
       $aux = "";
@@ -23,6 +30,13 @@ use PDF;
       return $aux;
     }
 
+  /**
+   * [remove description]
+   * Remove 0 to have the original string
+   * @param  integer $numberDigits number of digits that must have the string
+   * @param  string $data         part of the barcode
+   * @return string       string without 0
+   */
   public static function remove($numberDigits, $data)
     {
       $answer="";
@@ -38,6 +52,13 @@ use PDF;
       return $answer;
     }
 
+  /**
+   * [generateItemBarcode description]
+   * Generate barcode
+   * @param  array $dataBarcode data that will make up the barcode
+   * @param  SComponetBarcode $data       numer of digits of the components of the barcode
+   * @return string              barcode
+   */
   public static function generateItemBarcode($dataBarcode,$data){
       $auxLot = "";
       $auxTextLot = "";
@@ -70,7 +91,13 @@ use PDF;
   }
 
 
-
+  /**
+   * [generatePalletBarcode description]
+   * Generate barcode
+   * @param  array $dataBarcode data that will make up the barcode
+   * @param  SComponetBarcode $data       numer of digits of the components of the barcode
+   * @return string              barcode
+   */
   public static function generatePalletBarcode($dataBarcode,$data){
       $auxPallet = "";
       $auxTextPallet = "";
@@ -105,6 +132,11 @@ use PDF;
 
   }
 
+  /**
+   * [decodeBarcode description]
+   * @param  [type] $data [description]
+   * @return [type]       [description]
+   */
   public static function decodeBarcode($data){
 
     $type = substr($data, 0 , 1 );

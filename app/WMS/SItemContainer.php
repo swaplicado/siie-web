@@ -30,6 +30,11 @@ class SItemContainer extends Model {
    protected $auxBranch = '';
    protected $auxCompany = '';
 
+    /**
+     * [getLocation description]
+     * Return object SLocation
+     * @return SLocation
+     */
     public function getLocation()
     {
        if ($this->container_type_id == \Config::get('scwms.CONTAINERS.LOCATION'))
@@ -48,6 +53,11 @@ class SItemContainer extends Model {
        }
     }
 
+    /**
+     * [getWarehouse description]
+     * Return object SWarehouse
+     * @return SWarehouse
+     */
     public function getWarehouse()
     {
       if ($this->auxWarehouse != '')
@@ -69,6 +79,11 @@ class SItemContainer extends Model {
        }
     }
 
+    /**
+     * [getBranch description]
+     * Return object SBranch
+     * @return SBranch
+     */
     public function getBranch()
     {
         if ($this->auxBranch != '')
@@ -89,6 +104,11 @@ class SItemContainer extends Model {
        }
     }
 
+    /**
+     * [getCompany description]
+     * Return object SCompany
+     * @return SCompany
+     */
     public function getCompany()
     {
         if ($this->auxCompany != '')
@@ -105,6 +125,14 @@ class SItemContainer extends Model {
        }
     }
 
+    /**
+     * [scopeSearch description]
+     * To search in a query
+     * @param  string $query      query to do
+     * @param  integer $folioStart in what folio start the search
+     * @param  integer $iFilter    type of filter
+     * @return string             query
+     */
     public function scopeSearch($query, $folioStart, $iFilter)
     {
         switch ($iFilter) {

@@ -22,26 +22,54 @@ class SWmsLot extends SModel {
                           'unit_id',
                         ];
 
+  /**
+   * [item description]
+   * Return object SItem
+   * @return SItem
+   */
   public function item()
   {
     return $this->belongsTo('App\ERP\SItem');
   }
 
+  /**
+   * [unit description]
+   * Return object SUnit
+   * @return SUnit
+   */
   public function unit()
   {
     return $this->belongsTo('App\ERP\SUnit');
   }
 
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

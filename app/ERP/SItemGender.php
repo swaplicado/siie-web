@@ -26,25 +26,56 @@ class SItemGender extends Model {
                           'item_type_id',
                         ];
 
+  /**
+   * [items description]
+   * Return object SItem
+   * @return SItem
+   */
   public function items()
   {
     return $this->hasMany('App\ERP\SItem', 'id_item');
   }
+
+  /**
+   * [group description]
+   * Return object SItemGroup
+   * @return SItemGroup
+   */
   public function group()
   {
     return $this->belongsTo('App\ERP\SItemGroup', 'item_group_id');
   }
 
+
+  /**
+   * [itemClass description]
+   * Return object SItemClass
+   * @return SItemClass
+   */
   public function itemClass()
   {
     return $this->belongsTo('App\ERP\SItemClass', 'item_class_id');
   }
 
+  /**
+   * [type description]
+   * Return object SItemType
+   * @return SItemType
+   */
   public function type()
   {
     return $this->belongsTo('App\ERP\SItemType', 'item_type_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query    query to do
+   * @param  string $name     variable for where class
+   * @param  integer $iFilter  type of filter
+   * @param  integer $iClassId if search by item_class_id
+   * @return string           query
+   */
   public function scopeSearch($query, $name, $iFilter, $iClassId)
   {
       switch ($iFilter) {

@@ -37,46 +37,94 @@ class SDocument extends SModel {
                           'updated_by_id',
                         ];
 
+  /**
+   * [rows description]
+   * Return object SDocumentRow
+   * @return SDocumentRow
+   */
   public function rows()
   {
     return $this->hasmany('App\ERP\SDocumentRow', 'document_id');
   }
 
+  /**
+   * [movementsOfOrder description]
+   * Return object SMovement
+   * @return SMovement
+   */
   public function movementsOfOrder()
   {
     return $this->hasmany('App\WMS\SMovement', 'doc_order_id');
   }
 
+  /**
+   * [movementsOfInvoice description]
+   * Return object SMovement
+   * @return SMovement
+   */
   public function movementsOfInvoice()
   {
     return $this->hasmany('App\WMS\SMovement', 'doc_invoice_id');
   }
 
+  /**
+   * [partner description]
+   * Return object SPartner
+   * @return SPartner
+   */
   public function partner()
   {
     return $this->belongsTo('App\ERP\SPartner', 'partner_id');
   }
 
+  /**
+   * [sourceDocument description]
+   * Return object SDocument
+   * @return SDocument
+   */
   public function sourceDocument()
   {
     return $this->belongsTo('App\ERP\SDocument', 'doc_src_id');
   }
 
+  /**
+   * [currency description]
+   * Return object SCurrency
+   * @return SCurrency
+   */
   public function currency()
   {
     return $this->belongsTo('App\ERP\SCurrency', 'currency_id');
   }
 
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * to search in a query
+   * @param  string $query          query to do
+   * @param  string $iDocCategory   variable for where clause
+   * @param  string $iDocumentClass variable for where clause
+   * @return string                 query
+   */
   public function scopeSearch($query, $iDocCategory, $iDocumentClass)
   {
       $query->join('erpu_partners', 'erpu_documents.partner_id', '=', 'erpu_partners.id_partner')

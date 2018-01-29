@@ -18,21 +18,44 @@ class SState extends Model {
                           'country_id'
                         ];
 
+  /**
+   * [country description]
+   * Return object SCountry
+   * @return SCountry
+   */
   public function country()
   {
     return $this->belongsTo('App\ERP\SCountry',  'country_id');
   }
 
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
   public function userCreation()
   {
     return $this->belongsTo('App\User', 'created_by_id');
   }
 
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
   }
 
+  /**
+   * [scopeSearch description]
+   * To search in a query
+   * @param  string $query   query to do
+   * @param  string $name    variable for where clause
+   * @param  integer $iFilter type of filter
+   * @return string          query
+   */
   public function scopeSearch($query, $name, $iFilter)
   {
       switch ($iFilter) {

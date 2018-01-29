@@ -49,11 +49,21 @@ class SStock extends Model {
     return $this->table;
   }
 
+  /**
+   * [movement description]
+   * Return object SMovement
+   * @return SMovement
+   */
   public function movement()
   {
     return $this->belongsTo('App\WMS\SMovement', 'mvt_id');
   }
 
+  /**
+   * [item description]
+   * Return object SItem
+   * @return SItem
+   */
   public function item()
   {
     return $this->belongsTo('App\ERP\SItem', 'item_id');

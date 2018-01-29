@@ -14,6 +14,11 @@ class SMvtClass extends Model {
                           'is_deleted',
                         ];
 
+  /**
+   * [mvtTypes description]
+   * Return object SMvtType
+   * @return SMvtType
+   */
   public function mvtTypes()
   {
     return $this->hasMany('App\WMS\SMvtTypes');

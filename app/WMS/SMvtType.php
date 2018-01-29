@@ -15,6 +15,11 @@ class SMvtType extends Model {
                           'mvt_class_id',
                         ];
 
+  /**
+   * [mvtClass description]
+   * Return object SMvtClass
+   * @return SMvtClass
+   */
   public function mvtClass()
   {
     return $this->belongsTo('App\WMS\SMvtClass');

@@ -65,36 +65,71 @@ class User extends Model implements AuthenticatableContract,
         }
     }
 
+    /**
+     * [userType description]
+     * Return object TypeUser
+     * @return TypeUser
+     */
     public function userType()
     {
       return $this->belongsTo('App\SYS\TypeUser');
     }
 
+    /**
+     * [userPermission description]
+     * Return object SUserPermission
+     * @return SUserPermission
+     */
     public function userPermission()
     {
       return $this->hasMany('App\SYS\SUserPermission');
     }
 
+    /**
+     * [coUsPermission description]
+     * Return object SCoUsPermission
+     * @return SCoUsPermission
+     */
     public function coUsPermission()
     {
       return $this->hasMany('App\SYS\SCoUsPermission');
     }
 
+    /**
+     * [userCompanies description]
+     * Return object SUserCompany
+     * @return SUserCompany
+     */
     public function userCompanies()
     {
       return $this->hasMany('App\SYS\SUserCompany');
     }
 
+    /**
+     * [userBranches description]
+     * Return object SUserBranch
+     * @return SUserBranch
+     */
     public function userBranches()
     {
       return $this->hasMany('App\ERP\SUserBranch');
     }
 
+    /**
+     * [userCreation description]
+     * Return object User
+     * @return User
+     */
     public function userCreation()
     {
       return $this->belongsTo('App\User', 'created_by_id');
     }
 
+    /**
+     * [userCreation description]
+     * Return object User
+     * @return User
+     */
     public function userUpdate()
     {
       return $this->belongsTo('App\User', 'updated_by_id');
