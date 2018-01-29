@@ -38,6 +38,7 @@ class WmsAddSegregationTables extends Migration {
 
           Schema::connection($this->sConnection)->create('wms_segregations', function (blueprint $table) {
           	$table->increments('id_segregation');
+          	$table->date('dt_date');
           	$table->boolean('is_deleted');
           	$table->integer('segregation_type_id')->unsigned();
           	$table->integer('reference_id')->unsigned();
@@ -51,7 +52,7 @@ class WmsAddSegregationTables extends Migration {
           });
 
           DB::connection($this->sConnection)->table('wms_segregations')->insert([
-          	['id_segregation' => '1','is_deleted' => '3','segregation_type_id' => '3','reference_id'=>'1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_segregation' => '1','dt_date' => '2018-01-01','is_deleted' => '0','segregation_type_id' => '3','reference_id'=>'1', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
 
           Schema::connection($this->sConnection)->create('wms_segregation_rows', function (blueprint $table) {

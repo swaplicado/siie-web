@@ -25,4 +25,10 @@ return [
                           'QUALITY' => '3',
                         ],
 
+    'QMS_VIEW' => [
+                      'BY_STATUS' => '1',
+                      'INSPECTION' => '2',
+                      'CLASSIFY' => '3',
+                  ],
+
 ];

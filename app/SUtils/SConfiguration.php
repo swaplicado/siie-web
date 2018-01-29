@@ -7,6 +7,13 @@ use App\Http\Requests;
 
 class SConfiguration {
 
+  /**
+   * get the class of Nav to the module, this changes the color
+   * depending of module
+   *
+   * @param  int $iModule
+   * @return string constant with the class of the nav
+   */
   public static function getModuleNav($iModule)
   {
     $sNav = '';
@@ -40,5 +47,5 @@ class SConfiguration {
 
     return $sNav;
   }
-  
+
 }

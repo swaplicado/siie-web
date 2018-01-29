@@ -10,12 +10,26 @@
 
 @section('title', $sTitle)
 
-<?php $sRoute='wms.segregations'?>
+<?php $sRoute='qms.segregations'?>
 
 @section('content')
-	{{-- <div class="row">
-			@include('templates.stock.filterstock')
-	</div> --}}
+	@section('thefilters')
+		{!! Form::open(['route' => [ $sRoute.'.index'],
+										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
+			<div class="form-group">
+				<div class="input-group">
+					<span class="input-group-btn">
+						{!! Form::date('filterDate', $tFilterDate, ['class'=>'form-control']) !!}
+					</span>
+					<span class="input-group-btn">
+							<button id="searchbtn" type="submit" class="form-control">
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+					</span>
+				</div>
+			</div>
+		{!! Form::close() !!}
+	@endsection
 	@include('wms.segregations.classification')
 	<br />
 	<div class="row">
@@ -39,7 +53,9 @@
 		            <th>Almacén</th>
 		            <th data-priority="1">{{ trans('userinterface.labels.STATUS') }}</th>
 		            <th>Doc</th>
-		            <th>-</th>
+								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY'))
+									<th>-</th>
+								@endif
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -66,14 +82,16 @@
 									</span>
 								</td>
 								<td>{{ $row->num_doc }}</td>
-								<td>
-									<a data-toggle="modal" data-target="#classQlty"
-											title="Evaluar material/producto"
-											onclick="classificateUnits(this)"
-											class="btn btn-default btn-sm">
-										<span class="glyphicon glyphicon-search" aria-hidden = "true"/>
-									</a>
-								</td>
+								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY'))
+									<td>
+										<a data-toggle="modal" data-target="#classQlty"
+												title="Evaluar material/producto"
+												onclick="classificateUnits(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-search" aria-hidden = "true"/>
+										</a>
+									</td>
+								@endif
 		        </tr>
 					@endforeach
 		    </tbody>

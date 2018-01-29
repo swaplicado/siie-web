@@ -37,7 +37,7 @@ function classificateUnits(obj) {
       sUnit = oRow.children[2].textContent;
       sLot = oRow.children[3].textContent;
       sPallet = oRow.children[4].textContent;
-      sStatus = oRow.children[7].outerText;
+      sStatus = oRow.children[7].textContent;
       dQuantity = oRow.children[5].textContent;
     }
 

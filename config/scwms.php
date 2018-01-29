@@ -76,6 +76,7 @@ return [
                         'WHS' => '5',
                         'BRANCH' => '6',
                         'ID_YEAR' => '7',
+                        'DATE' => '8',
                       ],
 
     'STOCK' => [

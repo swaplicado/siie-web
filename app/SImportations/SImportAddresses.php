@@ -6,26 +6,36 @@ use App\ERP\SCountry;
 use App\ERP\SState;
 
 /**
- *
+ * this class import the data of address from siie
  */
-class SImportAddresses
-{
-  // protected $webhost        = 'localhost';
+class SImportAddresses {
   protected $webusername    = 'root';
   protected $webpassword    = 'msroot';
   protected $webdbname      = 'erp';
   protected $webcon         = '';
 
+  /**
+   * receive the name of host to connect
+   * can be a IP or name of host
+   *
+   * @param string $sHost
+   */
   function __construct($sHost)
   {
-      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
+      $this->webcon = mysqli_connect($sHost, $this->webusername,
+                                    $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
-      if (mysqli_connect_errno())
-      {
+
+      if (mysqli_connect_errno()) {
           echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
       }
   }
 
+  /**
+   * read the data  from siie, transform it, and saves it in the database
+   *
+   * @return integer number of records imported
+   */
   public function importAddresses()
   {
       $sql = "SELECT
@@ -57,6 +67,8 @@ class SImportAddresses
                   locu_sta AS ls ON (bba.fid_sta_n = ls.id_sta)";
 
       $result = $this->webcon->query($sql);
+      $this->webcon->close();
+
       $lSiieAddresses = array();
       $lWebAddresses = SAddress::get();
       $lBranches = SBranch::get();
@@ -68,37 +80,30 @@ class SImportAddresses
       $lAddresses = array();
       $lAddressesToWeb = array();
 
-      foreach ($lWebAddresses as $key => $value)
-      {
+      foreach ($lWebAddresses as $key => $value) {
           $lAddresses[$value->external_id] = $value;
       }
 
-      foreach ($lBranches as $key => $branch)
-      {
+      foreach ($lBranches as $key => $branch) {
           $lWebBranches[$branch->external_id] = $branch->id_branch;
       }
 
-      foreach ($lCountries as $key => $country)
-      {
+      foreach ($lCountries as $key => $country) {
           $lWebCountries[$country->code] = $country->id_country;
       }
 
-      foreach ($lStates as $key => $state)
-      {
+      foreach ($lStates as $key => $state) {
           $lWebStates[$state->code] = $state->id_state;
       }
 
-      if ($result->num_rows > 0)
-      {
+      if ($result->num_rows > 0) {
          // output data of each row
-         while($row = $result->fetch_assoc())
-         {
+         while($row = $result->fetch_assoc()) {
            $rowId = $row["id_bpb"];
-             if (array_key_exists($rowId, $lAddresses))
-             {
+             if (array_key_exists($rowId, $lAddresses)) {
                 if ($row["ts_edit"] > $lAddresses[$row["id_bpb"]]->updated_at ||
-                      $row["ts_del"] > $lAddresses[$row["id_bpb"]]->updated_at)
-                {
+                      $row["ts_del"] > $lAddresses[$row["id_bpb"]]->updated_at) {
+
                     $lAddresses[$rowId]->name = $row["bpb_add"];
                     $lAddresses[$rowId]->street = $row["street"];
                     $lAddresses[$rowId]->num_ext = $row["street_num_ext"];
@@ -119,20 +124,15 @@ class SImportAddresses
                     array_push($lAddressesToWeb, $lAddresses[$rowId]);
                 }
              }
-             else
-             {
+             else {
                 array_push($lAddressesToWeb, SImportAddresses::siieToSiieWeb($row, $lWebBranches, $lWebCountries, $lWebStates));
              }
          }
       }
-      else
-      {
+      else {
          echo "0 results";
       }
 
-      $this->webcon->close();
-
-      // dd($lAddressesToWeb);
       foreach ($lAddressesToWeb as $key => $oAddress) {
          $oAddress->save();
       }
@@ -140,7 +140,18 @@ class SImportAddresses
       return sizeof($lAddressesToWeb);
   }
 
-  private static function siieToSiieWeb($oSiieAddress = '', $lWebBranches, $lWebCountries, $lWebStates)
+  /**
+   * Transform a siie object to siie-web object
+   *
+   * @param  string $oSiieAddress
+   * @param  array $lWebBranches array of branches to map siie to siie-web branches
+   * @param  array $lWebCountries array of countries to map siie to siie-web countries
+   * @param  array $lWebStates array of states to map siie to siie-web states
+   *
+   * @return SAddress object from siie
+   */
+  private static function siieToSiieWeb($oSiieAddress = '', $lWebBranches = [],
+                                        $lWebCountries = [], $lWebStates = [])
   {
      $oAddress = new SAddress();
      $oAddress->name = $oSiieAddress["bpb_add"];

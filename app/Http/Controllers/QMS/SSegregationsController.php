@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SProcess;
+use Carbon\Carbon;
 
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
@@ -26,30 +27,39 @@ class SSegregationsController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the segregations resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  Request $request
+     * @param  int  $sTitle Label that will appear on the view of segregations
+     * @param  int  $iSegregationType can be quality, production or shipment
+     *
      */
-    public function index($sTitle, $iSegregationType)
+    public function index(Request $request, $sTitle, $iSegregationType, $iQualityType)
     {
-        $segregated = session('segregation')->getSegregated($iSegregationType);
+        $sFilterDate = $request->filterDate == null ? session('work_date')->format('Y-m-d') : $request->filterDate;
+        $oFilterDate = Carbon::parse($sFilterDate);
+        $iYearId = session('utils')->getYearId($oFilterDate->year);
+
+        $segregated = session('segregation')->getSegregated($iSegregationType, $iQualityType);
         $lQltyStatus = SStatus::where('is_deleted', false)
                                 ->lists('name', 'id_status');
 
         return view('wms.segregations.index')
                     ->with('lStatus', $lQltyStatus)
+                    ->with('tFilterDate', session('work_date'))
                     ->with('sTitle', $sTitle)
+                    ->with('iQualityType', $iQualityType)
                     ->with('data', $segregated);
     }
 
     /**
-     * [getTable set the value of data from client to session('data')]
+     * set the value of data from client to session('data')
+     * get the data from the view to classify in segregations context
      *
-     * @param  Request $request [$request->value]
+     * @param  Request $request
      */
     public function process(Request $request)
     {
-        \Debugbar::info($request);
         $val = $request->value;
 
         $aParameters = array();
@@ -64,167 +74,9 @@ class SSegregationsController extends Controller
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[19];
         $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[18];
 
-        $this->classify($request, $aParameters);
+        session('segregation')->classify($request, $aParameters);
 
         return redirect()->route('wms.whs.index');
-    }
-
-    public function segregate(Request $request, $oMovement, $iSegregationType)
-    {
-        $this->processSegregation($oMovement, $iSegregationType, false, \Config::get('scqms.TO_EVALUATE'));
-    }
-
-    public function classify(Request $request, $aParameters)
-    {
-        \DB::connection('company')->transaction(function() use ($aParameters, $request) {
-
-          $iIdItem = $aParameters[\Config::get('scwms.SEG_PARAM.ID_ITEM')];
-          $iIdUnit = $aParameters[\Config::get('scwms.SEG_PARAM.ID_UNIT')];
-          $iIdLot = $aParameters[\Config::get('scwms.SEG_PARAM.ID_LOT')];
-          $iIdPallet = $aParameters[\Config::get('scwms.SEG_PARAM.ID_PALLET')];
-          $iIdWhs = $aParameters[\Config::get('scwms.SEG_PARAM.ID_WHS')];
-          $iIdBranch = $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')];
-          $iIdDocument = $aParameters[\Config::get('scwms.SEG_PARAM.ID_DOCUMENT')];
-          $iIdQltyPrev = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')];
-          $iIdQltyNew = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')];
-          $dQuantity = $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')];
-
-          $oSegregation = new SSegregation();
-
-          $oSegregation->is_deleted = false;
-          $oSegregation->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.QUALITY');
-          $oSegregation->reference_id = $iIdDocument;
-          $oSegregation->created_by_id = \Auth::user()->id;
-          $oSegregation->updated_by_id = \Auth::user()->id;
-
-          $oSegregation->save();
-
-          $oSegRow = new SSegregationRow();
-
-          $oSegRow->quantity = $iIdLot > 1 ? 0 : $dQuantity;
-          $oSegRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-          $oSegRow->pallet_id = $iIdPallet;
-          $oSegRow->whs_id = $iIdWhs;
-          $oSegRow->branch_id = $iIdBranch;
-          $oSegRow->year_id = session('work_year');
-          $oSegRow->item_id = $iIdItem;
-          $oSegRow->unit_id = $iIdUnit;
-          $oSegRow->quality_status_id = $iIdQltyPrev;
-
-          if (! session('segregation')->isRelease($iIdQltyNew))
-          {
-            $oSegRowMirror = clone $oSegRow;
-            $oSegRowMirror->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-            $oSegRowMirror->quality_status_id = $iIdQltyNew;
-
-            $oSegregation->rows()->save($oSegRowMirror);
-          }
-
-          $oSegregation->rows()->save($oSegRow);
-
-          $oSegLotRow = new SSegregationLotRow();
-
-          if ($iIdLot > 1) {
-            $oSegLotRow->quantity = $dQuantity;
-            $oSegLotRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-            $oSegLotRow->lot_id = $iIdLot;
-            $oSegLotRow->year_id = 1;
-            $oSegLotRow->item_id = $iIdItem;
-            $oSegLotRow->unit_id = $iIdUnit;
-            $oSegLotRow->quality_status_id = $iIdQltyPrev;
-
-            if (! session('segregation')->isRelease($iIdQltyNew))
-            {
-              $oSegLotRowMirror = clone $oSegLotRow;
-              $oSegLotRowMirror->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-              $oSegLotRowMirror->quality_status_id = $iIdQltyNew;
-
-              $oSegRowMirror->lotRows()->save($oSegLotRowMirror);
-            }
-            $oSegRow->lotRows()->save($oSegLotRow);
-          }
-        });
-    }
-
-    public function release(Request $request, $oMovement, $iSegregationType, $iQltyStatus)
-    {
-        $this->processSegregation($oMovement, $iSegregationType, true, $iQltyStatus);
-    }
-
-    public function processSegregation($oMovement, $iSegregationType, $bIsRelease, $iQltyStatus)
-    {
-      \DB::connection('company')->transaction(function() use ($oMovement, $iSegregationType, $bIsRelease, $iQltyStatus) {
-        $oSegregation = new SSegregation();
-
-        $oSegregation->is_deleted = false;
-        $oSegregation->segregation_type_id = $iSegregationType; // Pendiente constantes
-
-        $iReference = 1;
-        if ($oMovement->doc_order_id > 1){
-          $iReference = $oMovement->doc_order_id;
-        }
-        elseif ($oMovement->doc_invoice_id > 1) {
-          $iReference = $oMovement->doc_invoice_id;
-        }
-        elseif ($oMovement->doc_debit_note_id > 1) {
-          $iReference = $oMovement->doc_debit_note_id;
-        }
-        elseif ($oMovement->doc_credit_note_id > 1) {
-          $iReference = $oMovement->doc_credit_note_id;
-        }
-
-        $oSegregation->reference_id = $iReference;
-        $oSegregation->created_by_id = \Auth::user()->id;
-        $oSegregation->updated_by_id = \Auth::user()->id;
-        $oSegregation->save();
-
-        foreach ($oMovement->rows as $movRow)
-        {
-          $oSegRow = new SSegregationRow();
-
-          $oSegRow->quantity = sizeof($movRow->lotRows) > 0 ? 0 : $movRow->quantity;
-          if ($bIsRelease)
-          {
-              $oSegRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-          }
-          else
-          {
-              $oSegRow->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-          }
-
-          $oSegRow->pallet_id = $movRow->pallet_id;
-          $oSegRow->whs_id = $oMovement->whs_id;
-          $oSegRow->branch_id = $oMovement->branch_id;
-          $oSegRow->year_id = session('work_year');
-          $oSegRow->item_id = $movRow->item_id;
-          $oSegRow->unit_id = $movRow->unit_id;
-          $oSegRow->quality_status_id = $iQltyStatus;
-
-          $oSegregation->rows()->save($oSegRow);
-
-          foreach ($movRow->lotRows as $lotRow)
-          {
-            $oSegLotRow = new SSegregationLotRow();
-
-            $oSegLotRow->quantity = $lotRow->quantity;
-            if ($bIsRelease)
-            {
-                $oSegLotRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-            }
-            else
-            {
-                $oSegLotRow->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-            }
-            $oSegLotRow->lot_id = $lotRow->lot_id;
-            $oSegLotRow->year_id = session('work_year');
-            $oSegLotRow->item_id = $movRow->item_id;
-            $oSegLotRow->unit_id = $movRow->unit_id;
-            $oSegLotRow->quality_status_id = $iQltyStatus;
-
-            $oSegRow->lotRows()->save($oSegLotRow);
-          }
-        }
-      });
     }
 
 }

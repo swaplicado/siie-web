@@ -4,10 +4,9 @@ use App\ERP\SItemGender;
 use App\ERP\SItemGroup;
 
 /**
- *
+ * this class import the data of item genders from siie
  */
-class SImportGenders
-{
+class SImportGenders {
   protected $webhost        = 'localhost';
   protected $webusername    = 'root';
   protected $webpassword    = 'msroot';
@@ -17,12 +16,17 @@ class SImportGenders
   protected $aClasses       = '';
   protected $aTypes         = '';
 
+  /**
+   * receive the name of host to connect
+   * can be a IP or name of host
+   *
+   * @param string $sHost
+   */
   function __construct($sHost)
   {
       $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
-      if (mysqli_connect_errno())
-      {
+      if (mysqli_connect_errno()) {
           echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
       }
 
@@ -50,9 +54,13 @@ class SImportGenders
       array_push($this->aTypes, new TypesMap(4,2,1,1)); // MATERIA PRIMA OPERACIÃ“N
       array_push($this->aTypes, new TypesMap(4,2,2,12)); // MANO DE OBRA OPERACIÃ“N
       array_push($this->aTypes, new TypesMap(4,2,3,12)); // GASTO INDIRECTO OPERACIÃ“N
-
   }
 
+  /**
+   * read the data  from siie, transform it, and saves it in the database
+   *
+   * @return integer number of records imported
+   */
   public function importGenders()
   {
       $sql = "SELECT id_igen, igen,
@@ -65,6 +73,8 @@ class SImportGenders
                       ts_new, ts_edit, ts_del FROM itmu_igen";
 
       $result = $this->webcon->query($sql);
+      $this->webcon->close();
+
       $lSiieGenders = array();
       $lWebGenders = SItemGender::get();
       $lGroups = SItemGroup::get();
@@ -72,8 +82,7 @@ class SImportGenders
       $lGenders = array();
       $lGendersToWeb = array();
 
-      foreach ($lWebGenders as $key => $value)
-      {
+      foreach ($lWebGenders as $key => $value) {
           $lGenders[$value->external_id] = $value;
       }
 
@@ -81,16 +90,13 @@ class SImportGenders
           $lWebGroups[$group->external_id] = $group->id_item_group;
       }
 
-      if ($result->num_rows > 0)
-      {
+      if ($result->num_rows > 0) {
          // output data of each row
-         while($row = $result->fetch_assoc())
-         {
-             if (array_key_exists($row["id_igen"], $lGenders))
-             {
+         while($row = $result->fetch_assoc()) {
+             if (array_key_exists($row["id_igen"], $lGenders)) {
                 if ($row["ts_edit"] > $lGenders[$row["id_igen"]]->updated_at ||
-                      $row["ts_del"] > $lGenders[$row["id_igen"]]->updated_at)
-                {
+                      $row["ts_del"] > $lGenders[$row["id_igen"]]->updated_at) {
+
                     $lGenders[$row["id_igen"]]->name = $row["igen"];
                     $lGenders[$row["id_igen"]]->external_id = $row["id_igen"];
                     $lGenders[$row["id_igen"]]->is_length = $row["b_len"];
@@ -112,27 +118,30 @@ class SImportGenders
                     array_push($lGendersToWeb, $lGenders[$row["id_igen"]]);
                 }
              }
-             else
-             {
+             else {
                 array_push($lGendersToWeb, SImportGenders::siieToSiieWeb($row, $lWebGroups, $this->aCatClass, $this->aTypes));
              }
          }
-      }
-      else
-      {
-         echo "0 results";
       }
 
       foreach ($lGendersToWeb as $key => $oGender) {
          $oGender->save();
       }
 
-      $this->webcon->close();
-
       return sizeof($lGendersToWeb);
   }
 
-  private static function siieToSiieWeb($oSiieGender = '', $lGroups, $lClasses, $lTypes)
+  /**
+   * Transform a siie object to siie-web object
+   *
+   * @param  Object $oSiieGender
+   * @param  array  $lGroups  array of item groups to map siie to siie-web groups
+   * @param  array  $lClasses  array of item classes to map siie to siie-web classes
+   * @param  array  $lTypes  array of item types to map siie to siie-web types
+   *
+   * @return SItemGender
+   */
+  private static function siieToSiieWeb($oSiieGender = '', $lGroups = [], $lClasses = [], $lTypes = [])
   {
      $oGender = new SItemGender();
      $oGender->name = $oSiieGender["igen"];
@@ -159,23 +168,37 @@ class SImportGenders
      return $oGender;
   }
 
-  private static function getClassId($aClassMap, $iCategoryId = 1)
+  /**
+   * Obtain the item class id based on map from siie
+   *
+   * @param  array   $aClassMap
+   * @param  integer $iCategoryId category of item from siie
+   * @return integer class id from siie-web
+   */
+  private static function getClassId($aClassMap = [], $iCategoryId = 1)
   {
-      foreach ($aClassMap as $key => $rClass)
-      {
-         if ($iCategoryId == $key)
-         {
+      foreach ($aClassMap as $key => $rClass) {
+         if ($iCategoryId == $key) {
            return $rClass;
          }
       }
   }
 
-  private static function getTypeId($aTypeMap, $iCategoryId, $iClassId, $iTypeId)
+  /**
+   * Obtain the type siie-web id of item based in category, class and type of siie
+   *
+   * @param  array $aTypeMap
+   * @param  integer $iCategoryId
+   * @param  integer $iClassId
+   * @param  integer $iTypeId
+   *
+   * @return integer equivalent primary key of movement type
+   */
+  private static function getTypeId($aTypeMap = [], $iCategoryId = 0,
+                                      $iClassId = 0, $iTypeId = 0)
   {
-      foreach ($aTypeMap as $oType)
-      {
-         if ($oType->iCategory == $iCategoryId && $oType->iClass == $iClassId && $oType->iType = $iTypeId)
-         {
+      foreach ($aTypeMap as $oType) {
+         if ($oType->iCategory == $iCategoryId && $oType->iClass == $iClassId && $oType->iType = $iTypeId) {
             return $oType->iEquiv;
          }
       }
@@ -183,10 +206,9 @@ class SImportGenders
 }
 
 /**
- *
+ * Object to map the document type
  */
-class TypesMap
-{
+class TypesMap {
   public $iCategory = 0;
   public $iClass = 0;
   public $iType = 0;

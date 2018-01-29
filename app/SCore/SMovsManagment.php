@@ -15,24 +15,36 @@ use App\SCore\SStockUtils;
  */
 class SMovsManagment {
 
+    /**
+     * get a new folio for the movement
+     * if the folio was not found return 0
+     *
+     * @param  SMovement $oMovement
+     *
+     * @return int new folio
+     */
     public static function getNewFolio($oMovement = '')
     {
+      // define the base query to search the max folio for a configuration
       $baseQuery = \DB::connection(session('db_configuration')->getConnCompany())
                    ->table('wms_mvts as wm')
                    ->select(\DB::raw('MAX(folio) as max_folio, count(*) as num_movs'))
                    ->where('is_deleted', false)
                    ->orderBy('max_folio', 'desc');
 
+       // get all folio configurations that are not deleted
        $lFolios = SFolio::where('is_deleted', false)->get();
 
+       // look for a configuration to warehouse
        $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
                                                  \Config::get('scwms.CONTAINERS.WAREHOUSE'),
                                                  $oMovement->whs_id,
                                                  $oMovement->mvt_whs_class_id,
                                                  $oMovement->mvt_whs_type_id);
 
-       if ($oRequiredFolio != null)
-       {
+       // if the configuration was found look for the max folio with this configuration
+       // if the query returns a empty result the function return the folio configured as initial
+       if ($oRequiredFolio != null) {
            $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
                          ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
                          ->where('branch_id', $oMovement->branch_id)
@@ -41,25 +53,23 @@ class SMovsManagment {
                          ->take(1)
                          ->get();
 
-           if ($lFolios[0]->num_movs > 0)
-           {
+           if ($lFolios[0]->num_movs > 0) {
              return $lFolios[0]->max_folio + 1;
            }
-           else
-           {
-             return $oRequiredFolio->folio_start;
-           }
+
+           return $oRequiredFolio->folio_start;
        }
-       else
-       {
+        // look for a configuration to branch
+       else {
            $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
                                                      \Config::get('scwms.CONTAINERS.BRANCH'),
                                                      $oMovement->branch_id,
                                                      $oMovement->mvt_whs_class_id,
                                                      $oMovement->mvt_whs_type_id);
 
-           if ($oRequiredFolio != null)
-           {
+           // if the configuration was found look for the max folio with this configuration
+           // if the query returns a empty result the function return the folio configured as initial
+           if ($oRequiredFolio != null) {
                $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
                              ->where('mvt_whs_type_id', $oMovement->mvt_whs_type_id)
                              ->where('branch_id', $oMovement->branch_id)
@@ -67,23 +77,21 @@ class SMovsManagment {
                              ->take(1)
                              ->get();
 
-               if ($lFolios[0]->num_movs > 0)
-               {
+               if ($lFolios[0]->num_movs > 0) {
                  return $lFolios[0]->max_folio + 1;
                }
-               else
-               {
-                 return $oRequiredFolio->folio_start;
-               }
+
+               return $oRequiredFolio->folio_start;
            }
-           else
-           {
+           // look for a configuration to company for movement type and movement class
+           else {
                $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
                                                          0,
                                                          0,
                                                          $oMovement->mvt_whs_class_id,
                                                          $oMovement->mvt_whs_type_id);
-
+               // if the configuration was found look for the max folio with this configuration
+               // if the query returns a empty result the function return the folio configured as initial
                if ($oRequiredFolio != null)
                {
                    $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
@@ -92,41 +100,36 @@ class SMovsManagment {
                                  ->take(1)
                                  ->get();
 
-                   if ($lFolios[0]->num_movs > 0)
-                   {
+                   if ($lFolios[0]->num_movs > 0) {
                      return $lFolios[0]->max_folio + 1;
                    }
-                   else
-                   {
-                     return $oRequiredFolio->folio_start;
-                   }
+
+                   return $oRequiredFolio->folio_start;
                }
-               else
-               {
+               // look for a configuration to movement class
+               else {
                    $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
                                                              0,
                                                              0,
                                                              $oMovement->mvt_whs_class_id,
                                                              0);
 
-                   if ($oRequiredFolio != null)
-                   {
+                   // if the configuration was found look for the max folio with this configuration
+                   // if the query returns a empty result the function return the folio configured as initial
+                   if ($oRequiredFolio != null) {
                        $lFolios = $baseQuery->where('mvt_whs_class_id', $oMovement->mvt_whs_class_id)
                                      ->where('folio', '>=', $oRequiredFolio->folio_start)
                                      ->take(1)
                                      ->get();
 
-                       if ($lFolios[0]->num_movs > 0)
-                       {
+                       if ($lFolios[0]->num_movs > 0) {
                          return $lFolios[0]->max_folio + 1;
                        }
-                       else
-                       {
-                         return $oRequiredFolio->folio_start;
-                       }
+
+                       return $oRequiredFolio->folio_start;
                    }
-                   else
-                   {
+                   // if no configuration was found return 0
+                   else {
                      return 0;
                    }
                }
@@ -134,56 +137,64 @@ class SMovsManagment {
        }
     }
 
-    private static function existsFolioConfiguration($lFolios, $iContainerType, $iContainerId, $iMvtClass, $iMvtType)
+    /**
+     * determines if the configuration for the parameters exists in the list of
+     * configurations
+     *
+     * @param  collection  $lFolios
+     * @param  integer $iContainerType can be warehouse, branch, company
+     * @param  integer $iContainerId
+     * @param  integer $iMvtClass class of movement
+     * @param  integer $iMvtType type of movement
+     *
+     * @return SFolio object configuration if the configuration was not found return null
+     */
+    private static function existsFolioConfiguration($lFolios = null, $iContainerType = 0,
+                                                      $iContainerId = 0, $iMvtClass = 0,
+                                                      $iMvtType = 0)
     {
         $bConfigExists = false;
         $oRequiredFolio = '';
-        foreach ($lFolios as $oFolio)
-        {
-           if ($oFolio->mvt_class_id == $iMvtClass)
-           {
-              if ($iMvtType != 0)
-              {
-                  if ($oFolio->mvt_type_id == $iMvtType)
-                  {
-                      if ($iContainerType != 0)
-                      {
-                          if ($oFolio->container_type_id == $iContainerType && $oFolio->container_id == $iContainerId)
-                          {
+        foreach ($lFolios as $oFolio) {
+           if ($oFolio->mvt_class_id == $iMvtClass) {
+              if ($iMvtType != 0) {
+                  if ($oFolio->mvt_type_id == $iMvtType) {
+                      if ($iContainerType != 0) {
+                          if ($oFolio->container_type_id == $iContainerType &&
+                                    $oFolio->container_id == $iContainerId) {
                             $oRequiredFolio = $oFolio;
                             $bConfigExists = true;
                             break;
                           }
                       }
-                      else
-                      {
+                      else {
                         $oRequiredFolio = $oFolio;
                         $bConfigExists = true;
                         break;
                       }
                   }
               }
-              // else
-              // {
-              //   $oRequiredFolio = $oFolio;
-              //   $bConfigExists = true;
-              //   break;
-              // }
-
            }
         }
 
-        if ($bConfigExists)
-        {
+        if ($bConfigExists) {
           return $oRequiredFolio;
         }
-        else
-        {
-          return null;
-        }
+
+        return null;
     }
 
-    public static function assignForeignDoc($oMovement, $iMvtType, $iDocumentId)
+    /**
+     * assign to correspond var the id of document
+     * depends of type of document
+     *
+     * @param  SMovement  $oMovement
+     * @param  integer $iMvtType
+     * @param  integer $iDocumentId
+     *
+     * @return SMovement with the foreign key assigned
+     */
+    public static function assignForeignDoc($oMovement = null, $iMvtType = 0, $iDocumentId = 0)
     {
         $oMovement->doc_order_id = 1;
         $oMovement->doc_invoice_id = 1;
@@ -192,8 +203,7 @@ class SMovsManagment {
 
         $oDocument = SDocument::find($iDocumentId);
 
-        if (is_null($oDocument))
-        {
+        if (is_null($oDocument)) {
           return $oMovement;
         }
 
@@ -219,7 +229,18 @@ class SMovsManagment {
         return $oMovement;
     }
 
-    public static function assignForeignRow($oMovementRow, $iMvtType, $iDocRowId)
+
+    /**
+     * assign to correspond var the id of document row
+     * depends of type of document
+     *
+     * @param  SMovementRow $oMovementRow
+     * @param  integer      $iMvtType
+     * @param  integer      $iDocRowId  primary key of row
+     *
+     * @return SMovementRow with the foreign key of document row assigned
+     */
+    public static function assignForeignRow(SMovementRow $oMovementRow, $iMvtType = 0, $iDocRowId = 0)
     {
         $oMovementRow->doc_order_row_id = 1;
         $oMovementRow->doc_invoice_row_id = 1;
@@ -267,18 +288,17 @@ class SMovsManagment {
     public static function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $oPalletData)
     {
        // The movement is adjust or input by purchases
-       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') || $iMovType == \Config::get('scwms.MVT_TP_IN_PUR'))
-       {
+       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
+            $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
+              $iMovType == \Config::get('scwms.MVT_TP_IN_PUR')) {
           return SMovsManagment::createTheMovement($oMovement, $aMovementRows);
        }
        // The movement is trasfer
-       else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA'))
-       {
+       else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA')) {
           return SMovsManagment::createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes);
        }
        // the movement is pallet reconfiguration (pallet division)
-       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_IN'))
-       {
+       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
          return SMovsManagment::divisionOfPallet($oMovement, $oPalletData, $aMovementRows);
 
        }
@@ -305,12 +325,17 @@ class SMovsManagment {
     }
 
     /**
-     * [Create a transfer movement, the user only can create a output transfer]
-     * @param  [type] $oMovement     [description]
-     * @param  [type] $aMovementRows [description]
-     * @return [type]                [description]
+     * Create a transfer movement, the user only can create a output transfer
+     *
+     * @param  SMovement $oMovement
+     * @param  array    $aMovementRows
+     * @param  integer   $iWhsSrc
+     * @param  integer   $iWhsDes
+     *
+     * @return array with SMovement objects
      */
-    public static function createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes)
+    public static function createTransfer(SMovement $oMovement, $aMovementRows = null,
+                                                    $iWhsSrc = 0, $iWhsDes = 0)
     {
         $aMovements = array();
 
@@ -322,8 +347,8 @@ class SMovsManagment {
 
         $iWhsSrcDefLocation = 0;
         $iWhsDesDefLocation = 0;
-        if (! session('location_enabled'))
-        {
+
+        if (! session('location_enabled')) {
            $oSrcLocation = SWarehouse::find($iWhsSrc)->getDefaultLocation();
            $oDesLocation = SWarehouse::find($iWhsDes)->getDefaultLocation();
 
@@ -337,13 +362,11 @@ class SMovsManagment {
             $movRow = clone $row;
             $movRowM = clone $row;
 
-            if (! session('location_enabled'))
-            {
+            if (! session('location_enabled')) {
                 $movRow->location_id = $iWhsSrcDefLocation;
                 $movRowM->location_id = $iWhsDesDefLocation;
             }
-            else
-            {
+            else {
               $movRow->location_id = 1;
             }
 
@@ -415,7 +438,14 @@ class SMovsManagment {
        return $aMovements;
     }
 
-    public static function addToPallet($oMovement, $oPalletData, $movementRows)
+    /**
+     * create a movement when elements were added to a pallet
+     *
+     * @param SMovement $oMovement
+     * @param Object $oPalletData
+     * @param array $movementRows
+     */
+    public static function addToPallet(SMovement $oMovement, $oPalletData = null, $movementRows)
     {
       $aMovements = array();
 

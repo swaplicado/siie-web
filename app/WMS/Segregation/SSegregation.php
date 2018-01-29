@@ -10,6 +10,7 @@ class SSegregation extends SModel {
 
     protected $fillable = [
                           'id_segregation',
+                          'dt_date',
                           'is_deleted',
                           'segregation_type_id',
                           'reference_id',

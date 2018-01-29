@@ -7,7 +7,7 @@
 @section('title', trans('userinterface.titles.LIST_USERS'))
 
 @section('content')
-	<?php $sRoute='siie.userwhs' ?>
+	<?php $sRoute='admin.userwhs' ?>
 
 	<table data-toggle="table" class="table table-condensed">
 		<thead>
@@ -19,7 +19,7 @@
 				<tr>
 					<td>{{ $user->user->username }}</td>
 					<td>
-						<a href="{{ route('siie.userwhs.edit', $user->user->id) }}" class="btn btn-info"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+						<a href="{{ route('admin.userwhs.edit', $user->user->id) }}" class="btn btn-info"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
 					</td>
 
 				</tr>

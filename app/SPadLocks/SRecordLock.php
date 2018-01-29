@@ -12,11 +12,12 @@ use \Carbon\Carbon;
 class SRecordLock {
 
     /**
-     * [acquireLock lock the record to prevent current modification]
-     * @param  [object] $record [record of Model]
-     * @return [int]             [returns -1 if the lock was obtained
-     *                            returns the id of user if the lock is
-     *                            occuped]
+     * acquireLock lock the record to prevent current modification
+     *
+     * @param  object extends Model $record record of Model
+     * @return integer   returns -1 if the lock was obtained
+     *                   returns the id of user if the lock is
+     *                   occuped
      */
     public function acquireLock($record)
     {
@@ -27,21 +28,21 @@ class SRecordLock {
      * lock the record to prevent current modification. If the record is locked
      * the method verify if the lock has expired and release the lock.
      *
-     * @param  [int] $iCompanyId [company id from SCompany model]
-     * @param  [string] $sTable     [name of table of model]
-     * @param  [int] $iRecordId  [id of record to lock]
-     * @param  [int] $iUserId    [description]
-     * @return [int]             [returns -1 if the lock was obtained
-     *                            returns the id of user if the lock is
-     *                            occuped.]
+     * @param  integer $iCompanyId company id from SCompany model
+     * @param  string $sTable name of table of model
+     * @param  integer $iRecordId  id of record to lock
+     * @param  integer $iUserId
+     *
+     * @return integer  returns -1 if the lock was obtained.
+     *                  returns the id of user if the lock is
+     *                  occuped.
      */
     protected function aquire($iCompanyId, $sTable, $iRecordId, $iUserId)
     {
-        if (is_null($iRecordId))
-        {
+        if (is_null($iRecordId)) {
           return -1;
         }
-        
+
         $oLock = SLock::where('company_id', $iCompanyId)
                         ->where('table_name', $sTable)
                         ->where('record_id', $iRecordId)
@@ -58,41 +59,33 @@ class SRecordLock {
 
           return -1;
         }
-        else
-        {
-          if ($oLock->session_id == session()->getId())
-          {
+        else {
+          if ($oLock->session_id == session()->getId()) {
               return -1;
           }
-          else
-          {
+          else {
              $timeDiff = $oLock->created_at->diff(Carbon::now());
-             if ($timeDiff->i > session('lock_time'))
-             {
+             if ($timeDiff->i > session('lock_time')) {
                 $released = $this->release($iCompanyId, $sTable, $iRecordId, $iUserId);
-                if ($released == -1)
-                {
+                if ($released == -1) {
                   return $this->aquire($iCompanyId, $sTable, $iRecordId, $iUserId);
                 }
-                else
-                {
-                  return $released;
-                }
+
+                return $released;
              }
-             else
-             {
-                return $oLock->user_id;
-             }
+
+             return $oLock->user_id;
           }
         }
     }
 
     /**
-     * [releaseLock unlock the record of model]
-     * @param  [object from model] $record
-     * @return [int]             [returns -1 if the lock was released
-     *                            returns the id of user if the lock is
-     *                            occuped]
+     * releaseLock unlock the record of model
+     *
+     * @param  object extends Model $record record of Model $record
+     *
+     * @return integer  returns -1 if the lock was released
+     *                returns the id of user if the lock is occuped
      */
     public function releaseLock($record)
     {
@@ -100,14 +93,16 @@ class SRecordLock {
     }
 
     /**
-     * [release unlock the record of model]
-     * @param  [int] $iCompanyId [company id from SCompany model]
-     * @param  [string] $sTable     [name of table of model]
-     * @param  [int] $iRecordId  [id of record to lock]
-     * @param  [int] $iUserId    [description]
-     * @return [int]             [returns -1 if the lock was released
-     *                            returns the id of user if the lock is
-     *                            occuped]
+     * release unlock the record of model
+     *
+     * @param  integer $iCompanyId  company id from SCompany model
+     * @param  string  $sTable  name of table of model
+     * @param  integer $iRecordId  id of record to lock
+     * @param  integer  $iUserId
+     *
+     * @return integer  returns -1 if the lock was released
+     *                  returns the id of user if the lock is
+     *                  occuped
      */
     protected function release($iCompanyId, $sTable, $iRecordId, $iUserId)
     {
@@ -117,41 +112,32 @@ class SRecordLock {
                         ->first();
 
         if (! is_null($oLock)) {
-          if ($oLock->session_id == session()->getId())
-          {
+          if ($oLock->session_id == session()->getId()) {
             $oLock->delete();
             return -1;
           }
-          else
-          {
-            if ($oLock->created_at->diffInMinutes(Carbon::now()) > session('lock_time'))
-            {
+          else {
+            if ($oLock->created_at->diffInMinutes(Carbon::now()) > session('lock_time')) {
                 $oLock->delete();
                 return -1;
             }
-            else
-            {
-               return $oLock->user_id;
-            }
-          }
 
+            return $oLock->user_id;
+          }
         }
-        else
-        {
-          return -1;
-        }
+
+        return -1;
     }
 
     /**
      * returns true if the record is locked
      *
-     * @param  [object]   $record
+     * @param object extends Model $record
      * @return bool
      */
     public function isLocked($record)
     {
         return $this->isAlreadyLocked(session('company')->id_company, $record->getTable(), $record->getKey());
-
     }
 
     protected function isAlreadyLocked($iCompanyId, $sTable, $iRecordId)
@@ -169,7 +155,7 @@ class SRecordLock {
      * If the record is locked returns the id of user who has the locked
      * If the record isn't locked returns -1
      *
-     * @param  object   $record
+     * @param  object extends Model $record
      * @return int
      */
     public function canUpdateRecord($record)
@@ -178,12 +164,14 @@ class SRecordLock {
     }
 
     /**
-     * [canUpdateByLock description]
-     * @param  [int] $iCompanyId [company id from SCompany model]
-     * @param  [string] $sTable     [name of table of model]
-     * @param  [int] $iRecordId  [id of record to lock]
-     * @param  [int] $iUserId    [description]
-     * @return [type]             [description]
+     * canUpdateByLock description
+     *
+     * @param  integer $iCompanyId company id from SCompany model
+     * @param  string $sTable name of table of model
+     * @param  integer $iRecordId  id of record to lock
+     * @param  integer $iUserId
+     *
+     * @return integer             [description]
      */
     public function canUpdateByLock($iCompanyId, $sTable, $iRecordId)
     {
@@ -192,28 +180,23 @@ class SRecordLock {
                         ->where('record_id', $iRecordId)
                         ->first();
 
-        if (! is_null($oLock))
-        {
-            if ($oLock->session_id == session()->getId())
-            {
-                return -1;;
+        if (! is_null($oLock)) {
+            if ($oLock->session_id == session()->getId()) {
+                return -1;
             }
-            else
-            {
-                return $oLock->user_id;
-            }
+
+            return $oLock->user_id;
         }
-        else
-        {
-           return $this->aquire($iCompanyId, $sTable, $iRecordId, \Auth::user()->id);
-        }
+
+        return $this->aquire($iCompanyId, $sTable, $iRecordId, \Auth::user()->id);
     }
 
     /**
-     * [getLockUserId get the id of user who has the padlock]
-     * @param  object $record [description]
-     * @return [int]  [returns the id of the user who has the padlock
-     *                  if the lock not exists return -1 ]
+     * getLockUserId get the id of user who has the padlock
+     *
+     * @param  object extends Model $record
+     * @return integer  returns the id of the user who has the padlock
+     *                  if the lock not exists return -1
      */
     public function getLockUserId($record)
     {
@@ -221,12 +204,14 @@ class SRecordLock {
     }
 
     /**
-     * [getLockUser get the id of user who has the padlock]
-     * @param  [type] $iCompanyId
-     * @param  [type] $sTable
-     * @param  [type] $iRecordId
-     * @return [int]   [returns the id of the user who has the padlock
-     *                  if the lock not exists return -1 ]
+     * getLockUser get the id of user who has the padlock
+     *
+     * @param  integer $iCompanyId
+     * @param  string $sTable
+     * @param  integer $iRecordId
+     *
+     * @return integer  returns the id of the user who has the padlock
+     *                  if the lock not exists return -1
      */
     protected function getLockUser($iCompanyId, $sTable, $iRecordId)
     {
@@ -235,13 +220,10 @@ class SRecordLock {
                         ->where('record_id', $iRecordId)
                         ->first();
 
-        if (is_null($oLock))
-        {
+        if (is_null($oLock)) {
             return -1;
         }
-        else
-        {
-          return $oLock->user_id;
-        }
+
+        return $oLock->user_id;
     }
 }

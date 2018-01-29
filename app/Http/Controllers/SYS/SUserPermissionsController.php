@@ -1,6 +1,4 @@
-w<?php
-
-namespace App\Http\Controllers\SYS;
+<?php namespace App\Http\Controllers\SYS;
 
 use Illuminate\Http\Request;
 

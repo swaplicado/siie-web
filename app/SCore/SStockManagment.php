@@ -75,6 +75,7 @@ class SStockManagment
         * \Config::get('scwms.STOCK_PARAMS.WHS')
         * \Config::get('scwms.STOCK_PARAMS.BRANCH')
         * \Config::get('scwms.STOCK_PARAMS.ID_YEAR')
+        * \Config::get('scwms.STOCK_PARAMS.DATE')
         * ]
     * @return [array] [aStock]
     */
@@ -205,6 +206,11 @@ class SStockManagment
               $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] <> '0')
         {
             $sub = $sub->whereRaw('wslr.lot_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
+        }
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0')
+        {
+            $sub = $sub->whereRaw('ws.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');
         }
 
         return $sub;

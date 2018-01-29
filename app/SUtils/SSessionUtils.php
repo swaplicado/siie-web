@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\User;
+use App\ERP\SYear;
 
 class SSessionUtils {
 
@@ -34,8 +35,7 @@ class SSessionUtils {
    */
   public function formatNumber($value = '0', $type = '1')
   {
-      try
-      {
+      try {
         switch ($type) {
           case \Config::get('scsiie.FRMT.AMT'):
             $iDecimals = session('decimals_amt');
@@ -51,8 +51,7 @@ class SSessionUtils {
         return number_format($value, $iDecimals, '.', ',');
 
       }
-      catch (Exception $e)
-      {
+      catch (Exception $e) {
         return number_format(0, 1, '.', ',');
       }
   }
@@ -66,8 +65,7 @@ class SSessionUtils {
    */
   public function validateEdition($iPrivilege, $oRecord)
   {
-      if (!(SValidation::canEdit($iPrivilege) || SValidation::canAuthorEdit($iPrivilege, $oRecord->created_by_id)))
-      {
+      if (!(SValidation::canEdit($iPrivilege) || SValidation::canAuthorEdit($iPrivilege, $oRecord->created_by_id))) {
         return redirect()->route('notauthorized');
       }
   }
@@ -85,8 +83,7 @@ class SSessionUtils {
       if ($iLock != -1) {
         return [0 => 'No se puede tener acceso al registro el usuario: '.User::find($iLock)->username.' lo está usando'];
       }
-      else
-      {
+      else {
         return array();
       }
   }
@@ -104,8 +101,7 @@ class SSessionUtils {
       if ($iLock != -1) {
         return [0 => 'No se puede tener acceso al registro el usuario: '.User::find($iLock)->username.' lo está usando'];
       }
-      else
-      {
+      else {
         return array();
       }
   }
@@ -119,10 +115,26 @@ class SSessionUtils {
    */
   public function validateDestroy($iPrivilege = 0)
   {
-      if (! SValidation::canDestroy($iPrivilege))
-      {
+      if (! SValidation::canDestroy($iPrivilege)) {
         return redirect()->route('notauthorized');
       }
+  }
+
+  /**
+   * get the id of year received, this method returns the id that isn't deleted
+   *
+   * @param  [int] $iYear year to search in DB
+   * @return [int] id of year in DB
+   */
+  public function getYearId($iYear = 0)
+  {
+      if ($iYear == 0) {
+        $iYear = session('work_date')->year;
+      }
+
+      return SYear::where('year', $iYear)
+                    ->where('is_deleted', false)
+                    ->first()->id_year;
   }
 
 }

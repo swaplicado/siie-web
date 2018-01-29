@@ -6,17 +6,23 @@ use App\ERP\SItem;
 use App\ERP\SUnit;
 
 /**
- *
+ * this class import the data of document rows from siie
  */
-class SImportDocumentRows
-{
+class SImportDocumentRows {
   protected $webhost        = 'localhost';
   protected $webusername    = 'root';
   protected $webpassword    = 'msroot';
   protected $webdbname      = '';
   protected $webcon         = '';
 
-  function __construct($sHost, $sDbName)
+  /**
+   * __construct
+   *
+   * @param string $sHost the name of host to connect
+   *                  can be a IP or name of host
+   * @param string $sDbName name of data base to read
+   */
+  function __construct($sHost = '', $sDbName = '')
   {
       $this->webhost = $sHost;
       $this->webdbname = $sDbName;
@@ -28,10 +34,21 @@ class SImportDocumentRows
       }
   }
 
-  public function importRows($iYearId, $sOperator)
+  /**
+   *  read the data  from siie, transform it, and saves it in the database
+   *  this process is divided on first and second half of year
+   *
+   * @param  integer $iYearId   [description]
+   * @param  integer $sOperator [description]
+   *
+   * @return integer quantity of records imported
+   */
+  public function importRows($iYearId = 0, $sOperator = '')
   {
       $sql = "SELECT * FROM trn_dps_ety WHERE id_year = ".$iYearId." AND ts_new  ".$sOperator." '".$iYearId."-06-31';";
       $result = $this->webcon->query($sql);
+      $this->webcon->close();
+
       $lSiieRows = array();
       $lWebRows = SDocumentRow::get();
       $lDocuments = SDocument::get();
@@ -48,16 +65,19 @@ class SImportDocumentRows
         '1' => '2016',
         '2' => '2017',
         '3' => '2018',
+        '4' => '2019',
+        '5' => '2020',
       ];
 
       $lYearsId = [
         '2016' => '1',
         '2017' => '2',
         '2018' => '3',
+        '2019' => '4',
+        '2020' => '5',
       ];
 
-      foreach ($lWebRows as $key => $value)
-      {
+      foreach ($lWebRows as $key => $value) {
           $lRows[''.$value->document_id.$lYears[$value->year_id].$value->external_id] = $value;
       }
 
@@ -73,19 +93,16 @@ class SImportDocumentRows
           $lWebUnits[$unit->external_id] = $unit->id_unit;
       }
 
-      if ($result->num_rows > 0)
-      {
+      if ($result->num_rows > 0) {
          // output data of each row
-         while($row = $result->fetch_assoc())
-         {
+         while($row = $result->fetch_assoc()) {
             if (array_key_exists($row["id_doc"], $lWebDocuments)) {
                 $sKey = ''.$lWebDocuments[$row["id_doc"]].$row["id_year"].$row["id_ety"];
 
-             if (array_key_exists($sKey, $lRows))
-             {
+             if (array_key_exists($sKey, $lRows)) {
                 if ($row["ts_edit"] > $lRows[$sKey]->updated_at ||
-                      $row["ts_del"] > $lRows[$sKey]->updated_at)
-                {
+                      $row["ts_del"] > $lRows[$sKey]->updated_at) {
+
                     $lRows[$sKey]->concept_key = $row["concept_key"];
                     $lRows[$sKey]->concept = $row["concept"];
                     $lRows[$sKey]->reference = $row["ref"];
@@ -122,8 +139,7 @@ class SImportDocumentRows
                     array_push($lRowsToWeb, $lRows[$sKey]);
                 }
              }
-             else
-             {
+             else {
                 $oRow = SImportDocumentRows::siieToSiieWeb($row, $lWebDocuments, $lYearsId, $lWebItems, $lWebUnits);
                 $oRow->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
                 array_push($lRowsToWeb, $oRow);
@@ -131,12 +147,6 @@ class SImportDocumentRows
            }
          }
       }
-      else
-      {
-         echo "0 results";
-      }
-
-      $this->webcon->close();
 
       foreach ($lRowsToWeb as $key => $oRow) {
          $oRowCopy = clone $oRow;
@@ -147,42 +157,54 @@ class SImportDocumentRows
       return sizeof($lRowsToWeb);
   }
 
-  private static function siieToSiieWeb($oSiieRow = '', $lWebDocuments, $lYearsId, $lWebItems, $lWebUnits)
+  /**
+   * Transform a siie object to siie-web object
+   *
+   * @param  Object $oSiieRow Objet of siie DB row
+   * @param  array $lWebDocuments  array of documents to map siie to siie-web documents
+   * @param  array $lYearsId  array of years to map siie to siie-web years
+   * @param  array $lWebItems  array of items to map siie to siie-web items
+   * @param  array $lWebUnits  array of units to map siie to siie-web units
+   *
+   * @return SDocumentRow
+   */
+  private static function siieToSiieWeb($oSiieRow = null, $lWebDocuments = [],
+                                          $lYearsId = [], $lWebItems = [], $lWebUnits = [])
   {
-     $oRow = new SDocumentRow();
+      $oRow = new SDocumentRow();
 
-    $oRow->concept_key = $oSiieRow["concept_key"];
-    $oRow->concept = $oSiieRow["concept"];
-    $oRow->reference = $oSiieRow["ref"];
-    $oRow->quantity = $oSiieRow["qty"];
-    $oRow->price_unit = $oSiieRow["price_u"];
-    $oRow->price_unit_sys = $oSiieRow["price_u_sys"];
-    $oRow->subtotal = $oSiieRow["stot_r"];
-    $oRow->tax_charged = $oSiieRow["tax_charged_r"];
-    $oRow->tax_retained = $oSiieRow["tax_retained_r"];
-    $oRow->total = $oSiieRow["tot_r"];
-    $oRow->price_unit_cur = $oSiieRow["price_u_cur"];
-    $oRow->price_unit_sys_cur = $oSiieRow["price_u_sys_cur"];
-    $oRow->subtotal_cur = $oSiieRow["stot_cur_r"];
-    $oRow->tax_charged_cur = $oSiieRow["tax_charged_cur_r"];
-    $oRow->tax_retained_cur = $oSiieRow["tax_retained_cur_r"];
-    $oRow->total_cur = $oSiieRow["tot_cur_r"];
-    $oRow->length = $oSiieRow["len"];
-    $oRow->surface = $oSiieRow["surf"];
-    $oRow->volume = $oSiieRow["vol"];
-    $oRow->mass = $oSiieRow["mass"];
-    $oRow->is_inventory = $oSiieRow["b_inv"];
-    $oRow->is_deleted = $oSiieRow["b_del"];
-    $oRow->external_id = $oSiieRow["id_ety"];
-    $oRow->item_id = $lWebItems[$oSiieRow["fid_item"]];
-    $oRow->unit_id = $lWebUnits[$oSiieRow["fid_unit"]];
-    $oRow->year_id = $lYearsId[$oSiieRow["id_year"]];
-    $oRow->document_id = $lWebDocuments[$oSiieRow["id_doc"]];
-    $oRow->created_by_id = 1;
-    $oRow->updated_by_id = 1;
-    $oRow->created_at = $oSiieRow["ts_new"];
-    $oRow->updated_at = $oSiieRow["ts_edit"];
+      $oRow->concept_key = $oSiieRow["concept_key"];
+      $oRow->concept = $oSiieRow["concept"];
+      $oRow->reference = $oSiieRow["ref"];
+      $oRow->quantity = $oSiieRow["qty"];
+      $oRow->price_unit = $oSiieRow["price_u"];
+      $oRow->price_unit_sys = $oSiieRow["price_u_sys"];
+      $oRow->subtotal = $oSiieRow["stot_r"];
+      $oRow->tax_charged = $oSiieRow["tax_charged_r"];
+      $oRow->tax_retained = $oSiieRow["tax_retained_r"];
+      $oRow->total = $oSiieRow["tot_r"];
+      $oRow->price_unit_cur = $oSiieRow["price_u_cur"];
+      $oRow->price_unit_sys_cur = $oSiieRow["price_u_sys_cur"];
+      $oRow->subtotal_cur = $oSiieRow["stot_cur_r"];
+      $oRow->tax_charged_cur = $oSiieRow["tax_charged_cur_r"];
+      $oRow->tax_retained_cur = $oSiieRow["tax_retained_cur_r"];
+      $oRow->total_cur = $oSiieRow["tot_cur_r"];
+      $oRow->length = $oSiieRow["len"];
+      $oRow->surface = $oSiieRow["surf"];
+      $oRow->volume = $oSiieRow["vol"];
+      $oRow->mass = $oSiieRow["mass"];
+      $oRow->is_inventory = $oSiieRow["b_inv"];
+      $oRow->is_deleted = $oSiieRow["b_del"];
+      $oRow->external_id = $oSiieRow["id_ety"];
+      $oRow->item_id = $lWebItems[$oSiieRow["fid_item"]];
+      $oRow->unit_id = $lWebUnits[$oSiieRow["fid_unit"]];
+      $oRow->year_id = $lYearsId[$oSiieRow["id_year"]];
+      $oRow->document_id = $lWebDocuments[$oSiieRow["id_doc"]];
+      $oRow->created_by_id = 1;
+      $oRow->updated_by_id = 1;
+      $oRow->created_at = $oSiieRow["ts_new"];
+      $oRow->updated_at = $oSiieRow["ts_edit"];
 
-     return $oRow;
+      return $oRow;
   }
 }

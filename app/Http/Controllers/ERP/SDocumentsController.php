@@ -18,12 +18,24 @@ class SDocumentsController extends Controller {
 
     public function __construct()
     {
-        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.DOCUMENTS_MANAGE'), \Config::get('scsys.MODULES.ERP'));
+        $this->oCurrentUserPermission = SProcess::constructor($this,
+          \Config::get('scperm.PERMISSION.DOCUMENTS_MANAGE'), \Config::get('scsys.MODULES.ERP'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
 
-    public function index(Request $request, $iDocCategory, $iDocClass, $iDocType, $sTitle)
+    /**
+     * display a list of documents that were imported from siie depending of cat, class, and doc type
+     *
+     * @param  Request $request
+     * @param  integer $iDocCategory
+     * @param  integer $iDocClass
+     * @param  integer $iDocType
+     * @param  string  $sTitle
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request, $iDocCategory = 0, $iDocClass = 0, $iDocType = 0, $sTitle = '')
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
@@ -57,25 +69,21 @@ class SDocumentsController extends Controller {
                               'ec.code as cur_code'
                       );
 
-          switch ($this->iFilter)
-          {
-            case \Config::get('scsys.FILTER.ACTIVES'):
-              $lDocuments = $lDocuments->where('ed.is_deleted', '=', \Config::get('scsys.STATUS.ACTIVE'));
-              break;
+        switch ($this->iFilter) {
+          case \Config::get('scsys.FILTER.ACTIVES'):
+            $lDocuments = $lDocuments->where('ed.is_deleted', '=', \Config::get('scsys.STATUS.ACTIVE'));
+            break;
 
-            case \Config::get('scsys.FILTER.DELETED'):
-              $lDocuments = $lDocuments->where('ed.is_deleted', '=', \Config::get('scsys.STATUS.DEL'));
-              break;
+          case \Config::get('scsys.FILTER.DELETED'):
+            $lDocuments = $lDocuments->where('ed.is_deleted', '=', \Config::get('scsys.STATUS.DEL'));
+            break;
 
-            case \Config::get('scsys.FILTER.ALL'):
-            // return $lDocuments;
-              break;
-          }
+          case \Config::get('scsys.FILTER.ALL'):
+          // return $lDocuments;
+            break;
+        }
 
-
-          $lDocuments = $lDocuments->get();
-
-        // dd($lDocuments);
+        $lDocuments = $lDocuments->get();
 
         return view('siie.docs.index')
                               ->with('iFilter', $this->iFilter)
@@ -87,18 +95,26 @@ class SDocumentsController extends Controller {
                               ->with('title', $sTitle);
     }
 
-    public function view($iDocumentId)
+    /**
+     * display a Document with rows in a view
+     *
+     * @param  integer $iDocumentId primary key of SDocument
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function view($iDocumentId = 0)
     {
        $oDocument = SDocument::find($iDocumentId);
        $oDocument->rows;
+
        foreach ($oDocument->rows as $key => $row) {
          $row->unit;
        }
+
        $oDocument->partner;
        $oDocument->currency;
 
        return view('siie.docs.view')->with('document', $oDocument)
                                     ->with('title', 'Documento a detalle');
     }
-
   }

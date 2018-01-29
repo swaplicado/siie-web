@@ -7,7 +7,7 @@ use App\ERP\SItem;
 use App\ERP\SUnit;
 
 /**
- *
+ * this class import the data of document taxes from siie
  */
 class SImportDocumentTaxRows
 {
@@ -17,6 +17,13 @@ class SImportDocumentTaxRows
   protected $webdbname      = '';
   protected $webcon         = '';
 
+  /**
+   * __construct
+   *
+   * @param string $sHost the name of host to connect
+   *                  can be a IP or name of host
+   * @param string $sDbName name of data base to read
+   */
   function __construct($sHost, $sDbName)
   {
       $this->webdbname = $sDbName;
@@ -28,7 +35,19 @@ class SImportDocumentTaxRows
       }
   }
 
-  public function importTaxRows($iYear, $iDocExternalId, $iExternalRowId, $lWebDocuments, $lWebDocumentRows)
+  /**
+   * read the data  from siie, transform it, and saves it in the database
+   *
+   * @param  integer $iYearId  id of year in siie ('2017')
+   * @param  integer $iDocExternalId
+   * @param  integer $iExternalRowId
+   * @param  array   $lWebDocuments  array of documents to map siie to siie-web documents
+   * @param  array   $lWebDocumentRows  array of document rows to map siie to siie-web document rows
+   *
+   * @return array array of tax rows
+   */
+  public function importTaxRows($iYear = 0, $iDocExternalId = 0, $iExternalRowId = 0,
+                                $lWebDocuments = [], $lWebDocumentRows = [])
   {
       $lYears = [
         '1' => '2016',
@@ -73,16 +92,20 @@ class SImportDocumentTaxRows
          }
       }
 
-      // $this->webcon->close();
-
-      // foreach ($lTaxRowsToWeb as $key => $oRow) {
-      //    $oRow->save();
-      // }
-
       return $lTaxRowsToWeb;
   }
 
-  private static function siieToSiieWeb($oSiieRow = '', $lWebDocuments, $lYearsId, $lWebDocumentRows)
+  /**
+   * Transform a siie object to siie-web object
+   *
+   * @param  Object $oSiieRow
+   * @param  array  $lWebDocuments  array of documents to map siie to siie-web documents
+   * @param  array  $lYearsId  array of years to map siie to siie-web years
+   * @param  array  $lWebDocumentRows  array of document rows to map siie to siie-web document rows
+   *
+   * @return SDocumentRowTax
+   */
+  private static function siieToSiieWeb($oSiieRow = null, $lWebDocuments = [], $lYearsId = [], $lWebDocumentRows = [])
   {
       $oRow = new SDocumentRowTax();
 
@@ -92,7 +115,6 @@ class SImportDocumentTaxRows
       $oRow->tax = $oSiieRow["tax"];
       $oRow->tax_currency = $oSiieRow["tax_cur"];
       $oRow->external_id = $oSiieRow["id_tax"];
-      // $oRow->document_row_id = $lWebDocumentRows[''.$lWebDocuments[$oSiieRow["id_doc"]].$oSiieRow["id_year"].$oSiieRow["id_ety"]];
       $oRow->document_id = $lWebDocuments[$oSiieRow["id_doc"]];
       $oRow->year_id = $lYearsId[$oSiieRow["id_year"]];
 

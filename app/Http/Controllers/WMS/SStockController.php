@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
@@ -41,10 +42,15 @@ class SStockController extends Controller
                          ei.name as item,
                          eu.code as unit';
 
+     $sFilterDate = $request->filterDate == null ? session('work_date')->format('Y-m-d') : $request->filterDate;
+     $oFilterDate = Carbon::parse($sFilterDate);
+     $iYearId = session('utils')->getYearId($oFilterDate->year);
+
      $aParameters = array();
      $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 'ei.id_item';
      $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 'eu.id_unit';
-     $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = ''.session('work_year');
+     $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = ''.$iYearId;
+     $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] = $sFilterDate;
 
       switch ($iStockType) {
         case \Config::get('scwms.STOCK_TYPE.STK_BY_ITEM'):
@@ -119,10 +125,15 @@ class SStockController extends Controller
                     // ->select(\DB::raw($select))
                     // ->mergeBindings($sub)
                     ->where('ws.is_deleted', false)
+                    ->where('ws.dt_date', '<=', $sFilterDate)
                     ->groupBy($groupBy)
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)
                     ->having('stock', '>', '0');
+                    
+      if (\Auth::user()->user_type_id != \Config::get('scsys.TP_USER.MANAGER')) {
+          $stock = $stock->where('ww.id_whs', session()->has('whs') ? session('whs')->id_whs : 1);
+      }
 
       if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
       {
@@ -137,6 +148,7 @@ class SStockController extends Controller
 
       return view('wms.stock.stock')
                         ->with('iStockType', $iStockType)
+                        ->with('tfilterDate', Carbon::parse($sFilterDate))
                         ->with('data', $stock);
     }
 

@@ -7,10 +7,10 @@
 @section('title', trans('userinterface.titles.LIST_USERS').' sucursales')
 
 @section('content')
-	<?php $sRoute='siie.userwhs'
+	<?php $sRoute='admin.userwhs'
 
 	?>
-{!! Form::open(['route' => 'siie.userwhs.store' , 'method' => 'POST', 'files' => true]) !!}
+{!! Form::open(['route' => 'admin.userwhs.store' , 'method' => 'POST', 'files' => true]) !!}
 	<table data-toggle="table" class="table table-condensed">
 		<tr>
       <th>Nombre Usuario:</th>
@@ -59,7 +59,7 @@
             var opt=" ";
             $.ajax({
               type:'get',
-              url:'{!!URL::to('siie/userwhs/findWhs')!!}',
+              url:'{!!URL::to('admin/userwhs/findWhs')!!}',
               data:{'id':eti_id},
               success:function(data){
 

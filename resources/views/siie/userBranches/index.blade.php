@@ -7,7 +7,7 @@
 @section('title', trans('userinterface.titles.LIST_USERS').' sucursales')
 
 @section('content')
-	<?php $sRoute='siie.userBranches' ?>
+	<?php $sRoute='admin.userBranches' ?>
 
 	<table data-toggle="table" class="table table-condensed">
 		<thead>

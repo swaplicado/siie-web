@@ -113,6 +113,12 @@ class SUtil {
       return $lUserCompany;
   }
 
+  /**
+   *  return an array with the branches corresponding
+   *  to the current partner in session
+   *
+   * @return array SBranch
+   */
   public static function companyBranchesArray()
   {
       return SBranch::where('partner_id', session()->has('partner') ? session('partner')->id_partner : 0)

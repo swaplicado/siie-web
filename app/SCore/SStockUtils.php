@@ -25,8 +25,7 @@ class SStockUtils
     {
         $aErrors = array();
 
-        if ($oMovement == '')
-        {
+        if ($oMovement == '') {
           array_push($aErrors, "El movimiento está vacío");
           return $aErrors;
         }
@@ -41,29 +40,23 @@ class SStockUtils
         $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 0;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
 
-        foreach ($oMovement->aAuxRows as $movRow)
-        {
+        foreach ($oMovement->aAuxRows as $movRow) {
             $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow->item_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow->unit_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow->pallet_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
 
-            if ($movRow->item->is_lot)
-            {
-                if (sizeof($movRow->getAuxLots()) == 0)
-                {
+            if ($movRow->item->is_lot) {
+                if (sizeof($movRow->getAuxLots()) == 0) {
                     array_push($aErrors, "El renglón ".$movRow['oAuxItem']['name']." no tiene lotes asignados");
                 }
-                else
-                {
-                  foreach ($movRow->getAuxLots() as $lotRow)
-                  {
+                else {
+                  foreach ($movRow->getAuxLots() as $lotRow) {
                       $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $lotRow->lot_id;
 
                       $oStock = session('stock')->getStock($aParameters);
-                      if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow->quantity)
-                      {
+                      if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow->quantity) {
                           if ($movRow->pallet_id == 1) {
                             array_push($aErrors, "No hay suficientes existencias SIN TARIMA del lote ".$lotRow->lot->lot."\n
                                                   Total: ".$oStock[\Config::get('scwms.STOCK.GROSS')]."\n
@@ -73,28 +66,26 @@ class SStockUtils
                           else {
                             array_push($aErrors, "No hay suficientes existencias del lote ".$lotRow->lot->lot." en la tarima ".$movRow->pallet->pallet);
                           }
+
                           return $aErrors;
                       }
                   }
                 }
             }
-            else
-            {
+            else {
                 $oStock = session('stock')->getStock($aParameters);
-                if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow->quantity)
-                {
-                    if ($movRow->pallet_id == 1)
-                    {
+                if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow->quantity) {
+                    if ($movRow->pallet_id == 1) {
                       array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
                                               material/producto ".$movRow->item->name."\n
                                               Total:".$oStock[\Config::get('scwms.STOCK.GROSS')]."\n
                                               Segregadas:".$oStock[\Config::get('scwms.STOCK.SEGREGATED')]."\n
                                               Disponibles:".$oStock[\Config::get('scwms.STOCK.AVAILABLE')]);
                     }
-                    else
-                    {
+                    else {
                       array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name." en la tarima ".$movRow->pallet->pallet);
                     }
+
                     return $aErrors;
                 }
             }
@@ -114,8 +105,7 @@ class SStockUtils
         $aErrors = array();
         $aItems = array();
 
-        if ($oMovement == '')
-        {
+        if ($oMovement == '') {
           array_push($aErrors, "El movimiento está vacío");
           return $aErrors;
         }
@@ -130,20 +120,17 @@ class SStockUtils
              if (array_key_exists($movRow->item_id, $aItems)) {
                 $aItems[$movRow->item_id] += $movRow->quantity;
              }
-             else
-             {
+             else {
                $aItems[$movRow->item_id] = $movRow->quantity;
              }
           }
 
-          if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
-          {
+          if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
               foreach ($aItems as $itemId => $quantity) {
                 $aErrors = SStockUtils::validateMin($movRow->item, $oMovement->warehouse, $quantity);
               }
           }
-          else
-          {
+          else {
               foreach ($aItems as $itemId => $quantity) {
                 $aErrors = SStockUtils::validateMax($movRow->item, $oMovement->warehouse, $quantity);
               }
@@ -183,8 +170,7 @@ class SStockUtils
        $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 0;
        $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
 
-       foreach ($lLimits as $oLimit)
-       {
+       foreach ($lLimits as $oLimit) {
           if ($oLimit->container_type_id == \Config::get('scwms.CONTAINERS.WAREHOUSE')
               && $oLimit->container_id == $oWarehouse->id_whs) {
 
@@ -193,8 +179,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oWarehouse->id_whs;
 
                 $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
-                if (($dStock + $dQuantity) > $oLimit->max)
-                {
+                if (($dStock + $dQuantity) > $oLimit->max) {
                    array_push($aErrors, 'El material/producto '.$oItem->name.' excede los límites permitidos en el almacén '.$oWarehouse->name);
                 }
           }
@@ -206,8 +191,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oWarehouse->branch_id;
 
                 $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
-                if (($dStock + $dQuantity) > $oLimit->max)
-                {
+                if (($dStock + $dQuantity) > $oLimit->max) {
                    array_push($aErrors, 'El material/producto '.$oItem->name.' excede los límites permitidos en la sucursal '.$oWarehouse->branch->name);
                 }
           }
@@ -218,8 +202,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
 
                 $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
-                if (($dStock + $dQuantity) > $oLimit->max)
-                {
+                if (($dStock + $dQuantity) > $oLimit->max) {
                    array_push($aErrors, 'El material/producto '.$oItem->name.' excede los límites permitidos en la empresa actual.');
                 }
           }
@@ -258,8 +241,7 @@ class SStockUtils
        $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 0;
        $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
 
-       foreach ($lLimits as $oLimit)
-       {
+       foreach ($lLimits as $oLimit) {
           if ($oLimit->container_type_id == \Config::get('scwms.CONTAINERS.WAREHOUSE')
               && $oLimit->container_id == $oWarehouse->id_whs) {
 
@@ -268,8 +250,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oWarehouse->id_whs;
 
                 $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
-                if (($dStock - $dQuantity) < $oLimit->min)
-                {
+                if (($dStock - $dQuantity) < $oLimit->min) {
                    array_push($aErrors, 'La existencia del material/producto '.$oItem->name.' estaría por debajo del mínimo permitido en el almacén '.$oWarehouse->name);
                 }
           }
@@ -281,8 +262,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oWarehouse->branch_id;
 
                 $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
-                if (($dStock - $dQuantity) < $oLimit->min)
-                {
+                if (($dStock - $dQuantity) < $oLimit->min) {
                    array_push($aErrors, 'La existencia del material/producto '.$oItem->name.' estaría por debajo del mínimo permitido en la sucursal '.$oWarehouse->branch->name);
                 }
           }
@@ -293,8 +273,7 @@ class SStockUtils
                 $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oItem->unit_id;
 
                 $dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
-                if (($dStock - $dQuantity) < $oLimit->min)
-                {
+                if (($dStock - $dQuantity) < $oLimit->min) {
                    array_push($aErrors, 'La existencia del material/producto '.$oItem->name.' estaría por debajo del mínimo permitido en la empresa actual.');
                 }
           }
@@ -317,8 +296,7 @@ class SStockUtils
                       sum(ws.output) as outputs,
                       (sum(ws.input) - sum(ws.output)) as stock';
 
-        try
-        {
+        try {
           $stock = \DB::connection(session('db_configuration')->getConnCompany())
                         ->table('wms_stock as ws')
                         ->join('erpu_items as ei', 'ws.item_id', '=', 'ei.id_item')
@@ -336,19 +314,16 @@ class SStockUtils
                         ->having('stock', '>', '0')
                         ->get();
         }
-        catch (Exception $e)
-        {
+        catch (Exception $e) {
           \Debugbar::error($e);
         }
 
         if (sizeof($stock) > 0) {
             return SLocation::find($stock[0]->location_id);
         }
-        else {
-            return SLocation::find(1);
-        }
 
-        return $stock;
+        return SLocation::find(1);
+
     }
 
 }

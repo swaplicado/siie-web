@@ -91,7 +91,7 @@ class SUserWhsController extends Controller
 
          Flash::warning(trans('messages.REG_EDITED'))->important();
 
-         return redirect()->route('siie.userwhs.index');
+         return redirect()->route('admin.userwhs.index');
 
   }
 

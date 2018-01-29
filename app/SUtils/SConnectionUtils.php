@@ -43,9 +43,14 @@ class SConnectionUtils {
         \DB::reconnect($sConnectionName);
     }
 
+    /**
+     * reconnect the system to the database configured in the company
+     * or the database
+     *
+     * @param  string $sDataBase name of database to reconnect
+     */
     public static function reconnectCompany($sDataBase = '')
     {
-        //dd(session('company'));
         $connection = session()->has('db_configuration') ? session('db_configuration')->getConnCompany() : '';
         \Config::set('database.connections.'.$connection.'.database', session()->has('company') ? session('company')->database_name : $sDataBase);
     }

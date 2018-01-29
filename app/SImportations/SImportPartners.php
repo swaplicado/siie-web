@@ -3,52 +3,58 @@
 use App\ERP\SPartner;
 
 /**
- *
+ * this class import the data of items from siie
  */
-class SImportPartners
-{
+class SImportPartners {
   protected $webhost        = 'localhost';
   protected $webusername    = 'root';
   protected $webpassword    = 'msroot';
   protected $webdbname      = 'erp';
   protected $webcon         = '';
 
+  /**
+   * receive the name of host to connect
+   * can be a IP or name of host
+   *
+   * @param string $sHost
+   */
   function __construct($sHost)
   {
       $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
-      if (mysqli_connect_errno())
-      {
+      if (mysqli_connect_errno()) {
           echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
       }
   }
 
+  /**
+   * read the data  from siie, transform it, and saves it in the database
+   *
+   * @return integer number of records imported
+   */
   public function importPartners()
   {
       $sql = "SELECT id_bp, bp, lastname, firstname, fiscal_id,
               b_del, b_co, b_cus, b_sup, b_att_rel_pty,
               ts_new, ts_edit, ts_del FROM bpsu_bp";
       $result = $this->webcon->query($sql);
+      $this->webcon->close();
+
       $lSiiePartners = array();
       $lWebPartners = SPartner::get();
       $lPartners = array();
       $lPartnersToWeb = array();
 
-      foreach ($lWebPartners as $key => $value)
-      {
+      foreach ($lWebPartners as $key => $value) {
           $lPartners[$value->external_id] = $value;
       }
 
-      if ($result->num_rows > 0)
-      {
+      if ($result->num_rows > 0) {
          // output data of each row
-         while($row = $result->fetch_assoc())
-         {
-             if (array_key_exists($row["id_bp"], $lPartners))
-             {
+         while($row = $result->fetch_assoc()) {
+             if (array_key_exists($row["id_bp"], $lPartners)) {
                 if ($row["ts_edit"] > $lPartners[$row["id_bp"]]->updated_at ||
-                      $row["ts_del"] > $lPartners[$row["id_bp"]]->updated_at)
-                {
+                      $row["ts_del"] > $lPartners[$row["id_bp"]]->updated_at) {
                     $lPartners[$row["id_bp"]]->code = $row["fiscal_id"];
                     $lPartners[$row["id_bp"]]->name = $row["bp"];
                     $lPartners[$row["id_bp"]]->last_name = $row["lastname"];
@@ -66,17 +72,11 @@ class SImportPartners
                     array_push($lPartnersToWeb, $lPartners[$row["id_bp"]]);
                 }
              }
-             else
-             {
+             else {
                 array_push($lPartnersToWeb, SImportPartners::siieToSiieWeb($row));
              }
          }
       }
-      else
-      {
-         echo "0 results";
-      }
-       $this->webcon->close();
 
        foreach ($lPartnersToWeb as $key => $partner) {
          $partner->save();
@@ -85,6 +85,13 @@ class SImportPartners
        return sizeof($lPartnersToWeb);
   }
 
+  /**
+   * Transform a siie object to siie-web object
+   *
+   * @param  Object $oSiiePartner
+   *
+   * @return SPartner
+   */
   private static function siieToSiieWeb($oSiiePartner = '')
   {
      $oPartner = new SPartner();

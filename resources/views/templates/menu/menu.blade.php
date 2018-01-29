@@ -28,11 +28,6 @@
                   <a href="{{ route('admin.privileges.index') }}">{{ trans('userinterface.PRIVILEGES') }}</a>
                 </li>
               @endif
-              @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.ASSIGNAMENTS')))
-                <li>
-                  <a href="{{ route('admin.userpermissions.index') }}">{{ trans('userinterface.USER_PERMISSIONS') }}</a>
-                </li>
-              @endif
               @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.PERMISSIONS')))
                 <li>
                   <a href="{{ route('admin.permissions.index') }}">{{ trans('userinterface.PERMISSIONS') }}</a>
@@ -41,8 +36,24 @@
                 <li>
                   <a href="{{ route('admin.companies.index') }}">{{ trans('userinterface.COMPANIES') }}</a>
                 </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ trans('userinterface.labels.CONFIGURATION') }}<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.VIEW_CODE.ASSIGNAMENTS')))
+                <li>
+                  <a href="{{ route('admin.userpermissions.index') }}">{{ trans('userinterface.USER_PERMISSIONS') }}</a>
+                </li>
+              @endif
                 <li>
                   <a href="{{ route('admin.usraccess.index') }}">{{ trans('userinterface.USER_COMPANIES') }}</a>
+                </li>
+                <li>
+                  <a href="{{ route('admin.userBranches.index') }}">{{ trans('userinterface.USER_BRANCHES') }}</a>
+                </li>
+                <li>
+                  <a href="{{ route('admin.userwhs.index') }}">{{ trans('userinterface.USER_WHS') }}</a>
                 </li>
             </ul>
           </li>

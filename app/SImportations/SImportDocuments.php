@@ -5,7 +5,7 @@ use App\ERP\SPartner;
 use App\ERP\SCurrency;
 
 /**
- *
+ * this class import the data of documents from siie
  */
 class SImportDocuments
 {
@@ -15,6 +15,13 @@ class SImportDocuments
   protected $webdbname      = '';
   protected $webcon         = '';
 
+  /**
+   * __construct
+   *
+   * @param string $sHost the name of host to connect
+   *                  can be a IP or name of host
+   * @param string $sDbName name of data base to read
+   */
   function __construct($sHost, $sDbName)
   {
       $this->webdbname = $sDbName;
@@ -26,20 +33,22 @@ class SImportDocuments
       }
   }
 
+  /**
+   *  read the data  from siie, transform it, and saves it in the database
+   *
+   * @param  integer $iYearId  id of year in siie ('2017')
+   * @param  integer $sOperator [description]
+   *
+   * @return integer quantity of records imported
+   */
   public function importDocuments($iYearId)
   {
-      // $document = SDocument::find(1);
-      // $document->rows;
-      // foreach ($document->rows as $key => $row) {
-      //   $row->taxRows;
-      // }
-      // dd($document);
-      // $document = '';
-
       $lYears = [
         '2016' => '1',
         '2017' => '2',
         '2018' => '3',
+        '2019' => '4',
+        '2020' => '5',
       ];
 
       $lCurrencies = [
@@ -82,6 +91,8 @@ class SImportDocuments
             id_year = ".$iYearId.";";
 
       $result = $this->webcon->query($sql);
+      $this->webcon->close();
+      
       $lSiieDocuments = array();
       $lWebDocuments = SDocument::get();
       $lPartners = SPartner::get();
@@ -89,13 +100,11 @@ class SImportDocuments
       $lDocumentsToWeb = array();
       $lWebPartners = array();
 
-      foreach ($lWebDocuments as $key => $value)
-      {
+      foreach ($lWebDocuments as $key => $value) {
           $lDocuments[$value->external_id] = $value;
       }
 
-      foreach ($lWebDocuments as $key => $value)
-      {
+      foreach ($lWebDocuments as $key => $value) {
           $lDocsYear[$value->external_id.$value->year_id] = $value;
       }
 
@@ -103,16 +112,12 @@ class SImportDocuments
           $lWebPartners[$partner->external_id] = $partner->id_partner;
       }
 
-      if ($result->num_rows > 0)
-      {
+      if ($result->num_rows > 0) {
          // output data of each row
-         while($row = $result->fetch_assoc())
-         {
-             if (array_key_exists($row["id_doc"], $lDocuments))
-             {
+         while($row = $result->fetch_assoc()) {
+             if (array_key_exists($row["id_doc"], $lDocuments)) {
                 if ($row["ts_edit"] > $lDocuments[$row["id_doc"]]->updated_at ||
-                      $row["ts_del"] > $lDocuments[$row["id_doc"]]->updated_at)
-                {
+                      $row["ts_del"] > $lDocuments[$row["id_doc"]]->updated_at) {
 
                     $lDocuments[$row["id_doc"]]->dt_date = $row["dt"];
                     $lDocuments[$row["id_doc"]]->dt_doc = $row["dt_doc"];
@@ -134,8 +139,7 @@ class SImportDocuments
                     $lDocuments[$row["id_doc"]]->doc_category_id = $row["fid_ct_dps"];
                     $lDocuments[$row["id_doc"]]->doc_class_id = $row["fid_cl_dps"];
                     $lDocuments[$row["id_doc"]]->doc_type_id = $row["fid_tp_dps"];
-                    try
-                    {
+                    try {
                       $src_id = $lDocsYear[$row["fid_src_doc_n"].$lYears[$row["fid_src_year_n"]]]->id_document;
                     }
                     catch (\ErrorException $e) {
@@ -152,17 +156,11 @@ class SImportDocuments
                     array_push($lDocumentsToWeb, $lDocuments[$row["id_doc"]]);
                 }
              }
-             else
-             {
+             else {
                 array_push($lDocumentsToWeb, SImportDocuments::siieToSiieWeb($row, $lYears, $lWebPartners, $lCurrencies, $lDocsYear));
              }
          }
       }
-      else
-      {
-         echo "0 results";
-      }
-       $this->webcon->close();
 
        foreach ($lDocumentsToWeb as $key => $document) {
          $document->save();
@@ -171,47 +169,57 @@ class SImportDocuments
        return sizeof($lDocumentsToWeb);
   }
 
-  private static function siieToSiieWeb($oSiieDocument = '', $lYears, $lWebPartners, $lCurrencies, $lDocsYear)
-  {
-     $oDocument = new SDocument();
-     $oDocument->dt_date = $oSiieDocument["dt"];
-     $oDocument->dt_doc = $oSiieDocument["dt_doc"];
-     $oDocument->num = $oSiieDocument["num"];
-     $oDocument->subtotal = $oSiieDocument["stot_r"];
-     $oDocument->tax_charged = $oSiieDocument["tax_charged_r"];
-     $oDocument->tax_retained = $oSiieDocument["tax_retained_r"];
-     $oDocument->total = $oSiieDocument["tot_r"];
-     $oDocument->exchange_rate = $oSiieDocument["exc_rate"];
-     $oDocument->exchange_rate_sys = $oSiieDocument["exc_rate_sys"];
-     $oDocument->subtotal_cur = $oSiieDocument["stot_cur_r"];
-     $oDocument->tax_charged_cur = $oSiieDocument["tax_charged_cur_r"];
-     $oDocument->tax_retained_cur = $oSiieDocument["tax_retained_cur_r"];
-     $oDocument->total_cur = $oSiieDocument["tot_cur_r"];
-     $oDocument->is_closed = $oSiieDocument["b_close"];
-     $oDocument->is_deleted = $oSiieDocument["b_del"];
-     $oDocument->external_id = $oSiieDocument["id_doc"];
-     $oDocument->year_id = $lYears[$oSiieDocument["id_year"]];
-     $oDocument->doc_category_id = $oSiieDocument["fid_ct_dps"];
-     $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
-     $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
-     try
-     {
-       $src_id = $lDocsYear[$oSiieDocument["fid_src_doc_n"].$lYears[$oSiieDocument["fid_src_year_n"]]]->id_document;
-     }
-     catch (\ErrorException $e) {
-       $src_id = 1;
-     }
+  /**
+   * Transform a siie object to siie-web object
+   *
+   * @param  Object $oSiieDocument
+   * @param  array  $lYears  array of years to map siie to siie-web years
+   * @param  array  $lWebPartners  array of partners to map siie to siie-web partners
+   * @param  array  $lCurrencies  array of currencies to map siie to siie-web currencies
+   * @param  array  $lDocsYear  array of documents to map siie to siie-web documents
+   *
+   * @return SDocument
+   */
+  private static function siieToSiieWeb($oSiieDocument = null, $lYears = [], $lWebPartners = [],
+                                  $lCurrencies = [], $lDocsYear = []) {
+       $oDocument = new SDocument();
+       $oDocument->dt_date = $oSiieDocument["dt"];
+       $oDocument->dt_doc = $oSiieDocument["dt_doc"];
+       $oDocument->num = $oSiieDocument["num"];
+       $oDocument->subtotal = $oSiieDocument["stot_r"];
+       $oDocument->tax_charged = $oSiieDocument["tax_charged_r"];
+       $oDocument->tax_retained = $oSiieDocument["tax_retained_r"];
+       $oDocument->total = $oSiieDocument["tot_r"];
+       $oDocument->exchange_rate = $oSiieDocument["exc_rate"];
+       $oDocument->exchange_rate_sys = $oSiieDocument["exc_rate_sys"];
+       $oDocument->subtotal_cur = $oSiieDocument["stot_cur_r"];
+       $oDocument->tax_charged_cur = $oSiieDocument["tax_charged_cur_r"];
+       $oDocument->tax_retained_cur = $oSiieDocument["tax_retained_cur_r"];
+       $oDocument->total_cur = $oSiieDocument["tot_cur_r"];
+       $oDocument->is_closed = $oSiieDocument["b_close"];
+       $oDocument->is_deleted = $oSiieDocument["b_del"];
+       $oDocument->external_id = $oSiieDocument["id_doc"];
+       $oDocument->year_id = $lYears[$oSiieDocument["id_year"]];
+       $oDocument->doc_category_id = $oSiieDocument["fid_ct_dps"];
+       $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
+       $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
+       try {
+         $src_id = $lDocsYear[$oSiieDocument["fid_src_doc_n"].$lYears[$oSiieDocument["fid_src_year_n"]]]->id_document;
+       }
+       catch (\ErrorException $e) {
+         $src_id = 1;
+       }
 
 
-     $oDocument->doc_src_id = $src_id;
-     $oDocument->doc_status_id = 1;
-     $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
-     $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];
-     $oDocument->created_by_id = 1;
-     $oDocument->updated_by_id = 1;
-     $oDocument->created_at = $oSiieDocument["ts_new"];
-     $oDocument->updated_at = $oSiieDocument["ts_edit"];
+       $oDocument->doc_src_id = $src_id;
+       $oDocument->doc_status_id = 1;
+       $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
+       $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];
+       $oDocument->created_by_id = 1;
+       $oDocument->updated_by_id = 1;
+       $oDocument->created_at = $oSiieDocument["ts_new"];
+       $oDocument->updated_at = $oSiieDocument["ts_edit"];
 
-     return $oDocument;
+       return $oDocument;
   }
 }

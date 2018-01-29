@@ -188,6 +188,7 @@ class SValidation {
    *
    * @param  User  $oUser
    * @param  int  $iIdCompany Company id
+   * 
    * @return true or false
    */
   public static function canAccessToCompany($oUser, $iIdCompany)
@@ -203,6 +204,14 @@ class SValidation {
       return false;
   }
 
+  /**
+   * Return true if the user has permission to access to the branch.
+   *
+   * @param  User  $oUser
+   * @param  int  $iIdBranch Company id
+   *
+   * @return true or false
+   */
   public static function canAccessToBranch($oUser, $iIdBranch)
   {
       foreach ($oUser->userBranches as $access)

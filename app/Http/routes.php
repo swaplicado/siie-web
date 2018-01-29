@@ -152,7 +152,27 @@ Route::post('/start/whs',[
   			'as' => 'admin.companies.activate'
   		]);
 
+      /*
+      * User companies
+      **/
+
       Route::resource('usraccess','SYS\SUserCompaniesController');
+
+      /*
+      * User Branches
+      **/
+      Route::resource('userBranches','ERP\SUserBranchesController');
+
+      /*
+      * User Warehouses
+      **/
+      Route::get('userwhs/findWhs','ERP\SUserWhsController@findWhs');
+      Route::resource('userwhs','ERP\SUserWhsController');
+      Route::get('userwhs/{id}/edit', [
+        'uses' => 'ERP\SUserWhsController@edit',
+        'as' => 'admin.userwhs.edit'
+      ]);
+
     });
 
 	});
@@ -188,12 +208,12 @@ Route::group(['prefix' => 'qms'], function () {
       * segregations
       **/
       // Route::resource('segregations','WMS\SSegregationsController');
-      Route::get('segregations/{title}/{segType}/index',[
+      Route::get('segregations/{title}/{segType}/{viewType}/index',[
         'uses' => 'QMS\SSegregationsController@index',
         'as' => 'qms.segregations.index'
       ]);
 
-      Route::post('segregations/{title}/{segType}/index/process',[
+      Route::post('segregations/{title}/{segType}/{viewType}/index/process',[
         'uses' => 'QMS\SSegregationsController@Process',
         'as' => 'qms.segregations.index.process'
       ]);
@@ -481,16 +501,6 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'ERP\SBranchesController@create',
         'as' => 'siie.branches.edit'
       ]);
-
-      Route::resource('userBranches','ERP\SUserBranchesController');
-
-      Route::get('userwhs/findWhs','ERP\SUserWhsController@findWhs');
-      Route::resource('userwhs','ERP\SUserWhsController');
-      Route::get('userwhs/{id}/edit', [
-        'uses' => 'ERP\SUserWhsController@edit',
-        'as' => 'siie.userwhs.edit'
-      ]);
-
 
       /*
       * address

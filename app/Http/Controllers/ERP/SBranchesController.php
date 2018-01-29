@@ -89,17 +89,6 @@ class SBranchesController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -140,7 +129,13 @@ class SBranchesController extends Controller {
          return redirect()->route('siie.branches.index');
      }
 
-
+     /**
+      * set the var is_deleted to false in registry
+      *
+      * @param  Request $request
+      * @param  int $id  primary key of Model
+      * @return redirect to route('siie.branches.index');
+      */
      public function activate(Request $request, $id)
      {
          $branch = SBranch::find($id);

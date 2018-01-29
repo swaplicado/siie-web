@@ -48,9 +48,9 @@ class SMovsController extends Controller
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
 
-
     /**
-     * Display a listing of the resource.
+     * @param  Request $request
+     * @param  integer $iFolio receive a folio if a movement was saved
      *
      * @return \Illuminate\Http\Response
      */
@@ -71,8 +71,6 @@ class SMovsController extends Controller
             $row->item->unit;
         }
 
-        //  \Debugbar::info($date);
-        // dd($lMovRows);
         return view('wms.movs.index')
                     ->with('iFolio', $iFolio)
                     ->with('iFilter', $this->iFilter)
@@ -81,7 +79,12 @@ class SMovsController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * prepare all data to create a new warehouse movement
+     *
+     * @param  Request $request [description]
+     * @param  integer  $mvtType type of movement
+     * @param  integer $iDocId if is a supply the method receive the id to show
+     *                         this document
      *
      * @return \Illuminate\Http\Response
      */
@@ -90,6 +93,7 @@ class SMovsController extends Controller
         $movement = new SMovement();
         $lDocData = array();
 
+        // get the document if the id != 0
         if ($iDocId != 0)
         {
             $oDocument = SDocument::find($iDocId);
@@ -105,7 +109,6 @@ class SMovsController extends Controller
                                             $oDocument->doc_type_id, $FilterDel,
                                             $sFilterDate, $iViewType, $iDocId,
                                             $bWithPending);
-
         }
         else
         {
@@ -244,12 +247,14 @@ class SMovsController extends Controller
         $whsSrc = 0;
         $whsDes = 0;
 
+        // the transfer implies two warehouses
         if ($oData['iMvtType'] == \Config::get('scwms.MVT_TP_OUT_TRA'))
         {
           $whsSrc = $oData['iWhsSrc'];
           $whsDes = $oData['iWhsDes'];
           $whsId = $oData['iWhsSrc'];
         }
+        // if the movement is output implies that the warehouse is of source
         else if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
         {
             $whsId = $oData['iWhsSrc'];
@@ -400,7 +405,8 @@ class SMovsController extends Controller
     }
 
     /**
-     * [Saves the movement in DB and creates and saves stock rows]
+     * Saves the movement in DB and creates and saves stock rows
+     *
      * @param  [SMovement] $movement
      * @param  [Array of SMovementRow] $movementRows
      * @param  [SMovRequest] $request
@@ -441,19 +447,9 @@ class SMovsController extends Controller
 
                 if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
                   if ($movement->warehouse->is_quality) {
-                  // if ($movement->warehouse->is_quality &&
-                  //       $movement->mvt_whs_type_id != \Config::get('scwms.PALLET_RECONFIG_IN') &&
-                  //       $movement->mvt_whs_type_id != \Config::get('scwms.PALLET_RECONFIG_OUT') ) {
-                      $oSegregations = new SSegregationsController();
-                      $oSegregations->segregate($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
+                      session('segregation')->segregate($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
                   }
                 }
-                // else {
-                //   if ($movement->warehouse->is_quality) {
-                //       $oSegregations = new SSegregationsController();
-                //       $oSegregations->release($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'), \Config::get('scqms.RELEASED'));
-                //   }
-                // }
             }
           }
           catch (\Exception $e)

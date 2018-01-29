@@ -97,7 +97,7 @@ class SUserBranchesController extends Controller
 
         Flash::warning(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('siie.userBranches.index');
+        return redirect()->route('admin.userBranches.index');
     }
 
 }

@@ -7,12 +7,12 @@
 
 	<?php
         $aux = $user;
-        $sRoute = 'siie.userBranches.update';
+        $sRoute = 'admin.userBranches.update';
 	?>
 
 	@section('title', 'Acceso a sucursales')
 
-	<?php $sRoute2='siie.userBranches.index' ?>
+	<?php $sRoute2='admin.userBranches.index' ?>
 
 @section('content')
 

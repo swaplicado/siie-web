@@ -27,21 +27,21 @@ class SAddressController extends Controller
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
 
-
     /**
      * Display a listing of the resource.
      *
+     * @param  Request $request
+     * @param  int  $iBranchId primary key of branch
+     *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $iBranchId = NULL)
+    public function index(Request $request, $iBranchId = 0)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        if ($iBranchId != NULL)
-        {
+        if ($iBranchId != NULL) {
             session(['branchIdAux' => $iBranchId]);
         }
-        else
-        {
+        else {
             $iBranchId = session('branchIdAux');
         }
 
@@ -60,8 +60,7 @@ class SAddressController extends Controller
      */
     public function create()
     {
-        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-        {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
         }
 
@@ -93,16 +92,6 @@ class SAddressController extends Controller
       return redirect()->route('siie.address.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -114,8 +103,8 @@ class SAddressController extends Controller
     {
         $domicile = SAddress::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $domicile->created_by_id)))
-        {
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id)
+            || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $domicile->created_by_id))) {
           return redirect()->route('notauthorized');
         }
 
@@ -154,8 +143,7 @@ class SAddressController extends Controller
      */
     public function copy(Request $request, $id)
     {
-        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
-        {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
         }
 
@@ -168,12 +156,19 @@ class SAddressController extends Controller
                                               ->with('bIsCopy', true);
     }
 
+    /**
+     * set the var is_deleted to false in registry
+     *
+     * @param  Request $request
+     * @param  int $id  primary key of Model
+     * @return redirect to route('siie.address.index');
+     */
     public function activate(Request $request, $id)
     {
         $domicile = SAddress::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $domicile->created_by_id)))
-        {
+        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) ||
+              SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $domicile->created_by_id))) {
           return redirect()->route('notauthorized');
         }
 
@@ -191,13 +186,13 @@ class SAddressController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int  $id primary key of registry
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
+        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
         }
 
@@ -214,6 +209,13 @@ class SAddressController extends Controller
         return redirect()->route('siie.address.index');
     }
 
+    /**
+     *  return a list with states of a country
+     *
+     * @param  Request $request
+     *
+     * @return list of Models (SState)
+     */
     public function children(Request $request)
     {
     	 return SState::where('country_id', '=', $request->parent)->get();

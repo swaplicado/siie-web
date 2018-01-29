@@ -13,9 +13,23 @@
 <?php $sRoute="wms.stock"?>
 
 @section('content')
-	{{-- <div class="row">
-			@include('templates.stock.filterstock')
-	</div> --}}
+	@section('thefilters')
+		{!! Form::open(['route' => [ $sRoute.'.index', $iStockType],
+										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
+			<div class="form-group">
+		    <div class="input-group">
+					<span class="input-group-btn">
+					  {!! Form::date('filterDate', $tfilterDate, ['class'=>'form-control']) !!}
+					</span>
+			    <span class="input-group-btn">
+			        <button id="searchbtn" type="submit" class="form-control">
+								<span class="glyphicon glyphicon-search"></span>
+							</button>
+					</span>
+		    </div>
+			</div>
+		{!! Form::close() !!}
+  @endsection
 	<br />
 	<div class="row">
 		<table id="table_id" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
