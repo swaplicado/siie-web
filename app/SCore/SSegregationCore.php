@@ -1,5 +1,9 @@
 <?php namespace App\SCore;
 
+use App\WMS\Segregation\SSegregation;
+use App\WMS\Segregation\SSegregationRow;
+use App\WMS\Segregation\SSegregationLotRow;
+
 /**
  *
  */
@@ -9,11 +13,10 @@ class SSegregationCore
   /**
    * Segregate unit from movement object
    *
-   * @param  Request $request
    * @param  SMovement  $oMovement
    * @param  int  $iSegregationType can be quality, production or shipment
    */
-  public function segregate(Request $request, $oMovement, $iSegregationType)
+  public function segregate($oMovement, $iSegregationType)
   {
       $this->processSegregation($oMovement, $iSegregationType, false, \Config::get('scqms.TO_EVALUATE'));
   }

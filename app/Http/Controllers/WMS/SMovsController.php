@@ -447,7 +447,7 @@ class SMovsController extends Controller
 
                 if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
                   if ($movement->warehouse->is_quality) {
-                      session('segregation')->segregate($request, $movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
+                      session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
                   }
                 }
             }
