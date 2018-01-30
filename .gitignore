@@ -2,4 +2,4 @@
 Homestead.yaml
 Homestead.json
 .env
-/config/debugbar.php
+config/debugbar.php
