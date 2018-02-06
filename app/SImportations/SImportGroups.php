@@ -38,7 +38,7 @@ class SImportGroups {
   {
       $sql = "SELECT id_igrp, igrp, b_del, fid_ifam, ts_new, ts_edit, ts_del FROM itmu_igrp";
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
+      // $this->webcon->close();
 
       $lSiieGroups = array();
       $lWebGroups = SItemGroup::get();

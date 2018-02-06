@@ -38,7 +38,6 @@ class SImportBranches {
   {
       $sql = "SELECT id_bpb, code, bpb, b_add_prt, b_del, fid_bp, ts_new, ts_edit, ts_del FROM bpsu_bpb";
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
 
       $lSiieBranches = array();
       $lWebBranches = SBranch::get();
@@ -54,6 +53,8 @@ class SImportBranches {
       foreach ($lPartners as $key => $partner) {
           $lWebPartners[$partner->external_id] = $partner->id_partner;
       }
+
+      $this->webcon->close();
 
       if ($result->num_rows > 0) {
          // output data of each row

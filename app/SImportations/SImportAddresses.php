@@ -67,7 +67,7 @@ class SImportAddresses {
                   locu_sta AS ls ON (bba.fid_sta_n = ls.id_sta)";
 
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
+      // $this->webcon->close();
 
       $lSiieAddresses = array();
       $lWebAddresses = SAddress::get();

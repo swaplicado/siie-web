@@ -36,7 +36,7 @@ class SImportUnits {
   {
       $sql = "SELECT id_unit, symbol, unit, unit_base_equiv, b_del, ts_new, ts_edit, ts_del FROM itmu_unit";
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
+      // $this->webcon->close();
 
       $lSiieUnits = array();
       $lWebUnits = SUnit::get();
@@ -81,7 +81,7 @@ class SImportUnits {
    * Transform a siie object to siie-web object
    *
    * @param  string $oSiieUnit
-   * 
+   *
    * @return SUnit
    */
   private static function siieToSiieWeb($oSiieUnit = '')

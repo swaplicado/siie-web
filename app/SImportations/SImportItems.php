@@ -43,7 +43,7 @@ class SImportItems
                       fid_unit, fid_igen, ts_new, ts_edit, ts_del FROM itmu_item";
 
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
+      // $this->webcon->close();
 
       $lSiieItems = array();
       $lWebItems = SItem::get();

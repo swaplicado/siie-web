@@ -47,7 +47,7 @@ class SImportDocumentRows {
   {
       $sql = "SELECT * FROM trn_dps_ety WHERE id_year = ".$iYearId." AND ts_new  ".$sOperator." '".$iYearId."-06-31';";
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
+      // $this->webcon->close();
 
       $lSiieRows = array();
       $lWebRows = SDocumentRow::get();

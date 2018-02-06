@@ -91,8 +91,8 @@ class SImportDocuments
             id_year = ".$iYearId.";";
 
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
-      
+      // $this->webcon->close();
+
       $lSiieDocuments = array();
       $lWebDocuments = SDocument::get();
       $lPartners = SPartner::get();

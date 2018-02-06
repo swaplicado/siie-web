@@ -38,9 +38,10 @@ class SImportGenders {
                     ];
 
       $this->aTypes = [];
+                            //cat, class, type, webId
       array_push($this->aTypes, new TypesMap(1,1,1,5)); // PRODUCTO
       array_push($this->aTypes, new TypesMap(1,1,2,7)); // PRODUCTO TERMINADO
-      array_push($this->aTypes, new TypesMap(1,1,3,4)); // PRODUCTO EN PROCESO
+      array_push($this->aTypes, new TypesMap(1,1,3,6)); // PRODUCTO EN PROCESO
       array_push($this->aTypes, new TypesMap(1,1,4,8)); // SUBPRODUCTO
       array_push($this->aTypes, new TypesMap(1,1,5,9)); // DESECHO
       array_push($this->aTypes, new TypesMap(1,2,1,3)); // SERVICIO
@@ -73,7 +74,7 @@ class SImportGenders {
                       ts_new, ts_edit, ts_del FROM itmu_igen";
 
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
+      // $this->webcon->close();
 
       $lSiieGenders = array();
       $lWebGenders = SItemGender::get();
@@ -198,10 +199,12 @@ class SImportGenders {
                                       $iClassId = 0, $iTypeId = 0)
   {
       foreach ($aTypeMap as $oType) {
-         if ($oType->iCategory == $iCategoryId && $oType->iClass == $iClassId && $oType->iType = $iTypeId) {
+         if ($oType->iCategory == $iCategoryId && $oType->iClass == $iClassId && $oType->iType == $iTypeId) {
             return $oType->iEquiv;
          }
       }
+
+      return 1;
   }
 }
 

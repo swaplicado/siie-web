@@ -38,7 +38,6 @@ class SImportPartners {
               b_del, b_co, b_cus, b_sup, b_att_rel_pty,
               ts_new, ts_edit, ts_del FROM bpsu_bp";
       $result = $this->webcon->query($sql);
-      $this->webcon->close();
 
       $lSiiePartners = array();
       $lWebPartners = SPartner::get();
@@ -48,6 +47,8 @@ class SImportPartners {
       foreach ($lWebPartners as $key => $value) {
           $lPartners[$value->external_id] = $value;
       }
+
+      // $this->webcon->close();
 
       if ($result->num_rows > 0) {
          // output data of each row
