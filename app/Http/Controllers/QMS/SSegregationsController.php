@@ -74,7 +74,7 @@ class SSegregationsController extends Controller
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[19];
         $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[18];
 
-        session('segregation')->classify($request, $aParameters);
+        session('segregation')->classify($aParameters);
 
         return redirect()->route('wms.whs.index');
     }

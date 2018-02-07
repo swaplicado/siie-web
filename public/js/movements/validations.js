@@ -218,7 +218,7 @@ function validateMovement(oMovement) {
         movement.rows.forEach(function(element) {
           dItemMQty = 0;
             if (element.lotRows.length > 0) {
-                movement.rows.forEach(function(lotRow) {
+                element.lotRows.forEach(function(lotRow) {
                   dItemMQty += parseFloat(lotRow.dQuantity, 10);
                 });
             }

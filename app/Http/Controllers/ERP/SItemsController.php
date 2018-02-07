@@ -232,7 +232,7 @@ class SItemsController extends Controller
         $item->fill($request->all());
         $item->updated_by_id = \Auth::user()->id;
 
-        $errors = $item->save($item->toArray());
+        $errors = $item->save();
         if (sizeof($errors) > 0)
         {
            return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);

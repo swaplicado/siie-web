@@ -24,7 +24,6 @@ class SSegregationCore
   /**
    * Change the quality status of the units.
    *
-   * @param  Request $request
    * @param  [array] $aParameters [
        * \Config::get('scwms.STOCK_PARAMS.ITEM')
        * \Config::get('scwms.STOCK_PARAMS.UNIT')
@@ -37,9 +36,9 @@ class SSegregationCore
        * \Config::get('scwms.STOCK_PARAMS.DATE')
        * ]
    */
-  public function classify(Request $request, $aParameters)
+  public function classify($aParameters)
   {
-      \DB::connection('company')->transaction(function() use ($aParameters, $request) {
+      \DB::connection('company')->transaction(function() use ($aParameters) {
 
         $iIdItem = $aParameters[\Config::get('scwms.SEG_PARAM.ID_ITEM')];
         $iIdUnit = $aParameters[\Config::get('scwms.SEG_PARAM.ID_UNIT')];
