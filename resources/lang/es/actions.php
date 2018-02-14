@@ -14,6 +14,7 @@
 		'IMPORT' => 'Importar',
 		'SUPPLY' => 'Surtir',
 		'DEVOLVE' => 'Devolver',
+		'QUIT' => 'Eliminar',
 
 
     ];

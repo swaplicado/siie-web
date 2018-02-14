@@ -189,11 +189,27 @@ Route::post('/start/whs',[
 		]);
 
 //****************************************/ Manufacturing /*************************
-		Route::get('/mms/home',[
+
+Route::group(['prefix' => 'mms'], function () {
+		Route::get('/home',[
 			'as' => 'mms.home',
 			'uses' => 'MMS\SProductionController@Home'
 		]);
 		Route::resource('mms','MMS\SProductionController');
+
+    /*
+    * formulas
+    **/
+    Route::resource('formulas','MMS\SFormulasController');
+    Route::get('/formulas/create/itemformulas', [
+      'uses' => 'MMS\SFormulasController@getItemFormulas',
+      'as' => 'mms.formulas.create.itemformulas'
+    ]);
+    Route::get('/formulas/{id}/edit/itemformulas', [
+      'uses' => 'MMS\SFormulasController@getItemFormulas',
+      'as' => 'mms.formulas.edit.itemformulas'
+    ]);
+  });
 
 //****************************************/ Quality Module /*************************
 

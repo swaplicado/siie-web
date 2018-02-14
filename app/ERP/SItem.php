@@ -64,6 +64,17 @@ class SItem extends SModel {
   }
 
   /**
+   * [pallet description]
+   * Return object collection of SFormula
+   *
+   * @return Collection of SFormula
+   */
+  public function formulas()
+  {
+    return $this->hasmany('App\MMS\Formulas\SFormula', 'item_id', 'id_item');
+  }
+
+  /**
    * [scopeSearch description]
    * @param  string $query         query to do
    * @param  string $name          variable for where clause

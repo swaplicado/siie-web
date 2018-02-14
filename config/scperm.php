@@ -53,6 +53,7 @@ return [
                   'DOCUMENTS_MANAGE' => '007',
                   'SEGREGATIONS' => '008',
                   'QUALITY' => '009',
+                  'MANUFACTURING' => '010',
 
                   'ERP' =>  '101',
                   'MMS' =>  '102',

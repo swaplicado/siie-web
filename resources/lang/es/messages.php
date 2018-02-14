@@ -19,4 +19,6 @@
 		'404' => 'UUPS! - No se encontró la página',
 		'401' => 'UUPS! - No tiene permisos para acceder a esta página',
 		'401_1' => 'UUPS! - No tiene permisos para acceder al sistema',
+
+		'MAX_LENGTH'	=> '*Número máximo de caracteres: '
 	];

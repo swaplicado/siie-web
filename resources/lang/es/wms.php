@@ -74,10 +74,12 @@ return [
                       'ELEMENTS_TO_MOVE' => 'Elementos a mover',
                       'LEVEL' => 'Nivel',
                       'REFERENCE' => 'Referencia',
+                      'ITEM_TYPE' => 'Tipo de ítem',
                     ],
 
       'placeholders'  =>  [
                           'FOLIO_START' => 'Ingrese folio inicial...',
+                          'ITEM_TYPE' => 'Tipo de ítem...',
                           'SELECT_MVT_CLASS' => 'Seleccione clase de movimiento...',
                           'SELECT_MVT_TYPE' => 'Seleccione tipo de movimiento...',
                           'SELECT_MAT_PROD' => 'Seleccione material/producto...',

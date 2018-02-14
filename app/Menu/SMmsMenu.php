@@ -11,17 +11,7 @@ class SMmsMenu {
         ->addClass('nav navbar-nav')
         ->link('', '')
         ->route('mms.home', trans('mms.MODULE'))
-        ->link('/two', 'Two')
-        ->submenu(
-            Link::to('#', 'Dropdown <span class="caret"></span>')
-                ->addClass('dropdown-toggle')
-                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
-            \Menu::new()
-                ->addClass('dropdown-menu')
-                ->link('#', 'Action')
-                ->link('#', 'Another action')
-                ->html('', ['role' => 'separator', 'class' => 'divider'])
-        )
+        ->route('mms.formulas.index', trans('mms.FORMULAS'))
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
     });

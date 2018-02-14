@@ -317,6 +317,7 @@ class SMovsController extends Controller
         $movement->created_by_id = \Auth::user()->id;
         $movement->updated_by_id = \Auth::user()->id;
 
+        $dTotalAmount = 0;
         $movementRows = array();
         foreach ($oData['rows'] as $row) {
            $oMvtRow = new SMovementRow();
@@ -340,12 +341,18 @@ class SMovsController extends Controller
                  $oMovLotRow->lot_id = $lotRow['iLotId'];
 
                  array_push($movLotRows, $oMovLotRow);
+                 $dTotalAmount += ($oMovLotRow->quantity * $oMovLotRow->amount_unit);
              }
+           }
+           else {
+             $dTotalAmount += ($oMvtRow->quantity * $oMvtRow->amount_unit);
            }
 
            $oMvtRow->setAuxLots($movLotRows);
            array_push($movementRows, $oMvtRow);
         }
+
+        $movement->total_amount = $dTotalAmount;
 
         $movements = SMovsManagment::processMovement($movement,
                                                     $movementRows,

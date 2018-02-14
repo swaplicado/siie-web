@@ -8,14 +8,10 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/navbars.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/checkboxes.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
-	{{-- <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-toggle/css/bootstrap-toggle.min.css') }}"> --}}
-	<link rel="stylesheet" type="text/css" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
 	<link rel="stylesheet" href="{{asset('datePicker/css/bootstrap-datepicker3.css')}}">
   <link rel="stylesheet" href="{{asset('datePicker/css/bootstrap-datepicker.standalone.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{ asset('datatables/datatables.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('sweet-alert/sweetalert2.min.css') }}">
 
-<!--
-	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table.css') }}">
--->
 	@include('templates.menu.info')
 </head>

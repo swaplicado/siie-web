@@ -45,6 +45,21 @@ return [
                     'ITEM' => '7',
                   ],
 
+  'ITEM_TYPE' => [
+                    'DIRECT_MATERIAL_MATERIAL' => '1',
+                    'DIRECT_PACKING_MATERIAL' => '2',
+                    'INDIRECT_MATERIAL' => '3',
+                    'REPROCESS' => '4',
+                    'PRODUCT' => '5',
+                    'BASE_PRODUCT' => '6',
+                    'FINISHED_PRODUCT' => '7',
+                    'SUBPRODUCT' => '8',
+                    'DUMPS' => '9',
+                    'EXPENSES_PURCHASE' => '10',
+                    'EXPANSES_DIRECT' => '11',
+                    'EXPENSES_INDIRECT' => '12',
+                  ],
+
   'DOC_CAT' => [
                     'PURCHASES' => '1',
                     'SALES' => '2',
