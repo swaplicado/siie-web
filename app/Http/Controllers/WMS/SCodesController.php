@@ -16,6 +16,7 @@ use App\SUtils\SProcess;
 use App\ERP\SItem;
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
+use App\WMS\SLocation;
 use App\SBarcode\SBarcode;
 use App\SCore\SStockManagment;
 use App\WMS\SComponetBarcode;
@@ -66,6 +67,14 @@ class SCodesController extends Controller
         //$data=SItem::orderBy('name','ASC')->lists('name','id_item');
         return response()->json($data);
       }
+      if($request->id==2){
+        $data = SLocation::select('id_whs_location','code')
+                          ->where('is_deleted',0)
+                          ->where('whs_id',session('whs')->id_whs)
+                          ->get();
+
+        return response()->json($data);
+      }
     }
 
 
@@ -109,6 +118,23 @@ class SCodesController extends Controller
         view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf');
         $paper_size = array(0,0,215,141);
+        $pdf->setPaper($paper_size);
+        return $pdf->download('etiqueta.pdf');
+      }
+
+      if($request->etiqueta==2){
+        $dataBarcode = SComponetBarcode::select('digits','id_component')
+                                        ->where('type_barcode','Ubicacion')
+                                        ->get()->lists('digits','id_component');
+        $data = SLocation::find($request->productos);
+        $data->warehouse;
+
+        $barcode = SBarcode::generateLocationBarcode($dataBarcode,$data);
+
+        view()->share('barcode',$barcode);
+        view()->share('data',$data);
+        $pdf = PDF::loadView('vista_pdf_2');
+        $paper_size = array(0,0,612,750);
         $pdf->setPaper($paper_size);
         return $pdf->download('etiqueta.pdf');
       }
