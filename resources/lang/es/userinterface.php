@@ -262,6 +262,7 @@
 											'NUM_EXT' => '#',
 											'NUM_INT' => '# Int.',
 											'MVT_TYPE' => 'Tipo de movimiento',
+											'MVT_SUB_TYPE' => 'Subtipo de movimiento',
 											'MVT_FOLIO' => 'Folio de movimiento',
 											'MVT_DATE' => 'Fecha de movimiento',
 											'MVT_WHS_SRC' => 'Almacén origen',

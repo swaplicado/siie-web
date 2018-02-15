@@ -10,6 +10,7 @@ use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SCore\SStockUtils;
 use App\SCore\SMovsManagment;
+use App\SCore\SMovsUtils;
 use App\ERP\SErpConfiguration;
 
 use Laracasts\Flash\Flash;
@@ -142,6 +143,15 @@ class SMovsController extends Controller
           $whs->whsType;
         }
 
+        $iWhsSrc = 0;
+        $iWhsDes = 0;
+        if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+          $iWhsDes = session('whs')->id_whs;
+        }
+        else {
+          $iWhsSrc = session('whs')->id_whs;
+        }
+
         $mvtComp = NULL;
 
         switch ($mvtType) {
@@ -186,6 +196,7 @@ class SMovsController extends Controller
         }
 
         $oDbPerSupply = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PERCENT_SUPPLY'));
+        $itemsWhs = SMovsUtils::getItemsToWarehouse($iWhsSrc, $iWhsDes);
 
         return view('wms.movs.whsmovs')
                           ->with('oMovType', $oMovType)
@@ -195,8 +206,8 @@ class SMovsController extends Controller
                           ->with('movTypes', $movTypes)
                           ->with('mvtComp', $mvtComp)
                           ->with('warehouses', $warehouses)
-                          ->with('whs_src', 0)
-                          ->with('whs_des', 0)
+                          ->with('whs_src', $iWhsSrc)
+                          ->with('whs_des', $iWhsDes)
                           ->with('warehousesObj', $warehousesObj)
                           ->with('locations', $locations)
                           ->with('lots', $lots)
