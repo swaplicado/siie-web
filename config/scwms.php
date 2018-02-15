@@ -68,15 +68,16 @@ return [
     'RECONFIG_PALLETS' => '100',
 
     'STOCK_PARAMS' => [
-                        'ITEM' => '0',
-                        'UNIT' => '1',
-                        'LOT' => '2',
-                        'PALLET' => '3',
-                        'LOCATION' => '4',
-                        'WHS' => '5',
-                        'BRANCH' => '6',
-                        'ID_YEAR' => '7',
-                        'DATE' => '8',
+                        'SSELECT' => '0',
+                        'ITEM' => '1',
+                        'UNIT' => '2',
+                        'LOT' => '3',
+                        'PALLET' => '4',
+                        'LOCATION' => '5',
+                        'WHS' => '6',
+                        'BRANCH' => '7',
+                        'ID_YEAR' => '8',
+                        'DATE' => '9',
                       ],
 
     'STOCK' => [

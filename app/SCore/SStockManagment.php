@@ -66,6 +66,7 @@ class SStockManagment
 
    /**
     * [getStock description]
+    * @param string $sSelect
     * @param  [array] $aParameters [
         * \Config::get('scwms.STOCK_PARAMS.ITEM')
         * \Config::get('scwms.STOCK_PARAMS.UNIT')
@@ -79,24 +80,26 @@ class SStockManagment
         * ]
     * @return [array] [aStock]
     */
-    public static function getStock($aParameters = []) {
+    public static function getStock($sSelect = '', $aParameters = []) {
+        if ($sSelect == '') {
+            $sSelect = 'ws.lot_id, wl.lot,
+                             sum(ws.input) as inputs,
+                             sum(ws.output) as outputs,
+                             (sum(ws.input) - sum(ws.output)) as stock,
+                             AVG(ws.cost_unit) as cost_unit,
+                             ei.code as item_code,
+                             ei.name as item,
+                             eu.code as unit_code,
+                             ws.pallet_id,
+                             ws.location_id
+                             ';
+        }
 
-        $select = 'ws.lot_id, wl.lot,
-                           sum(ws.input) as inputs,
-                           sum(ws.output) as outputs,
-                           (sum(ws.input) - sum(ws.output)) as stock,
-                           AVG(ws.cost_unit) as cost_unit,
-                           ei.code as item_code,
-                           ei.name as item,
-                           eu.code as unit_code,
-                           ws.pallet_id,
-                           ws.location_id
-                           ';
 
          $sub = session('stock')->getSubSegregated($aParameters);
-         $select = $select.', ('.($sub->toSql()).') as segregated';
+         $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
 
-        $stock = SStockManagment::getStockBaseQuery($select)
+        $stock = SStockManagment::getStockBaseQuery($sSelect)
                       ->groupBy(['ws.item_id', 'ws.unit_id'])
                       ->where('ws.is_deleted', false);
 
