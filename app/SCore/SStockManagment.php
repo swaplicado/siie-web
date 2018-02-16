@@ -31,6 +31,47 @@ class SStockManagment
         return $query;
     }
 
+    public static function getStockResult($sSelect = '', $aParameters = [])
+    {
+        $sub = session('stock')->getSubSegregated($aParameters);
+        $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
+
+       $stock = SStockManagment::getStockBaseQuery($sSelect)
+                     ->groupBy(['ws.item_id', 'ws.unit_id'])
+                     ->where('ws.is_deleted', false);
+
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ITEM'), $aParameters) &&
+               $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] != 0) {
+           $stock->where('ws.item_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')]);
+       }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.UNIT'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] != 0) {
+           $stock->where('ws.unit_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')]);
+       }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOT'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] != 0) {
+           $stock->where('ws.lot_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
+       }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.PALLET'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] != 0) {
+           $stock->where('ws.pallet_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')]);
+       }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOCATION'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] != 0) {
+           $stock->where('ws.location_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')]);
+       }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] != 0) {
+           $stock->where('ws.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+       }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] != 0) {
+           $stock->where('ws.branch_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
+       }
+
+       return $stock;
+    }
+
    /**
     * [getLotsOfPallet This method returns an array with the rows of lots in a Pallet]
     * @param  integer $iPalletId
@@ -93,45 +134,10 @@ class SStockManagment
                            ws.pallet_id,
                            ws.location_id
                            ';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
         }
 
-
-         $sub = session('stock')->getSubSegregated($aParameters);
-         $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
-
-        $stock = SStockManagment::getStockBaseQuery($sSelect)
-                      ->groupBy(['ws.item_id', 'ws.unit_id'])
-                      ->where('ws.is_deleted', false);
-
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ITEM'), $aParameters) &&
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] != 0) {
-            $stock->where('ws.item_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')]);
-        }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.UNIT'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] != 0) {
-            $stock->where('ws.unit_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')]);
-        }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOT'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] != 0) {
-            $stock->where('ws.lot_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
-        }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.PALLET'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] != 0) {
-            $stock->where('ws.pallet_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')]);
-        }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOCATION'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] != 0) {
-            $stock->where('ws.location_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')]);
-        }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] != 0) {
-            $stock->where('ws.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
-        }
-        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] != 0) {
-            $stock->where('ws.branch_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
-        }
-
+        $stock = session('stock')->getStockResult($aParameters);
         $stock = $stock->get();
 
         if (sizeof($stock) > 0)
