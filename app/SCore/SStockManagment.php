@@ -13,7 +13,7 @@ class SStockManagment
      * @param  string $sSelect [description]
      * @return [type]          [description]
      */
-    public static function getStockBaseQuery($sSelect = 'ws.item_id')
+    public static function getStockBaseQuery($sSelect = '')
     {
         $query = \DB::connection(session('db_configuration')->getConnCompany())
                       ->table('wms_stock as ws')
@@ -25,8 +25,11 @@ class SStockManagment
                       ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
                       ->join('erpu_branches as eb', 'ws.branch_id', '=', 'eb.id_branch')
                       ->where('ei.is_deleted', false)
-                      ->where('eu.is_deleted', false)
-                      ->select(\DB::raw($sSelect));
+                      ->where('ws.is_deleted', false);
+
+        if ($sSelect != '') {
+            $query = $query->select(\DB::raw($sSelect));
+        }
 
         return $query;
     }
@@ -68,6 +71,10 @@ class SStockManagment
              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] != 0) {
            $stock->where('ws.branch_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
        }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.YEAR'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.YEAR')] != 0) {
+           $stock->where('ws.year_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.YEAR')]);
+       }
 
        return $stock;
     }
@@ -107,7 +114,6 @@ class SStockManagment
 
    /**
     * [getStock description]
-    * @param string $sSelect
     * @param  [array] $aParameters [
         * \Config::get('scwms.STOCK_PARAMS.ITEM')
         * \Config::get('scwms.STOCK_PARAMS.UNIT')
@@ -118,6 +124,7 @@ class SStockManagment
         * \Config::get('scwms.STOCK_PARAMS.BRANCH')
         * \Config::get('scwms.STOCK_PARAMS.ID_YEAR')
         * \Config::get('scwms.STOCK_PARAMS.DATE')
+        * \Config::get('scwms.STOCK_PARAMS.SSELECT')
         * ]
     * @return [array] [aStock]
     */
@@ -171,14 +178,23 @@ class SStockManagment
          * \Config::get('scwms.STOCK_PARAMS.WHS')
          * \Config::get('scwms.STOCK_PARAMS.BRANCH')
          * \Config::get('scwms.STOCK_PARAMS.ID_YEAR')
+         * \Config::get('scwms.STOCK_PARAMS.DATE')
          * ]
      * @return [type]              [description]
      */
     public function getSubSegregated($aParameters = []) {
 
         $sSelect = '(COALESCE(
-                    SUM(IF(wsr.move_type_id = 1, IF(id_lot is null, wsr.quantity, wslr.quantity), 0)) -
-                    SUM(IF(wsr.move_type_id = 2, IF(id_lot is null, wsr.quantity, wslr.quantity), 0))
+                    SUM(IF(wsr.move_type_id = 1,
+                            IF((SELECT is_lot FROM erpu_items WHERE id_item = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')].'),
+                                  wslr.quantity,
+                                  wsr.quantity),
+                        0)) -
+                    SUM(IF(wsr.move_type_id = 2,
+                            IF((SELECT is_lot FROM erpu_items WHERE id_item = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')].'),
+                                  wslr.quantity,
+                                  wsr.quantity),
+                        0))
                     , 0))';
 
         $sub = \DB::connection(session('db_configuration')->getConnCompany())
