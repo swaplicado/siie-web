@@ -4,6 +4,7 @@ namespace App\SBarcode;
 use App\WMS\SComponetBarcode;
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
+use App\ERP\SItem;
 use Laracasts\Flash\Flash;
 use PDF;
 
@@ -132,6 +133,21 @@ use PDF;
 
   }
 
+  public static function generateLocationBarcode($dataBarcode,$data){
+      $numWhs = $dataBarcode[9];
+      $numLoc = $dataBarcode[10];
+
+      $digitWhs = strlen($data->whs_id);
+      $digitLoc = strlen($data->id_whs_location);
+
+      $auxWhs = SBarcode::fill($digitWhs,$numWhs);
+      $auxLoc = SBarcode::fill($digitLoc,$numLoc);
+
+      $barcode = '3'.$auxWhs.$data->whs_id.$auxLoc.$data->id_whs_location;
+
+      return $barcode;
+  }
+
   /**
    * [decodeBarcode description]
    * @param  [type] $data [description]
@@ -214,8 +230,39 @@ use PDF;
       return $answer;
 
     }
+    if($type==3)
+    {
+      $dataBarcode = SComponetBarcode::select('digits','id_component')
+                                      ->where('type_barcode','Ubicacion')
+                                      ->get()->lists('digits','id_component');
 
-    $answer = null;
+
+      $numWhs = $dataBarcode[9];
+      $numLoc = $dataBarcode[10];
+
+      $idWhs = substr($code, 0, $numWhs);
+      $idLoc = substr($code, $numWhs,$numLoc);
+
+      $Whs = SBarcode::remove($numWhs,$idWhs);
+      $Loc = SBarcode::remove($numLoc,$idLoc);
+
+      $answer = SLocation::find($Loc);
+
+      if($answer != null){
+
+        if($answer->whs_id == $Whs)
+        {
+          return $answer;
+        }
+
+        $answer = null;
+      }
+
+      return $answer;
+
+    }
+    $answer = SItem::where('code',$data)
+                      ->first();
     return $answer;
 
   }
