@@ -196,7 +196,7 @@ class SMovsController extends Controller
         }
 
         $oDbPerSupply = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PERCENT_SUPPLY'));
-        $itemsWhs = SMovsUtils::getItemsToWarehouse($iWhsSrc, $iWhsDes);
+        //$itemsWhs = SMovsUtils::getItemsToWarehouse($iWhsSrc, $iWhsDes);
 
         return view('wms.movs.whsmovs')
                           ->with('oMovType', $oMovType)

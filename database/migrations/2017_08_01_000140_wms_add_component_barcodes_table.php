@@ -43,7 +43,7 @@ class WmsAddComponentBarcodesTable extends Migration
         $table->increments('id_component');
       	$table->char('name', 100);
       	$table->integer('digits');
-      	$table->enum('type_barcode',['Item', 'Tarima']);
+      	$table->enum('type_barcode',['Item', 'Tarima','Ubicacion']);
       	$table->integer('created_by_id')->unsigned();
       	$table->integer('updated_by_id')->unsigned();
       	$table->timestamps();
@@ -60,7 +60,9 @@ class WmsAddComponentBarcodesTable extends Migration
           ['id_component' => '5','name' => 'id_pallet','digits' => '6', 'type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
           ['id_component' => '6','name' => 'text_pallet','digits' => '15', 'type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
           ['id_component' => '7','name' => 'id_item','digits' => '5','type_barcode' => 'Tarima', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
-          ['id_component' => '8','name' => 'id_unit','digits' => '4', 'type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00']
+          ['id_component' => '8','name' => 'id_unit','digits' => '4', 'type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '9','name' => 'id_whs','digits' => '6','type_barcode' => 'Ubicacion', 'created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00'],
+          ['id_component' => '10','name' => 'id_loc','digits' => '6', 'type_barcode' => 'Ubicacion','created_by_id' => '1','updated_by_id' => '1','created_at' => '0000-00-00','updated_at' => '0000-00-00']
         ]);
       }
     }
