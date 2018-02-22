@@ -25,7 +25,7 @@
 
           <div class="col-md-3">
 
-            {!! Form::select('etiqueta', ['Tarima','Item suelto'], null , ['class'=>'form-control select-etiqueta etiqueta', 'placeholder' => 'Selecciona...', 'required']) !!}
+            {!! Form::select('etiqueta', ['Tarima','Item suelto','Ubicacion'], null , ['class'=>'form-control select-etiqueta etiqueta', 'placeholder' => 'Selecciona...', 'required']) !!}
 
           </div>
 
@@ -100,9 +100,14 @@
                     opt+='<option value="'+data[i].id_lot+'">'+data[i].id_lot+".- "+data[i].name+'</option>';
                   }
                 }
-                else{
+                if(eti_id==0){
                   for(var i=0;i<data.length;i++){
                     opt+='<option value="'+data[i].id_pallet+'">'+data[i].pallet+'</option>';
+                  }
+                }
+								if(eti_id==2){
+                  for(var i=0;i<data.length;i++){
+                    opt+='<option value="'+data[i].id_whs_location+'">'+data[i].code+'</option>';
                   }
                 }
 

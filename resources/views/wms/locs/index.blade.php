@@ -22,6 +22,7 @@
 			<th>{{ trans('userinterface.labels.WAREHOUSE') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
+			<th>{{'Etiqueta'}}</th>
 		</thead>
 		<tbody>
 			@foreach($locations as $location)
@@ -47,6 +48,9 @@
 								];
 						?>
 						@include('templates.list.options')
+					</td>
+					<td>
+							<a href="{{ route('wms.locations.barcode', $location->id_whs_location) }}" class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 					</td>
 				</tr>
 			@endforeach

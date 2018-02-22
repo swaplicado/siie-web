@@ -13,6 +13,10 @@ use App\SUtils\SValidation;
 use App\WMS\SWarehouse;
 use App\WMS\SLocation;
 use App\SUtils\SProcess;
+use App\SBarcode\SBarcode;
+use App\WMS\SComponetBarcode;
+use PDF;
+
 
 class SLocationsController extends Controller
 {
@@ -208,5 +212,23 @@ class SLocationsController extends Controller
 
         Flash::error(trans('messages.REG_DELETED'))->important();
         return redirect()->route('wms.locs.index');
+    }
+
+    public function barcode($id){
+      $dataBarcode = SComponetBarcode::select('digits','id_component')
+                                      ->where('type_barcode','Ubicacion')
+                                      ->get()->lists('digits','id_component');
+
+      $data = SLocation::find($id);
+      $data->warehouse;
+
+      $barcode = SBarcode::generateLocationBarcode($dataBarcode,$data);
+
+      view()->share('barcode',$barcode);
+      view()->share('data',$data);
+      $pdf = PDF::loadView('vista_pdf_2');
+      $paper_size = array(0,0,612,750);
+      $pdf->setPaper($paper_size);
+      return $pdf->download('etiqueta.pdf');
     }
 }

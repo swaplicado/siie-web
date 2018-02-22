@@ -96,7 +96,7 @@ class SStockManagment
                            eu.code as unit';
 
         $stock = SStockManagment::getStockBaseQuery($select)
-                      ->groupBy(['ws.lot_id', 'ws.item_id', 'ws.unit_id'])
+                      ->groupBy(['wp.id_pallet','ws.lot_id', 'ws.item_id', 'ws.unit_id'])
                       ->orderBy('ws.lot_id')
                       ->orderBy('ws.item_id')
                       ->where('ws.is_deleted', false)
@@ -106,7 +106,6 @@ class SStockManagment
         if ($iWhsId != 0) {
             $stock->where('ws.whs_id', $iWhsId);
         }
-
         $stock = $stock->get();
 
         return $stock;
@@ -129,7 +128,10 @@ class SStockManagment
     * @return [array] [aStock]
     */
     public static function getStock($aParameters = []) {
-        if (! array_key_exists(\Config::get('scwms.STOCK_PARAMS.SSELECT'), $aParameters)) {
+
+        if (! array_key_exists(\Config::get('scwms.STOCK_PARAMS.SSELECT'), $aParameters)
+        || $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] == ''
+      ) {
           $sSelect = 'ws.lot_id, wl.lot,
                            sum(ws.input) as inputs,
                            sum(ws.output) as outputs,

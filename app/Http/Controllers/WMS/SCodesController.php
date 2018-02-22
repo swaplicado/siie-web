@@ -157,23 +157,25 @@ class SCodesController extends Controller
       $type = substr($request->codigo, 0 , 1 );
 
       if($type == 1){
-
-        $stock=SStockManagment::getStock($data->item,$data->unit,$data->id_lot,0,0,session('whs')->name ,session('branch')->id_branch);
+        $string = ' ';
+        $a=array('',$data->item->id_item,$data->unit->id_unit,$data->id_lot,0,0,session('whs')->id_whs ,session('branch')->id_branch,session('work_year'));
+        $stock=SStockManagment::getStock($a);
+        $lotStock=null;
 
       }
 
       if($type == 2){
-
-        $stock=SStockManagment::getStock($data->item,$data->unit,0,$data->id_pallet,0, session('whs')->name ,session('branch')->id_branch);
-        //$lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,0);
+        $a=array('',$data->item->id_item,$data->unit->id_unit,0,$data->id_pallet,0, session('whs')->id_whs ,session('branch')->id_branch,session('work_year'));
+        $stock=SStockManagment::getStock($a);
+        $lotStock = SStockManagment::getLotsOfPallet($data->id_pallet,session('whs')->id_whs);
 
       }
 
       return view('wms.codes.info')
               ->with('info',$data)
               ->with('type',$type)
-              ->with('stock',$stock);
-              //->with('lotStock',$lotStock);
+              ->with('stock',$stock)
+              ->with('lotStock',$lotStock);
 
     }
 

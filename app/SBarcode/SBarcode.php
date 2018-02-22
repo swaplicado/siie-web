@@ -154,7 +154,9 @@ use PDF;
    * @return [type]       [description]
    */
   public static function decodeBarcode($data){
-
+    $answer = SItem::where('code',$data)
+                      ->first();
+    if($answer==null){
     $type = substr($data, 0 , 1 );
     $code = substr($data,1);
 
@@ -261,8 +263,7 @@ use PDF;
       return $answer;
 
     }
-    $answer = SItem::where('code',$data)
-                      ->first();
+  }
     return $answer;
 
   }
