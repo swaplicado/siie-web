@@ -40,6 +40,7 @@ class WmsAddContainerMaxMinTable extends Migration {
           	$table->increments('id_container_max_min');
           	$table->decimal('max', 23,8);
           	$table->decimal('min', 23,8);
+            $table->decimal('reorder', 23,8);
           	$table->boolean('is_deleted');
           	$table->integer('container_type_id')->unsigned();
           	$table->integer('container_id')->unsigned();

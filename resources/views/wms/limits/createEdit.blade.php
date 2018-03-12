@@ -41,6 +41,13 @@
 				 																						'placeholder' => '0.0']) !!}
 		</div>
 
+		<div class="form-group">
+			{!! Form::label('reorder', trans('wms.labels.REORDER').'*') !!}
+			{!! Form::number('reorder',
+				isset($limit) ? $limit->reorder : 0 , ['class'=>'form-control', 'min' => '0', 'step' => '1',
+				 																						'placeholder' => '0.0']) !!}
+		</div>
+
 		{{-- <div class="form-group">
 			{!! Form::label('aux_company_b', trans('wms.labels.COMPANY_LEVEL')) !!}
 			{!! Form::checkbox('aux_company_b', 1, isset($limit) ?  $limit->aux_company_b : 0) !!}
@@ -92,6 +99,7 @@
 		<script>
 				whenChangeBranch('aux_branch_id');
 				document.getElementById('aux_whs_id').value = whsId;
+				whenChangeWarehouse('aux_whs_id');
 				document.getElementById('aux_location_id').value = locationId;
 		</script>
 @endsection

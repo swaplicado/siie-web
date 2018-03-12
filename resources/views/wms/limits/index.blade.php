@@ -19,6 +19,7 @@
 		<thead>
 			<th>{{ trans('wms.labels.MAX') }}</th>
 			<th>{{ trans('wms.labels.MIN') }}</th>
+			<th>{{ trans('wms.labels.REORDER')}}</th>
 			<th>{{ trans('wms.labels.LOCATION') }}</th>
 			<th>{{ trans('wms.labels.WAREHOUSE') }}</th>
 			<th>{{ trans('wms.labels.BRANCH') }}</th>
@@ -31,6 +32,7 @@
 				<tr>
 					<td>{{ $limit->max }}</td>
 					<td>{{ $limit->min }}</td>
+					<td>{{ $limit->reorder }}</td>
 					<td>{{ $limit->getLocation()->name }}</td>
 					<td>{{ $limit->getWarehouse()->name }}</td>
 					<td>{{ $limit->getBranch()->name }}</td>

@@ -16,6 +16,7 @@ class SLimit extends Model {
     protected $fillable = [
                             'max',
                             'min',
+                            'reorder',
                             'is_deleted',
                             'container_type_id',
                             'container_id',

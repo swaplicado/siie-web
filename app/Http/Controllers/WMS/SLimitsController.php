@@ -66,7 +66,9 @@ class SLimitsController extends Controller
         $lItems = SItem::where('is_deleted', false)->orderBy('name', 'ASC')
                           ->select(\DB::raw("CONCAT(code, '-', name) AS item_option, id_item"))
                           ->lists('item_option', 'id_item');
-        $lBranches = SBranch::where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_branch');
+        $lBranches = SBranch::where('is_deleted', false)
+                              ->where('partner_id',session('partner')->id_partner)
+                              ->orderBy('name', 'ASC')->lists('name', 'id_branch');
         $lWarehouses = SWarehouse::where('is_deleted', false)->get();
         $lLocations = SLocation::where('is_deleted', false)->get();
 
@@ -173,7 +175,9 @@ class SLimitsController extends Controller
         $lItems = SItem::where('is_deleted', false)->orderBy('name', 'ASC')
                           ->select(\DB::raw("CONCAT(code, '-', name) AS item_option, id_item"))
                           ->lists('item_option', 'id_item');
-        $lBranches = SBranch::where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_branch');
+                          $lBranches = SBranch::where('is_deleted', false)
+                                                ->where('partner_id',session('partner')->id_partner)
+                                                ->orderBy('name', 'ASC')->lists('name', 'id_branch');
         $lWarehouses = SWarehouse::where('is_deleted', false)->get();
         $lLocations = SLocation::where('is_deleted', false)->get();
 

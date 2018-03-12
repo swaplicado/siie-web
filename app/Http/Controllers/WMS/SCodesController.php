@@ -147,7 +147,7 @@ class SCodesController extends Controller
 
 
       $data = SBarcode::decodeBarcode($request->codigo);
-      if($data == null)
+      if($data == null || $data->id_item!=null)
       {
         Flash::error('No existe el producto');
         return redirect()->route('wms.codes.consult');

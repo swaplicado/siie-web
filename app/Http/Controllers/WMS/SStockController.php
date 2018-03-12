@@ -73,7 +73,9 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
-          $select = $select.', '.'wwl.name as location';
+          $select = $select.', '.'wwl.name as location'.', '.'eb.id_branch as branchid'.', '.'ei.id_item as itemid'.', '.', '.'(SELECT * FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs_locations ON wmsu_whs_locations.id_whs_location = wmsu_container_max_min.container_id) as maxmin';
           $groupBy = ['ws.location_id','ws.item_id'];
           $orderBy1 = 'ws.location_id';
           $orderBy2 = 'ws.item_id';
@@ -81,7 +83,13 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE'):
-          $select = $select.', '.'ww.name as warehouse';
+          $select = $select.', '.'ww.name as warehouse'.', '.'ww.id_whs as whsid'.', '.'ei.id_item as itemid'.', '.'(SELECT max FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as maxi'.', '.'(SELECT min FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as mini'.', '.'(SELECT reorder FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as reorder';
           $groupBy = ['ws.whs_id','ws.item_id'];
           $orderBy1 = 'ws.whs_id';
           $orderBy2 = 'ws.item_id';
@@ -89,14 +97,26 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'):
-          $select = $select.', '.'eb.name as branch_';
+          $select = $select.', '.'eb.name as branch_'.', '.'eb.id_branch as branchid'.', '.'ei.id_item as itemid'.', '.'(SELECT max FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN erpu_branches ON erpu_branches.id_branch = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = branchid) as maxi'.', '.'(SELECT min FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN erpu_branches ON erpu_branches.id_branch = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = branchid) as mini'.', '.'(SELECT reorder FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN erpu_branches ON erpu_branches.id_branch = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = branchid) as reorder';
           $groupBy = ['ws.branch_id','ws.item_id'];
           $orderBy1 = 'ws.branch_id';
           $orderBy2 = 'ws.item_id';
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
-          $select = $select.', '.'wl.lot AS lot_, ww.name as warehouse';
+          $select = $select.', '.'wl.lot AS lot_, ww.name as warehouse'.', '.'ww.name as warehouse'.', '.'ww.id_whs as whsid'.', '.'ei.id_item as itemid'.', '.'(SELECT max FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as maxi'.', '.'(SELECT min FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as mini'.', '.'(SELECT reorder FROM wmsu_container_max_min
+          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
+          INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as reorder';
           $groupBy = ['ws.item_id','ws.lot_id','ws.whs_id'];
           $orderBy1 = 'ws.item_id';
           $orderBy2 = 'ws.lot_id';
@@ -130,7 +150,7 @@ class SStockController extends Controller
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)
                     ->having('stock', '>', '0');
-                    
+
       if (\Auth::user()->user_type_id != \Config::get('scsys.TP_USER.MANAGER')) {
           $stock = $stock->where('ww.id_whs', session()->has('whs') ? session('whs')->id_whs : 1);
       }
