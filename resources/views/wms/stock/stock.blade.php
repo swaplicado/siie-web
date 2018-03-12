@@ -63,6 +63,16 @@
 		            <th data-priority="1">Segregado</th>
 		            <th data-priority="1">Disponible</th>
 								<th data-priority="1">Unidad</th>
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
+									<th data-priority="1">Semaforo</th>
+									<th data-priority="1">Maximo</th>
+			            <th data-priority="1">Minimo</th>
+									<th data-priority="1">Reorden</th>
+								@endif
+
+
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -96,6 +106,47 @@
 		            <td align="right">{{ session('utils')->formatNumber($row->segregated, \Config::get('scsiie.FRMT.QTY')) }}</td>
 		            <td align="right">{{ session('utils')->formatNumber(($row->stock - $row->segregated), \Config::get('scsiie.FRMT.QTY')) }}</td>
 								<td align="right">{{ $row->unit }}</td>
+								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
+											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
+
+											@if ($row->maxi==null)
+											 <td align="right">{{ 'N/A'}}</td>
+										 	@else
+												@if ($row->stock<=$row->mini)
+													<td align="center"><button class="btn btn-danger "><span class="glyphicon glyphicon-unchecked"></span></button></td>
+												@endif
+												@if ($row->stock<=$row->reorder && $row->stock>$row->mini)
+													<td align="center"><button class="btn btn-warning "><span class="glyphicon glyphicon-unchecked"></span></button></td>
+												@endif
+												@if ($row->stock>$row->reorder && $row->stock<$row->maxi)
+													<td align="center"><button class="btn btn-success "><span class="glyphicon glyphicon-unchecked"></span></button></td>
+												@endif
+												@if ($row->stock>$row->maxi)
+													<td align="center"><button class="btn btn-info "><span class="glyphicon glyphicon-alert"></span></button></td>
+												@endif
+
+											@endif
+
+											@if ($row->maxi==null)
+												<td align="right">{{ 'N/A'}}</td>
+											@else
+												<td align="right">{{ $row->maxi}}</td>
+											@endif
+
+											@if ($row->mini==null)
+												<td align="right">{{ 'N/A'}}</td>
+											@else
+												<td align="right">{{ $row->mini}}</td>
+											@endif
+
+											@if ($row->reorder==null)
+												<td align="right">{{ 'N/A'}}</td>
+											@else
+												<td align="right">{{ $row->reorder}}</td>
+											@endif
+								@endif
+
 		        </tr>
 					@endforeach
 		    </tbody>

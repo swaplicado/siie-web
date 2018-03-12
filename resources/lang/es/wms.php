@@ -75,6 +75,7 @@ return [
                       'LEVEL' => 'Nivel',
                       'REFERENCE' => 'Referencia',
                       'ITEM_TYPE' => 'Tipo de ítem',
+                      'REORDER' => 'Punto Reorden'
                     ],
 
       'placeholders'  =>  [
