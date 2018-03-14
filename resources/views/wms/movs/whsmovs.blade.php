@@ -21,38 +21,6 @@
 		  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"></div>
 		</div>
 	@endsection
-	@section('docrows')
-		<div class="row">
-			<div class="col-md-10 col-md-offset-1">
-				<table id="docTable" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="50%">
-				    <thead>
-				        <tr class="titlerow">
-				            <th>Cve</th>
-				            <th>Concepto</th>
-				            <th>Clase</th>
-				            <th>Cant.</th>
-				            <th>Pendiente</th>
-										<th>Un.</th>
-				            <th>P.U.$</th>
-				        </tr>
-				    </thead>
-				    <tbody>
-							@foreach ($lDocData as $row)
-								<tr>
-				            <td class="small">{{ $row->concept_key }}</td>
-				            <td class="small">{{ $row->concept }}</td>
-				            <td class="small">{{ $row->class_name }}</td>
-										<td class="small" align="right">{{ session('utils')->formatNumber($row->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
-										<td class="small" align="right">{{ session('utils')->formatNumber($row->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
-				            <td class="small">{{ $row->unit }}</td>
-				            <td class="small" align="right">{{ session('utils')->formatNumber($row->price_unit_cur, \Config::get('scsiie.FRMT.AMT')) }}</td>
-				        </tr>
-							@endforeach
-				    </tbody>
-				</table>
-			</div>
-		</div>
-	@endsection
 @endif
 
 @section('content')
@@ -61,103 +29,241 @@
 	) !!}
   <div class="row">
     <div class="col-md-6">
+			@if (isset($oMovement->folio))
+				<div class="form-group">
+					{!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
+					{!! Form::text('folio', $oMovement->folio, ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'readonly']) !!}
+				</div>
+			@endif
+
       <div class="form-group">
-				{!! Form::hidden('mvt_whs_class_id', $oMovType->mvt_class_id) !!}
+				{!! Form::hidden('mvt_whs_class_id', $oMovement->mvt_whs_class_id) !!}
   			{!! Form::label('mvt_whs_type_id', trans('userinterface.labels.MVT_TYPE').'*') !!}
-				{!! Form::select('mvt_whs_type_id', $movTypes, $oMovType->id_mvt_type, ['class'=>'form-control select-one',
+				{!! Form::select('mvt_whs_type_id', $movTypes, $oMovement->mvt_whs_type_id, ['class'=>'form-control select-one',
+																															'id' => 'mvt_whs_type_id',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'disabled']) !!}
   		</div>
 
       <div class="form-group">
-  			{!! Form::label('mvt_com', trans('userinterface.labels.MVT_TYPE').'*') !!}
+  			{!! Form::label('mvt_com', trans('userinterface.labels.MVT_SUB_TYPE').'*') !!}
 				{!! Form::select('mvt_com', $mvtComp, $iMvtSubType, ['class'=>'form-control select-one',
-																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'required', ]) !!}
-  		</div>
-
-      {{-- <div class="form-group">
-  			{!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
-  			{!! Form::text('folio', null , ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'required', 'unique']) !!}
-  		</div> --}}
-
-			<div class="form-group">
-  			{!! Form::label('dt_date', trans('userinterface.labels.MVT_DATE').'*') !!}
-  			{!! Form::date('dt_date', session('work_date'), ['class'=>'form-control']) !!}
+																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'),
+																															'required', 'id' => 'mvt_com',
+																															isset($oMovement->id_mvt) ? 'disabled' : '']) !!}
   		</div>
 
     </div>
     <div class="col-md-6">
+			<div class="row">
+				<div class="col-md-12">
 
-			<div class="form-group">
-				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_src'))
-						{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
-						{!! Form::select('whs_src', $warehouses, $whs_src, ['class'=>'form-control border_red select-one',
-																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
-				@endif
-				@if (App\SUtils\SGuiUtils::isWhsShowed($oMovType->mvt_class_id, $oMovType->id_mvt_type, 'whs_des'))
-		  			{!! Form::label('whs_des', ($oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ?
-							trans('wms.labels.WAREHOUSE') :
-									trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
-						{!! Form::select('whs_des', $warehouses, $whs_des, ['class'=>'form-control select-one',
-																																	'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
-				@endif
-			</div>
+					<div class="form-group">
+						{!! Form::label('dt_date', trans('userinterface.labels.MVT_DATE').'*') !!}
+						{!! Form::date('dt_date',
+								isset($oMovement->dt_date) ? $oMovement->dt_date : session('work_date'),
+																											['class'=>'form-control',
+																											'id' => 'dt_date',
+																											isset($oMovement->id_mvt) ? 'readonly' : '']) !!}
+					</div>
 
-    	<div class="form-group">
-  			{!! Form::label('item', trans('userinterface.labels.WHS_ITM').'*') !!}
 					<div class="row">
-					  <div class="col-md-6">
-								{!! Form::text('item',
-									isset($whs) ? $whs->code : null , ['class'=>'form-control', 'id' => 'item', 'placeholder' => trans('userinterface.placeholders.CODE'),
-																											'onkeypress' => 'addRowByEnter(event)', 'required']) !!}
+						<div class="col-md-8">
+							<div class="form-group">
+								@if (App\SUtils\SGuiUtils::isWhsShowed($oMovement->mvt_whs_class_id, $oMovement->mvt_whs_type_id, 'whs_src'))
+										{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
+										{!! Form::select('whs_src', $warehouses, $whs_src, ['class'=>'form-control border_red select-one',
+																				'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required',
+																				isset($oMovement->id_mvt) ? 'disabled' : '']) !!}
+								@endif
+								@if (App\SUtils\SGuiUtils::isWhsShowed($oMovement->mvt_whs_class_id, $oMovement->mvt_whs_type_id, 'whs_des'))
+										{!! Form::label('whs_des', ($oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ?
+											trans('wms.labels.WAREHOUSE') :
+													trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
+										{!! Form::select('whs_des', $warehouses, $whs_des, ['class'=>'form-control select-one',
+																					'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required',
+																					isset($oMovement->id_mvt) ? 'disabled' : '']) !!}
+								@endif
+							</div>
 						</div>
-					  <div class="col-md-3">
-								{!! Form::number('quantity', 1, ['class'=>'form-control', 'id' => 'quantity','onkeypress' => 'addRowByEnter(event)',
-																											'placeholder' => trans('userinterface.placeholders.QUANTITY'),
-																											$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN') ||
-																											$oMovType->id_mvt_type == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
+						<div id="div_modify" style="display: none;">
+							<br />
+							<br />
+							<button style="float: right;" onclick="modifyHeader()"
+							type="button" class="btn btn-danger">{{ trans('actions.MODIFY') }}</button>
 						</div>
-					  <div class="col-md-3">
-								<button id="tButton" type="button" class="btn btn-primary">{{ trans('actions.ADD') }}</button>
+
+						<div id="div_continue">
+							<br />
+							<br />
+							<br />
+							<button style="float: right;" onclick="validateHeader()" id="butContinue"
+												type="button" class="btn btn-primary">{{ trans('actions.CONTINUE') }}</button>
 						</div>
 					</div>
+					<div class="row">
+
+					</div>
+				</div>
 			</div>
+
     </div>
   </div>
-	@if (App\SUtils\SGuiUtils::showPallet($oMovType->id_mvt_type))
-		<label style="color: #0200e6">{{ App\SUtils\SGuiUtils::getLabelOfPallet($oMovType->id_mvt_type) }}</label>
-		@include('wms.movs.pallet')
-		<br />
-		<label style="color: #0200e6">{{ trans('wms.labels.ELEMENTS_TO_MOVE') }}</label>
-	@endif
+	<div id="div_rows" style="display: none;">
+		<div class="row">
+			<div class="col-md-12">
+						<div class="row">
+							@if (session('location_enabled'))
+								<div class="col-md-3">
+									{!! Form::label(trans('actions.SEARCH_LOCATION').'...') !!}
+										{!! Form::text('location',
+											isset($whs) ? $whs->code : null , ['class'=>'form-control',
+											'id' => 'location',
+											'placeholder' => trans('userinterface.placeholders.CODE'),
+											'onkeypress' => 'searchLoc(event)']) !!}
+								</div>
+								<div class="col-md-1">
+									{!! Form::label('.') !!}
+									<button type="button"
+									class="btn btn-warning"
+									data-toggle="modal"
+									data-target="#location_search">Ubica.</button>
+								</div>
+								<div class="col-md-3">
+									{!! Form::label('Ubicación') !!}
+									{!! Form::label('label_loc', '--',
+																			['class' => 'form-control',
+																			'id' => 'label_loc']) !!}
+								</div>
+							@endif
+						</div>
+						<div class="row">
+							@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
+										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ'))
+									<div class="col-md-3">
+										{!! Form::label(trans('actions.SEARCH').'...') !!}
+										{!! Form::text('item', null, ['class'=>'form-control',
+																										'id' => 'item',
+																										'placeholder' => trans('userinterface.placeholders.CODE'),
+																										'onkeypress' => 'searchElem(event)']) !!}
+									</div>
+									<div class="col-md-1">
+											{!! Form::label('.') !!}
+											<button type="button" class="btn btn-info"
+															onclick="showItems()">{{ trans('actions.SEARCH') }}</button>
+									</div>
+							@endif
+							<div class="col-md-6">
+								{!! Form::label('seleccionado') !!}
+								{!! Form::label('label_sel', '--',
+																		['class' => 'form-control',
+																		'id' => 'label_sel']) !!}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-2">
+									{!! Form::label(trans('userinterface.labels.QUANTITY').'*') !!}
+									{!! Form::number('quantity', 0, ['class'=>'form-control', 'id' => 'quantity',
+																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
+																												'style' => 'text-align: right;',
+																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ||
+																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
+							</div>
+							<div class="col-md-1">
+								{!! Form::label('Un.') !!}
+								{!! Form::label('label_unit', '--',
+																		['class' => 'form-control',
+																		'id' => 'label_unit']) !!}
+							</div>
+							<div class="col-md-2">
+									{!! Form::label('item', trans('userinterface.labels.PRICE').'*') !!}
+									{!! Form::number('price', 1, ['class'=>'form-control', 'id' => 'price',
+																												'placeholder' => trans('userinterface.placeholders.PRICE'),
+																												'style' => 'text-align: right;',
+																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ||
+																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
+							</div>
+							<div class="col-md-1">
+								{!! Form::label('Mon.') !!}
+								{!! Form::label('label_cur', session('currency')->code,
+																		['class' => 'form-control',
+																		'id' => 'label_cur']) !!}
+							</div>
+							<div class="col-md-1" id="div_pallets">
+								{!! Form::label(trans('.')) !!}
+								<button type="button" id="btn_pallet" class="btn btn-secondary" onclick="showPalletModal()">
+												{{ trans('wms.labels.PALLET') }}
+								</button>
+							</div>
+							<div class="col-md-1" id="div_lots">
+								{!! Form::label(trans('.')) !!}
+								<button type="button" id="btn_lots" class="btn btn-secondary" onclick="showLotsModal()">
+												{{ trans('wms.labels.LOTS') }}
+								</button>
+							</div>
+							<div class="col-md-2">
+								{!! Form::label('.') !!}
+									<div class="row">
+										<div class="col-md-8" id="div_add">
+											<button id="tButton" onclick="addElement()" type="button" class="btn btn-primary buttonlarge">{{ trans('actions.ADD') }}</button>
+										</div>
+										<div class="col-md-4">
+											<a onclick="cleanPanel()" title="{{ trans('actions.CLEAN') }}" class="btn btn-default">
+												<span class="glyphicon glyphicon-erase" aria-hidden = "true"/>
+											</a>
+										</div>
+									</div>
+							</div>
+						</div>
+			</div>
+		</div>
+		@if (App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
+			<label style="color: #0200e6">{{ App\SUtils\SGuiUtils::getLabelOfPallet($oMovement->mvt_whs_type_id) }}</label>
+			@include('wms.movs.pallet')
+			<br />
+			<label style="color: #0200e6">{{ trans('wms.labels.ELEMENTS_TO_MOVE') }}</label>
+		@endif
+	</div>
+	<br />
+	<div class="row">
+
+		<div class="col-md-2" id="div_delete" style="display: none;">
+			<button id="delButton" onclick="deleteElement()" type="button" class="btn btn-danger">{{ trans('actions.QUIT') }}</button>
+		</div>
+		@if($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
+			<div class="col-md-2">
+				<button id="stkButton" type='button' onClick='stockComplete()'
+							class='butstk btn btn-success'
+							data-toggle='modal' data-target='#stock_com_modal'
+							title='Ver existencias'>{{ trans('wms.WHS_IN_STK') }}
+				</button>
+			</div>
+		@endif
+		@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR'))
+			<div class="col-md-2" id="div_setdata" style="display: none;">
+				<button id="sData" type='button' onClick='setRowData()'
+							class='btn btn-success'
+							title='Agregar datos'>Data
+				</button>
+			</div>
+		@endif
+	</div>
   <div class="row">
     <div class="col-xs-12">
 			<div class="form-group">
-				<table id="example" class="table table-bordered display responsive no-wrap" cellspacing="0" width="100%">
-						<thead>
-								<tr class="titlerow">
-										<th style="display:none;"></th>
-										<th>{{ trans('wms.labels.CODE') }}</th>
-										<th>{{ trans('wms.labels.MAT_PROD') }}</th>
-										<th>{{ trans('wms.labels.UN') }}</th>
-										<th>{{ trans('wms.labels.LOCATION') }}</th>
-										<th>{{ trans('wms.labels.PALLET') }}</th>
-										<th>{{ trans('wms.labels.PRICE') }}</th>
-										<th>{{ trans('wms.labels.QTY') }}</th>
-										<th>{{ trans('wms.labels.LOT') }}</th>
-										<th>{{ trans('wms.labels.STOCK') }}</th>
-										<th>-</th>
-								</tr>
-						</thead>
-						<tbody id="lbody">
-						</tbody>
-				</table>
+					@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
+								$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ'))
+							@include('wms.movs.tables.adjustments')
+					@elseif ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR'))
+							@include('wms.movs.tables.others')
+					@endif
 			</div>
     </div>
   </div>
+	{!! Form::hidden('movement_object', null, ['id' => 'movement_object']) !!}
 	<div class="form-group" align="right">
 		<a id="idFreeze" class="btn btn-info" onclick="unfreeze()" role="button">{{ trans('actions.FREEZE') }}</a>
 		{!! Form::submit(trans('actions.SAVE'), ['class' => 'btn btn-primary', 'id' => 'saveButton', 'disabled']) !!}
-		<input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="location.href='{{ route('wms.home') }}'"/>
+		<input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="location.href='{{ route('wms.movs.docs') }}'"/>
 	</div>
 {!! Form::close() !!}
 @endsection
@@ -169,17 +275,20 @@
 		function GlobalData () {
 		  this.oDocument = <?php echo json_encode($oDocument); ?>;
 		  this.lDocData = <?php echo json_encode($lDocData); ?>;
-		  this.lLots = <?php echo json_encode($lots); ?>;
-		  this.lPallets = <?php echo json_encode($pallets); ?>;
-			this.lWarehouses = <?php echo json_encode($warehousesObj); ?>;
-		  this.lLocations = <?php echo json_encode($locations); ?>;
-		  this.lItemContainers = <?php echo json_encode($itemContainers); ?>;
-		  this.bIsInputMov = <?php echo json_encode($oMovType->mvt_class_id != \Config::get('scwms.MVT_CLS_OUT')); ?>;
-		  this.iMvtClass = <?php echo json_encode($oMovType->mvt_class_id); ?>;
-		  this.iMvtType = <?php echo json_encode($oMovType->id_mvt_type); ?>;
-		  this.IS_ITEM = 1;
-		  this.IS_LOT = 2;
-		  this.IS_PALLET = 3;
+		  this.iOperation = <?php echo json_encode($iOperation); ?>;
+		  this.iMovId = <?php echo json_encode($oMovement->id_mvt); ?>;
+		  this.iMvtClass = <?php echo json_encode($oMovement->mvt_whs_class_id); ?>;
+		  this.iMvtType = <?php echo json_encode($oMovement->mvt_whs_type_id); ?>;
+			this.bIsInputMov = <?php echo json_encode($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')); ?>;
+			this.lFItems = [];
+			this.lFLots = [];
+			this.lFPallets = [];
+			this.lFStock = <?php echo json_encode($lStock != null ? $lStock : array()); ?>;
+			this.lFSrcLocations = [];
+			this.lFDesLocations = [];
+			this.lElementsType = <?php echo json_encode(\Config::get('scwms.ELEMENTS_TYPE')) ?>;
+			this.lOperationType = <?php echo json_encode(\Config::get('scwms.OPERATION_TYPE')) ?>;
+			this.lOperation = <?php echo json_encode(\Config::get('scwms.OPERATION')) ?>;
 
 		  this.MVT_CLS_IN = <?php echo json_encode(\Config::get('scwms.MVT_CLS_IN')) ?>; //
 		  this.MVT_CLS_OUT = <?php echo json_encode(\Config::get('scwms.MVT_CLS_OUT')) ?>; //
@@ -227,7 +336,23 @@
 		}
 
 		var globalData = new GlobalData();
-		movement.iDocumentId = globalData.oDocument != 0 ? globalData.oDocument.id_document : 0;
+		headerCore.initializeStock();
+		if (! globalData.LOCATION_ENABLED) {
+		    oMovsTable.column( 4 ).visible( false );
+		}
+
+		// movement.iDocumentId = globalData.oDocument != 0 ? globalData.oDocument.id_document : 0;
+		var lDocRows = <?php echo json_encode($lDocData) ?>;
+
+		if (lDocRows.length > 0) {
+				headerCore.transformServerToClientDocRows(lDocRows);
+		}
+
+		var lRows = <?php echo json_encode($oMovement->rows) ?>;
+
+		if (lRows.length > 0) {
+				headerCore.transformServerToClientRows(lRows);
+		}
 
 		if (localStorage.getItem('movement') !== null) {
 			var errors = <?php echo json_encode($errors->all()) ?>;
@@ -237,7 +362,9 @@
 				console.log("here again");
 				var retrievedObject = localStorage.getItem('movement');
 				console.log(JSON.parse(retrievedObject));
-				movement = setMovement(JSON.parse(retrievedObject));
+				// movement = setMovement(JSON.parse(retrievedObject));
+
+				console.log('cargar movimiento');
 
 				if (movement.iWhsDes != 0) {
 					document.getElementById('whs_des').value = movement.iWhsDes;
@@ -248,66 +375,42 @@
 					$('#whs_src').prop('disabled', true).trigger("chosen:updated");
 				}
 
-				if (globalData.isPalletReconfiguration) {
-					if (localStorage.getItem('pallet') !== null) {
-						var oPalletSaved = localStorage.getItem('pallet');
-						console.log(JSON.parse(oPalletSaved));
+				// if (globalData.isPalletReconfiguration) {
+				// 	if (localStorage.getItem('pallet') !== null) {
+				// 		var oPalletSaved = localStorage.getItem('pallet');
+				// 		console.log(JSON.parse(oPalletSaved));
+        //
+				// 		oPalletRow = JSON.parse(oPalletSaved);
+				// 		updatePallet(oPalletRow, globalData.iMvtType);
+				// 	}
+				// }
+				// else {
+				// 	oPalletRow = '';
+				// }
 
-						oPalletRow = JSON.parse(oPalletSaved);
-						updatePallet(oPalletRow, globalData.iMvtType);
-					}
-				}
-				else {
-					oPalletRow = '';
-				}
-
-				movement.rows.forEach(function(element) {
-						var type = 0;
-						if(element.iPalletId > 1) {
-								type = globalData.IS_PALLET;
-						}
-						else if(element.lotRows.length == 0){
-								type = globalData.IS_ITEM;
-						}
-						else {
-							type = globalData.IS_LOT;
-						}
-
-				    addRowTr(element.iIdRow, element,
-												(globalData.bIsInputMov ? movement.iWhsDes : movement.iWhsSrc),
-												type);
-				});
+				// movement.rows.forEach(function(element) {
+				// 		var type = 0;
+				// 		if(element.iPalletId > 1) {
+				// 				type = globalData.IS_PALLET;
+				// 		}
+				// 		else if(element.lotRows.length == 0){
+				// 				type = globalData.IS_ITEM;
+				// 		}
+				// 		else {
+				// 			type = globalData.IS_LOT;
+				// 		}
+        //
+				//     addRowTr(element.iIdRow, element,
+				// 								(globalData.bIsInputMov ? movement.iWhsDes : movement.iWhsSrc),
+				// 								type);
+				// });
 
 				unfreeze();
-				updateProgressbar();
+				// updateProgressbar();
 			}
 
 			localStorage.removeItem('movement');
 		}
-
-
-		// var totals=[0,0,0];
-		/*
-		* This function puts a row of totals in the table
-		*/
-		// $(document).ready(function(){
-		//
-		// 		var $dataRows=$("#example tr:not('.totalColumn, .titlerow')");
-		//
-		// 		$dataRows.each(function() {
-		// 				$(this).find('.summ').each(function(i){
-		// 						totals[i]+=parseFloat( $(this).html());
-		// 				});
-		// 		});
-		// 		$("#example td.totalCol").each(function(i){
-		// 				$(this).html(totals[i].toFixed(8));
-		// 		});
-		//
-		// });
-
-		// $(document).ready(function() {
-		//     $('#example').DataTable();
-		// });
 
 		$('.select-one').chosen({
 			placeholder_select_single: 'Seleccione un item...'
@@ -317,4 +420,9 @@
 @endsection
 
 @include('wms.movs.lotrows')
-@include('wms.movs.stock')
+@include('siie.items.itemsearch')
+@include('wms.locs.locationsearch')
+@include('wms.movs.lotsmodal')
+@include('wms.movs.palletmodal')
+@include('wms.movs.stockmodal')
+@include('wms.movs.stockcompletemodal')

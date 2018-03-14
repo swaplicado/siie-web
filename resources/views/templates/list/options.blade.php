@@ -16,7 +16,7 @@
 
 @if (sizeof($loptions) > 2)
 	<div class="btn-group">
-		<button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+		<button type="button" class="btn btn-secondary dropdown-toggle btn-xs" data-toggle="dropdown">
 			<span  class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		</button>

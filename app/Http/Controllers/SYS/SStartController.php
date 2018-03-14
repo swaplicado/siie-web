@@ -14,6 +14,7 @@ use App\SYS\SConfiguration;
 use App\ERP\SErpConfiguration;
 use App\Database\Config;
 use App\ERP\SPartner;
+use App\ERP\SCurrency;
 use App\SYS\SUserCompany;
 use App\ERP\SUserBranch;
 use App\ERP\SUserWhs;
@@ -197,24 +198,27 @@ class SStartController extends Controller
         SConnectionUtils::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
 
         $oErpConfigurationPartner = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PARTNER_ID'));
+        $oErpConfLocCur = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCAL_CURRENCY'));
         $oDecAmount = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_AMT'));
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
-        $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
+        $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOC_ENABLED'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
         $oDbImport = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_IMPORT'));
         $oDbHost = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_HOST'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
+        $oCurrency = SCurrency::find($oErpConfLocCur->val_int);
         $oStock = new SStockManagment();
         $oSegregations = new SSegregationCore();
 
         session(['partner' => $oPartner]);
+        session(['currency' => $oCurrency]);
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['db_import' => $oDbImport->val_text]);
-        //session(['db_host' => $oDbHost->val_text]);
+        session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
 
@@ -227,6 +231,7 @@ class SStartController extends Controller
                         ->where('is_deleted', false)
                         ->first();
         session(['work_year' => $oYear->id_year]);
+        
         return SStartController::branchwhs();
     }
 

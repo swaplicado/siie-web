@@ -4,89 +4,95 @@
 */
 function unfreeze() {
   var fre = document.getElementById("idFreeze"); // freeze button
-  var but = document.getElementById("tButton"); // Add button
-  var item = document.getElementById("item"); // item field
-  var qty = document.getElementById("quantity"); // quantity field
+  // var but = document.getElementById("tButton"); // Add button
+  // var item = document.getElementById("item"); // item field
+  // var qty = document.getElementById("quantity"); // quantity field
   var sBut = document.getElementById("saveButton"); // save button
-  var lQtyis = document.getElementsByClassName('inqty');
-  var lFCodes = document.getElementsByClassName('c_item_code');
+  // var lQtyis = document.getElementsByClassName('inqty');
+  // var lFCodes = document.getElementsByClassName('c_item_code');
+
+  setMovementToForm();
 
   if (fre.firstChild.data == "Congelar") {
-    if (globalData.isPalletReconfiguration) {
-      movement.auxPalletRow = oPalletRow;
-    }
-    else {
-      movement.auxPalletRow = '';
-    }
-
-    if (validateMovement(movement)) {
-        but.disabled = true;
-        item.disabled = true;
-        qty.disabled = true;
+  //   // if (globalData.isPalletReconfiguration) {
+  //   //   movement.auxPalletRow = oPalletRow;
+  //   // }
+  //   // else {
+  //   //   movement.auxPalletRow = '';
+  //   // }
+  //
+    if (validateMovement(oMovement)) {
+        // but.disabled = true;
+        // item.disabled = true;
+        // qty.disabled = true;
+        guiValidations.hidePanel();
+        guiValidations.hideDelete();
         sBut.disabled = false;
 
-        for (var i = 0; i < lQtyis.length; i++) {
-          lQtyis[i].disabled = true;
-        }
+        // for (var i = 0; i < lQtyis.length; i++) {
+        //   lQtyis[i].disabled = true;
+        // }
 
-        $(function(){
-          $("button.removebutton").attr("disabled", true);
-          $("button.buttlots").attr("disabled", true);
-          // $("button.butstk").attr("disabled", true);
-          $("select.selPallet").attr("disabled", true);
-        });
-
-        if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
-          discountMovements(movement);
-        }
-
-        setData(movement); //the table is sends to the server
-
+        // $(function(){
+        //   $("button.removebutton").attr("disabled", true);
+        //   $("button.buttlots").attr("disabled", true);
+        //   $("button.butstk").attr("disabled", true);
+        //   $("select.selPallet").attr("disabled", true);
+        // });
+        //
+        // if (globalData.iMvtType == globalData.PALLET_RECONFIG_IN) {
+        //   discountMovements(movement);
+        // }
+        //
+        // setData(movement); //the table is sends to the server
+  //
         fre.innerHTML = "Descongelar";
     }
   }
   else {
-    but.disabled = false;
-    item.disabled = false;
-    qty.disabled = false;
+  //   but.disabled = false;
+  //   item.disabled = false;
+  //   qty.disabled = false;
+    guiValidations.showAdd();
+    guiValidations.showDelete();
     sBut.disabled = true;
-
-    // for (var i = 0; i < lQtyis.length; i++) {
-    //   lQtyis[i].disabled = false;
-    // }
-
-    var table = document.getElementById("example");
-    for (var i = 1, row; row = table.rows[i]; i++) {
-       //iterate through rows
-       //rows would be accessed using the "row" variable assigned in the for loop
-       for (var j = 1, col; col = row.cells[j]; j++) {
-         //iterate through columns
-         //columns would be accessed using the "col" variable assigned in the for loop
-         if (j == 1) {
-            var code = col.textContent;
-            var isLot = isItemLot(code);
-            if (isLot) {
-              row.cells[8].children[0].disabled = false;
-            }
-            else {
-              row.cells[7].children[0].disabled = false;
-            }
-         }
-       }
-    }
-
-    $(function() {
-      $("button.removebutton").attr("disabled", false);
-      if (globalData.iMvtType != globalData.MVT_TP_OUT_TRA && !globalData.isPalletReconfiguration) {
-        $("select.selPallet").attr("disabled", false);
-      }
-      // $("button.buttlots").attr("disabled", false);
-      // $("button.butstk").attr("disabled", false);
-
-    });
-
-    setData("");
-
+  //
+  //   // for (var i = 0; i < lQtyis.length; i++) {
+  //   //   lQtyis[i].disabled = false;
+  //   // }
+  //
+  //   var table = document.getElementById("example");
+  //   for (var i = 1, row; row = table.rows[i]; i++) {
+  //      //iterate through rows
+  //      //rows would be accessed using the "row" variable assigned in the for loop
+  //      for (var j = 1, col; col = row.cells[j]; j++) {
+  //        //iterate through columns
+  //        //columns would be accessed using the "col" variable assigned in the for loop
+  //        if (j == 1) {
+  //           var code = col.textContent;
+  //           var isLot = isItemLot(code);
+  //           if (isLot) {
+  //             row.cells[8].children[0].disabled = false;
+  //           }
+  //           else {
+  //             row.cells[7].children[0].disabled = false;
+  //           }
+  //        }
+  //      }
+  //   }
+  //
+  //   $(function() {
+  //     $("button.removebutton").attr("disabled", false);
+  //     if (globalData.iMvtType != globalData.MVT_TP_OUT_TRA && !globalData.isPalletReconfiguration) {
+  //       $("select.selPallet").attr("disabled", false);
+  //     }
+  //     // $("button.buttlots").attr("disabled", false);
+  //     // $("button.butstk").attr("disabled", false);
+  //
+  //   });
+  //
+  //   setData("");
+  //
     fre.innerHTML = "Congelar";
   }
 }
@@ -96,173 +102,154 @@ function unfreeze() {
 */
 function validateMovement(oMovement) {
 
-  if (oMovement.rows.length == 0) {
+  if (oMovement.rows.size == 0) {
     swal("Error", "No ha agregado movimientos.", "error");
     return false;
   }
 
   var valid = true;
-  var rowIndex = 1;
-  oMovement.rows.forEach(function(row) {
-      if (row.iPalletId == 0) {
-          swal("Error", "El renglón " + row.oAuxItem.name + " no tiene una tarima seleccionada.", "error");
-          valid = false;
-          return true;
-      }
-
-      if (row.oAuxItem.is_lot && row.lotRows.length == 0) {
-          swal("Error", "El renglón " + row.oAuxItem.name + " no tiene lotes asignados.", "error");
-          valid = false;
-          return true;
-      }
-
-      if (Number.isNaN(Number.parseFloat(row.dQuantity))) {
-          swal("Error", "Debe ingresar sólo números en los campos cantidad y precio.", "error");
-          valid = false;
-          return true;
-      }
-
-      if (!row.oAuxItem.is_bulk && isFloat(parseFloat(row.dQuantity))) {
-          swal("Error", "El renglón " + row.oAuxItem.name + " no acepta decimales.", "error");
-          valid = false;
-          return true;
-      }
-
-      var qtySum = 0.0;
-      row.lotRows.forEach(function(lotRow) {
-          qtySum += lotRow.dQuantity;
-
-          if (row.oAuxItem.is_lot && lotRow.iLotId <= 0) {
-            swal("Error", "El código " + row.sAuxItemCode + " no tiene un lote asignado.", "error");
-            valid = false;
-            return true;
-          }
-      });
-
-      if (row.oAuxItem.is_lot && qtySum != row.dQuantity) {
-          swal("Error", "Asignación de lotes inconsistente en el material/producto " + row.oAuxItem.name + ", renglón " + rowIndex + ".", "error");
-          valid = false;
-          return true;
-      }
-      rowIndex++;
-  });
-
-  if (!valid) {
-    return false;
-  }
-
-  if (oMovement.iMvtType == globalData.PALLET_RECONFIG_IN) {
-      var totalQuantity = 0;
-      var palletLotRows = [];
-
-      oMovement.auxPalletRow.lotRows.forEach(function(row) {
-          palletLotRows.push(new LotRow(row.iLotId, row.dQuantity)); //LotRow in pallets.js
-      });
-
-      oMovement.rows.forEach(function(row) {
-        totalQuantity += row.dQuantity;
-
-        row.lotRows.forEach(function(lotRow) {
-            palletLotRows.forEach(function(palletLot) {
-                if (lotRow.iLotId == palletLot.iLotId) {
-                    palletLot.dQuantity -= lotRow.dQuantity;
-                }
-            });
-        });
-      });
-
-      var dPalletQty = 0;
-
-      if (oMovement.auxPalletRow.oAuxItem.is_lot) {
-          oMovement.auxPalletRow.lotRows.forEach(function(lotRow) {
-              dPalletQty += lotRow.dQuantity;
-          });
-      }
-      else {
-          dPalletQty = oMovement.auxPalletRow.dQuantity;
-      }
-
-      if (totalQuantity > dPalletQty) {
-        swal("Error", "No puede mover más unidades de las que contiene la tarima.", "error");
+  for (var [key, row] of oMovement.rows) {
+    if (row.iPalletId == 0) {
+        swal("Error", "El renglón " + row.sItem + " no tiene una tarima seleccionada.", "error");
         valid = false;
-        return false;
-      }
+        break;
+    }
 
-      palletLotRows.forEach(function(palletLot) {
-          if (palletLot.dQuantity < 0) {
-            swal("Error", "No hay suficientes existencias de lote " + palletLot.iLotId + " en la tarima.", "error");
-            valid = false;
-            return true;
-          }
-      });
-  }
+    if (row.bIsLot && row.lotRows.size == 0) {
+        swal("Error", "El renglón " + row.sItem  + " no tiene lotes asignados.", "error");
+        valid = false;
+        break;
+    }
 
-  if (oMovement.iMvtType == globalData.MVT_TP_IN_PUR) {
-    if (globalData.oDocument != 0) {
-        var itemsDoc = new Map();
-        var dQuantItem = 0;
-        globalData.lDocData.forEach(function(docRow) {
+    if (Number.isNaN(Number.parseFloat(row.dQuantity))) {
+        swal("Error", "Debe ingresar sólo números en los campos cantidad y precio.", "error");
+        valid = false;
+        break;
+    }
 
-          dQuantItem =  parseFloat(docRow.pending, 10);
-
-          if (itemsDoc.has('' + docRow.item_id + '-' + docRow.unit_id)) {
-              itemsDoc.get('' + docRow.item_id + '-' + docRow.unit_id).dQuantity + dQuantItem;
-          }
-          else {
-              itemsDoc.set('' + docRow.item_id + '-' + docRow.unit_id, new QtyItemAux(dQuantItem, docRow.concept));
-          }
-        });
-
-        var itemsMov = new Map();
-        var dItemMQty = 0;
-        movement.rows.forEach(function(element) {
-          dItemMQty = 0;
-            if (element.lotRows.length > 0) {
-                element.lotRows.forEach(function(lotRow) {
-                  dItemMQty += parseFloat(lotRow.dQuantity, 10);
-                });
-            }
-            else {
-              dItemMQty += parseFloat(element.dQuantity, 10);
-            }
-
-            if (itemsMov.has('' + element.iItemId + '-' + element.iUnitId)) {
-                itemsMov.get('' + element.iItemId + '-' + element.iUnitId).dQuantity + dItemMQty;
-            }
-            else {
-                itemsMov.set('' + element.iItemId + '-' + element.iUnitId, new QtyItemAux(dItemMQty, element.oAuxItem.name));
-            }
-        });
-
-        for (var [key, value] of itemsDoc) {
-           if (!itemsMov.has(key)) {
-            //  swal("Error", "No ha agregado " + value.sItem + " al movimiento.", "error");
-            //  valid = false;
-            //  break;
-           }
-           else {
-             if (itemsMov.get(key).dQuantity > (value.dQuantity * (1 + globalData.dPerSupp))) {
-               swal("Error", "No puede surtir una mayor cantidad de  " + value.sItem +
-                                  " mov: " + itemsMov.get(key).dQuantity +
-                                  " doc: " +  value.dQuantity + " (Más del " +
-                                  (globalData.dPerSupp * 100) + "%).", "error");
-               valid = false;
-               break;
-             }
-             else if (itemsMov.get(key).dQuantity < (value.dQuantity * (1 - globalData.dPerSupp))) {
-               swal("Error", "No puede surtir una menor cantidad de " + value.sItem +
-                                "\n mov: " + itemsMov.get(key).dQuantity +
-                                "\n doc: " + value.dQuantity + " (Menos del " +
-                                (globalData.dPerSupp * 100) + "%).", "error");
-               valid = false;
-               break;
-             }
-           }
-        }
+    if (!row.bIsBulk && isFloat(parseFloat(row.dQuantity))) {
+        swal("Error", "El renglón " + row.sItem + " no acepta decimales.", "error");
+        valid = false;
+        break;
     }
   }
 
-  return valid;
+  if (! valid) {
+    return false;
+  }
+
+  // if (oMovement.iMvtType == globalData.PALLET_RECONFIG_IN) {
+  //     var totalQuantity = 0;
+  //     var palletLotRows = [];
+  //
+  //     oMovement.auxPalletRow.lotRows.forEach(function(row) {
+  //         palletLotRows.push(new LotRow(row.iLotId, row.dQuantity)); //LotRow in pallets.js
+  //     });
+  //
+  //     oMovement.rows.forEach(function(row) {
+  //       totalQuantity += row.dQuantity;
+  //
+  //       row.lotRows.forEach(function(lotRow) {
+  //           palletLotRows.forEach(function(palletLot) {
+  //               if (lotRow.iLotId == palletLot.iLotId) {
+  //                   palletLot.dQuantity -= lotRow.dQuantity;
+  //               }
+  //           });
+  //       });
+  //     });
+  //
+  //     var dPalletQty = 0;
+  //
+  //     if (oMovement.auxPalletRow.oAuxItem.is_lot) {
+  //         oMovement.auxPalletRow.lotRows.forEach(function(lotRow) {
+  //             dPalletQty += lotRow.dQuantity;
+  //         });
+  //     }
+  //     else {
+  //         dPalletQty = oMovement.auxPalletRow.dQuantity;
+  //     }
+  //
+  //     if (totalQuantity > dPalletQty) {
+  //       swal("Error", "No puede mover más unidades de las que contiene la tarima.", "error");
+  //       valid = false;
+  //       return false;
+  //     }
+  //
+  //     palletLotRows.forEach(function(palletLot) {
+  //         if (palletLot.dQuantity < 0) {
+  //           swal("Error", "No hay suficientes existencias de lote " + palletLot.iLotId + " en la tarima.", "error");
+  //           valid = false;
+  //           return true;
+  //         }
+  //     });
+  // }
+
+  // if (oMovement.iMvtType == globalData.MVT_TP_IN_PUR) {
+  //   if (globalData.oDocument != 0) {
+  //       var itemsDoc = new Map();
+  //       var dQuantItem = 0;
+  //       globalData.lDocData.forEach(function(docRow) {
+  //
+  //         dQuantItem =  parseFloat(docRow.pending, 10);
+  //
+  //         if (itemsDoc.has('' + docRow.item_id + '-' + docRow.unit_id)) {
+  //             itemsDoc.get('' + docRow.item_id + '-' + docRow.unit_id).dQuantity + dQuantItem;
+  //         }
+  //         else {
+  //             itemsDoc.set('' + docRow.item_id + '-' + docRow.unit_id, new QtyItemAux(dQuantItem, docRow.concept));
+  //         }
+  //       });
+  //
+  //       var itemsMov = new Map();
+  //       var dItemMQty = 0;
+  //       movement.rows.forEach(function(element) {
+  //         dItemMQty = 0;
+  //           if (element.lotRows.length > 0) {
+  //               element.lotRows.forEach(function(lotRow) {
+  //                 dItemMQty += parseFloat(lotRow.dQuantity, 10);
+  //               });
+  //           }
+  //           else {
+  //             dItemMQty += parseFloat(element.dQuantity, 10);
+  //           }
+  //
+  //           if (itemsMov.has('' + element.iItemId + '-' + element.iUnitId)) {
+  //               itemsMov.get('' + element.iItemId + '-' + element.iUnitId).dQuantity + dItemMQty;
+  //           }
+  //           else {
+  //               itemsMov.set('' + element.iItemId + '-' + element.iUnitId, new QtyItemAux(dItemMQty, element.oAuxItem.name));
+  //           }
+  //       });
+  //
+  //       for (var [key, value] of itemsDoc) {
+  //          if (!itemsMov.has(key)) {
+  //           //  swal("Error", "No ha agregado " + value.sItem + " al movimiento.", "error");
+  //           //  valid = false;
+  //           //  break;
+  //          }
+  //          else {
+  //            if (itemsMov.get(key).dQuantity > (value.dQuantity * (1 + globalData.dPerSupp))) {
+  //              swal("Error", "No puede surtir una mayor cantidad de  " + value.sItem +
+  //                                 " mov: " + itemsMov.get(key).dQuantity +
+  //                                 " doc: " +  value.dQuantity + " (Más del " +
+  //                                 (globalData.dPerSupp * 100) + "%).", "error");
+  //              valid = false;
+  //              break;
+  //            }
+  //            else if (itemsMov.get(key).dQuantity < (value.dQuantity * (1 - globalData.dPerSupp))) {
+  //              swal("Error", "No puede surtir una menor cantidad de " + value.sItem +
+  //                               "\n mov: " + itemsMov.get(key).dQuantity +
+  //                               "\n doc: " + value.dQuantity + " (Menos del " +
+  //                               (globalData.dPerSupp * 100) + "%).", "error");
+  //              valid = false;
+  //              break;
+  //            }
+  //          }
+  //       }
+  //   }
+  // }
+
+  return true;
 }
 
 class QtyItemAux {

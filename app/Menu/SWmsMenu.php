@@ -35,6 +35,7 @@ class SWmsMenu {
             \Menu::new()
                 ->addClass('dropdown-menu')
                 ->route('wms.movs.index', trans('wms.WHS_MOVS'))
+                ->route('wms.movs.docs', trans('wms.WHS_DOCS'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ')])

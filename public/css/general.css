@@ -24,6 +24,53 @@ td { font-size: 90%; }
 
 td.small { font-size: 82%; }
 
+.buttonlarge {width: 100%;}
+
+.text-right {
+  style: 'text-align: right;'
+}
+.text-center {
+  style: 'text-align: center;'
+}
+
+.paddingsm {
+   padding: 4 !important;
+   margin: 2 !important;
+}
+
+.backgreen {
+  background-color: #3CBC8D !important;
+  color: white !important;
+}
+
+.backblue {
+  background-color: #31708F !important;
+  color: white !important;
+}
+
+.columnn {
+    float: left;
+    padding: 10px;
+    /* height: 30%; /* Should be removed. Only for demonstration */ */
+}
+
+.left {
+  width: 50%;
+  text-align: right;
+}
+
+.right {
+  width: 50%;
+  text-align: right;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 .button-xlarge {
     color: #FFFFFF;
     height: 25%;

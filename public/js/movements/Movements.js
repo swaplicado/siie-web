@@ -3,50 +3,49 @@
 */
 class SMovement {
     constructor() {
-      this.idRow = 0;
+      this.iIdNewRow = 0;
+
+      this.iIdMovement = 0;
       this.iMvtType = 0;
+      this.iMvtSubType = 0;
+      this.tDate = 0;
       this.iWhsSrc = 0;
       this.iWhsDes = 0;
       this.iDocumentId = 0;
-      this.rows = [];
+      this.bIsDeleted = false;
+
+      this.rows = new Map();
+      this.lAuxRows = null;
+      this.lAuxlotsToCreate = null;
       this.auxPalletRow = '';
     }
 
-    get rowIdentifier() {
-      return this.idRow;
+    get newId() {
+      return this.iIdNewRow;
     }
 
     getRow(id) {
-      id = parseInt(id);
-      var mRow = null;
+      var key = parseInt(id);
 
-      this.rows.forEach(function(element) {
-          if (element.iIdRow == id) {
-              mRow = element;
-              return true;
-          }
-      });
-
-      return mRow;
+      return this.rows.get(key);
     }
 
     addRow(row) {
-      this.rows.push(row);
-      this.idRow++;
+      row.iIdRow = this.iIdNewRow;
+      this.rows.set(this.iIdNewRow, row);
+      this.iIdNewRow++;
     }
 
-    removeRow(ident) {
-      this.rows = this.rows.filter(function( obj ) {
-          return obj.iIdRow != ident;
-      });
-    }
+    removeRow(id) {
+      var key = parseInt(id);
+      var row = this.rows.get(key);
 
-    updateLocation(idRow, idLoc) {
-      this.getRow(idRow).iLocationId = parseInt(idLoc);
-    }
-
-    updatePallet(idRow, idPallet) {
-      this.getRow(idRow).iPalletId = parseInt(idPallet);
+      if (row.iIdMovRow > 0) {
+          row.bIsDeleted = true;
+      }
+      else {
+          this.rows.delete(key);
+      }
     }
 }
 
@@ -54,15 +53,21 @@ class SMovement {
 * Rows of movement
 */
 class SMovementRow {
-    constructor(idRow) {
-      this.iIdRow = idRow;
-      this.idLotRow = 0;
+    constructor() {
+      this.iIdRow = 0;
+      this.idNewLotRow = 0;
+
+      this.iIdMovRow = 0;
       this.iItemId = 0;
       this.iUnitId = 0;
-      this.iPalletId = 0;
+      this.bIsLot = false;
+      this.bIsBulk = false;
+      this.iPalletId = 1;
       this.iLocationId = 0;
       this.dQuantity = 0;
       this.dPrice = 0;
+      this.dAuxQuantity = 0;
+
       this.oAuxItem = '';
       this.oAuxUnit = '';
       this.oAuxPallet = '';
@@ -71,44 +76,53 @@ class SMovementRow {
       this.iDocInvoiceRowId = 1;
       this.iDocDebitNoteRowId = 1;
       this.iDocCreditNoteRowId = 1;
+      this.bIsDeleted = false;
 
-      this.lotRows = [];
-      this.aStock = [];
+      this.sItem = 'NA';
+      this.sItemCode = 'NA';
+      this.sUnit = 'NA';
+
+      this.sLocation = 'DEFAULT';
+      this.sPallet = 'NA';
+
+      this.iLotId = 1;
+      this.sLot = 'NA';
+      this.tExpDate = 'NA';
+      this.iKeyLot = null; // key to map the new Lot
+
+      this.lotRows = new Map();
+      this.lAuxlotRows = null;
+      this.lAuxlotsToCreate = null;
+
+      this.iElementType = 404;
+      this.oElement = null;
     }
 
-    get identifier() {
-      return this.idLotRow
+    get lotIdentifier() {
+      return this.idNewLotRow;
     }
 
     getLotRow(id) {
-      var lRow = null;
-      id = parseInt(id);
+      var key = parseInt(id);
 
-      this.lotRows.forEach(function(element) {
-          if (element.id == id) {
-              lRow = element;
-              return true;
-          }
-      });
-
-      return lRow;
+      return this.lotRows.get(key);
     }
 
     addLotRow(lotRow) {
-      this.lotRows.push(lotRow);
-      this.idLotRow++;
+      this.lotRows.set(this.idNewLotRow, lotRow);
+      this.idNewLotRow++;
     }
 
-    removeLotRow(ident) {
-      this.lotRows = this.lotRows.filter(function( obj ) {
-          return obj.iIdRow !== ident;
-      });
-    }
+    removeLotRow(id) {
+      var key = parseInt(id);
+      var lotRow = this.lotRows.get(key);
 
-    updateLot(id, idLot) {
-      id = parseInt(id);
-      idLot = parseInt(idLot);
-      this.getLotRow(id).iLotId = idLot;
+      if (lotRow.iIdLotRow > 0) {
+          lotRow.bIsDeleted = true;
+      }
+      else {
+          this.lotRows.delete(key);
+      }
     }
 }
 
@@ -116,11 +130,18 @@ class SMovementRow {
 * Rows of RowMovement (Lots)
 */
 class SLotRow {
-    constructor(id, lot, qty, price) {
-      this.id = id;
-      this.iLotId = lot;
-      this.dQuantity = qty;
-      this.dPrice = price;
+    constructor() {
+      this.id = 0;
+
+      this.iIdLotRow = 0;
+      this.iLotId = 0;
+      this.sLot = '';
+      this.tExpDate = '';
+      this.dQuantity = 0;
+      this.dPrice = 0;
+      this.bIsDeleted = false;
+
+      this.bCreate = false;
     }
 
     get identifier() {
@@ -199,5 +220,15 @@ function setData(data) {
       });
 }
 
+function setMovementToForm() {
+  for (var [key, oRow] of oMovement.rows) {
+     oRow.lAuxlotRows = Array.from(oRow.lotRows);
+  }
+  oMovement.lAuxRows = Array.from(oMovement.rows);
+  oMovement.lAuxlotsToCreate = lLotsToCreate;
 
-var movement = new SMovement(); // Initialization, the counter inits in 0
+  localStorage.setItem('movement', JSON.stringify(oMovement));
+  document.getElementById('movement_object').value = JSON.stringify(oMovement);
+}
+
+var oMovement = new SMovement(); // Initialization, the counter inits in 0

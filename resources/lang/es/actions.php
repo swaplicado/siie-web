@@ -3,18 +3,24 @@
 # trans('actions.CREATE')
 
 	return [
-		'CREATE' => 'Crear',
-		'SAVE' => 'Guardar',
-		'EDIT' => 'Editar',
-		'CANCEL' => 'Cancelar',
 		'ACCESS' => 'Acceder',
+		'ACCEPT' => 'Aceptar',
 		'ADD' => 'Agregar',
-		'FREEZE' => 'Congelar',
+		'CANCEL' => 'Cancelar',
+		'CLEAN' => 'Limpiar',
 		'CLOSE' => 'Cerrar',
-		'IMPORT' => 'Importar',
-		'SUPPLY' => 'Surtir',
+		'CONTINUE' => 'Continuar',
+		'CREATE' => 'Crear',
 		'DEVOLVE' => 'Devolver',
+		'EDIT' => 'Editar',
+		'FREEZE' => 'Congelar',
+		'IMPORT' => 'Importar',
+		'MODIFY' => 'Modificar',
+		'SAVE' => 'Guardar',
+		'SEARCH' => 'Buscar',
+		'SSELECT' => 'Seleccionar',
+		'SUPPLY' => 'Surtir',
 		'QUIT' => 'Eliminar',
 
-
+		'SEARCH_LOCATION' => 'Buscar ubicación',
     ];

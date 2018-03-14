@@ -294,17 +294,41 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@index',
       	'as' => 'wms.movs.index'
       ]);
-      Route::post('/movs', [
-      	'uses' => 'WMS\SMovsController@store',
-      	'as' => 'wms.movs.store'
+      Route::get('/movs/docs', [
+      	'uses' => 'WMS\SMovsController@inventoryDocs',
+      	'as' => 'wms.movs.docs'
       ]);
       Route::get('/movs/{id}/create', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'
       ]);
-      Route::get('/movs/{id?}/create/children', [
-        'uses' => 'WMS\SMovsController@children',
-        'as' => 'wms.movs.create.children'
+      Route::get('/movs/{id}/edit', [
+      	'uses' => 'WMS\SMovsController@edit',
+      	'as' => 'wms.movs.edit'
+      ]);
+      Route::get('/movs/{id}/destroy', [
+        'uses' => 'WMS\SMovsController@Destroy',
+        'as' => 'wms.movs.destroy'
+      ]);
+      Route::get('/movs/{id}/activate', [
+        'uses' => 'WMS\SMovsController@Activate',
+        'as' => 'wms.movs.activate'
+      ]);
+      Route::post('/movs', [
+        'uses' => 'WMS\SMovsController@store',
+        'as' => 'wms.movs.store'
+      ]);
+      Route::get('/movs/{id?}/create/data', [
+        'uses' => 'WMS\SMovsController@getMovementData',
+        'as' => 'wms.movs.create.data'
+      ]);
+      Route::get('/movs/{id?}/create/search', [
+        'uses' => 'WMS\SMovsController@searchElement',
+        'as' => 'wms.movs.create.search'
+      ]);
+      Route::post('/movs/{id?}/create/validaterow', [
+        'uses' => 'WMS\SMovsController@validateRow',
+        'as' => 'wms.movs.create.validaterow'
       ]);
       Route::post('/movs/{id?}/create/storetable', [
         'uses' => 'WMS\SMovsController@getTable',
@@ -314,13 +338,17 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.supply'
       ]);
-      Route::get('/movs/{id}/{doc}/supply/children', [
-        'uses' => 'WMS\SMovsController@children',
-        'as' => 'wms.movs.create.children'
+      Route::get('/movs/{id}/{doc}/supply/data', [
+        'uses' => 'WMS\SMovsController@getMovementData',
+        'as' => 'wms.movs.supply.data'
       ]);
-      Route::post('/movs/{id}/{doc}/supply/storetable', [
-        'uses' => 'WMS\SMovsController@getTable',
-        'as' => 'wms.movs.create.storetable'
+      Route::get('/movs/{id}/{doc}/supply/search', [
+        'uses' => 'WMS\SMovsController@searchElement',
+        'as' => 'wms.movs.supply.search'
+      ]);
+      Route::post('/movs/{id}/{doc}/supply/validaterow', [
+        'uses' => 'WMS\SMovsController@validateRow',
+        'as' => 'wms.movs.supply.validaterow'
       ]);
 
       /*

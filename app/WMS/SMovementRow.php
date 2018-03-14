@@ -173,7 +173,6 @@ class SMovementRow extends Model {
       $query->join('erpu_items as ei', $this->table.'.item_id', '=', 'ei.id_item')
               ->join('wms_mvts as wm', $this->table.'.mvt_id', '=', 'wm.id_mvt')
               ->select($this->table.'.*')
-              ->where('ei.is_deleted', false)
               ->whereBetween('wm.dt_date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
       switch ($iFilter) {

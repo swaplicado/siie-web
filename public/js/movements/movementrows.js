@@ -14,7 +14,8 @@ var palletMovement = new SMovement();
 * Row of movement
 */
 $('#tButton').on('click', function(e) {
-    addRow(e);
+    // addRow(e);
+    // addElement();
 });
 
 /*
@@ -23,7 +24,8 @@ $('#tButton').on('click', function(e) {
 */
 function addRowByEnter(e) {
   if (e.keyCode == 13) {
-        addRow(e);
+        // addRow(e);
+        // addElement();
     }
 }
 

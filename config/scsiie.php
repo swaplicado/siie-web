@@ -12,6 +12,10 @@ return [
                   'DB_IMPORT' => '6',
                   'DB_HOST' => '7',
                   'PERCENT_SUPPLY' => '8',
+                  'WHS_ITEM_TRANSIT' => '9',
+                  'CAN_CREATE_LOT_PAL_MAT' => '10',
+                  'CAN_CREATE_LOT_PAL_PROD' => '11',
+                  'LOCAL_CURRENCY' => '12',
                 ],
 
   'ATT' => [

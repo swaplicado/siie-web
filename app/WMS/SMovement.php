@@ -1,6 +1,7 @@
 <?php namespace App\WMS;
 
 use Illuminate\Database\Eloquent\Model;
+use App\SUtils\SGuiUtils;
 
 class SMovement extends Model {
 
@@ -142,6 +143,41 @@ class SMovement extends Model {
   public function expType()
   {
     return $this->belongsTo('App\WMS\SMvtExpType', 'mvt_exp_type_id');
+  }
+
+
+  /**
+   * filter of movements
+   *
+   * @param  Query $query
+   * @param  integer $iFilter is_deleted
+   * @param  string $sDtFilter date in format 'dd/mm/yyyy - dd/mm/yyyy'
+   *
+   * @return Query  after filters
+   */
+  public function scopeSearch($query, $iFilter, $sDtFilter)
+  {
+      $aDates = SGuiUtils::getDatesOfFilter($sDtFilter);
+
+      $query->whereBetween('dt_date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+
+      switch ($iFilter) {
+        case \Config::get('scsys.FILTER.ACTIVES'):
+            return $query->where($this->table.'.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+          break;
+
+        case \Config::get('scsys.FILTER.DELETED'):
+            return $query->where($this->table.'.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+          break;
+
+        case \Config::get('scsys.FILTER.ALL'):
+            return $query;
+          break;
+
+        default:
+            return $query;
+          break;
+      }
   }
 
 }

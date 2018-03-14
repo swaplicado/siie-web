@@ -52,14 +52,18 @@ class ErpAddErpConfigurationsTable extends Migration {
 
 
           DB::connection($this->sConnection)->table('erp_configuration')->insert([
-          	['id_configuration' => '1','code' => '001','name' => 'PARTNER_ID','val_boolean' => '0','val_int' => '1','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '2','code' => '002','name' => 'DECIMALES MONTOS','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '3','code' => '003','name' => 'DECIMALES CANTIDAD','val_boolean' => '0','val_int' => '5','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '4','code' => '004','name' => 'HABILITAR UBICACIONES','val_boolean' => '0','val_int' => '0','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-          	['id_configuration' => '5','code' => '005','name' => 'TIEMPO DE CANDADO MINUTOS (ENTERO)','val_boolean' => '0','val_int' => '5','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-            ['id_configuration' => '6','code' => '006','name' => 'BASE DE DATOS ORIGEN','val_boolean' => '0','val_int' => '0','val_text' => 'erp_aeth','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-            ['id_configuration' => '7','code' => '007','name' => 'HOST BASE DE DATOS ORIGEN','val_boolean' => '0','val_int' => '0','val_text' => '192.168.1.233','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '1','code' => '001','name' => 'PARTNER_ID','val_boolean' => '0','val_int' => '1','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '2','code' => '002','name' => 'DECIMALES MONTOS','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '3','code' => '003','name' => 'DECIMALES CANTIDAD','val_boolean' => '0','val_int' => '5','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '4','code' => '004','name' => 'HABILITAR UBICACIONES','val_boolean' => '0','val_int' => '0','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '5','code' => '005','name' => 'TIEMPO DE CANDADO MINUTOS (ENTERO)','val_boolean' => '0','val_int' => '5','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '6','code' => '006','name' => 'BASE DE DATOS ORIGEN','val_boolean' => '0','val_int' => '0','val_text' => 'erp_universal','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '7','code' => '007','name' => 'HOST BASE DATOS','val_boolean' => '0','val_int' => '0','val_text' => 'localhost','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
             ['id_configuration' => '8','code' => '008','name' => '% SURTIDO PERMITIDO','val_boolean' => '0','val_int' => '0','val_text' => ' ','val_decimal' => '10', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '9','code' => '009','name' => 'ALMACÉN MERCANCÍAS EN TRÁNSITO','val_boolean' => '0','val_int' => '1','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '10','code' => '010','name' => 'CREAR LOTES PARA MATERIALES','val_boolean' => '1','val_int' => '0','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '11','code' => '011','name' => 'CREAR LOTES PARA PRODUCTOS','val_boolean' => '1','val_int' => '0','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '12','code' => '012','name' => 'MONEDA LOCAL','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
 
         }

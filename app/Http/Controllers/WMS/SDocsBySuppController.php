@@ -6,6 +6,7 @@ use Laracasts\Flash\Flash;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SProcess;
+use App\SUtils\SGuiUtils;
 use Carbon\Carbon;
 
 use App\ERP\SDocument;
@@ -40,7 +41,7 @@ class SDocsBySuppController extends Controller {
     public function viewDocs(Request $request, $iDocCategory, $iDocClass, $iDocType, $iViewType, $sTitle)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $sFilterDate = $request->filterDate == null ? \Config::get('scsys.FILTER.MONTH') : $request->filterDate;
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $iDocId = 0;
         $bWithPending = false;
 

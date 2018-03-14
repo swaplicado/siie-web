@@ -11,6 +11,7 @@ use App\Http\Requests\WMS\SMovRequest;
 use App\SCore\SStockUtils;
 use App\SCore\SMovsManagment;
 use App\SCore\SMovsUtils;
+use App\SCore\SLotsValidations;
 use App\ERP\SErpConfiguration;
 
 use Laracasts\Flash\Flash;
@@ -18,6 +19,7 @@ use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SProcess;
 use App\SUtils\SValidation;
+use App\SUtils\SGuiUtils;
 use App\ERP\SBranch;
 use App\ERP\SItem;
 use App\ERP\SDocument;
@@ -36,6 +38,7 @@ use App\WMS\SItemContainer;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
+use App\WMS\Data\SData;
 
 class SMovsController extends Controller
 {
@@ -57,7 +60,7 @@ class SMovsController extends Controller
      */
     public function index(Request $request, $iFolio = 0)
     {
-        $sFilterDate = $request->filterDate == null ? \Config::get('scsys.FILTER.MONTH') : $request->filterDate;
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate)->orderBy('item_id', 'ASC')->orderBy('item_id', 'ASC')->paginate(20);
 
         foreach ($lMovRows as $row) {
@@ -79,6 +82,37 @@ class SMovsController extends Controller
                     ->with('rows', $lMovRows);
     }
 
+
+
+    /**
+     * index for the view of inventory documents
+     *
+     * @param  Request $request
+     *
+     * @return view  'wms.movs.inventorydocs'
+     */
+    public function inventoryDocs(Request $request)
+    {
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+        $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC')->paginate(20);
+
+        foreach ($lMovs as $mov) {
+            $mov->branch;
+            $mov->warehouse;
+            $mov->mvtType;
+            $mov->trnType;
+            $mov->adjType;
+            $mov->mfgType;
+            $mov->expType;
+        }
+
+        return view('wms.movs.inventorydocs')
+                    ->with('iFilter', $this->iFilter)
+                    ->with('sFilterDate', $sFilterDate)
+                    ->with('actualUserPermission', $this->oCurrentUserPermission)
+                    ->with('lMovs', $lMovs);
+    }
+
     /**
      * prepare all data to create a new warehouse movement
      *
@@ -91,8 +125,15 @@ class SMovsController extends Controller
      */
     public function create(Request $request, $mvtType, $iDocId = 0)
     {
-        $movement = new SMovement();
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
+          return redirect()->route('notauthorized');
+        }
+
+        $iOperation = \Config::get('scwms.OPERATION_TYPE.CREATION');
+
+        $oMovement = new SMovement();
         $lDocData = array();
+        $lStock = null;
 
         // get the document if the id != 0
         if ($iDocId != 0)
@@ -118,43 +159,32 @@ class SMovsController extends Controller
 
         $oMovType = SMvtType::find($mvtType);
         $iMvtSubType = 1;
-        $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $mvtType)->lists('name', 'id_mvt_type');
+        $oMovement->mvt_whs_class_id = $oMovType->mvt_class_id;
+        $oMovement->mvt_whs_type_id = $oMovType->id_mvt_type;
+
+        $movTypes = SMvtType::where('is_deleted', false)
+                              ->where('id_mvt_type', $oMovement->mvt_whs_type_id)
+                              ->lists('name', 'id_mvt_type');
+
         $warehouses = SWarehouse::where('is_deleted', false)
                                 ->where('branch_id', session('branch')->id_branch)
                                 ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                ->orderBy('name', 'ASC')
                                 ->lists('warehouse', 'id_whs');
-        $warehousesObj = SWarehouse::where('is_deleted', false)->get();
-        $locations = SLocation::where(function ($q) {
-                                      $q->where('is_deleted', false)
-                                      ->orWhere('id_whs_location', 1);
-                                  })->get();
-        $lots = SWmsLot::where(function ($q) {
-                                      $q->where('is_deleted', false)
-                                      ->orWhere('id_lot', 1);
-                                  })->get();
-        $pallets = SPallet::where(function ($q) {
-                                      $q->where('is_deleted', false)
-                                      ->orWhere('id_pallet', 1);
-                                  })->get();
-
-        $itemContainers = SItemContainer::where('is_deleted', false)->get();
-
-        foreach ($warehousesObj as $whs) {
-          $whs->whsType;
-        }
 
         $iWhsSrc = 0;
         $iWhsDes = 0;
-        if ($oMovType->mvt_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+        if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
           $iWhsDes = session('whs')->id_whs;
         }
         else {
           $iWhsSrc = session('whs')->id_whs;
         }
 
+        $oTransitWarehouse = null;
         $mvtComp = NULL;
 
-        switch ($mvtType) {
+        switch ($oMovement->mvt_whs_type_id) {
           case \Config::get('scwms.MVT_TP_IN_SAL'):
           case \Config::get('scwms.MVT_TP_IN_PUR'):
           case \Config::get('scwms.MVT_TP_OUT_SAL'):
@@ -171,6 +201,8 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_IN_TRA'):
             $mvtComp = SMvtAdjType::where('id_mvt_adj_type', 1)->lists('name', 'id_mvt_adj_type');
+            $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
+            $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
             break;
 
           case \Config::get('scwms.MVT_TP_IN_CON'):
@@ -196,10 +228,13 @@ class SMovsController extends Controller
         }
 
         $oDbPerSupply = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PERCENT_SUPPLY'));
-        //$itemsWhs = SMovsUtils::getItemsToWarehouse($iWhsSrc, $iWhsDes);
+        $oCanCreateLotMat = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.CAN_CREATE_LOT_PAL_MAT'));
+        $oCanCreateLotProd = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.CAN_CREATE_LOT_PAL_PROD'));
 
         return view('wms.movs.whsmovs')
-                          ->with('oMovType', $oMovType)
+                          ->with('oMovement', $oMovement)
+                          ->with('lStock', $lStock)
+                          ->with('iOperation', $iOperation)
                           ->with('iMvtSubType', $iMvtSubType)
                           ->with('oDocument', $oDocument)
                           ->with('lDocData', $lDocData)
@@ -208,94 +243,66 @@ class SMovsController extends Controller
                           ->with('warehouses', $warehouses)
                           ->with('whs_src', $iWhsSrc)
                           ->with('whs_des', $iWhsDes)
-                          ->with('warehousesObj', $warehousesObj)
-                          ->with('locations', $locations)
-                          ->with('lots', $lots)
-                          ->with('pallets', $pallets)
+                          ->with('oTransitWarehouse', $oTransitWarehouse)
                           ->with('dPerSupp', $oDbPerSupply->val_decimal)
-                          ->with('itemContainers', $itemContainers);
+                          ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
+                          ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean);
     }
 
     /**
-     * [getTable set the value of data from client to session('data')]
+     * store saves the whs movs
      *
-     * @param  Request $request [$request->value]
+     * @param  Request $request
+     *
+     * @return redirect to whs.home
      */
-    public function getTable(Request $request)
+    public function store(Request $request)
     {
-      if ($request->value != '') {
-        session(['data' => $request->value]);
+        $oData = new SItem();
+        $oMovementJs = json_decode($request->input('movement_object'));
+        // $oPalletData = session()->has('pallet') ? session('pallet') : 0;
 
-          if ($request->value['auxPalletRow'] != '') {
-            session(['pallet' => $request->value['auxPalletRow']]);
-          }
-      }
-
-      if ($request->value == '') {
-        if (session()->has('data')) {
-          session()->forget('data');
-        }
-         if (session()->has('pallet')) {
-           session()->forget('pallet');
-         }
-      }
-    }
-
-    /**
-     * [store saves the whs movs]
-     * @param  Request $request [description]
-     * @return [redirect to whs.home]
-     */
-    public function store(SMovRequest $request)
-    {
-        $oData = session('data');
-        $oPalletData = session()->has('pallet') ? session('pallet') : 0;
-
-        session()->forget('data');
-        session()->forget('pallet');
-
-        $whsId = 0;
-        $whsSrc = 0;
-        $whsDes = 0;
+        $iWhsId = 0;
+        $iWhsSrc = 0;
+        $iWhsDes = 0;
 
         // the transfer implies two warehouses
-        if ($oData['iMvtType'] == \Config::get('scwms.MVT_TP_OUT_TRA'))
+        if ($oMovementJs->iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA'))
         {
-          $whsSrc = $oData['iWhsSrc'];
-          $whsDes = $oData['iWhsDes'];
-          $whsId = $oData['iWhsSrc'];
+            $iWhsSrc = $oMovementJs->iWhsSrc;
+            $iWhsDes = $oMovementJs->iWhsDes;
         }
         // if the movement is output implies that the warehouse is of source
         else if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
         {
-            $whsId = $oData['iWhsSrc'];
-            $whsSrc = $oData['iWhsSrc'];
+            $iWhsSrc = $oMovementJs->iWhsSrc;
+            $iWhsId = $iWhsSrc;
         }
         else
         {
-            $whsId = $oData['iWhsDes'];
-            $whsDes = $oData['iWhsDes'];
+            $iWhsDes = $oMovementJs->iWhsDes;
+            $iWhsId = $iWhsDes;
         }
 
         $movement = new SMovement($request->all());
 
-        $movement->mvt_whs_type_id = $oData['iMvtType'];
+        $movement->mvt_whs_type_id = $oMovementJs->iMvtType;
         $movement->mvt_trn_type_id = 1;
         $movement->mvt_adj_type_id = 1;
         $movement->mvt_mfg_type_id = 1;
         $movement->mvt_exp_type_id = 1;
 
-        switch ($oData['iMvtType']) {
+        switch ($movement->mvt_whs_type_id) {
           case \Config::get('scwms.MVT_TP_IN_SAL'):
           case \Config::get('scwms.MVT_TP_IN_PUR'):
           case \Config::get('scwms.MVT_TP_OUT_SAL'):
           case \Config::get('scwms.MVT_TP_OUT_PUR'):
-            $movement->mvt_trn_type_id = $request->input('mvt_com');
+            $movement->mvt_trn_type_id = $oMovementJs->iMvtSubType;
             break;
 
           case \Config::get('scwms.MVT_TP_IN_ADJ'):
           case \Config::get('scwms.MVT_TP_OUT_ADJ'):
-            $movement->mvt_adj_type_id = $request->input('mvt_com');
+            $movement->mvt_adj_type_id = $oMovementJs->iMvtSubType;
             break;
 
           case \Config::get('scwms.MVT_TP_IN_TRA'):
@@ -304,12 +311,12 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_OUT_CON'):
           case \Config::get('scwms.MVT_TP_OUT_PRO'):
-            $movement->mvt_mfg_type_id = $request->input('mvt_com');
+            $movement->mvt_mfg_type_id = $oMovementJs->iMvtSubType;
             break;
 
           case \Config::get('scwms.MVT_TP_IN_EXP'):
           case \Config::get('scwms.MVT_TP_OUT_EXP'):
-            $movement->mvt_exp_type_id = $request->input('mvt_com');
+            $movement->mvt_exp_type_id = $oMovementJs->iMvtSubType;
             break;
 
           default:
@@ -317,39 +324,65 @@ class SMovsController extends Controller
             break;
         }
 
-        $movement->whs_id = $whsId;
+        $oProcess = new SMovsManagment();
+
+        $movement->whs_id = $iWhsId;
         $movement->branch_id = $movement->warehouse->branch_id;
         $movement->year_id = session('work_year');
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
-        $movement = SMovsManagment::assignForeignDoc($movement, $movement->mvt_whs_type_id, $oData['iDocumentId']);
+        // $movement = SMovsManagment::assignForeignDoc($movement, $movement->mvt_whs_type_id, $oData['iDocumentId']);
+        $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, 0);
         $movement->auth_status_by_id = 1;
         $movement->closed_shipment_by_id = 1;
         $movement->created_by_id = \Auth::user()->id;
         $movement->updated_by_id = \Auth::user()->id;
 
+        //transform the hash map to normal array of php
+        $lRowsJs = array();
+        foreach ($oMovementJs->lAuxRows as $value) {
+           $key = $value['0'];
+           $lRowsJs[$key] = $value['1'];
+        }
+
         $dTotalAmount = 0;
         $movementRows = array();
-        foreach ($oData['rows'] as $row) {
+        foreach ($lRowsJs as $row) {
            $oMvtRow = new SMovementRow();
 
-           $oMvtRow->quantity = $row['dQuantity'];
-           $oMvtRow->amount_unit = $row['dPrice'];
-           $oMvtRow->item_id = $row['iItemId'];
-           $oMvtRow->unit_id = $row['iUnitId'];
-           $oMvtRow->pallet_id = $row['iPalletId'];
-           $oMvtRow->location_id = $row['iLocationId'];
+           $oMvtRow->quantity = $row->dQuantity;
+           $oMvtRow->amount_unit = $row->dPrice;
+           $oMvtRow->item_id = $row->iItemId;
+           $oMvtRow->unit_id = $row->iUnitId;
+           $oMvtRow->pallet_id = $row->iPalletId;
+           $oMvtRow->location_id = $row->iLocationId;
 
-           $oMvtRow = SMovsManagment::assignForeignRow($oMvtRow, $movement->mvt_whs_type_id, $row['iDocOrderRowId']);
+           $oMvtRow = $oProcess->assignForeignRow($oMvtRow, $movement->mvt_whs_type_id, $row->iDocOrderRowId);
 
            $movLotRows = array();
-           if (isset($row['lotRows']))
-           {
-             foreach ($row['lotRows'] as $lotRow) {
+           if ($row->bIsLot && isset($row->lAuxlotRows)) {
+
+             // save new lots required for the movement
+             $lCreatedLots = $oProcess->saveLots($oMovementJs->lAuxlotsToCreate);
+
+             $lLotRowsJs = array();
+             foreach ($row->lAuxlotRows as $value) {
+                $key = $value['0'];
+
+                if ($value['1']->iLotId == 0) {
+                    if (array_key_exists($value['1']->iKeyLot, $lCreatedLots)) {
+                       $value['1']->iLotId = $lCreatedLots[$value['1']->iKeyLot]->id_lot;
+                    }
+                }
+
+                $lLotRowsJs[$key] = $value['1'];
+             }
+
+             foreach ($lLotRowsJs as $rowsJs) {
                  $oMovLotRow = new SMovementRowLot();
-                 $oMovLotRow->quantity = $lotRow['dQuantity'];
-                 $oMovLotRow->amount_unit = $lotRow['dPrice'];
-                 $oMovLotRow->lot_id = $lotRow['iLotId'];
+                 $oMovLotRow->quantity = $rowsJs->dQuantity;
+                 $oMovLotRow->amount_unit = $rowsJs->dPrice;
+                 $oMovLotRow->lot_id = $rowsJs->iLotId;
 
                  array_push($movLotRows, $oMovLotRow);
                  $dTotalAmount += ($oMovLotRow->quantity * $oMovLotRow->amount_unit);
@@ -364,34 +397,18 @@ class SMovsController extends Controller
         }
 
         $movement->total_amount = $dTotalAmount;
+        $oPalletData = null;
 
-        $movements = SMovsManagment::processMovement($movement,
-                                                    $movementRows,
+        $aResult = $oProcess->processTheMovement($movement, $movementRows,
                                                     $request->input('mvt_whs_class_id'),
-                                                    $oData['iMvtType'],
-                                                    $whsSrc,
-                                                    $whsDes,
-                                                    $oPalletData);
+                                                    $oMovementJs->iMvtType,
+                                                    $iWhsSrc,
+                                                    $iWhsDes,
+                                                    $oPalletData,
+                                                    $request);
 
-        foreach ($movements as $mov) {
-          if ($mov->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
-            $aErrors = SStockUtils::validateStock($mov);
-
-            if(sizeof($aErrors) > 0)
-            {
-                return redirect()
-                          ->back()
-                          ->withErrors($aErrors)
-                          ->withInput();
-            }
-          }
-        }
-
-        foreach ($movements as $mov) {
-          $aErrors = SStockUtils::validateLimits($mov);
-
-          if(sizeof($aErrors) > 0)
-          {
+        if (is_array($aResult)) {
+          if(sizeof($aErrors) > 0) {
               return redirect()
                         ->back()
                         ->withErrors($aErrors)
@@ -399,233 +416,284 @@ class SMovsController extends Controller
           }
         }
 
+        return redirect()->route('wms.movs.index', $aResult);
+    }
 
-        foreach ($movements as $mov) {
-           $iFolio = SMovsManagment::getNewFolio($mov);
-           if ($iFolio > 0)
-           {
-              $mov->folio = $iFolio;
-           }
-           else
-           {
-             $aErrors[0] = "No hay un folio asignado para este tipo de movimiento";
+    /**
+     * edit the inventory movement
+     * load all neccesary data for the edition and shows the form
+     *
+     * @param  integer $id id of movement
+     *
+     * @return view('wms.movs.whsmovs')
+     */
+    public function edit($id = 0)
+    {
+      $iOperation = \Config::get('scwms.OPERATION_TYPE.EDITION');
+      $oMovement = SMovement::find($id);
 
-             return redirect()
-                       ->back()
-                       ->withErrors($aErrors)
-                       ->withInput();
-           }
+      session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $oMovement);
+
+      /*
+      This method tries to get the lock, if not is obtained returns an array of errors
+      */
+      $error = session('utils')->validateLock($oMovement);
+      if (sizeof($error) > 0)
+      {
+        return redirect()->back()->withErrors($error);
+      }
+
+      $oMovement->rows;
+
+      foreach ($oMovement->rows as $oRow) {
+        $oRow->lotRows;
+        foreach ($oRow->lotRows as $oLotRow) {
+          $oLotRow->lot;
+        }
+      }
+
+      $oDocument = 0;
+      $lDocData = array();
+
+      $iMvtSubType = $oMovement->mvt_whs_type_id;
+      $lStock = null;
+
+      $iWhsSrc = 0;
+      $iWhsDes = 0;
+      if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+        $iWhsDes = $oMovement->whs_id;
+      }
+      else {
+        $iWhsSrc = $oMovement->whs_id;
+        $lStock = SMovsUtils::getStockFromWarehouse($iWhsSrc, $oMovement->id_mvt);
+      }
+
+      $warehouses = SWarehouse::where('id_whs', $oMovement->whs_id)
+                              ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                              ->orderBy('name', 'ASC')
+                              ->lists('warehouse', 'id_whs');
+
+      $movTypes = SMvtType::where('is_deleted', false)->where('id_mvt_type', $oMovement->mvt_whs_type_id)->lists('name', 'id_mvt_type');
+
+      $mvtComp = NULL;
+
+      switch ($oMovement->mvt_whs_type_id) {
+        case \Config::get('scwms.MVT_TP_IN_SAL'):
+        case \Config::get('scwms.MVT_TP_IN_PUR'):
+        case \Config::get('scwms.MVT_TP_OUT_SAL'):
+        case \Config::get('scwms.MVT_TP_OUT_PUR'):
+          $mvtComp = SMvtTrnType::where('is_deleted', false)->lists('name', 'id_mvt_trn_type');
+          break;
+
+        case \Config::get('scwms.MVT_TP_IN_ADJ'):
+        case \Config::get('scwms.MVT_TP_OUT_ADJ'):
+          $mvtComp = SMvtAdjType::where('is_deleted', false)->lists('name', 'id_mvt_adj_type');
+          break;
+
+        case \Config::get('scwms.MVT_TP_OUT_TRA'):
+        case \Config::get('scwms.MVT_TP_IN_TRA'):
+          $mvtComp = SMvtAdjType::where('id_mvt_adj_type', 1)->lists('name', 'id_mvt_adj_type');
+          $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
+          $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
+          break;
+
+        case \Config::get('scwms.MVT_TP_IN_CON'):
+        case \Config::get('scwms.MVT_TP_IN_PRO'):
+        case \Config::get('scwms.MVT_TP_OUT_CON'):
+        case \Config::get('scwms.MVT_TP_OUT_PRO'):
+          $mvtComp = SMvtMfgType::where('is_deleted', false)->lists('name', 'id_mvt_mfg_type');
+          break;
+
+        case \Config::get('scwms.MVT_TP_IN_EXP'):
+        case \Config::get('scwms.MVT_TP_OUT_EXP'):
+          $mvtComp = SMvtExpType::where('is_deleted', false)->lists('name', 'id_mvt_exp_type');
+          break;
+
+        case \Config::get('scwms.PALLET_RECONFIG_IN'):
+        case \Config::get('scwms.PALLET_RECONFIG_OUT'):
+          $mvtComp = SMvtExpType::where('id_mvt_exp_type', 1)->lists('name', 'id_mvt_exp_type');
+          break;
+
+        default:
+          # code...
+          break;
+      }
+
+      $oDbPerSupply = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PERCENT_SUPPLY'));
+      $oCanCreateLotMat = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.CAN_CREATE_LOT_PAL_MAT'));
+      $oCanCreateLotProd = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.CAN_CREATE_LOT_PAL_PROD'));
+
+
+      return view('wms.movs.whsmovs')
+                        ->with('oMovement', $oMovement)
+                        ->with('iOperation', $iOperation)
+                        ->with('iMvtSubType', $iMvtSubType)
+                        ->with('oDocument', $oDocument)
+                        ->with('lDocData', $lDocData)
+                        ->with('movTypes', $movTypes)
+                        ->with('mvtComp', $mvtComp)
+                        ->with('warehouses', $warehouses)
+                        ->with('whs_src', $iWhsSrc)
+                        ->with('whs_des', $iWhsDes)
+                        ->with('lStock', $lStock)
+                        ->with('dPerSupp', $oDbPerSupply->val_decimal)
+                        ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
+                        ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean);
+
+    }
+
+    /**
+     * this method obtains the data required to process the movement
+     * on client side, obtains:
+     *  the permitted items
+     *  the permitted lots
+     *  the permitted pallets
+     *  the locations of implied warehouses
+     *  the stock of warehouse
+     *
+     * @param  Request $request
+     *                  the request contains:
+     *                        source warehouse
+     *                        destiny warehouse
+     *                        movement class
+     *                        movement type
+     *
+     * @return JSON JSON object of the class SData
+     */
+    public function getMovementData(Request $request)
+    {
+        $oData = new SData();
+        $oData->lItems = SMovsUtils::getElementsToWarehouse(
+                                                      $request->whs_source,
+                                                      $request->whs_des,
+                                                      \Config::get('scwms.ELEMENTS_TYPE.ITEMS')
+                                                    );
+        $oData->lPallets = SMovsUtils::getElementsToWarehouse(
+                                                      $request->whs_source,
+                                                      $request->whs_des,
+                                                      \Config::get('scwms.ELEMENTS_TYPE.PALLETS')
+                                                    );
+        $oData->lLots = SMovsUtils::getElementsToWarehouse(
+                                                      $request->whs_source,
+                                                      $request->whs_des,
+                                                      \Config::get('scwms.ELEMENTS_TYPE.LOTS')
+                                                    );
+
+        $iWhs = 0;
+        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_OUT')) {
+            $oData->lSrcLocations = SMovsUtils::getResWarehouseLocations($request->whs_source)->get();
+            $iWhs = $request->whs_source;
+        }
+        else {
+            $oData->lDesLocations = SMovsUtils::getResWarehouseLocations($request->whs_des)->get();
+            $iWhs = $request->whs_des;
         }
 
-        $this->saveMovement($movements, $request);
+        $oProcess = new SMovsManagment();
 
-        return redirect()->route('wms.movs.index', $movements[0]->folio);
+        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_OUT') ||
+              $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+                $oWarehouse = SWarehouse::find($request->whs_source);
+                $oData->iFolioSrc = $oProcess->getNewFolio($oWarehouse->branch_id,
+                                                              $oWarehouse->id_whs,
+                                                        \Config::get('scwms.MVT_CLS_OUT'),
+                                                        $request->mvt_type);
+        }
+        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_IN') ||
+              $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+                $oWarehouse = SWarehouse::find($request->whs_des);
+                $oData->iFolioDes = $oProcess->getNewFolio($oWarehouse->branch_id,
+                                                              $oWarehouse->id_whs,
+                                                              \Config::get('scwms.MVT_CLS_IN'),
+                                                              $request->mvt_type);
+        }
+
+        $oData->lStock = SMovsUtils::getStockFromWarehouse($iWhs, $request->mvt_id);
+
+        return json_encode($oData);
     }
 
     /**
-     * Saves the movement in DB and creates and saves stock rows
+     * Method that search the code written by the user
      *
-     * @param  [SMovement] $movement
-     * @param  [Array of SMovementRow] $movementRows
-     * @param  [SMovRequest] $request
-     */
-    private function saveMovement($movements, $request)
-    {
-        \DB::connection('company')->transaction(function() use ($movements, $request) {
-          try
-          {
-            foreach ($movements as $mov)
-            {
-                $movement = clone $mov;
-                $movement->save();
-
-                foreach ($mov->aAuxRows as $movRow)
-                {
-                  $row = clone $movRow;
-                  $row->mvt_id = $movement->id_mvt;
-                  $row->save();
-
-                  foreach ($movRow->getAuxLots() as $lotRow)
-                  {
-                     $lRow = clone $lotRow;
-                     $lRow->mvt_row_id = $row->id_mvt_row;
-                     $lRow->save();
-                  }
-                  // $row->lotRows()->saveMany($movRow->getAuxLots());
-                }
-
-                $movement = SMovement::find($movement->id_mvt);
-                foreach ($movement->rows as $row)
-                {
-                  $row->lotRows;
-                }
-
-                $stkController = new SStockController();
-                $stkController->store($request, $movement);
-
-                if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
-                  if ($movement->warehouse->is_quality) {
-                      session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
-                  }
-                }
-            }
-          }
-          catch (\Exception $e)
-          {
-              dd($e);
-          }
-       });
-    }
-
-    /**
-     * [children gets the data of code received from view]
+     * @param  Request $request contains the code written by the user in the
+     *                           variable "code"
      *
-     * @param  Request $request [parent, whs, idCls]
-     * @return [array]    [array of SMovementRow]
+     * @return JSON of object SData
      */
-    public function children(Request $request)
+    public function searchElement(Request $request)
     {
-      $rows = array();
+        $oObject = SBarcode::decodeBarcode($request->code);
+        $oData = new SData();
 
-      try
-      {
-          $dStock = 0.0;
-          $obj = SBarcode::decodeBarcode($request->parent);
-          // If the barcode is Item
-          if ($obj == NULL)
-          {
-            $items = SItem::where('is_deleted', false)->where('code', $request->parent)->get();
+        if ($oObject instanceof SItem) {
+            $oData->iElementType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+            $oObject->unit;
+        }
+        elseif ($oObject instanceof SWmsLot) {
+            $oData->iElementType = \Config::get('scwms.ELEMENTS_TYPE.LOTS');
+            $oObject->item;
+            $oObject->unit;
+        }
+        elseif ($oObject instanceof SPallet) {
+            $oData->iElementType = \Config::get('scwms.ELEMENTS_TYPE.PALLETS');
+            $oObject->item;
+            $oObject->unit;
 
-            foreach ($items as $item) {
-                $row = $this->createMovement($item->id_item, $item->unit_id, 0);
+            $aParameters = array();
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oObject->item_id;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oObject->unit_id;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $oObject->id_pallet;
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
 
-                $aParameters = array();
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $item->id_item;
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $item->unit_id;
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $request->whs;
-                $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
+            $oData->dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
+        }
+        elseif ($oObject instanceof SLocation) {
+            $oData->iElementType = \Config::get('scwms.ELEMENTS_TYPE.LOCATIONS');
+        }
 
-                $row->aux_stock = session('stock')->getStock($aParameters);
+        $oData->oElement = $oObject;
 
-                array_push($rows, $row);
-            }
-          }
-
-          // If the barcode is Pallet
-          elseif ($obj instanceof SPallet)
-          {
-              $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
-
-              $aParameters = array();
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $obj->item_id;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $obj->unit_id;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $obj->id_pallet;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $request->whs;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
-
-              $row->aux_stock = session('stock')->getStock($aParameters);
-
-              $result = session('stock')->getLotsOfPallet($obj->id_pallet, $request->whs);
-              $row->aux_lots = $this->createLotRows($result);
-
-              $qty = 0;
-              $amnt = 0;
-              foreach ($row->aux_lots as $lot) {
-                $qty += $lot->quantity;
-                $amnt += $lot->amount;
-              }
-
-              $row->quantity = $qty;
-              $row->amount = $amnt;
-              $row->amount_unit = $qty == 0 ? 0 : $amnt/$qty;
-              $row->pallet_id = $obj->id_pallet;
-
-              $location = SStockUtils::getPalletLocation($row->pallet_id);
-              $row->location_id = $location->id_whs_location;
-              $row->pallet;
-              $row->location->warehouse;
-
-              array_push($rows, $row);
-          }
-
-          //If the barcode is lot
-          elseif ($obj instanceof SWmsLot)
-          {
-              $row = $this->createMovement($obj->item_id, $obj->unit_id, $obj->quantity);
-              $row->aux_lot_id = $obj->id_lot;
-
-              $aParameters = array();
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $obj->item_id;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $obj->unit_id;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $obj->id_lot;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $request->whs;
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
-
-              $row->aux_stock = session('stock')->getStock($aParameters);
-
-              array_push($rows, $row);
-          }
-      }
-      catch (Exception $e)
-      {
-        \Debugbar::error($e);
-      }
-      finally
-      {
-        return $rows;
-      }
+        return json_encode($oData);
     }
 
     /**
-     * [createMovement description]
-     * @param  string $iItemId   [description]
-     * @param  string $iUnitId   [description]
-     * @param  string $dQuantity [description]
-     * @return [type]            [description]
+     * Validate if the lots introduced by the client
+     * are new or already exists on the datatabase
+     *
+     * @param  Request $request
+     *
+     * @return JSON of object SData
      */
-    public function createMovement($iItemId = '0', $iUnitId = '0', $dQuantity = '0')
+    public function validateRow(Request $request)
     {
-        $movRow = new SMovementRow();
-        $movRow->item_id = $iItemId;
-        $movRow->unit_id = $iUnitId;
-        $movRow->item->gender->itemClass;
-        $movRow->item->gender->group;
-        $movRow->unit;
-        $movRow->quantity = $dQuantity;
-        $movRow->pallet_id = 1;
-        $movRow->location_id = 1;
+        $lLots = array();
+        $lLotsToCreate = array();
+        $oData = new SData();
 
-        return $movRow;
-    }
+        if ($request->value != '') {
+           $oRow = json_decode($request->value);
+           $oItem = SItem::find($oRow->iItemId);
 
-    /**
-     * [createLotRows description]
-     * @param  array  $result [description]
-     * @return [type]         [description]
-     */
-    public function createLotRows($result = [])
-    {
-       $lotRows = array();
-       foreach ($result as $row) {
-          $mrl = new SMovementRowLot();
-          $mrl->lot_id = $row->lot_id;
-          $mrl->quantity = $row->stock;
-          $mrl->amount_unit = $row->cost_unit;
-          $mrl->amount = $mrl->quantity * $mrl->amount_unit;
+           if ($oItem->is_lot) {
+               $lLotsJs = $oRow->lAuxlotRows;
+               $lLotsToCreateJs = $oRow->lAuxlotsToCreate;
 
-          array_push($lotRows, $mrl);
-       }
+               foreach ($lLotsJs as $value) {
+                  $key = $value['0'];
+                  $lLots[$key] = $value['1'];
+               }
 
-       return $lotRows;
+               $oValidation = new SLotsValidations($lLots, $lLotsToCreateJs, $oItem);
+
+               $oValidation->validateLots();
+               $oData->lErrors = $oValidation->getErrors();
+               $oData->lNewLots = $oValidation->getLotsToCreate();
+               $oData->lLotRows = $oValidation->getLots();
+           }
+
+        }
+
+        return json_encode($oData);
     }
 }

@@ -224,7 +224,7 @@ class SGuiUtils {
      */
     public static function getDatesOfFilter($sDtFilter = '')
     {
-        $sFilterDate = $sDtFilter == null ? \Config::get('scsys.FILTER.MONTH') : $sDtFilter;
+        $sFilterDate = $sDtFilter == null ? SGuiUtils::getCurrentMonth() : $sDtFilter;
         $aDates = array();
 
         if (! is_null($sFilterDate) && $sFilterDate != '') {
@@ -239,5 +239,52 @@ class SGuiUtils {
         }
 
         return $aDates;
+    }
+
+    /**
+     * get the current month in range format string
+     * get the work date in session
+     *
+     * @return string [dd/mm/yyyy - dd/mm/yyyy]
+     */
+    public static function getCurrentMonth()
+    {
+       $month = session('work_date')->format('m');
+       $year = session('work_date')->format('Y');
+
+       $first = SGuiUtils::date_first_month_day($month, $year, 'd-m-Y');
+       $last = SGuiUtils::date_last_month_day($month, $year, 'd-m-Y');
+
+       $sStartDate = str_replace('-', '/', $first);
+       $sEndDate = str_replace('-', '/', $last);
+
+       return $sStartDate.' - '.$sEndDate;
+    }
+
+    /**
+     * gets the date of the last day of month and year received
+     *
+     * @param  integer $iMonth
+     * @param  integer $iYear
+     * @param  string $sFormat 'd-m-Y' or 'Y-m-d'
+     *
+     * @return string date based in format received
+     */
+    public static function date_last_month_day($iMonth = 0, $iYear = 0, $sFormat = '') {
+      $day = date("d", mktime(0,0,0, $iMonth + 1, 0, $iYear));
+
+      return date($sFormat, mktime(0,0,0, $iMonth, $day, $iYear));
+    }
+
+    /**
+     * gets the date of the first day of month and year received
+     *
+     * @param  integer $iMonth
+     * @param  integer $iYear
+     * @param  string $sFormat 'd-m-Y' or 'Y-m-d'
+     * @return string date based in format received
+     */
+    public static function date_first_month_day($iMonth = 0, $iYear = 0, $sFormat = '') {
+        return date($sFormat, mktime(0,0,0, $iMonth, 1, $iYear));
     }
 }

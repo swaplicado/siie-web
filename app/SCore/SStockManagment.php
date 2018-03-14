@@ -34,14 +34,52 @@ class SStockManagment
         return $query;
     }
 
-    public static function getStockResult($sSelect = '', $aParameters = [])
+    /**
+     * get the result of query without get();
+     *
+     * @param  array $aParameters [
+         * \Config::get('scwms.STOCK_PARAMS.SSELECT')
+         * \Config::get('scwms.STOCK_PARAMS.ITEM')
+         * \Config::get('scwms.STOCK_PARAMS.UNIT')
+         * \Config::get('scwms.STOCK_PARAMS.LOT')
+         * \Config::get('scwms.STOCK_PARAMS.PALLET')
+         * \Config::get('scwms.STOCK_PARAMS.LOCATION')
+         * \Config::get('scwms.STOCK_PARAMS.WHS')
+         * \Config::get('scwms.STOCK_PARAMS.BRANCH')
+         * \Config::get('scwms.STOCK_PARAMS.ID_YEAR')
+         * \Config::get('scwms.STOCK_PARAMS.DATE')
+         * \Config::get('scwms.STOCK_PARAMS.ID_MVT')
+         * ]
+         * @param  array $aParameters [
+             * \Config::get('scwms.STOCK_PARAMS.SSELECT')
+             * \Config::get('scwms.STOCK_PARAMS.ITEM')
+             * \Config::get('scwms.STOCK_PARAMS.UNIT')
+             * \Config::get('scwms.STOCK_PARAMS.LOT')
+             * \Config::get('scwms.STOCK_PARAMS.PALLET')
+             * \Config::get('scwms.STOCK_PARAMS.LOCATION')
+             * \Config::get('scwms.STOCK_PARAMS.WHS')
+             * \Config::get('scwms.STOCK_PARAMS.BRANCH')
+             * \Config::get('scwms.STOCK_PARAMS.ID_YEAR')
+             * \Config::get('scwms.STOCK_PARAMS.DATE')
+             * \Config::get('scwms.STOCK_PARAMS.ID_MVT')
+             * ]
+             *
+     * @return Query result of query
+     */
+    public static function getStockResult($aParameters = [], $aSegParameters = [])
     {
-        $sub = session('stock')->getSubSegregated($aParameters);
-        $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
+        $aSegregationParameters = array();
+        if ($aSegParameters == null || sizeof($aSegParameters) == 0) {
+            $aSegregationParameters = $aParameters;
+        }
+        else {
+            $aSegregationParameters = $aSegParameters;
+        }
 
-       $stock = SStockManagment::getStockBaseQuery($sSelect)
-                     ->groupBy(['ws.item_id', 'ws.unit_id'])
-                     ->where('ws.is_deleted', false);
+        $sub = session('stock')->getSubSegregated($aSegregationParameters);
+        $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ('.($sub->toSql()).') as segregated';
+
+       $stock = SStockManagment::getStockBaseQuery($sSelect);
 
        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ITEM'), $aParameters) &&
                $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] != 0) {
@@ -75,6 +113,10 @@ class SStockManagment
              $aParameters[\Config::get('scwms.STOCK_PARAMS.YEAR')] != 0) {
            $stock->where('ws.year_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.YEAR')]);
        }
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ID_MVT'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] != 0) {
+           $stock->where('ws.mvt_id', '!=',$aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')]);
+       }
 
        return $stock;
     }
@@ -106,6 +148,7 @@ class SStockManagment
         if ($iWhsId != 0) {
             $stock->where('ws.whs_id', $iWhsId);
         }
+
         $stock = $stock->get();
 
         return $stock;
@@ -128,10 +171,7 @@ class SStockManagment
     * @return [array] [aStock]
     */
     public static function getStock($aParameters = []) {
-
-        if (! array_key_exists(\Config::get('scwms.STOCK_PARAMS.SSELECT'), $aParameters)
-        || $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] == ''
-      ) {
+        if (! array_key_exists(\Config::get('scwms.STOCK_PARAMS.SSELECT'), $aParameters)) {
           $sSelect = 'ws.lot_id, wl.lot,
                            sum(ws.input) as inputs,
                            sum(ws.output) as outputs,
@@ -146,7 +186,8 @@ class SStockManagment
           $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
         }
 
-        $stock = session('stock')->getStockResult($aParameters);
+        $stock = session('stock')->getStockResult($aParameters, null)
+                      ->groupBy(['ws.item_id', 'ws.unit_id']);
         $stock = $stock->get();
 
         if (sizeof($stock) > 0)
@@ -211,8 +252,6 @@ class SStockManagment
                       ->whereRaw('wsr.year_id = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')])
                       ->whereRaw('wsr.item_id = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')])
                       ->whereRaw('wsr.unit_id = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')]);
-                      // ->addBinding($aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')])
-                      // ->addBinding($aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')]);
 
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] <> '0')
@@ -232,7 +271,7 @@ class SStockManagment
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOT'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] <> '0')
         {
-            $sub = $sub->whereRaw('wslr.lot_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
+            $sub = $sub->whereRaw('COALESCE(wslr.lot_id, 1) ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0')
@@ -298,6 +337,8 @@ class SStockManagment
                                   'ei.code as cve_item',
                                   'ei.name as item',
                                   'eu.code as unit',
+                                  'ei.is_lot',
+                                  'ei.is_bulk',
                                   'edr.concept_key',
                                   'edr.concept',
                                   'edr.price_unit_cur',

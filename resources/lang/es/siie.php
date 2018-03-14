@@ -71,6 +71,7 @@ return [
                   'EXCHANGE_RATE' => 'Tipo de cambio',
                   'FISCAL_ID' => 'RFC',
                   'ID_ERP' => 'ID ERP',
+                  'ITEM_SEARCH' => 'Búsqueda de material/producto',
                   'KEY' => 'Clave',
                   'NUM' => 'Núm.',
                   'PARTNER' => 'Asociado de negocios',

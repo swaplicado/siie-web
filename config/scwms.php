@@ -54,6 +54,17 @@ return [
     'MVT_EXP_TP_PUR' => '1', // purchases
     'MVT_EXP_TP_PRO' => '2', // production
 
+    'OPERATION_TYPE' => [
+                            'CREATION' => '1',
+                            'EDITION' => '2',
+                            'SUPPLY' => '3',
+                        ],
+
+    'OPERATION' => [
+                            'INPUT' => '1',
+                            'OUTPUT' => '2',
+                        ],
+
     'STOCK_TYPE'  =>  [
                         'STK_BY_ITEM' => '1',
                         'STK_BY_PALLET' => '2',
@@ -78,6 +89,7 @@ return [
                         'BRANCH' => '7',
                         'ID_YEAR' => '8',
                         'DATE' => '9',
+                        'ID_MVT' => '10',
                       ],
 
     'STOCK' => [
@@ -112,5 +124,13 @@ return [
                   'ID_STATUS_QLTY_PREV' => '7',
                   'ID_STATUS_QLTY_NEW' => '8',
                   'QUANTITY' => '9',
+                ],
+
+    'ELEMENTS_TYPE' => [
+                  'ITEMS' => '0',
+                  'LOTS' => '1',
+                  'PALLETS' => '2',
+                  'LOCATIONS' => '3',
+                  'NOT_FOUND' => '404',
                 ],
 ];
