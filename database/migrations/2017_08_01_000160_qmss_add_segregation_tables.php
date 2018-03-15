@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class WmssAddSegregationTables extends Migration {
+class QmssAddSegregationTables extends Migration {
     private $lDatabases;
     private $sConnection;
     private $sDataBase;
@@ -78,7 +78,7 @@ class WmssAddSegregationTables extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('qmss_seg_mov_types');
+          Schema::connection($this->sConnection)->drop('qmss_segregation_mvt_types');
           Schema::connection($this->sConnection)->drop('qmss_segregation_types');
         }
     }
