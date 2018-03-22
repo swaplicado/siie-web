@@ -57,6 +57,8 @@ class SImportDocuments
         '3' => '4',
       ];
 
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.DOCUMENTS'));
+
       $sql = "SELECT
             id_year,
             id_doc,
@@ -88,7 +90,11 @@ class SImportDocuments
         FROM
             trn_dps
         WHERE
-            id_year = ".$iYearId.";";
+            id_year = ".$iYearId." AND
+            (ts_new > '".$oImportation->last_importation."' OR
+            ts_edit > '".$oImportation->last_importation."' OR
+            ts_del > '".$oImportation->last_importation."')
+            ";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
@@ -165,6 +171,8 @@ class SImportDocuments
        foreach ($lDocumentsToWeb as $key => $document) {
          $document->save();
        }
+
+       SImportUtils::saveImportation($oImportation);
 
        return sizeof($lDocumentsToWeb);
   }

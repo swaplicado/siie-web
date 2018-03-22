@@ -10,7 +10,7 @@ class SLotsCore {
   }
 
   search(sCode) {
-    $.get('./' + (globalData.oDocument != 0 ? 'supply' : 'create' ) +
+    $.get('./' + (globalData.sRoute) +
                   '/search?code=' + sCode,
      function(data) {
         var serverData = JSON.parse(data);
@@ -106,7 +106,8 @@ class SLotsCore {
         oLot.iLotId,
         oLot.sLot,
         oLot.tExpDate,
-        parseFloat(oLot.dQuantity, 10).toFixed(globalData.DEC_QTY)
+        parseFloat(oLot.dQuantity, 10).toFixed(globalData.DEC_QTY),
+        (oLot.bCreate ? 'SÍ' : 'NO')
     ]).draw( false );
   }
 
@@ -242,6 +243,8 @@ function showLotsModal() {
 
     lotsCore.setFoundLot();
 
+    oLotsTable.column( 5 ).visible( true );
+
     $('#lotss_modal').modal('show');
     $('#search_lot').focus();
 }
@@ -266,10 +269,12 @@ function cleanEntry() {
 }
 
 function viewLots(iRow) {
-  console.log(iRow);
   document.getElementById('lot_edition').style.display = 'none';
   document.getElementById('delete_lot').style.display = 'none';
   document.getElementById('lot_accep_div').style.display = 'none';
+
+  oLotsTable.column( 5 ).visible( false );
+
   oLotsTable.clear().draw();
 
   var oRow = oMovement.getRow(iRow);
@@ -282,7 +287,6 @@ function viewLots(iRow) {
   }
 
   $('#lotss_modal').modal('show');
-
 }
 
 $('#accLots').on('click', function(e) {

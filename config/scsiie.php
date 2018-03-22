@@ -110,4 +110,9 @@ return [
   'FILTER_GENDER' =>       [
                     'ALL' => '0',
                   ],
+
+  'DOC_OPER' =>   [
+                    'CLOSE' => '0',
+                    'OPEN' => '1',
+                  ],
 ];

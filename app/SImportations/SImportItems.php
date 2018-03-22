@@ -37,10 +37,17 @@ class SImportItems
    */
   public function importItems()
   {
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.ITEMS'));
+
       $sql = "SELECT id_item, item_key, item,
                       len, surf, vol, mass,
                       b_lot, b_bulk, b_del,
-                      fid_unit, fid_igen, ts_new, ts_edit, ts_del FROM itmu_item";
+                      fid_unit, fid_igen, ts_new, ts_edit, ts_del FROM itmu_item
+                      WHERE
+                      ts_new > '".$oImportation->last_importation."' OR
+                      ts_edit > '".$oImportation->last_importation."' OR
+                      ts_del > '".$oImportation->last_importation."'
+                      ";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
@@ -88,6 +95,8 @@ class SImportItems
       foreach ($lItemsToWeb as $key => $oItem) {
          $oItem->save();
       }
+
+      SImportUtils::saveImportation($oImportation);
 
       return sizeof($lItemsToWeb);
   }

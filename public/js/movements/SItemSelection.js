@@ -36,7 +36,7 @@ class SItemSelection {
     }
 
     search(sCode) {
-      $.get('./' + (globalData.oDocument != 0 ? 'supply' : 'create' ) +
+      $.get('./' + (globalData.sRoute) +
                     '/search?code=' + sCode,
        function(data) {
           var serverData = JSON.parse(data);
@@ -181,7 +181,6 @@ class SItemSelection {
 
         obElement.iElementType = globalData.lElementsType.ITEMS;
 
-        obElement.iLocationId = oLocation.id_whs_location;
         obElement.iItemId = oItem.id_item;
         obElement.iUnitId = oItem.unit_id;
         obElement.iPalletId = 1;
@@ -192,7 +191,6 @@ class SItemSelection {
         obElement.sUnit = oItem.unit.code;
         obElement.bIsLot = oItem.is_lot;
         obElement.bIsBulk = oItem.is_bulk;
-        obElement.sLocation = oLocation.name;
 
         obElement.oElement = oItem;
 
@@ -204,7 +202,6 @@ class SItemSelection {
 
         obElement.iElementType = globalData.lElementsType.LOTS;
 
-        obElement.iLocationId = oLocation.id_whs_location;
         obElement.iItemId = oLot.item_id;
         obElement.iUnitId = oLot.unit_id;
         obElement.iPalletId = 1;
@@ -217,7 +214,6 @@ class SItemSelection {
         obElement.sUnit = oLot.unit.code;
         obElement.tExpDate = oLot.dt_expiry
         obElement.sLot = oLot.lot;
-        obElement.sLocation = oLocation.name;
 
         obElement.oElement = oLot;
 
@@ -229,7 +225,6 @@ class SItemSelection {
 
         obElement.iElementType = globalData.lElementsType.LOTS;
 
-        obElement.iLocationId = oLocation.id_whs_location;
         obElement.iItemId = oPallet.item_id;
         obElement.iUnitId = oPallet.unit_id;
         obElement.iPalletId = oPallet.id_pallet;
@@ -240,7 +235,6 @@ class SItemSelection {
         obElement.sItem = oPallet.item.name;
         obElement.sItemCode = oPallet.item.code;
         obElement.sUnit = oPallet.unit.code;
-        obElement.sLocation = oLocation.name;
 
         obElement.oElement = oPallet;
 

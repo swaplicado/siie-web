@@ -50,7 +50,7 @@ class SStockManagment
          * \Config::get('scwms.STOCK_PARAMS.DATE')
          * \Config::get('scwms.STOCK_PARAMS.ID_MVT')
          * ]
-         * @param  array $aParameters [
+         * @param  array $aSegParameters [
              * \Config::get('scwms.STOCK_PARAMS.SSELECT')
              * \Config::get('scwms.STOCK_PARAMS.ITEM')
              * \Config::get('scwms.STOCK_PARAMS.UNIT')
@@ -76,8 +76,9 @@ class SStockManagment
             $aSegregationParameters = $aSegParameters;
         }
 
-        $sub = session('stock')->getSubSegregated($aSegregationParameters);
-        $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ('.($sub->toSql()).') as segregated';
+        // $sub = session('stock')->getSubSegregated($aSegregationParameters);
+        // $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ('.($sub->toSql()).') as segregated';
+        $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ("0") as segregated';
 
        $stock = SStockManagment::getStockBaseQuery($sSelect);
 
@@ -109,9 +110,9 @@ class SStockManagment
              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] != 0) {
            $stock->where('ws.branch_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
        }
-       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.YEAR'), $aParameters) &&
-             $aParameters[\Config::get('scwms.STOCK_PARAMS.YEAR')] != 0) {
-           $stock->where('ws.year_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.YEAR')]);
+       if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ID_YEAR'), $aParameters) &&
+             $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] != 0) {
+           $stock->where('ws.year_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')]);
        }
        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ID_MVT'), $aParameters) &&
              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] != 0) {
@@ -254,28 +255,23 @@ class SStockManagment
                       ->whereRaw('wsr.unit_id = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')]);
 
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] <> '0')
-        {
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] <> '0') {
             $sub = $sub->whereRaw('wsr.branch_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')]);
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] <> '0')
-        {
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] <> '0') {
             $sub = $sub->whereRaw('wsr.whs_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.PALLET'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] <> '0')
-        {
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] <> '0') {
             $sub = $sub->whereRaw('wsr.pallet_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')]);
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.LOT'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] <> '0')
-        {
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] <> '0') {
             $sub = $sub->whereRaw('COALESCE(wslr.lot_id, 1) ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
-              $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0')
-        {
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0') {
             $sub = $sub->whereRaw('ws.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');
         }
 
@@ -283,7 +279,7 @@ class SStockManagment
     }
 
     /**
-     * [getSupplied description]
+     * [getSuppliedRes description]
      * @param  [type] $iDocCategory [description]
      * @param  [type] $iDocClass    [description]
      * @param  [type] $iDocType     [description]
@@ -294,7 +290,7 @@ class SStockManagment
      * @param  [type] $bWithPending [description]
      * @return [type]               [description]
      */
-    public static function getSupplied($iDocCategory, $iDocClass, $iDocType,
+    public static function getSuppliedRes($iDocCategory, $iDocClass, $iDocType,
                                         $FilterDel, $sFilterDate, $iViewType,
                                         $iDocId, $bWithPending)
     {
@@ -302,11 +298,13 @@ class SStockManagment
 
         if ($iViewType == \Config::get('scwms.DOC_VIEW.NORMAL'))
         {
-            $lDocuments =  $lDocuments->select('id_document',
-                                  'dt_date',
-                                  'dt_doc',
-                                  'num',
-                                  'is_closed',
+            $lDocuments =  $lDocuments->select('ed.id_document',
+                                  'ed.dt_date',
+                                  'ed.dt_doc',
+                                  'ed.num',
+                                  'ed.is_closed',
+                                  'ed.doc_src_id',
+                                  'edsrc.num as num_src',
                                   'ed.external_id',
                                   'ed.partner_id',
                                   'ed.is_deleted',
@@ -319,15 +317,16 @@ class SStockManagment
                                   \DB::raw('(SUM(edr.quantity) - COALESCE(SUM(wmr.quantity), 0))  AS pending')
                           )
                           ->groupBy('edr.document_id')
-                          ->orderBy('dt_doc', 'desc');
+                          ->orderBy('ed.dt_doc', 'DESC');
         }
         else
         {
-            $lDocuments =  $lDocuments->select('id_document',
-                                  'dt_date',
-                                  'dt_doc',
-                                  'num',
-                                  'is_closed',
+            $lDocuments =  $lDocuments->select('ed.id_document',
+                                  'ed.dt_date',
+                                  'ed.dt_doc',
+                                  'ed.num',
+                                  'edsrc.num as num_src',
+                                  'ed.is_closed',
                                   'ed.external_id',
                                   'ed.partner_id',
                                   'ed.is_deleted',
@@ -353,15 +352,15 @@ class SStockManagment
                           )
                           ->groupBy('edr.id_document_row')
                           ->groupBy('edr.document_id')
-                          ->orderBy('document_id', 'document_id');
+                          ->orderBy('ed.dt_doc', 'DESC');
         }
 
         if ($iDocId != 0)
         {
-            $lDocuments = $lDocuments->where('id_document', $iDocId);
+            $lDocuments = $lDocuments->where('ed.id_document', $iDocId);
         }
 
-        if (!$bWithPending)
+        if (! $bWithPending)
         {
             $lDocuments = $lDocuments->havingRaw('pending > 0');
         }
@@ -371,7 +370,6 @@ class SStockManagment
         {
           $lDocuments = SStockManagment::filterDate($lDocuments, $sFilterDate);
         }
-        $lDocuments = $lDocuments->get();
 
         return $lDocuments;
     }
@@ -387,6 +385,7 @@ class SStockManagment
        $sub = SStockManagment::getSubQuery($iDocCategory, $iDocClass, $iDocType);
        $query = \DB::connection(session('db_configuration')->getConnCompany())
                      ->table('erpu_documents AS ed')
+                     ->join('erpu_documents AS edsrc', 'ed.doc_src_id', '=', 'edsrc.id_document')
                      ->join('erpu_document_rows AS edr', 'ed.id_document', '=', 'edr.document_id')
                      ->join('erpu_items AS ei', 'edr.item_id', '=', 'ei.id_item')
                      ->join('erpu_units AS eu', 'edr.unit_id', '=', 'eu.id_unit')
@@ -400,9 +399,9 @@ class SStockManagment
                               ->on('edr.document_id', '=', \DB::raw("({$sub->toSql()})"));
                        })
                      ->mergeBindings($sub)
-                     ->where('doc_category_id', $iDocCategory)
-                     ->where('doc_class_id', $iDocClass)
-                     ->where('doc_type_id', $iDocType)
+                     ->where('ed.doc_category_id', $iDocCategory)
+                     ->where('ed.doc_class_id', $iDocClass)
+                     ->where('ed.doc_type_id', $iDocType)
                      ->where('eic.id_item_class', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'));
 
        return $query;
@@ -485,7 +484,7 @@ class SStockManagment
     public static function filterDate($lDocuments, $sDtFilter = '')
     {
         $aDates = SGuiUtils::getDatesOfFilter($sDtFilter);
-        $lDocuments =  $lDocuments->whereBetween('dt_doc', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+        $lDocuments =  $lDocuments->whereBetween('ed.dt_doc', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
 
         return $lDocuments;

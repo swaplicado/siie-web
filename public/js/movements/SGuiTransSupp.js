@@ -9,11 +9,43 @@ class SGuiTransSupp {
      * supplied
      */
     hideSetDataButton() {
-        document.getElementById('div_setdata').style.display = 'none';
+        try {
+          document.getElementById('div_setdata').style.display = 'none';
+        }
+        catch (e) {
+          console.log(e);
+        }
     }
 
     showSetDataButton() {
-        document.getElementById('div_setdata').style.display = 'inline';
+        try {
+          document.getElementById('div_setdata').style.display = 'inline';
+        }
+        catch (e) {
+          console.log(e);
+        }
+    }
+
+    /**
+     * hide the button to set data to row in transfers or
+     * supplied
+     */
+    hideCleanDataButton() {
+        try {
+          document.getElementById('div_cleandata').style.display = 'none';
+        }
+        catch (e) {
+          console.log(e);
+        }
+    }
+
+    showCleanDataButton() {
+        try {
+          document.getElementById('div_cleandata').style.display = 'inline';
+        }
+        catch (e) {
+          console.log(e);
+        }
     }
 
 }

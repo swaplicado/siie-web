@@ -21,7 +21,7 @@ class SStockUtils
      * @return [array]  [returns an array with the erros description,
      *                    if the array is empty means that errors not found]
      */
-    public static function validateStock($oMovement = '')
+    public static function validateStock0($oMovement = '')
     {
         $aErrors = array();
 
@@ -89,6 +89,109 @@ class SStockUtils
                     return $aErrors;
                 }
             }
+        }
+
+        return $aErrors;
+    }
+    /**
+     * [validate the stock before the movement is made]
+     *
+     * @param  SMovement $oMovement
+     * @return [array]  [returns an array with the erros description,
+     *                    if the array is empty means that errors not found]
+     */
+    public static function validateStock($oMovement = '')
+    {
+        $aErrors = array();
+
+        if ($oMovement == '') {
+          array_push($aErrors, "El movimiento está vacío");
+          return $aErrors;
+        }
+
+        $sSelect = 'sum(ws.input) as inputs,
+                     sum(ws.output) as outputs,
+                     (sum(ws.input) - sum(ws.output)) as stock,
+                     AVG(ws.cost_unit) as cost_unit,
+                     ei.code as item_code,
+                     ei.name as item,
+                     eu.code as unit_code,
+                     ei.is_lot,
+                     ei.id_item,
+                     eu.id_unit,
+                     ws.lot_id,
+                     wl.lot,
+                     ws.pallet_id,
+                     ws.location_id
+                     ';
+
+        $aParameters = array();
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oMovement->branch_id;
+
+        $lStock = session('stock')->getStockResult($aParameters, $aParameters);
+
+        $lStock = $lStock->groupBy('id_item')
+                            ->groupBy('id_unit')
+                            ->groupBy('lot_id')
+                            ->groupBy('pallet_id')
+                            ->groupBy('location_id')
+                            ->get();
+
+        $bFound = false;
+        $lStockC = $lStock;
+
+        foreach ($oMovement->aAuxRows as $oRow) {
+          foreach ($lStockC as $oStock) {
+             if ($oStock->id_item == $oRow->item_id && $oStock->id_unit == $oRow->unit_id) {
+                if ($oStock->location_id == $oRow->location_id) {
+                   if ($oStock->pallet_id == $oRow->pallet_id) {
+                      if ($oRow->item->is_lot) {
+                          foreach ($oRow->getAuxLots() as $oLotRow) {
+                             if ($oLotRow->lot_id == $oStock->lot_id) {
+                                 $bFound = true;
+                                 if ($oStock->stock < $oLotRow->quantity) {
+                                   if ($oRow->pallet_id == 1) {
+                                     array_push($aErrors, "No hay suficientes existencias
+                                                            SIN TARIMA del lote ".$oLotRow->lot->lot."
+                                                              en la ubicación: ".$oRow->location->name);
+                                   }
+                                   else {
+                                     array_push($aErrors, "No hay suficientes existencias del lote ".$oLotRow->lot->lot.
+                                                            " en la tarima ".$oRow->pallet->pallet.
+                                                              " en la ubicación: ".$oRow->location->name);
+                                   }
+                                 }
+                                 else {
+                                   $oStock->stock -= $oLotRow->quantity;
+                                 }
+                             }
+                          }
+                      }
+                      else {
+                        $bFound = true;
+                        if ($oStock->stock < $oRow->quantity) {
+                            if ($movRow->pallet_id == 1) {
+                              array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
+                                                      material/producto ".$movRow->item->name.
+                                                      " en la ubicación: ".$oRow->location->name);
+                            }
+                            else {
+                              array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name.
+                                                      " en la tarima ".$movRow->pallet->pallet."
+                                                        en la ubicación: ".$oRow->location->name);
+                            }
+                        }
+                        else {
+                          $oStock->stock -= $oRow->quantity;
+                        }
+                      }
+                   }
+                }
+             }
+          }
         }
 
         return $aErrors;

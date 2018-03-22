@@ -1,6 +1,3 @@
-/*
-* language of datatables
-*/
 $('#table_id').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
@@ -25,9 +22,32 @@ $('#table_id').DataTable({
             "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         }
-      }
-  });
-
-  $(document).ready( function () {
-    $('#table_id').DataTable();
+      },
+      "colReorder": true,
+      "scrollX": true,
+      "columnDefs": [
+        {
+            "targets": 0,
+            "className": "text-center",
+            "width": "7%"
+        },
+        {
+            "targets": 1,
+            "className": "text-center",
+            "width": "5%"
+        },
+        {
+            "targets": 2,
+            "width": "15%"
+        },
+        {
+            "targets": [3, 4],
+            "width": "10%"
+        },
+        {
+            "targets": [5, 9],
+            "className": "text-center",
+            "width": "5%"
+        }
+      ],
   });

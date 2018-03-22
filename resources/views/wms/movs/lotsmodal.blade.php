@@ -105,6 +105,7 @@
                         <th>{{ trans('wms.labels.LOT') }}</th>
                         <th>{{ trans('wms.labels.EXPIRATION') }}</th>
                         <th>{{ trans('userinterface.labels.QUANTITY') }}</th>
+                        <th>{{ trans('actions.CREATE') }}</th>
                     </tr>
                 </thead>
                 <tbody>

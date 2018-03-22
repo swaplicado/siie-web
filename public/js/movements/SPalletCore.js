@@ -14,7 +14,7 @@ class SPalletCore {
   }
 
   search(sCode) {
-    $.get('./' + (globalData.oDocument != 0 ? 'supply' : 'create' ) +
+    $.get('./' + (globalData.sRoute) +
                   '/search?code=' + sCode,
      function(data) {
         var serverData = JSON.parse(data);
@@ -64,8 +64,11 @@ class SPalletCore {
 
   cleanPallet() {
     guiFunctions.setPalletNameLabel('--');
-    elementToAdd.iPalletId = 1;
-    elementToAdd.sPallet = 'N/A';
+    
+    if (elementToAdd != null) {
+      elementToAdd.iPalletId = 1;
+      elementToAdd.sPallet = 'N/A';
+    }
   }
 
 }

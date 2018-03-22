@@ -1,6 +1,7 @@
 <?php namespace App\SImportations;
 
 use App\ERP\SPartner;
+use App\SImportations\SImportUtils;
 
 /**
  * this class import the data of items from siie
@@ -34,9 +35,15 @@ class SImportPartners {
    */
   public function importPartners()
   {
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.PARTNERS'));
+
       $sql = "SELECT id_bp, bp, lastname, firstname, fiscal_id,
               b_del, b_co, b_cus, b_sup, b_att_rel_pty,
-              ts_new, ts_edit, ts_del FROM bpsu_bp";
+              ts_new, ts_edit, ts_del FROM bpsu_bp WHERE
+              ts_new > '".$oImportation->last_importation."' OR
+              ts_edit > '".$oImportation->last_importation."' OR
+              ts_del > '".$oImportation->last_importation."'
+              ";
       $result = $this->webcon->query($sql);
 
       $lSiiePartners = array();
@@ -82,6 +89,8 @@ class SImportPartners {
        foreach ($lPartnersToWeb as $key => $partner) {
          $partner->save();
        }
+
+       SImportUtils::saveImportation($oImportation);
 
        return sizeof($lPartnersToWeb);
   }

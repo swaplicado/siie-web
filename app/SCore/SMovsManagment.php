@@ -19,7 +19,7 @@ use App\SCore\SStockUtils;
  */
 class SMovsManagment {
 
-    public function processTheMovement($oMovement, $aMovementRows, $iMvtClass,
+    public function processTheMovement($iOperation, $oMovement, $aMovementRows, $iMvtClass,
                                             $iMvtType, $iWhsSrc, $iWhsDes, $oPalletData, $oRequest)
     {
         $movements = $this->processMovement($oMovement,
@@ -32,7 +32,7 @@ class SMovsManagment {
 
         foreach ($movements as $mov) {
           if ($mov->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
-            $aErrors = $this->validateStock($mov);
+            $aErrors = SStockUtils::validateStock($mov);
 
             if(sizeof($aErrors) > 0)
             {
@@ -41,50 +41,44 @@ class SMovsManagment {
           }
         }
 
-        foreach ($movements as $mov) {
-           $iFolio = $this->getNewFolio($mov->branch_id, $mov->whs_id, $mov->mvt_whs_class_id, $mov->mvt_whs_type_id);
-           if ($iFolio > 0)
-           {
-              $mov->folio = $iFolio;
-           }
-           else
-           {
-             $aErrors[0] = "No hay un folio asignado para este tipo de movimiento";
+        if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
+          foreach ($movements as $mov) {
 
-             return $aErrors;
-           }
+             $iFolio = $this->getNewFolio($mov->branch_id, $mov->whs_id, $mov->mvt_whs_class_id, $mov->mvt_whs_type_id);
+             if ($iFolio > 0)
+             {
+                $mov->folio = $iFolio;
+             }
+             else
+             {
+               $aErrors[0] = "No hay un folio asignado para este tipo de movimiento";
+
+               return $aErrors;
+             }
+          }
         }
 
-        $this->saveMovement($movements, $oRequest);
+        $this->saveMovement($movements, $oRequest, $iOperation);
 
         return $movements[0]->folio;
     }
 
-    /**
-     * Saves the movement in DB and creates and saves stock rows
-     *
-     * @param  [SMovement] $movement
-     * @param  [Array of SMovementRow] $movementRows
-     * @param  [SMovRequest] $oRequest
-     */
-    private function saveMovement($movements, $oRequest)
+
+    private function saveMovement($movements, $oRequest, $iOperation)
     {
         try
         {
           \DB::connection('company')->transaction(function() use ($movements, $oRequest) {
-            foreach ($movements as $mov)
-            {
+            foreach ($movements as $mov) {
                 $movement = clone $mov;
                 $movement->save();
 
-                foreach ($mov->aAuxRows as $movRow)
-                {
+                foreach ($mov->aAuxRows as $movRow) {
                   $row = clone $movRow;
                   $row->mvt_id = $movement->id_mvt;
                   $row->save();
 
-                  foreach ($movRow->getAuxLots() as $lotRow)
-                  {
+                  foreach ($movRow->getAuxLots() as $lotRow) {
                      $lRow = clone $lotRow;
                      $lRow->mvt_row_id = $row->id_mvt_row;
                      $lRow->save();
@@ -93,8 +87,7 @@ class SMovsManagment {
                 }
 
                 $movement = SMovement::find($movement->id_mvt);
-                foreach ($movement->rows as $row)
-                {
+                foreach ($movement->rows as $row) {
                   $row->lotRows;
                 }
 
@@ -103,7 +96,7 @@ class SMovsManagment {
 
                 if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
                   if ($movement->warehouse->is_quality) {
-                      session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
+                      // session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
                   }
                 }
             }
@@ -378,6 +371,10 @@ class SMovsManagment {
         $oMovementRow->doc_debit_note_row_id = 1;
         $oMovementRow->doc_credit_note_row_id = 1;
 
+        if (is_null($iDocRowId) || $iDocRowId == 0) {
+          return $oMovementRow;
+        }
+
         $oRow = SDocumentRow::find($iDocRowId);
         $oDocument = $oRow->document;
 
@@ -419,7 +416,8 @@ class SMovsManagment {
        // The movement is adjust or input by purchases
        if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
             $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-              $iMovType == \Config::get('scwms.MVT_TP_IN_PUR')) {
+              $iMovType == \Config::get('scwms.MVT_TP_IN_PUR') ||
+                $iMovType == \Config::get('scwms.MVT_TP_OUT_SAL')) {
           return $this->createTheMovement($oMovement, $aMovementRows);
        }
        // The movement is trasfer

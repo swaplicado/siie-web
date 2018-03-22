@@ -82,8 +82,6 @@ class SMovsController extends Controller
                     ->with('rows', $lMovRows);
     }
 
-
-
     /**
      * index for the view of inventory documents
      *
@@ -94,9 +92,11 @@ class SMovsController extends Controller
     public function inventoryDocs(Request $request)
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
-        $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC')->paginate(20);
+        $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC')->get();
 
         foreach ($lMovs as $mov) {
+            $mov->order;
+            $mov->invoice;
             $mov->branch;
             $mov->warehouse;
             $mov->mvtType;
@@ -146,11 +146,11 @@ class SMovsController extends Controller
             $iViewType = \Config::get('scwms.DOC_VIEW.DETAIL');
             $bWithPending = true;
 
-            $lDocData = session('stock')::getSupplied($oDocument->doc_category_id,
+            $lDocData = session('stock')::getSuppliedRes($oDocument->doc_category_id,
                                             $oDocument->doc_class_id,
                                             $oDocument->doc_type_id, $FilterDel,
                                             $sFilterDate, $iViewType, $iDocId,
-                                            $bWithPending);
+                                            $bWithPending)->get();
         }
         else
         {
@@ -331,8 +331,7 @@ class SMovsController extends Controller
         $movement->year_id = session('work_year');
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
-        // $movement = SMovsManagment::assignForeignDoc($movement, $movement->mvt_whs_type_id, $oData['iDocumentId']);
-        $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, 0);
+        $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, $oMovementJs->iDocumentId);
         $movement->auth_status_by_id = 1;
         $movement->closed_shipment_by_id = 1;
         $movement->created_by_id = \Auth::user()->id;
@@ -345,6 +344,9 @@ class SMovsController extends Controller
            $lRowsJs[$key] = $value['1'];
         }
 
+        // save new lots required for the movement
+        $lCreatedLots = $oProcess->saveLots($oMovementJs->lAuxlotsToCreate);
+
         $dTotalAmount = 0;
         $movementRows = array();
         foreach ($lRowsJs as $row) {
@@ -352,18 +354,16 @@ class SMovsController extends Controller
 
            $oMvtRow->quantity = $row->dQuantity;
            $oMvtRow->amount_unit = $row->dPrice;
+           $oMvtRow->amount = $oMvtRow->quantity * $oMvtRow->amount_unit;
            $oMvtRow->item_id = $row->iItemId;
            $oMvtRow->unit_id = $row->iUnitId;
            $oMvtRow->pallet_id = $row->iPalletId;
            $oMvtRow->location_id = $row->iLocationId;
 
-           $oMvtRow = $oProcess->assignForeignRow($oMvtRow, $movement->mvt_whs_type_id, $row->iDocOrderRowId);
+           $oMvtRow = $oProcess->assignForeignRow($oMvtRow, $movement->mvt_whs_type_id, $row->iAuxDocRowId);
 
            $movLotRows = array();
            if ($row->bIsLot && isset($row->lAuxlotRows)) {
-
-             // save new lots required for the movement
-             $lCreatedLots = $oProcess->saveLots($oMovementJs->lAuxlotsToCreate);
 
              $lLotRowsJs = array();
              foreach ($row->lAuxlotRows as $value) {
@@ -383,6 +383,7 @@ class SMovsController extends Controller
                  $oMovLotRow->quantity = $rowsJs->dQuantity;
                  $oMovLotRow->amount_unit = $rowsJs->dPrice;
                  $oMovLotRow->lot_id = $rowsJs->iLotId;
+                 $oMovLotRow->is_deleted = false;
 
                  array_push($movLotRows, $oMovLotRow);
                  $dTotalAmount += ($oMovLotRow->quantity * $oMovLotRow->amount_unit);
@@ -399,7 +400,8 @@ class SMovsController extends Controller
         $movement->total_amount = $dTotalAmount;
         $oPalletData = null;
 
-        $aResult = $oProcess->processTheMovement($movement, $movementRows,
+        $aResult = $oProcess->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
+                                                    $movement, $movementRows,
                                                     $request->input('mvt_whs_class_id'),
                                                     $oMovementJs->iMvtType,
                                                     $iWhsSrc,
@@ -408,10 +410,10 @@ class SMovsController extends Controller
                                                     $request);
 
         if (is_array($aResult)) {
-          if(sizeof($aErrors) > 0) {
+          if(sizeof($aResult) > 0) {
               return redirect()
                         ->back()
-                        ->withErrors($aErrors)
+                        ->withErrors($aResult)
                         ->withInput();
           }
         }
@@ -452,8 +454,44 @@ class SMovsController extends Controller
         }
       }
 
-      $oDocument = 0;
       $lDocData = array();
+      $lStock = null;
+
+      $iDocId = 0;
+      if ($oMovement->doc_order_id != 1) {
+        $iDocId = $oMovement->doc_order_id;
+      }
+      elseif($oMovement->doc_invoice_id != 1) {
+        $iDocId = $oMovement->doc_invoice_id;
+      }
+      elseif($oMovement->doc_credit_note_id != 1) {
+        $iDocId = $oMovement->doc_credit_note_id;
+      }
+      elseif($oMovement->doc_debit_note_id != 1) {
+        $iDocId = $oMovement->doc_debit_note_id;
+      }
+
+      // get the document if the id != 0
+      if ($iDocId != 0)
+      {
+          $oDocument = SDocument::find($iDocId);
+          $oDocument->rows;
+
+          $FilterDel = \Config::get('scsys.FILTER.ACTIVES');
+          $sFilterDate = null;
+          $iViewType = \Config::get('scwms.DOC_VIEW.DETAIL');
+          $bWithPending = true;
+
+          $lDocData = session('stock')::getSuppliedRes($oDocument->doc_category_id,
+                                          $oDocument->doc_class_id,
+                                          $oDocument->doc_type_id, $FilterDel,
+                                          $sFilterDate, $iViewType, $iDocId,
+                                          $bWithPending)->get();
+      }
+      else
+      {
+          $oDocument = 0;
+      }
 
       $iMvtSubType = $oMovement->mvt_whs_type_id;
       $lStock = null;
@@ -526,9 +564,9 @@ class SMovsController extends Controller
 
       return view('wms.movs.whsmovs')
                         ->with('oMovement', $oMovement)
+                        ->with('oDocument', $oDocument)
                         ->with('iOperation', $iOperation)
                         ->with('iMvtSubType', $iMvtSubType)
-                        ->with('oDocument', $oDocument)
                         ->with('lDocData', $lDocData)
                         ->with('movTypes', $movTypes)
                         ->with('mvtComp', $mvtComp)
@@ -540,6 +578,162 @@ class SMovsController extends Controller
                         ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
                         ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean);
 
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+       $oMovement = SMovement::find($id);
+       $oMovementJs = json_decode($request->input('movement_object'));
+
+       $oMovement->updated_by_id = \Auth::user()->id;
+
+       //transform the hash map to normal array of php
+       $lRowsJs = array();
+       foreach ($oMovementJs->lAuxRows as $value) {
+          $key = $value['0'];
+          $lRowsJs[$key] = $value['1'];
+       }
+
+       $oProcess = new SMovsManagment();
+
+       // save new lots required for the movement
+       $lCreatedLots = $oProcess->saveLots($oMovementJs->lAuxlotsToCreate);
+
+       $dTotalAmount = 0;
+       $movementRows = array();
+       foreach ($lRowsJs as $row) {
+          if ($row->iIdMovRow > 0) {
+            $oMvtRow = SMovementRow::find($row->iIdMovRow);
+
+            if (!$oMvtRow->is_deleted && $row->bIsDeleted) {
+              $oMvtRow->is_deleted = true;
+
+              $movLotRows = array();
+              if ($row->bIsLot && sizeof($row->lAuxlotRows) > 0) {
+
+                $lLotRowsJs = array();
+                foreach ($row->lAuxlotRows as $value) {
+                   $key = $value['0'];
+
+                   if ($value['1']->iLotId == 0) {
+                       if (array_key_exists($value['1']->iKeyLot, $lCreatedLots)) {
+                          $value['1']->iLotId = $lCreatedLots[$value['1']->iKeyLot]->id_lot;
+                       }
+                   }
+
+                   $lLotRowsJs[$key] = $value['1'];
+                }
+
+                foreach ($lLotRowsJs as $rowsJs) {
+                    if ($rowsJs->iIdLotRow > 0) {
+                        $oMovLotRow = SMovementRowLot::find($rowsJs->iIdLotRow);
+                        $oMovLotRow->is_deleted = true;
+                    }
+                    else {
+                        $oMovLotRow = new SMovementRowLot();
+                        $oMovLotRow->quantity = $rowsJs->dQuantity;
+                        $oMovLotRow->amount_unit = $rowsJs->dPrice;
+                        $oMovLotRow->lot_id = $rowsJs->iLotId;
+                    }
+
+                    array_push($movLotRows, $oMovLotRow);
+                }
+
+                $oMvtRow->setAuxLots($movLotRows);
+              }
+
+              array_push($movementRows, $oMvtRow);
+            }
+            else {
+              $dTotalAmount += $oMvtRow->amount;
+            }
+          }
+          else {
+            $oMvtRow = new SMovementRow();
+
+            $oMvtRow->quantity = $row->dQuantity;
+            $oMvtRow->amount_unit = $row->dPrice;
+            $oMvtRow->amount = $oMvtRow->quantity * $oMvtRow->amount_unit;
+            $oMvtRow->item_id = $row->iItemId;
+            $oMvtRow->unit_id = $row->iUnitId;
+            $oMvtRow->pallet_id = $row->iPalletId;
+            $oMvtRow->location_id = $row->iLocationId;
+
+            $oMvtRow = $oProcess->assignForeignRow($oMvtRow, $oMovement->mvt_whs_type_id, $row->iAuxDocRowId);
+
+            $movLotRows = array();
+            if ($row->bIsLot && sizeof($row->lAuxlotRows) > 0) {
+
+              $lLotRowsJs = array();
+              foreach ($row->lAuxlotRows as $value) {
+                 $key = $value['0'];
+
+                 if ($value['1']->iLotId == 0) {
+                     if (array_key_exists($value['1']->iKeyLot, $lCreatedLots)) {
+                        $value['1']->iLotId = $lCreatedLots[$value['1']->iKeyLot]->id_lot;
+                     }
+                 }
+
+                 $lLotRowsJs[$key] = $value['1'];
+              }
+
+              foreach ($lLotRowsJs as $rowsJs) {
+                  $oMovLotRow = new SMovementRowLot();
+                  $oMovLotRow->quantity = $rowsJs->dQuantity;
+                  $oMovLotRow->amount_unit = $rowsJs->dPrice;
+                  $oMovLotRow->lot_id = $rowsJs->iLotId;
+
+                  array_push($movLotRows, $oMovLotRow);
+                  $dTotalAmount += ($oMovLotRow->quantity * $oMovLotRow->amount_unit);
+              }
+            }
+            else {
+              $dTotalAmount += ($oMvtRow->quantity * $oMvtRow->amount_unit);
+            }
+
+            $oMvtRow->setAuxLots($movLotRows);
+            array_push($movementRows, $oMvtRow);
+          }
+       }
+
+       $oMovement->total_amount = $dTotalAmount;
+       $oPalletData = null;
+
+       if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
+          $iWhsSrc = $oMovement->whs_id;
+          $iWhsDes = 0;
+       }
+       else {
+          $iWhsSrc = 0;
+          $iWhsDes = $oMovement->whs_id;
+       }
+
+       $aResult = $oProcess->processTheMovement(\Config::get('scwms.OPERATION_TYPE.EDITION'),
+                                                   $oMovement, $movementRows,
+                                                   $oMovement->mvt_whs_class_id,
+                                                   $oMovement->mvt_whs_type_id,
+                                                   $iWhsSrc,
+                                                   $iWhsDes,
+                                                   $oPalletData,
+                                                   $request);
+
+       if (is_array($aResult)) {
+         if(sizeof($aErrors) > 0) {
+             return redirect()
+                       ->back()
+                       ->withErrors($aErrors)
+                       ->withInput();
+         }
+       }
+
+       return redirect()->route('wms.movs.index', $aResult);
     }
 
     /**

@@ -55,6 +55,7 @@ return [
       'BRANCHES' => 'Sucursales',
       'ADDRESSES' => 'Direcciones de sucursales',
       'DOCUMENTS' => 'Documentos',
+      'ROWS' => 'Renglones',
       'ROWS1' => 'Renglones parte 1',
       'ROWS2' => 'Renglones parte 2',
       'TAXES1' => 'Renglones de impuestos 1',

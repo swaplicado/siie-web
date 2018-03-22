@@ -26,17 +26,20 @@ class SRowsCore {
     // updateLocationsTable();
 
     guiFunctions.changeClassToSecondary('btn_pallet');
+    palletCore.cleanPallet();
     guiValidations.hidePallet();
 
     guiFunctions.changeClassToSecondary('btn_lots');
     lLotsToAdd = new Map();
+    oLotsTable.clear().draw();
+
     document.getElementById('lot_edition').style.display = 'inline';
     document.getElementById('delete_lot').style.display = 'inline';
     document.getElementById('lot_accep_div').style.display = 'inline';
-    oLotsTable.clear().draw();
+
     guiValidations.hideLots();
 
-    guiValidations.hideAdd();
+    // guiValidations.hideAdd();
 
     $('#item').focus();
   }
@@ -61,11 +64,20 @@ class SRowsCore {
       rowsCore.cleanAddPanel();
   }
 
-  deleteMovRow(tRow) {
+  deleteMovRow(tRow, index) {
     oMovsTable.row('.selected').remove().draw( false );
     var oRow = oMovement.getRow(tRow[0]);
-    if (headerCore.validateAndUdpateStock(oRow, globalData.lOperation.OUTPUT)) {
+    oRow.iAuxIndex = index;
+
+    if (! oRow.bAuxToStock) {
         oMovement.removeRow(tRow[0]);
+    }
+    else if (headerCore.validateAndUdpateStock(oRow, globalData.lOperation.OUTPUT)) {
+        oMovement.removeRow(tRow[0]);
+    }
+
+    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+      supplyCore.updateRow(oRow, supplyCore.CLEAN);
     }
   }
 
@@ -79,20 +91,26 @@ class SRowsCore {
 
   getStockButton(id) {
     return  "<button type='button' onClick='viewStock(" + id + ")'" +
-    "class='butstk btn btn-success btn-md'" +
-    "data-toggle='modal' data-target='#stock_modal'" +
-    "title='Ver existencias'>" +
-    "<i class='glyphicon glyphicon-info-sign'></i>" +
-    "</button>"
+                "class='butstk btn btn-success btn-md'" +
+                "data-toggle='modal' data-target='#stock_modal'" +
+                "title='Ver existencias'>" +
+                "<i class='glyphicon glyphicon-info-sign'></i>" +
+                "</button>"
   }
 
   validateClientRow() {
+      if (elementToAdd == null) {
+        swal("Error", "Debe seleccionar un elemento para agregar.", "error");
+        return false;
+      }
+
       if (globalData.bIsInputMov) {
          if (guiFunctions.getPrice() <= 0) {
            swal("Error", "El precio debe ser mayor a cero.", "error");
            return false;
          }
       }
+
       if (elementToAdd.bIsLot && lLotsToAdd.size == 0) {
            swal("Error", "Debe asignar lotes.", "error");
            return false;
@@ -113,7 +131,7 @@ class SRowsCore {
     var data = { value : JSON.stringify(elementToAdd) };
     $.ajax({
       type: "POST",
-      url: './' + (globalData.oDocument != 0 ? 'supply' : 'create') + '/validaterow',
+      url: './' + (globalData.sRoute) + '/validaterow',
       data: data,
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -149,14 +167,15 @@ class SRowsCore {
               elementToAdd.dQuantity = guiFunctions.getQuantity();
             }
 
+            elementToAdd.iLocationId = oLocation.id_whs_location;
+            elementToAdd.sLocation = oLocation.code.toUpperCase();
+
             if (headerCore.validateAndUdpateStock(elementToAdd, globalData.lOperation.INPUT)) {
-                if (globalData.iMvtType != globalData.MVT_TP_IN_PUR) {
-                    rowsCore.addRow(elementToAdd);
-                    guiValidations.showDelete();
+                if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+                  supplyCore.updateRow(elementToAdd, supplyCore.ADD);
                 }
-                else {
-                    supplyCore.updateRow(elementToAdd);
-                }
+                rowsCore.addRow(elementToAdd);
+                guiValidations.showDelete();
             }
          }
       }
@@ -234,13 +253,14 @@ function addElement() {
 
 function deleteElement() {
   var row = oMovsTable.row('.selected').data();
+  var index = oMovsTable.row('.selected').index();
 
   if (row == undefined) {
     swal("Error", "Debe seleccionar un elemento.", "error");
     return false;
   }
 
-  rowsCore.deleteMovRow(row);
+  rowsCore.deleteMovRow(row, index);
 }
 
 function cleanPanel() {

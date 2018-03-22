@@ -33,16 +33,19 @@
 	@endsection
 	<br />
 	<div class="row">
-		<table id="docs_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+		<table id="docs_table" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
 								<th data-priority="1">Fecha</th>
 		            <th data-priority="1">Folio</th>
-		            <th data-priority="1">Monto</th>
+		            <th>Monto</th>
 								<th data-priority="1">Tipo movimiento</th>
 								<th data-priority="1">Subtipo</th>
-		            <th>Sucursal</th>
-		            <th>Almacén</th>
+								<th>Sucursal</th>
+		            <th data-priority="1">Almacén</th>
+								<th data-priority="1">Doc</th>
+								<th>Clase</th>
+								<th>Cat</th>
 		            <th>Opciones</th>
 		        </tr>
 		    </thead>
@@ -67,6 +70,27 @@
 								@endif
 								<td>{{ $mov->branch->name }}</td>
 								<td>{{ $mov->warehouse->name }}</td>
+								@if ($mov->doc_order_id != 1)
+									<td>{{ $mov->order->num }}</td>
+									<td>{{ $mov->order->docClass->name }}</td>
+									<td>{{ $mov->order->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+								@elseif($mov->doc_invoice_id != 1)
+									<td>{{ $mov->invoice->num }}</td>
+									<td>{{ $mov->invoice->docClass->name }}</td>
+									<td>{{ $mov->invoice->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+								@elseif($mov->doc_debit_note_id != 1)
+									<td>{{ 'NA' }}</td>
+									<td>{{ 'NA' }}</td>
+									<td>{{ 'NA' }}</td>
+								@elseif($mov->doc_credit_note_id != 1)
+									<td>{{ 'NA' }}</td>
+									<td>{{ 'NA' }}</td>
+									<td>{{ 'NA' }}</td>
+								@else
+									<td>N/A</td>
+									<td>N/A</td>
+									<td>N/A</td>
+								@endif
 								<td>
       						<?php
       								$oRegistry = $mov;

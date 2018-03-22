@@ -21,6 +21,9 @@ class SHeaderCore {
         movement.iMvtType = document.getElementById('mvt_whs_type_id').value;
         movement.iMvtSubType = document.getElementById('mvt_com').value;
         movement.tDate = document.getElementById('dt_date').value;
+        if (! Number.isInteger(globalData.oDocument)) {
+          movement.iDocumentId = globalData.oDocument.id_document;
+        }
 
         if (movement.iMvtType == globalData.MVT_TP_OUT_TRA) {
             movement.iWhsSrc = document.getElementById('whs_src').value;
@@ -55,7 +58,7 @@ class SHeaderCore {
       var idMov = (globalData.iOperation == globalData.lOperationType.EDITION ? globalData.iMvtId : 0);
 
       showLoading(5000);
-      $.get('./' + (globalData.oDocument != 0 ? 'supply' : 'create' ) +
+      $.get('./' + (globalData.sRoute) +
                     '/data?whs_source=' + movement.iWhsSrc +
                     '&whs_des=' + movement.iWhsDes +
                     '&mvt_cls=' + globalData.iMvtClass +
@@ -134,12 +137,18 @@ class SHeaderCore {
         return true;
       }
 
-      try{
+      try {
+        var lStockResp = new Array();
+        globalData.lFStock.forEach(function(stockRow) {
+            var oStk = {dInput: stockRow.dInput, dOutput: stockRow.dOutput};
+            lStockResp.push(oStk);
+        });
+
         globalData.lFStock.forEach(function(stockRow) {
             if (oMovRow.iItemId == stockRow.item_id &&
                       oMovRow.iUnitId == stockRow.unit_id) {
-                if (oMovRow.iLocationId == stockRow.location_id &&
-                          oMovRow.iPalletId == stockRow.pallet_id) {
+                if (oMovRow.iLocationId == stockRow.location_id) {
+                  if (oMovRow.iPalletId == stockRow.pallet_id) {
                     if (oMovRow.bIsLot) {
                         oMovRow.lotRows.forEach(function(oLotRow) {
                            if (stockRow.lot_id == oLotRow.iLotId) {
@@ -147,15 +156,18 @@ class SHeaderCore {
                                if (globalData.lOperation.INPUT == iOperType) {
                                  if ((stockRow.available_stock
                                      + stockRow.dInput
-                                     - stockRow.dOutput) >= parseFloat(oMovRow.dQuantity, 10)) {
-                                          stockRow.dOutput += parseFloat(oMovRow.dQuantity, 10);
+                                     - stockRow.dOutput) >= parseFloat(oLotRow.dQuantity, 10))
+                                   {
+                                          stockRow.dOutput += parseFloat(oLotRow.dQuantity, 10);
                                           bValid = true;
                                    }
                                    else {
                                      swal(guiFunctions.getStockAlert(oMovRow.sItemCode, oMovRow.sItem,
-                                                                        oMovRow.sUnit, oMovRow.dQuantity, stockRow));
+                                                                        oMovRow.sUnit, oLotRow.dQuantity, stockRow));
+                                      bValid = false;
+                                      throw BreakException;
                                    }
-                                   throw BreakException;
+
                                }
                                else {
                                    stockRow.dInput += parseFloat(oMovRow.dQuantity, 10);
@@ -170,16 +182,17 @@ class SHeaderCore {
                       if (globalData.lOperation.INPUT == iOperType) {
                           if ((stockRow.available_stock
                               + stockRow.dInput
-                              - stockRow.dOutput) >= oMovRow.dQuantity) {
+                              - stockRow.dOutput) >= oMovRow.dQuantity)
+                          {
                                   stockRow.dOutput += parseFloat(oMovRow.dQuantity, 10);
                                   bValid = true;
                           }
                           else {
                               swal(guiFunctions.getStockAlert(oMovRow.sItemCode, oMovRow.sItem,
                                                            oMovRow.sUnit, oMovRow.dQuantity, stockRow));
+                              bValid = false;
                               throw BreakException;
                           }
-                          // throw BreakException;
                       }
                       else {
                           stockRow.dInput += parseFloat(oMovRow.dQuantity, 10);
@@ -187,6 +200,7 @@ class SHeaderCore {
                           throw BreakException;
                       }
                     }
+                  }
                 }
             }
         });
@@ -195,6 +209,16 @@ class SHeaderCore {
         if (e !== BreakException) {
          throw e;
         }
+      }
+
+      if (! bValid) {
+          oMovRow.lotRows = new Map();
+          var i = 0;
+          globalData.lFStock.forEach(function(stockRow) {
+             stockRow.dInput = lStockResp[i].dInput;
+             stockRow.dOutput = lStockResp[i].dOutput;
+             i++;
+          });
       }
 
       if (! globalData.bIsInputMov && !bFound) {
@@ -240,18 +264,22 @@ function initializePanel(serverData) {
     iElementType = globalData.lElementsType.ITEMS;
     updateTable(globalData.lElementsType.ITEMS);
     updateLocationsTable();
+
     guiValidations.hideLots();
+    oLotsTable.clear().draw();
+
     guiValidations.hidePallet();
     guiValidations.showPanel();
+    guiValidations.showFreeze();
 
-    if (oMovement.rows.size > 0 && globalData.iMvtType != globalData.MVT_TP_IN_PUR) {
+    if (oMovement.rows.size > 0) {
         guiValidations.showDelete();
     }
     else {
         guiValidations.hideDelete();
     }
 
-    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR) {
+    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
         guiTransSupp.showSetDataButton();
     }
 

@@ -113,6 +113,11 @@ return [
                   'DETAIL' => '3',
                 ],
 
+    'DOC_VIEW_S' => [
+                  'SUPP' => '1',
+                  'BY_SUPP' => '2',
+                ],
+
     'SEG_PARAM' => [
                   'ID_ITEM' => '0',
                   'ID_UNIT' => '1',

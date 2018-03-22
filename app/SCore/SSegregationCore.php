@@ -37,7 +37,7 @@ class SSegregationCore
        * ]
    */
   public function classify($aParameters)
-  {
+  {  
       \DB::connection('company')->transaction(function() use ($aParameters) {
 
         $iIdItem = $aParameters[\Config::get('scwms.SEG_PARAM.ID_ITEM')];

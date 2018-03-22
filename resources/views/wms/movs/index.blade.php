@@ -33,7 +33,7 @@
 	@endsection
 	<br />
 	<div class="row">
-		<table id="table_id" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+		<table id="table_id" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
 								<th data-priority="1">Fecha</th>

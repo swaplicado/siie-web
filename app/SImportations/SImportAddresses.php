@@ -38,6 +38,9 @@ class SImportAddresses {
    */
   public function importAddresses()
   {
+
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.ADDRESS'));
+
       $sql = "SELECT
                   bpb_add,
                   street,
@@ -64,7 +67,11 @@ class SImportAddresses {
                       LEFT OUTER JOIN
                   locu_cty AS lc ON (bba.fid_cty_n = lc.id_cty)
                       LEFT OUTER JOIN
-                  locu_sta AS ls ON (bba.fid_sta_n = ls.id_sta)";
+                  locu_sta AS ls ON (bba.fid_sta_n = ls.id_sta)
+              WHERE ".
+                  "bba.ts_new > '".$oImportation->last_importation."' OR ".
+                  "bba.ts_edit > '".$oImportation->last_importation."' OR ".
+                  "bba.ts_del > '".$oImportation->last_importation."';";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
@@ -136,6 +143,8 @@ class SImportAddresses {
       foreach ($lAddressesToWeb as $key => $oAddress) {
          $oAddress->save();
       }
+
+      SImportUtils::saveImportation($oImportation);
 
       return sizeof($lAddressesToWeb);
   }

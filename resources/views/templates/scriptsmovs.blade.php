@@ -16,7 +16,6 @@
 {{-- <script src="{{ asset('js/movements/lotrows.js')}}"></script> --}}
 {{-- <script src="{{ asset('js/movements/pallets.js')}}"></script> --}}
 {{-- <script src="{{ asset('js/movements/validations.js')}}"></script> --}}
-{{-- <script src="{{ asset('js/movements/progressbar.js')}}"></script> --}}
 <script src="{{ asset('js/movements/SContainersValidation.js')}}"></script>
 <script src="{{ asset('js/movements/SPalletCore.js')}}"></script>
 <script src="{{ asset('js/movements/SItemSelection.js')}}"></script>
@@ -30,4 +29,5 @@
 <script src="{{ asset('js/movements/lots_table.js')}}"></script>
 <script src="{{ asset('js/movements/stock_table.js')}}"></script>
 <script src="{{ asset('js/movements/validations.js')}}"></script>
+<script src="{{ asset('js/movements/SProgressBar.js')}}"></script>
 <script src="{{ asset('progressbar/bootstrap-progressbar.min.js')}}"></script>

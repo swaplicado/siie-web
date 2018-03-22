@@ -19,6 +19,9 @@
 			<div class="form-group">
 		    <div class="input-group">
 					@include('templates.list.search')
+					<span class="input-group-btn">
+					  {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
+					</span>
 			    <span class="input-group-btn">
 			        <button id="searchbtn" type="submit" class="form-control">
 								<span class="glyphicon glyphicon-search"></span>
@@ -29,124 +32,48 @@
 		{!! Form::close() !!}
   @endsection
 	<div class="row">
-		<table id="docTable" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+		<table id="docTable" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
 								<th data-priority="1">Folio</th>
 		            <th data-priority="2">Fecha</th>
-		            <th data-priority="2">Ref</th>
+								<th>ID ERP</th>
 		            <th data-priority="1">Asociado de negocios</th>
 		            <th>RFC</th>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
 									<th>Cantidad</th>
 			            <th>Cant. procesada</th>
 			            <th>Avance %</th>
-			            <th>Cant. pendiente</th>
 									<th>Ver</th>
-									@if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'))
-										<th data-priority="1">Devolver</th>
-									@else
-										<th data-priority="1">Surtir</th>
-									@endif
-									<th>Ligar</th>
-									<th>Cerrar</th>
 								@else
 									<th>Cve m/p</th>
 									<th>Mat/Prod</th>
 									<th>Cantidad</th>
 									<th>Surtida</th>
 									<th>Avance %</th>
-									<th>Pendiente</th>
 									<th>Un.</th>
 								@endif
-								<th>ID ERP</th>
+								<th>Cerrado</th>
+								<th>Abrir</th>
 								<th>Status</th>
 		        </tr>
 		    </thead>
 		    <tbody>
 					@foreach ($documents as $doc)
 						<tr>
-                {{-- <td class="small">{{ \Carbon\Carbon::parse($doc->dt_date)->format('d-m-Y') }}</td>
-                <td class="small">{{ \Carbon\Carbon::parse($doc->dt_doc)->format('d-m-Y') }}</td> --}}
                 <td class="small">{{ $doc->num }}</td>
                 <td class="small">{{ $doc->dt_doc }}</td>
-                <td class="small">{{ $doc->num_src }}</td>
+                <td class="small">{{ $doc->external_id }}</td>
 		            <td class="small">{{ $doc->name }}</td>
 		            <td class="small">{{ $doc->cve_an }}</td>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_doc, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->advance, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td>
 										<a href="{{ route('siie.docs.view', $doc->id_document) }}" title="Ver documento"
 																																class="btn btn-info btn-sm">
 											<span class=" glyphicon glyphicon-eye-open" aria-hidden = "true"/>
-										</a>
-									</td>
-									<td>
-										{{-- {{ dd($doc->id_document) }} --}}
-											<?php
-												if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
-														if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
-																		$iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_PUR');
-														}
-														else {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_IN_PUR');
-														}
-
-
-												}
-												else {
-														if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
-																	$iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_IN_SAL');
-														}
-														else {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_SAL');
-														}
-												}
-
-												switch ($iDocClass) {
-													case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
-														$iDocSource = $doc->doc_src_id;
-														$iDocDestiny = $doc->id_document;
-														break;
-													case \Config::get('scsiie.DOC_CLS.ORDER'):
-														$iDocSource = $doc->doc_src_id;
-														$iDocDestiny = $doc->id_document;
-														break;
-													case \Config::get('scsiie.DOC_CLS.ADJUST'):
-														$iDocSource = $doc->doc_src_id;
-														$iDocDestiny = $doc->id_document;
-														break;
-
-													default:
-														$iDocSource = 1;
-														$iDocDestiny = 1;
-														break;
-												}
-										 ?>
-										<a href="{{ route('wms.movs.supply', [$iMvtInvType, $doc->id_document]) }}" title="Surtir documento"
-																																class="btn btn-default btn-sm">
-											<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
-										</a>
-									</td>
-									<td>
-										@if ($doc->doc_src_id != 1)
-											<a href="{{ route('wms.docs.link', [$iDocSource, $iDocDestiny]) }}" title="Enlazar surtido"
-																																	class="btn btn-default btn-sm">
-												<span class="glyphicon glyphicon-link" aria-hidden = "true"/>
-											</a>
-										@else
-											--
-										@endif
-									</td>
-									<td>
-										<a href="{{ route('wms.docs.openclose', [\Config::get('scsiie.DOC_OPER.CLOSE'), $doc->id_document]) }}" title="Cerrar para surtido"
-																																class="btn btn-default btn-sm">
-											<span class="glyphicon glyphicon-ban-circle" aria-hidden = "true"/>
 										</a>
 									</td>
 								@else
@@ -155,10 +82,21 @@
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->advance, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td class="small">{{ $doc->unit }}</td>
 								@endif
-								<td class="small">{{ $doc->external_id }}</td>
+								<td>
+									@if (! $doc->is_closed)
+											<span class="label label-info">{{ trans('wms.labels.OPENED') }}</span>
+									@else
+											<span class="label label-warning">{{ trans('wms.labels.CLOSED') }}</span>
+									@endif
+								</td>
+								<td>
+									<a href="{{ route('wms.docs.openclose', [\Config::get('scsiie.DOC_OPER.OPEN'), $doc->id_document]) }}" title="Abrir para surtido"
+																															class="btn btn-default btn-sm">
+										<span class="glyphicon glyphicon-ok-circle" aria-hidden = "true"/>
+									</a>
+								</td>
 								<td class="small">
 									@if (! $doc->is_deleted)
 										<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>

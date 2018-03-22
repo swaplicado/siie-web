@@ -1,4 +1,4 @@
-oDocsTable = $('#docs_table').DataTable({
+var oMovsTable = $('#movs_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -29,25 +29,37 @@ oDocsTable = $('#docs_table').DataTable({
         {
             "targets": 0,
             "className": "text-center",
-            "width": "7%"
+            "width": "16%"
         },
         {
             "targets": 1,
             "className": "text-center",
-            "width": "5%"
+            "width": "16%"
         },
         {
             "targets": 2,
-            "className": "text-right",
-            "width": "8%"
+            "className": "text-center",
+            "width": "16%"
         },
         {
             "targets": 3,
-            "width": "13%"
+            "className": "text-center",
+            "width": "16%"
         },
         {
-            "targets": [7,8,9],
-            "width": "5%"
+            "targets": 4,
+            "className": "text-right",
+            "width": "16%"
+        },
+        {
+            "targets": 5,
+            "className": "text-right",
+            "width": "16%"
+        },
+        {
+            "targets": 6,
+            "className": "text-center",
+            "width": "4%"
         }
       ],
   });

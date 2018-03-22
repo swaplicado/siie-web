@@ -18,6 +18,7 @@ class SMovementRowLot extends Model {
                           'surface',
                           'volume',
                           'mass',
+                          'is_deleted',
                           'mvt_row_id',
                           'lot_id'
                         ];

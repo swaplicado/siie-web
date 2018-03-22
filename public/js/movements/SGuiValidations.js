@@ -30,6 +30,8 @@ function modifyHeader() {
     guiValidations.hidePanel();
     guiValidations.enableHeader();
     guiValidations.hideModify();
+
+    rowsCore.cleanAddPanel();
 }
 
 /**
@@ -180,14 +182,32 @@ class SGuiValidations {
      * hide the button to delete movement rows
      */
     hideDelete() {
-      document.getElementById('div_delete').style.display = "none";
+      try {
+        document.getElementById('div_delete').style.display = "none";
+      } catch (e) {
+        console.log(e);
+      }
+
     }
 
     /**
      * show the button to delete movement rows
      */
     showDelete() {
-      document.getElementById('div_delete').style.display = "inline";
+      try {
+        document.getElementById('div_delete').style.display = "inline";
+      }
+      catch (e) {
+        console.log(e);
+      }
+    }
+
+    showFreeze() {
+        document.getElementById('idFreeze').style.display = "inline";
+    }
+
+    hideFreeze() {
+        document.getElementById('idFreeze').style.display = "none";
     }
 
     /**
@@ -304,7 +324,7 @@ var guiValidations = new SGuiValidations();
  * function sleep
  *
  * @param  {double} dTime time in milliseconds
- * 
+ *
  */
 async function sleepFunction(dTime) {
     await sleep(dTime);

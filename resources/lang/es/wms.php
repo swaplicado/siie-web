@@ -50,6 +50,7 @@ return [
 
       'labels'  => [
                       'ACCUM_QUANTITY' => 'Cantidad acum',
+                      'ASSIGNED' => 'Asignado',
                       'AVAILABLE' => 'Disponible',
                       'CODE' => 'Código',
                       'FOLIO' => 'Folio',
@@ -82,7 +83,9 @@ return [
                       'LEVEL' => 'Nivel',
                       'REFERENCE' => 'Referencia',
                       'ITEM_TYPE' => 'Tipo de ítem',
-                      'REORDER' => 'Punto Reorden'
+                      'REORDER' => 'Punto Reorden',
+                      'CLOSED' => 'Cerrado',
+                      'OPENED' => 'Abierto',
                     ],
 
       'placeholders'  =>  [

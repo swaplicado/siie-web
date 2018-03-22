@@ -75,7 +75,7 @@ class SMovsUtils {
     //if the movement is output filter the elements by the configuration and
     //by the stock
     if ($iWhsSrc != '0') {
-      $lItemContainers = SMovsUtils::getContainerConfiguration($iWhsSrc);
+      $lItemContainers = array();
 
       $sSelect = $sSelect.',
                             (COALESCE(
@@ -111,14 +111,14 @@ class SMovsUtils {
   public static function getContainerConfiguration($iWarehouse = 0)
   {
       $oWarehouse = SWarehouse::find($iWarehouse);
-      $lItemContainers = SItemContainer::where(function ($query) use ($oWarehouse) {
+      $lItemContainers = SItemContainer::where('is_deleted', false)
+                                        ->where(function ($query) use ($oWarehouse) {
                                               $query->where('container_type_id', \Config::get('scwms.CONTAINERS.WAREHOUSE'))
                                                     ->where('container_id', $oWarehouse->id_whs);
                                           })->orWhere(function ($query) use ($oWarehouse) {
                                               $query->where('container_type_id', \Config::get('scwms.CONTAINERS.BRANCH'))
                                                     ->where('container_id', $oWarehouse->branch_id);
                                           })->orWhere('container_type_id', \Config::get('scwms.CONTAINERS.COMPANY'))
-                                          ->where('is_deleted', false)
                                           ->orderBy('item_link_type_id', 'ASC')
                                           ->get();
 
@@ -242,8 +242,9 @@ class SMovsUtils {
         break;
     }
 
-    $sub = session('stock')->getSubSegregated($aParameters);
-    $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
+    // $sub = session('stock')->getSubSegregated($aParameters);
+    // $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
+    $sSelect = $sSelect.', "0" as segregated';
 
     return $sSelect;
   }

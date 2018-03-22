@@ -112,7 +112,7 @@ class SGuiFunctions {
      * @param {string} sText text to be set in input
      */
     setTextLot(sText) {
-      document.getElementById('lot').value = sText;
+      document.getElementById('lot').value = sText.toUpperCase();;
     }
 
     /**
@@ -121,7 +121,7 @@ class SGuiFunctions {
      * @return {string} entered text
      */
     getTextLot() {
-      return document.getElementById('lot').value;
+      return document.getElementById('lot').value.toUpperCase();;
     }
 
     /**

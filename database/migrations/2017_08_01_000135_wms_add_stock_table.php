@@ -119,7 +119,7 @@ class WmsAddStockTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('wms_mvt_row_lots');
+          Schema::connection($this->sConnection)->drop('wms_stock');
         }
     }
 }

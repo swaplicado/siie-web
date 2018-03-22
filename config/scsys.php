@@ -67,4 +67,17 @@ return [
                 'NEW_BRANCH' => '006',
                 'ADDRESS' => '007',
               ],
+
+  'IMPORTATIONS' => [
+                'UNITS' => '1',
+                'FAMILIES' => '2',
+                'GROUPS' => '3',
+                'GENDERS' => '4',
+                'ITEMS' => '5',
+                'PARTNERS' => '6',
+                'BRANCHES' => '7',
+                'ADDRESS' => '8',
+                'DOCUMENTS' => '9',
+                'ROWS' => '10',
+              ],
 ];

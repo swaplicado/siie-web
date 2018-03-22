@@ -36,7 +36,14 @@ class SImportBranches {
    */
   public function importBranches()
   {
-      $sql = "SELECT id_bpb, code, bpb, b_add_prt, b_del, fid_bp, ts_new, ts_edit, ts_del FROM bpsu_bpb";
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.BRANCHES'));
+
+      $sql = "SELECT id_bpb, code, bpb, b_add_prt, b_del, fid_bp, ts_new, ts_edit, ts_del FROM bpsu_bpb WHERE
+                    ts_new > '".$oImportation->last_importation."' OR
+                    ts_edit > '".$oImportation->last_importation."' OR
+                    ts_del > '".$oImportation->last_importation."'
+                    ";
+
       $result = $this->webcon->query($sql);
 
       $lSiieBranches = array();
@@ -82,6 +89,8 @@ class SImportBranches {
       foreach ($lBranchesToWeb as $key => $oBranch) {
          $oBranch->save();
       }
+
+      SImportUtils::saveImportation($oImportation);
 
       return sizeof($lBranchesToWeb);
   }

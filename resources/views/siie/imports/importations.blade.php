@@ -107,7 +107,7 @@
           </div>
           <div class="row">
             <div class="col-md-4">
-              {!! Form::label('year', trans('siie.SYNCR.ROWS1')) !!}
+              {!! Form::label('year', trans('siie.SYNCR.ROWS')) !!}
             </div>
             <div class="col-md-4">
               {!! Form::checkbox('rows1', 'rows1', true, ['class' => 'form-control']) !!}
@@ -118,7 +118,7 @@
               </div>
             @endif
           </div>
-          <div class="row">
+          {{-- <div class="row">
             <div class="col-md-4">
               {!! Form::label('year', trans('siie.SYNCR.ROWS2')) !!}
             </div>
@@ -130,7 +130,7 @@
                     {{ $rows2.' '.trans('siie.SYNCR.ROWS2') }}
               </div>
             @endif
-          </div>
+          </div> --}}
           <div class="row">
             <div class="col-md-1">
             </div>

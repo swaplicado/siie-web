@@ -36,7 +36,14 @@ class SImportGroups {
    */
   public function importGroups()
   {
-      $sql = "SELECT id_igrp, igrp, b_del, fid_ifam, ts_new, ts_edit, ts_del FROM itmu_igrp";
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.GROUPS'));
+
+      $sql = "SELECT id_igrp, igrp, b_del, fid_ifam, ts_new, ts_edit, ts_del FROM itmu_igrp
+                WHERE
+                ts_new > '".$oImportation->last_importation."' OR
+                ts_edit > '".$oImportation->last_importation."' OR
+                ts_del > '".$oImportation->last_importation."'
+                ";
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
@@ -74,6 +81,8 @@ class SImportGroups {
       foreach ($lGroupsToWeb as $key => $oGroup) {
          $oGroup->save();
       }
+
+      SImportUtils::saveImportation($oImportation);
 
       return sizeof($lGroupsToWeb);
   }

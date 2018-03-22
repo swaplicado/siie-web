@@ -42,6 +42,11 @@ class SMovement {
 
       if (row.iIdMovRow > 0) {
           row.bIsDeleted = true;
+          if (row.bIsLot) {
+            for (var [key, lotRow] of row.lotRows) {
+               lotRow.bIsDeleted = true;
+            }
+          }
       }
       else {
           this.rows.delete(key);
@@ -68,14 +73,11 @@ class SMovementRow {
       this.dPrice = 0;
       this.dAuxQuantity = 0;
 
-      this.oAuxItem = '';
-      this.oAuxUnit = '';
-      this.oAuxPallet = '';
-      this.oAuxLocation = '';
       this.iDocOrderRowId = 1;
       this.iDocInvoiceRowId = 1;
       this.iDocDebitNoteRowId = 1;
       this.iDocCreditNoteRowId = 1;
+      this.iAuxDocRowId = 0;
       this.bIsDeleted = false;
 
       this.sItem = 'NA';
@@ -96,6 +98,8 @@ class SMovementRow {
 
       this.iElementType = 404;
       this.oElement = null;
+
+      this.bAuxToStock = true;
     }
 
     get lotIdentifier() {
@@ -142,6 +146,7 @@ class SLotRow {
       this.bIsDeleted = false;
 
       this.bCreate = false;
+      this.dAuxQuantity = 0;
     }
 
     get identifier() {
@@ -153,71 +158,73 @@ class SLotRow {
  * [setMovement description]
  * @param {[type]} obj [description]
  */
-function setMovement(obj) {
+function loadMovement(obj) {
    var mov = new SMovement();
+
    mov.iMvtType = obj.iMvtType;
+   mov.iMvtSubType = obj.iMvtSubType;
    mov.iWhsSrc = obj.iWhsSrc;
    mov.iWhsDes = obj.iWhsDes;
    mov.idRow = obj.idRow;
+   mov.bIsDeleted = obj.bIsDeleted;
 
-   var mRows = [];
-   obj.rows.forEach(function(rowS) {
-       var rowN = new SMovementRow(rowS.iIdRow);
-       rowN.idLotRow = rowS.idLotRow;
-       rowN.iItemId = rowS.iItemId;
-       rowN.iUnitId = rowS.iUnitId;
-       rowN.iPalletId = rowS.iPalletId;
-       rowN.iLocationId = rowS.iLocationId;
-       rowN.dQuantity = rowS.dQuantity;
-       rowN.dPrice = rowS.dPrice;
-       rowN.oAuxItem = rowS.oAuxItem;
-       rowN.oAuxUnit = rowS.oAuxUnit;
-       rowN.oAuxPallet = rowS.oAuxPallet;
-       rowN.oAuxLocation = rowS.oAuxLocation;
-       rowN.aStock = rowS.aStock;
+   for (var [key, rowS] of obj.lAuxRows) {
+     var rowN = new SMovementRow();
 
-       var mLotRows = [];
-       rowS.lotRows.forEach(function(lotRowS) {
-          var lotRowN = new SMovementRow(lotRowS.id);
-          lotRowN.iLotId = lotRowS.iLotId;
-          lotRowN.dQuantity = lotRowS.dQuantity;
-          lotRowN.dPrice = lotRowS.dPrice;
+     rowN.bAuxToStock = false;
 
-          mLotRows.push(lotRowN);
-       });
-       rowN.lotRows = mLotRows
+     rowN.iItemId = rowS.iItemId;
+     rowN.iUnitId = rowS.iUnitId;
+     rowN.iPalletId = rowS.iPalletId;
+     rowN.iLocationId = rowS.iLocationId;
+     rowN.dQuantity = rowS.dQuantity;
+     rowN.dPrice = rowS.dPrice;
+     rowN.bIsBulk = rowS.bIsBulk;
+     rowN.bIsLot = rowS.bIsLot;
+     rowN.bIsDeleted = rowS.bIsDeleted;
+     rowN.dAuxQuantity = rowS.dAuxQuantity;
+     rowN.iAuxDocRowId = rowS.iAuxDocRowId;
+     rowN.iDocOrderRowId = rowS.iDocOrderRowId;
+     rowN.iDocInvoiceRowId = rowS.iDocInvoiceRowId;
+     rowN.iDocDebitNoteRowId = rowS.iDocDebitNoteRowId;
+     rowN.iDocCreditNoteRowId = rowS.iDocCreditNoteRowId;
+     rowN.iElementType = rowS.iElementType;
+     rowN.iIdMovRow = rowS.iIdMovRow;
+     rowN.iIdRow = rowS.iIdRow;
+     rowN.iLocationId = rowS.iLocationId;
+     rowN.iLotId = rowS.iLotId;
+     rowN.iPalletId = rowS.iPalletId;
 
-       mRows.push(rowN);
-   });
+     rowN.idNewLotRow = rowS.idNewLotRow;
+     rowN.sItem = rowS.sItem;
+     rowN.sItemCode = rowS.sItemCode;
+     rowN.sLocation = rowS.sLocation;
+     rowN.sLot = rowS.sLot;
+     rowN.sPallet = rowS.sPallet;
+     rowN.sUnit = rowS.sUnit;
+     rowN.tExpDate = rowS.tExpDate;
 
-   mov.rows = mRows;
+     for (var [key, lotRowS] of rowS.lAuxlotRows) {
+       var lotRowN = new SLotRow();
+
+       lotRowN.iLotId = lotRowS.iLotId;
+       lotRowN.dQuantity = lotRowS.dQuantity;
+       lotRowN.dPrice = lotRowS.dPrice;
+       lotRowN.bCreate = lotRowS.bCreate;
+       lotRowN.bIsDeleted = lotRowS.bIsDeleted;
+       lotRowN.iIdLotRow = lotRowS.iIdLotRow;
+       lotRowN.id = lotRowS.id;
+       lotRowN.sLot = lotRowS.sLot;
+       lotRowN.tExpDate = lotRowS.tExpDate;
+
+       rowN.addLotRow(lotRowN);
+     }
+
+     rowsCore.addRow(rowN);
+     mov.addRow(rowN);
+   }
 
    return mov;
-}
-
-/*
-* This method sends the data of table to the server when
-* the button of freeze is pressed
-*/
-function setData(data) {
-    // var table = $('#example').tableToJSON();
-    console.log(data);
-    if (data.auxPalletRow != null && data.auxPalletRow != "") {
-      localStorage.setItem('pallet', JSON.stringify(data.auxPalletRow));
-    }
-    localStorage.setItem('movement', JSON.stringify(data));
-    var data = { value : data };
-      $.ajax({
-        type: "POST",
-        url: './' + (globalData.oDocument != 0 ? 'supply' : 'create') + '/storetable',
-        data: data,
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function() {
-          console.log("Value added ");
-        }
-      });
 }
 
 function setMovementToForm() {

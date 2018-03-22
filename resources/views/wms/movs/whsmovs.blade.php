@@ -10,23 +10,16 @@
 
 @section('title', trans('userinterface.titles.WHS_MOVS'))
 
-@if (is_object($oDocument))
-	@section('progressbar')
-		<div class="row">
-			<div class="col-md-6  col-md-offset-5">
-					Porcentaje de surtido
-			</div>
-		</div>
-		<div class="progress">
-		  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"></div>
-		</div>
-	@endsection
-@endif
-
 @section('content')
-{!! Form::open(
-	['route' => 'wms.movs.store', 'method' => 'POST', 'id' => 'theForm']
-	) !!}
+@if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION'))
+	{!! Form::open(
+		['route' => 'wms.movs.store', 'method' => 'POST', 'id' => 'theForm']
+		) !!}
+@elseif ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION'))
+	{!! Form::open(
+		['route' => ['wms.movs.update', $oMovement->id_mvt], 'method' => 'POST', 'id' => 'theForm']
+		) !!}
+@endif
   <div class="row">
     <div class="col-md-6">
 			@if (isset($oMovement->folio))
@@ -98,6 +91,8 @@
 							<br />
 							<button style="float: right;" onclick="validateHeader()" id="butContinue"
 												type="button" class="btn btn-primary">{{ trans('actions.CONTINUE') }}</button>
+							<br />
+							<br />
 						</div>
 					</div>
 					<div class="row">
@@ -108,6 +103,23 @@
 
     </div>
   </div>
+	<div class="row">
+		@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
+					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL'))
+			<div class="col-md-1" id="div_setdata" style="display: none;">
+				<button id="sData" type='button' onClick='setRowData()'
+							class='btn btn-success'
+							title='{{ trans('actions.SUPPLY') }}'>{{ trans('actions.SUPPLY') }}
+				</button>
+			</div>
+		@endif
+		@if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
+					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL'))
+			<div class="col-md-12">
+					@include('wms.movs.tables.others')
+			</div>
+		@endif
+	</div>
 	<div id="div_rows" style="display: none;">
 		<div class="row">
 			<div class="col-md-12">
@@ -138,7 +150,8 @@
 						</div>
 						<div class="row">
 							@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ'))
+										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
+										($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')))
 									<div class="col-md-3">
 										{!! Form::label(trans('actions.SEARCH').'...') !!}
 										{!! Form::text('item', null, ['class'=>'form-control',
@@ -225,10 +238,13 @@
 	</div>
 	<br />
 	<div class="row">
-
-		<div class="col-md-2" id="div_delete" style="display: none;">
-			<button id="delButton" onclick="deleteElement()" type="button" class="btn btn-danger">{{ trans('actions.QUIT') }}</button>
-		</div>
+		{{-- @if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
+					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
+					$iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) --}}
+			<div class="col-md-2" id="div_delete" style="display: none;">
+				<button id="delButton" onclick="deleteElement()" type="button" class="btn btn-danger">{{ trans('actions.QUIT') }}</button>
+			</div>
+		{{-- @endif --}}
 		@if($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
 			<div class="col-md-2">
 				<button id="stkButton" type='button' onClick='stockComplete()'
@@ -238,30 +254,34 @@
 				</button>
 			</div>
 		@endif
-		@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR'))
-			<div class="col-md-2" id="div_setdata" style="display: none;">
-				<button id="sData" type='button' onClick='setRowData()'
-							class='btn btn-success'
-							title='Agregar datos'>Data
-				</button>
-			</div>
-		@endif
 	</div>
   <div class="row">
     <div class="col-xs-12">
 			<div class="form-group">
-					@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-								$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ'))
+					{{-- @if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
+								$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
+								$iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) --}}
 							@include('wms.movs.tables.adjustments')
-					@elseif ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR'))
-							@include('wms.movs.tables.others')
-					@endif
+					{{-- @elseif ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') &&
+										$iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION'))
+
+					@endif --}}
 			</div>
     </div>
   </div>
+	@if (is_object($oDocument))
+			<div class="row">
+				<div class="col-md-6  col-md-offset-5">
+						Porcentaje de surtido
+				</div>
+			</div>
+			<div class="progress">
+			  <div class="progress-bar progress-bar-success progress-bar-striped" role="progressbar"></div>
+			</div>
+	@endif
 	{!! Form::hidden('movement_object', null, ['id' => 'movement_object']) !!}
 	<div class="form-group" align="right">
-		<a id="idFreeze" class="btn btn-info" onclick="unfreeze()" role="button">{{ trans('actions.FREEZE') }}</a>
+		<a id="idFreeze" style="display:none" class="btn btn-info" onclick="unfreeze()" role="button">{{ trans('actions.FREEZE') }}</a>
 		{!! Form::submit(trans('actions.SAVE'), ['class' => 'btn btn-primary', 'id' => 'saveButton', 'disabled']) !!}
 		<input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="location.href='{{ route('wms.movs.docs') }}'"/>
 	</div>
@@ -288,7 +308,7 @@
 			this.lFDesLocations = [];
 			this.lElementsType = <?php echo json_encode(\Config::get('scwms.ELEMENTS_TYPE')) ?>;
 			this.lOperationType = <?php echo json_encode(\Config::get('scwms.OPERATION_TYPE')) ?>;
-			this.lOperation = <?php echo json_encode(\Config::get('scwms.OPERATION')) ?>;
+			this.lOperation = <?php echo json_encode(\Config::get('scwms.OPERATION')) ?>; //input-output
 
 		  this.MVT_CLS_IN = <?php echo json_encode(\Config::get('scwms.MVT_CLS_IN')) ?>; //
 		  this.MVT_CLS_OUT = <?php echo json_encode(\Config::get('scwms.MVT_CLS_OUT')) ?>; //
@@ -311,19 +331,9 @@
 		  this.PALLET_RECONFIG_IN  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_IN')) ?>;
 		  this.PALLET_RECONFIG_OUT  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_OUT')) ?>;
 
-			this.LINK_ALL = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ALL')); ?>;
-			this.LINK_CLASS = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.CLASS')); ?>;
-			this.LINK_TYPE = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.TYPE')); ?>;
-			this.LINK_FAMILY = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.FAMILY')); ?>;
-			this.LINK_GROUP = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GROUP')); ?>;
-			this.LINK_GENDER = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GENDER')); ?>;
-			this.LINK_ITEM = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ITEM')); ?>;
+			this.lItemLinks = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK')); ?>;
 
-			this.CONTAINER_NA = <?php echo json_encode(\Config::get('scwms.CONTAINERS.NA')); ?>;
-	    this.CONTAINER_LOCATION = <?php echo json_encode(\Config::get('scwms.CONTAINERS.LOCATION')); ?>;
-	    this.CONTAINER_WAREHOUSE = <?php echo json_encode(\Config::get('scwms.CONTAINERS.WAREHOUSE')); ?>;
-	    this.CONTAINER_BRANCH = <?php echo json_encode(\Config::get('scwms.CONTAINERS.BRANCH')); ?>;
-	    this.CONTAINER_COMPANY = <?php echo json_encode(\Config::get('scwms.CONTAINERS.COMPANY')); ?>;
+			this.lContainers = <?php echo json_encode(\Config::get('scwms.CONTAINERS')); ?>;
 
 			var qty = <?php echo json_encode(session('decimals_qty')) ?>;
 			var amt = <?php echo json_encode(session('decimals_amt')) ?>;
@@ -333,6 +343,17 @@
 			this.LOCATION_ENABLED = (parseInt(loc) == 1);
 			this.isPalletReconfiguration = this.iMvtType == this.PALLET_RECONFIG_IN || this.iMvtType == this.PALLET_RECONFIG_OUT;
 			this.dPerSupp = <?php echo json_encode(($dPerSupp/100)); ?>; //percentage of supply permitted
+
+			this.sRoute = '';
+	    if (this.iOperation == this.lOperationType.EDITION) {
+	        this.sRoute = 'edit';
+	    }
+	    else if (this.oDocument != 0) {
+	        this.sRoute = 'supply';
+	    }
+	    else {
+	        this.sRoute = 'create';
+	    }
 		}
 
 		var globalData = new GlobalData();
@@ -341,12 +362,11 @@
 		    oMovsTable.column( 4 ).visible( false );
 		}
 
-		// movement.iDocumentId = globalData.oDocument != 0 ? globalData.oDocument.id_document : 0;
 		var lDocRows = <?php echo json_encode($lDocData) ?>;
 
-		if (lDocRows.length > 0) {
-				headerCore.transformServerToClientDocRows(lDocRows);
-		}
+		// if (lDocRows.length > 0) {
+		// 		headerCore.transformServerToClientDocRows(lDocRows);
+		// }
 
 		var lRows = <?php echo json_encode($oMovement->rows) ?>;
 
@@ -359,54 +379,20 @@
 			console.log(errors);
 
 			if (errors.length > 0) {
-				console.log("here again");
 				var retrievedObject = localStorage.getItem('movement');
-				console.log(JSON.parse(retrievedObject));
-				// movement = setMovement(JSON.parse(retrievedObject));
+				var movement = JSON.parse(retrievedObject);
+				oMovement = loadMovement(movement);
 
-				console.log('cargar movimiento');
+				document.getElementById('mvt_com').value = oMovement.iMvtSubType;
 
-				if (movement.iWhsDes != 0) {
-					document.getElementById('whs_des').value = movement.iWhsDes;
-					$('#whs_des').prop('disabled', true).trigger("chosen:updated");
+				if (oMovement.iWhsDes != 0) {
+					document.getElementById('whs_des').value = oMovement.iWhsDes;
 				}
 				if (movement.iWhsSrc != 0) {
-					document.getElementById('whs_src').value = movement.iWhsSrc;
-					$('#whs_src').prop('disabled', true).trigger("chosen:updated");
+					document.getElementById('whs_src').value = oMovement.iWhsSrc;
 				}
 
-				// if (globalData.isPalletReconfiguration) {
-				// 	if (localStorage.getItem('pallet') !== null) {
-				// 		var oPalletSaved = localStorage.getItem('pallet');
-				// 		console.log(JSON.parse(oPalletSaved));
-        //
-				// 		oPalletRow = JSON.parse(oPalletSaved);
-				// 		updatePallet(oPalletRow, globalData.iMvtType);
-				// 	}
-				// }
-				// else {
-				// 	oPalletRow = '';
-				// }
-
-				// movement.rows.forEach(function(element) {
-				// 		var type = 0;
-				// 		if(element.iPalletId > 1) {
-				// 				type = globalData.IS_PALLET;
-				// 		}
-				// 		else if(element.lotRows.length == 0){
-				// 				type = globalData.IS_ITEM;
-				// 		}
-				// 		else {
-				// 			type = globalData.IS_LOT;
-				// 		}
-        //
-				//     addRowTr(element.iIdRow, element,
-				// 								(globalData.bIsInputMov ? movement.iWhsDes : movement.iWhsSrc),
-				// 								type);
-				// });
-
-				unfreeze();
-				// updateProgressbar();
+				guiValidations.disableHeader();
 			}
 
 			localStorage.removeItem('movement');
@@ -415,6 +401,10 @@
 		$('.select-one').chosen({
 			placeholder_select_single: 'Seleccione un item...'
 		});
+
+		if (globalData.iMvtType == globalData.MVT_TP_IN_PUR) {
+				progressBar.updateProgressbar();
+		}
 
 	</script>
 @endsection

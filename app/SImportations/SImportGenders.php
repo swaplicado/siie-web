@@ -64,6 +64,8 @@ class SImportGenders {
    */
   public function importGenders()
   {
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.GENDERS'));
+
       $sql = "SELECT id_igen, igen,
                       b_len, b_len_variable,
                       b_surf, b_surf_variable,
@@ -71,7 +73,12 @@ class SImportGenders {
                       b_mass, b_mass_variable,
                       b_lot, b_bulk, b_del,
                       fid_igrp, fid_ct_item, fid_cl_item, fid_tp_item,
-                      ts_new, ts_edit, ts_del FROM itmu_igen";
+                      ts_new, ts_edit, ts_del FROM itmu_igen
+                      WHERE
+                      ts_new > '".$oImportation->last_importation."' OR
+                      ts_edit > '".$oImportation->last_importation."' OR
+                      ts_del > '".$oImportation->last_importation."'
+                      ";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
@@ -128,6 +135,8 @@ class SImportGenders {
       foreach ($lGendersToWeb as $key => $oGender) {
          $oGender->save();
       }
+
+      SImportUtils::saveImportation($oImportation);
 
       return sizeof($lGendersToWeb);
   }

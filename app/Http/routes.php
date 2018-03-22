@@ -318,6 +318,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@store',
         'as' => 'wms.movs.store'
       ]);
+      Route::post('/movs/{id}', [
+        'uses' => 'WMS\SMovsController@update',
+        'as' => 'wms.movs.update'
+      ]);
       Route::get('/movs/{id?}/create/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.create.data'
@@ -329,10 +333,6 @@ Route::group(['prefix' => 'qms'], function () {
       Route::post('/movs/{id?}/create/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.create.validaterow'
-      ]);
-      Route::post('/movs/{id?}/create/storetable', [
-        'uses' => 'WMS\SMovsController@getTable',
-        'as' => 'wms.movs.create.storetable'
       ]);
       Route::get('/movs/{id}/{doc}/supply', [
       	'uses' => 'WMS\SMovsController@create',
@@ -349,6 +349,18 @@ Route::group(['prefix' => 'qms'], function () {
       Route::post('/movs/{id}/{doc}/supply/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.supply.validaterow'
+      ]);
+      Route::get('/movs/{id}/edit/data', [
+        'uses' => 'WMS\SMovsController@getMovementData',
+        'as' => 'wms.movs.edit.data'
+      ]);
+      Route::get('/movs/{id}/edit/search', [
+        'uses' => 'WMS\SMovsController@searchElement',
+        'as' => 'wms.movs.edit.search'
+      ]);
+      Route::post('/movs/{id}/edit/validaterow', [
+        'uses' => 'WMS\SMovsController@validateRow',
+        'as' => 'wms.movs.edit.validaterow'
       ]);
 
       /*
@@ -458,11 +470,18 @@ Route::group(['prefix' => 'qms'], function () {
       /*
       * documents
       **/
-      Route::get('docs/{category}/{dclass}/{dtype}/{vtype}/{title}/index',[
+      Route::get('docs/{category}/{dclass}/{dtype}/{vtype}/{isupp}/{title}/index',[
         'uses' => 'WMS\SDocsBySuppController@ViewDocs',
         'as' => 'wms.docs.index'
       ]);
-
+      Route::get('docs/{oper}/{id}/openclose',[
+        'uses' => 'WMS\SDocsBySuppController@OpenAndclose',
+        'as' => 'wms.docs.openclose'
+      ]);
+      Route::get('docs/{doc_src}/{doc_pry}/link',[
+        'uses' => 'WMS\SDocsBySuppController@Link',
+        'as' => 'wms.docs.link'
+      ]);
   });
 
 

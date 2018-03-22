@@ -43,9 +43,17 @@ class SImportDocumentRows {
    *
    * @return integer quantity of records imported
    */
-  public function importRows($iYearId = 0, $sOperator = '')
+  public function importRows($iYearId = 0)
   {
-      $sql = "SELECT * FROM trn_dps_ety WHERE id_year = ".$iYearId." AND ts_new  ".$sOperator." '".$iYearId."-06-31';";
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.ROWS'));
+
+      $sql = "SELECT * FROM trn_dps_ety WHERE
+          id_year = ".$iYearId." AND
+          (ts_new > '".$oImportation->last_importation."' OR
+          ts_edit > '".$oImportation->last_importation."' OR
+          ts_del > '".$oImportation->last_importation."')
+          ";
+          
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
@@ -153,6 +161,8 @@ class SImportDocumentRows {
          $oRow->save();
          $oRow->taxRows()->saveMany($oRowCopy->taxRowsAux);
       }
+
+      SImportUtils::saveImportation($oImportation);
 
       return sizeof($lRowsToWeb);
   }

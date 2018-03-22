@@ -203,8 +203,6 @@ class SStartController extends Controller
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOC_ENABLED'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
-        $oDbImport = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_IMPORT'));
-        $oDbHost = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_HOST'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oCurrency = SCurrency::find($oErpConfLocCur->val_int);
@@ -217,8 +215,6 @@ class SStartController extends Controller
         session(['decimals_qty' => $oDecQuantity->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
-        session(['db_import' => $oDbImport->val_text]);
-        session(['db_host' => $oDbHost->val_text]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
 
@@ -231,7 +227,7 @@ class SStartController extends Controller
                         ->where('is_deleted', false)
                         ->first();
         session(['work_year' => $oYear->id_year]);
-        
+
         return SStartController::branchwhs();
     }
 

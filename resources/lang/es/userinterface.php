@@ -72,6 +72,8 @@
 											'LIST_INVS_SAL_BY_SUPP_DET' => 'Facturas de venta por surtir a detalle',
 											'LIST_CN_SAL_BY_SUPP' => 'Notas de crédito de venta por devolver',
 											'LIST_CN_SAL_BY_SUPP_DET' => 'Notas de crédito de venta por devolver a detalle',
+											'LIST_OR_PUR_SUPP' => 'Pedidos de compra surtidos',
+											'LIST_OR_PUR_SUPP_DET' => 'Pedidos de compra surtidos a detalle',
 											'CHANGE_PASS' => 'Cambiar contraseña',
 											'CREATE_ADDRESS' => 'Crear dirección',
 											'CREATE_USER_PERMISSION' => 'Otorgar los permisos correspondientes a:',

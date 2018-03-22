@@ -103,12 +103,7 @@ class SImportationsController extends Controller {
     public function importDocumentRows($sDbName, $iYear = '2017')
     {
       $rows = new SImportDocumentRows($this->sHost, $sDbName);
-      return $rows->importRows($iYear, '<');
-    }
-    public function importDocumentRowsLast($sDbName, $iYear = '2017')
-    {
-      $rows = new SImportDocumentRows($this->sHost, $sDbName);
-      return $rows->importRows($iYear, '>');
+      return $rows->importRows($iYear);
     }
 
     public function importationDocuments(Request $request)
@@ -150,9 +145,6 @@ class SImportationsController extends Controller {
        }
        if (! is_null($bRows1)) {
           $rows1 = $this->importDocumentRows($sDbName, $iYear);
-       }
-       if (! is_null($bRows2)) {
-          $rows2 = $this->importDocumentRowsLast($sDbName, $iYear);
        }
 
        return redirect()->route('siie.importation', [1, $items, $partners, $branches, $adds, $docs, $rows1, $rows2]);

@@ -34,7 +34,14 @@ class SImportFamilies {
    */
   public function importFamilies()
   {
-      $sql = "SELECT id_ifam, ifam, b_del, ts_new, ts_edit, ts_del FROM itmu_ifam";
+
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.FAMILIES'));
+
+      $sql = "SELECT id_ifam, ifam, b_del, ts_new, ts_edit, ts_del FROM itmu_ifam WHERE
+                    ts_new > '".$oImportation->last_importation."' OR
+                    ts_edit > '".$oImportation->last_importation."' OR
+                    ts_del > '".$oImportation->last_importation."'
+                    ";
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
@@ -70,6 +77,8 @@ class SImportFamilies {
        foreach ($lFamiliesToWeb as $key => $family) {
          $family->save();
        }
+
+       SImportUtils::saveImportation($oImportation);
 
        return sizeof($lFamiliesToWeb);
   }

@@ -92,6 +92,16 @@ class SDocument extends SModel {
    * Return object SCurrency
    * @return SCurrency
    */
+  public function docClass()
+  {
+    return $this->belongsTo('App\ERP\SDocumentClass', 'doc_class_id');
+  }
+
+  /**
+   * [currency description]
+   * Return object SCurrency
+   * @return SCurrency
+   */
   public function currency()
   {
     return $this->belongsTo('App\ERP\SCurrency', 'currency_id');

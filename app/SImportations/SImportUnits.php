@@ -34,7 +34,14 @@ class SImportUnits {
    */
   public function importUnits()
   {
-      $sql = "SELECT id_unit, symbol, unit, unit_base_equiv, b_del, ts_new, ts_edit, ts_del FROM itmu_unit";
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.UNITS'));
+
+      $sql = "SELECT id_unit, symbol, unit, unit_base_equiv, b_del, ts_new, ts_edit, ts_del FROM itmu_unit WHERE
+              ts_new > '".$oImportation->last_importation."' OR
+              ts_edit > '".$oImportation->last_importation."' OR
+              ts_del > '".$oImportation->last_importation."'
+              ";
+
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
@@ -73,6 +80,8 @@ class SImportUnits {
        foreach ($lUnitsToWeb as $key => $unit) {
          $unit->save();
        }
+
+       SImportUtils::saveImportation($oImportation);
 
        return sizeof($lUnitsToWeb);
   }
