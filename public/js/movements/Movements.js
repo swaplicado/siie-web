@@ -18,6 +18,10 @@ class SMovement {
       this.lAuxRows = null;
       this.lAuxlotsToCreate = null;
       this.auxPalletRow = '';
+
+      this.sBranch = '';
+      this.sWarehouse = '';
+      this.iAuxIndex = 0;
     }
 
     get newId() {
@@ -100,6 +104,13 @@ class SMovementRow {
       this.oElement = null;
 
       this.bAuxToStock = true;
+
+      this.iDocRowIndSupp = 0;
+      this.sBranch = '';
+      this.sWarehouse = '';
+      this.iAuxMovIndex = 0;
+      this.iTableRowIndex = 0;
+      this.dQtyIndSupplied = 0;
     }
 
     get lotIdentifier() {
@@ -147,6 +158,8 @@ class SLotRow {
 
       this.bCreate = false;
       this.dAuxQuantity = 0;
+
+      this.dQuantitySupplied = 0;
     }
 
     get identifier() {

@@ -8,9 +8,9 @@ use App\Http\Controllers\WMS\SStockController;
 use App\Http\Controllers\QMS\SSegregationsController;
 use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
-use App\SCore\SStockUtils;
+use App\SUtils\SStockUtils;
 use App\SCore\SMovsManagment;
-use App\SCore\SMovsUtils;
+use App\SUtils\SMovsUtils;
 use App\SCore\SLotsValidations;
 use App\ERP\SErpConfiguration;
 

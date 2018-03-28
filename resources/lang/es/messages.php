@@ -5,13 +5,13 @@
 	return [
 		'DOC_CLOSED' => 'El documento ha sido cerrado para surtido',
 		'DOC_OPENED' => 'El documento ha sido abierto para surtido',
+		'PASS_CHANGED' => '¡La contraseña ha sido cambiada de forma exitosa!',
+		'PASS_ERROR' => 'La contraseña actual no es correcta',
 		'REG_CREATED' => '¡Se ha creado de forma exitosa!',
 		'REG_DELETED' => '¡Se ha borrado de forma exitosa!',
 		'REG_EDITED' => '¡Se ha editado de forma exitosa!',
 		'REG_ACTIVATED' => '¡Se ha activado de forma exitosa!',
-		'PASS_CHANGED' => '¡La contraseña ha sido cambiada de forma exitosa!',
-
-		'PASS_ERROR' => 'La contraseña actual no es correcta',
+		'SUCCESS_SUPP' => 'El surtido se ha ligado exitosamente',
 
 		'options' =>	['MSG_YES' => 'Sí',
 						 'MSG_NO' => 'No'],

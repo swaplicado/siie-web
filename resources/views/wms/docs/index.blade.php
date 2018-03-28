@@ -75,9 +75,9 @@
 		            <td class="small">{{ $doc->cve_an }}</td>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_doc, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->advance, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur + $doc->qty_sur_ind, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">{{ session('utils')->formatNumber((($doc->qty_sur + $doc->qty_sur_ind) * 100)/$doc->qty_doc, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_doc - ($doc->qty_sur + $doc->qty_sur_ind), \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td>
 										<a href="{{ route('siie.docs.view', $doc->id_document) }}" title="Ver documento"
 																																class="btn btn-info btn-sm">
@@ -114,7 +114,7 @@
 														$iDocDestiny = $doc->id_document;
 														break;
 													case \Config::get('scsiie.DOC_CLS.ORDER'):
-														$iDocSource = $doc->doc_src_id;
+														$iDocSource = 0;
 														$iDocDestiny = $doc->id_document;
 														break;
 													case \Config::get('scsiie.DOC_CLS.ADJUST'):
@@ -134,7 +134,7 @@
 										</a>
 									</td>
 									<td>
-										@if ($doc->doc_src_id != 1)
+										@if (($doc->doc_src_id != 1 && ($doc->supp_ord > 0 || $doc->supp_cn)) || ($doc->supp_inv > 0 && $doc->doc_src_id == 1))
 											<a href="{{ route('wms.docs.link', [$iDocSource, $iDocDestiny]) }}" title="Enlazar surtido"
 																																	class="btn btn-default btn-sm">
 												<span class="glyphicon glyphicon-link" aria-hidden = "true"/>
@@ -153,7 +153,7 @@
 									<td class="small">{{ $doc->cve_item }}</td>
 									<td class="small">{{ $doc->item }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur + $doc->qty_sur_ind, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->advance, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td class="small">{{ $doc->unit }}</td>

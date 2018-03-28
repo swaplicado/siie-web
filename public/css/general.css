@@ -2,6 +2,17 @@
 .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary.active, .open .dropdown-toggle.btn-secondary
                         { color: #FFFFFF; background-color: #888; border-color: #444; }
 
+.modal {
+  position: relative;
+}
+
+.modal-dialog {
+  position: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+}
+
 html
 {
     position: relative;

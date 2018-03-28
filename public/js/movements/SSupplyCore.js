@@ -55,12 +55,12 @@ class SSupplyCore {
       var temp = oDocsTable.row(oElement.iAuxIndex).data();
 
       if (iAction == supplyCore.ADD) {
-          temp[6] = (parseFloat(temp[6].replace(',', ''), 10) + oElement.dQuantity).toFixed(globalData.DEC_QTY);
-          temp[7] = (parseFloat(temp[7].replace(',', ''), 10) - oElement.dQuantity).toFixed(globalData.DEC_QTY);
+          temp[9] = (parseFloat(temp[9].replace(',', ''), 10) + oElement.dQuantity).toFixed(globalData.DEC_QTY);
+          temp[10] = (parseFloat(temp[10].replace(',', ''), 10) - oElement.dQuantity).toFixed(globalData.DEC_QTY);
       }
       else {
-          temp[6] = (parseFloat(temp[6].replace(',', ''), 10) - oElement.dQuantity).toFixed(globalData.DEC_QTY);
-          temp[7] = (parseFloat(temp[7].replace(',', ''), 10) + oElement.dQuantity).toFixed(globalData.DEC_QTY);
+          temp[9] = (parseFloat(temp[9].replace(',', ''), 10) - oElement.dQuantity).toFixed(globalData.DEC_QTY);
+          temp[10] = (parseFloat(temp[10].replace(',', ''), 10) + oElement.dQuantity).toFixed(globalData.DEC_QTY);
       }
 
       $('#doc_table').dataTable().fnUpdate(temp, oElement.iAuxIndex, undefined, false);

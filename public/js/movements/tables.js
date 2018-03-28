@@ -110,13 +110,16 @@ oDocsTable = $('#doc_table').DataTable({
       },
       "columnDefs": [
         {
-            "targets": [4, 5, 6, 7], // your case first column
+            "targets": [7, 8, 9, 10], // your case first column
             "className": "text-right"
         }
      ],
   });
 
   oDocsTable.column( 0 ).visible( false );
+  oDocsTable.column( 1 ).visible( false );
+  oDocsTable.column( 2 ).visible( false );
+  oDocsTable.column( 3 ).visible( false );
 
   $('#doc_table tbody').on( 'click', 'tr', function () {
       if ( $(this).hasClass('selected') ) {

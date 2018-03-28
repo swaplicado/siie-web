@@ -1,4 +1,4 @@
-var oMovsTable = $('#movs_table').DataTable({
+var oMovscTable = $('#movs_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -27,39 +27,57 @@ var oMovsTable = $('#movs_table').DataTable({
       "scrollX": true,
       "columnDefs": [
         {
-            "targets": 0,
-            "className": "text-center",
-            "width": "16%"
-        },
-        {
-            "targets": 1,
-            "className": "text-center",
-            "width": "16%"
-        },
-        {
             "targets": 2,
             "className": "text-center",
-            "width": "16%"
+            "width": "10%"
         },
         {
             "targets": 3,
             "className": "text-center",
-            "width": "16%"
+            "width": "10%"
         },
         {
             "targets": 4,
-            "className": "text-right",
-            "width": "16%"
+            "className": "text-center",
+            "width": "10%"
         },
         {
             "targets": 5,
-            "className": "text-right",
-            "width": "16%"
+            "className": "text-center",
+            "width": "10%"
         },
         {
             "targets": 6,
+            "className": "text-right",
+            "width": "10%"
+        },
+        {
+            "targets": 7,
+            "className": "text-right",
+            "width": "12%"
+        },
+        {
+            "targets": 8,
+            "className": "text-right",
+            "width": "12%"
+        },
+        {
+            "targets": 9,
+            "className": "text-right",
+            "width": "12%"
+        },
+        {
+            "targets": 10,
+            "className": "text-right",
+            "width": "12%"
+        },
+        {
+            "targets": 11,
             "className": "text-center",
-            "width": "4%"
+            "width": "6%"
         }
       ],
   });
+
+  oMovscTable.column( 0 ).visible( false );
+  oMovscTable.column( 1 ).visible( false );

@@ -9,9 +9,10 @@ class SMovementRow extends Model {
   protected $primaryKey = 'id_mvt_row';
   protected $table = 'wms_mvt_rows';
   public $timestamps = false;
-  protected $auxLots = array();
+  protected $auxLots = [];
   public $iAuxLotId = 0;
   public $aAuxStock = [];
+  public $dIndSupplied = [];
 
   protected $fillable = [
                           'id_mvt_row',
@@ -115,6 +116,16 @@ class SMovementRow extends Model {
   public function getAuxLots()
   {
      return $this->auxLots;
+  }
+
+  public function getDIndSupplied()
+  {
+    return $this->dIndSupplied;
+  }
+
+  public function setDIndSupplied($value = [])
+  {
+    $this->dIndSupplied = $value;
   }
 
   /**

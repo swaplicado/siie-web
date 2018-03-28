@@ -296,6 +296,34 @@ class SStockManagment
     {
         $lDocuments = SStockManagment::getBaseQuery($iDocCategory, $iDocClass, $iDocType);
 
+        $sSubQueryInvoices = "(SELECT COUNT(*) supp_inv
+                                FROM
+                                erpu_documents eds
+                                INNER JOIN wms_mvts wmw ON (eds.id_document = wmw.doc_invoice_id)
+                                WHERE eds.doc_src_id = ed.id_document
+                                AND NOT eds.is_deleted
+                                AND NOT wmw.is_deleted)";
+
+        $sSubQueryOrders = "(SELECT COUNT(*) supp_ord
+                                FROM
+                                erpu_documents eds
+                                INNER JOIN wms_mvts wmw ON (eds.id_document = wmw.doc_order_id)
+                                WHERE eds.id_document = ed.doc_src_id
+                                AND NOT eds.is_deleted
+                                AND NOT wmw.is_deleted)";
+
+        $sSubQueryCreditNotes = "(SELECT COUNT(*) supp_cn
+                                FROM
+                                erpu_documents eds
+                                INNER JOIN wms_mvts wmw ON (eds.doc_src_id = wmw.doc_invoice_id)
+                                WHERE eds.id_document = ed.doc_src_id
+                                AND NOT eds.is_deleted
+                                AND NOT wmw.is_deleted)";
+
+        $bOrder = $iDocClass == \Config::get('scsiie.DOC_CLS.ORDER') && $iDocType == \Config::get('scsiie.DOC_TYPE.ORDER');
+        $bInvoice = $iDocClass == \Config::get('scsiie.DOC_CLS.DOCUMENT') && $iDocType == \Config::get('scsiie.DOC_TYPE.INVOICE');
+        $bCreditNote = $iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE');
+
         if ($iViewType == \Config::get('scwms.DOC_VIEW.NORMAL'))
         {
             $lDocuments =  $lDocuments->select('ed.id_document',
@@ -311,10 +339,13 @@ class SStockManagment
                                   'ep.name',
                                   'ep.fiscal_id',
                                   'ep.code as cve_an',
+                                  \DB::raw(($bOrder ? $sSubQueryInvoices : "'0'")." AS supp_inv"),
+                                  \DB::raw(($bInvoice ? $sSubQueryOrders : "'0'")." AS supp_ord"),
+                                  \DB::raw(($bCreditNote ? $sSubQueryCreditNotes : "'0'")." AS supp_cn"),
                                   \DB::raw('SUM(edr.quantity) AS qty_doc'),
                                   \DB::raw('COALESCE(SUM(wmr.quantity), 0) AS qty_sur'),
-                                  \DB::raw('(COALESCE(SUM(wmr.quantity), 0) * 100)/SUM(edr.quantity) AS advance'),
-                                  \DB::raw('(SUM(edr.quantity) - COALESCE(SUM(wmr.quantity), 0))  AS pending')
+                                  \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
+                                  \DB::raw('(SUM(edr.quantity) - ( COALESCE(SUM(wmr.quantity), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
                           ->groupBy('edr.document_id')
                           ->orderBy('ed.dt_doc', 'DESC');
@@ -345,10 +376,14 @@ class SStockManagment
                                   'edr.item_id',
                                   'edr.unit_id',
                                   'edr.id_document_row',
+                                  \DB::raw("'0' AS supp_inv"),
+                                  \DB::raw("'0' AS supp_ord"),
+                                  \DB::raw("'0' AS supp_cn"),
+                                  \DB::raw("'0' AS qty_ind_supp_row"),
                                   \DB::raw('edr.quantity AS qty_row'),
                                   \DB::raw('COALESCE(SUM(wmr.quantity), 0) AS qty_sur'),
-                                  \DB::raw('(COALESCE(SUM(wmr.quantity), 0) * 100)/edr.quantity AS advance'),
-                                  \DB::raw('(edr.quantity - COALESCE(SUM(wmr.quantity), 0))  AS pending')
+                                  \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
+                                  \DB::raw('(edr.quantity - (COALESCE(SUM(wmr.quantity), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
                           ->groupBy('edr.id_document_row')
                           ->groupBy('edr.document_id')
@@ -399,6 +434,7 @@ class SStockManagment
                               ->on('edr.document_id', '=', \DB::raw("({$sub->toSql()})"));
                        })
                      ->mergeBindings($sub)
+                     ->leftJoin('wms_indirect_supply_links AS wisl', 'edr.id_document_row', '=', 'wisl.des_doc_row_id')
                      ->where('ed.doc_category_id', $iDocCategory)
                      ->where('ed.doc_class_id', $iDocClass)
                      ->where('ed.doc_type_id', $iDocType)
@@ -409,13 +445,20 @@ class SStockManagment
 
     private static function getJoin($iDocClass)
     {
-       if ($iDocClass == \Config::get('scsiie.DOC_CLS.DOCUMENT'))
-       {
-          return 'doc_invoice_row_id';
-       }
-       else
-       {
-         return 'doc_order_row_id';
+       switch ($iDocClass) {
+         case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
+           return 'doc_invoice_row_id';
+           break;
+         case \Config::get('scsiie.DOC_CLS.ORDER'):
+           return 'doc_order_row_id';
+           break;
+         case \Config::get('scsiie.DOC_CLS.ADJUST'):
+           return 'doc_credit_note_row_id';
+           break;
+
+         default:
+           return '';
+           break;
        }
     }
 
@@ -438,7 +481,7 @@ class SStockManagment
         if (\Config::get('scsiie.DOC_CAT.PURCHASES') == $iDocCategory &&
             \Config::get('scsiie.DOC_CLS.ADJUST') == $iDocClass &&
             \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE') == $iDocType) {
-              $sub = $sub->select('doc_debit_note_id');
+              $sub = $sub->select('doc_credit_note_id');
         }
         if (\Config::get('scsiie.DOC_CAT.SALES') == $iDocCategory &&
             \Config::get('scsiie.DOC_CLS.ADJUST') == $iDocClass &&

@@ -1,4 +1,4 @@
-<?php namespace App\SCore;
+<?php namespace App\SUtils;
 
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;

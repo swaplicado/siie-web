@@ -6,8 +6,8 @@ class SProgressBar {
         var row = oDocsTable.row( index );
 
         var data = row.data();
-        dQtyToSup += parseFloat(data[5].replace(',', ''), 10);
-        dQtySupp += parseFloat(data[6].replace(',', ''), 10);
+        dQtyToSup += parseFloat(data[8].replace(',', ''), 10);
+        dQtySupp += parseFloat(data[9].replace(',', ''), 10);
     });
 
     // globalData.lDocData.forEach(function(oDocRow) {

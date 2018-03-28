@@ -29,20 +29,30 @@ oLotsTable = $('#lots_table').DataTable({
         {
             "targets": 2, // your case first column
             "className": "text-center",
-            "width": "25%"
+            "width": "19%"
         },
         {
             "targets": 3, // your case first column
             "className": "text-center",
-            "width": "40%"
+            "width": "19%"
         },
         {
             "targets": 4, // your case first column
             "className": "text-right",
-            "width": "30%"
+            "width": "19%"
         },
         {
             "targets": 5, // your case first column
+            "className": "text-right",
+            "width": "19%"
+        },
+        {
+            "targets": 6, // your case first column
+            "className": "text-right",
+            "width": "19%"
+        },
+        {
+            "targets": 7, // your case first column
             "className": "text-center",
             "width": "5%"
         }

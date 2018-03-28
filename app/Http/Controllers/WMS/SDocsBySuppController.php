@@ -10,9 +10,12 @@ use Carbon\Carbon;
 use App\SUtils\SProcess;
 use App\SUtils\SGuiUtils;
 use App\SCore\SLinkSupplyCore;
+use App\WMS\Data\SData;
 
 use App\ERP\SDocument;
 use App\WMS\SMovement;
+use App\WMS\SIndSupplyLink;
+use App\WMS\SIndSupplyLinkLot;
 
 class SDocsBySuppController extends Controller {
 
@@ -129,6 +132,12 @@ class SDocsBySuppController extends Controller {
        return redirect()->back();
     }
 
+    /**
+     * [link description]
+     * @param  integer $iDocSource  [description]
+     * @param  integer $iDocDestiny [description]
+     * @return [type]               [description]
+     */
     public function link($iDocSource = 0, $iDocDestiny = 0)
     {
         $oDocumentSrc = SDocument::find($iDocSource);
@@ -145,7 +154,47 @@ class SDocsBySuppController extends Controller {
                                         $sFilterDate, $iViewType, $iDocDestiny,
                                         $bWithPending)->get();
 
-        $lMovements = SLinkSupplyCore::getSupplyOfDocument($oDocumentSrc);
+        if ($iDocSource == 0) {
+            $lDocuments = SDocument::where('doc_src_id', $iDocDestiny)
+                                      ->where('is_deleted', false)
+                                      ->get();
+
+            $lMovements = array();
+            foreach ($lDocuments as $oDoc) {
+               $lMovs = SLinkSupplyCore::getSupplyOfDocument($oDoc);
+
+               foreach ($lMovs as $mov) {
+                  $mov->branch;
+                  $mov->warehouse;
+
+                  foreach ($mov->rows as $row) {
+                     $row->item;
+
+                     foreach ($row->lotRows as $lotRow) {
+                         $lotRow->lot;
+                     }
+                  }
+
+                  array_push($lMovements, $mov);
+               }
+            }
+        }
+        else {
+            $lMovements = SLinkSupplyCore::getSupplyOfDocument($oDocumentSrc);
+
+            foreach ($lMovements as $mov) {
+               $mov->branch;
+               $mov->warehouse;
+
+               foreach ($mov->rows as $row) {
+                  $row->item;
+
+                  foreach ($row->lotRows as $lotRow) {
+                      $lotRow->lot;
+                  }
+               }
+            }
+        }
 
         return view('wms.movs.supplies.links')
                           ->with('oDocumentSrc', $oDocumentSrc)
@@ -154,6 +203,154 @@ class SDocsBySuppController extends Controller {
                           ->with('lMovements', $lMovements)
                           ->with('actualUserPermission', $this->oCurrentUserPermission)
                           ->with('title', '$sTitle');
+    }
+
+    public function storeLinks(Request $request)
+    {
+        $oPackageJs = json_decode($request->input('spackage_object'));
+
+        $lMovements = array();
+        foreach ($oPackageJs->lMovements as $mov) {
+           $key = $mov['0'];
+           $lMovements[$key] = $mov['1'];
+
+           $lRows = array();
+           foreach ($lMovements[$key]->lAuxRows as $row) {
+               $keyRow = $row['0'];
+               $lRows[$keyRow] = $row['1'];
+
+               $lLotRows = array();
+               foreach ($lRows[$keyRow]->lAuxlotRows as $lotRow) {
+                   $keyLotRow = $lotRow['0'];
+                   $lLotRows[$keyLotRow] = $lotRow['1'];
+               }
+               $lRows[$keyRow]->lotRows = $lLotRows;
+           }
+           $lMovements[$key]->rows = $lRows;
+        }
+
+        \DB::connection('company')->transaction(function() use ($lMovements) {
+            foreach ($lMovements as $oMovement) {
+               foreach ($oMovement->rows as $oMovRow) {
+                  if ($oMovRow->dAuxQuantity > 0) {
+                      $oSuppLink = new SIndSupplyLink();
+
+                      $oSuppLink->quantity = $oMovRow->dAuxQuantity;
+                      $oSuppLink->is_deleted = false;
+                      $oSuppLink->src_doc_row_id = $this->getDocReferenceId($oMovRow);
+                      $oSuppLink->des_doc_row_id = $oMovRow->iAuxDocRowId;
+                      $oSuppLink->mvt_row_id = $oMovRow->iIdMovRow;
+                      $oSuppLink->pallet_id = $oMovRow->iPalletId;
+                      $oSuppLink->created_by_id = \Auth::user()->id;
+                      $oSuppLink->updated_by_id = \Auth::user()->id;
+
+                      $oSuppLink->save();
+
+                      if ($oMovRow->bIsLot && sizeof($oMovRow->lotRows) > 0) {
+                          $lLinkLots = array();
+                          foreach ($oMovRow->lotRows as $oLotRow) {
+                             $oSuppLinkLot = new SIndSupplyLinkLot();
+
+                             $oSuppLinkLot->quantity = $oLotRow->dAuxQuantity;
+                             $oSuppLinkLot->is_deleted = false;
+                             $oSuppLinkLot->lot_id = $oLotRow->iLotId;
+                             $oSuppLinkLot->mvt_row_lot_id = $oLotRow->iIdLotRow;
+
+                             array_push($lLinkLots, $oSuppLinkLot);
+                          }
+
+                          $oSuppLink->linkLots()->saveMany($lLinkLots);
+                      }
+                  }
+               }
+            }
+        });
+
+        $oDocumentDes = SDocument::find($oPackageJs->iDocumentDestinyId);
+
+        Flash::success(trans('messages.SUCCESS_SUPP'))->important();
+
+        return redirect()->route('wms.docs.index', [$oDocumentDes->doc_category_id,
+                                                      $oDocumentDes->doc_class_id,
+                                                      $oDocumentDes->doc_type_id,
+                                                      \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                      \Config::get('scwms.DOC_VIEW_S.BY_SUPP'),
+                                                      $this->getTitle($oDocumentDes->doc_category_id, $oDocumentDes->doc_class_id, $oDocumentDes->doc_type_id),
+                                                      ]);
+    }
+
+    private function getDocReferenceId($oMovRow)
+    {
+        if ($oMovRow->iDocOrderRowId > 1) {
+            return $oMovRow->iDocOrderRowId;
+        }
+        elseif ($oMovRow->iDocInvoiceRowId > 1) {
+            return $oMovRow->iDocInvoiceRowId;
+        }
+        elseif ($oMovRow->iDocDebitNoteRowId > 1) {
+            return $oMovRow->iDocDebitNoteRowId;
+        }
+        elseif ($oMovRow->iDocCreditNoteRowId > 1) {
+            return $oMovRow->iDocCreditNoteRowId;
+        }
+        else {
+            return 1;
+        }
+    }
+
+    private function getTitle($iDocCategory, $iDocClass, $iDocType)
+    {
+        switch ($iDocClass) {
+          case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
+            if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+                return trans('userinterface.titles.LIST_INVS_PUR_BY_SUPP');
+            }
+            else {
+                return trans('userinterface.titles.LIST_INVS_SAL_BY_SUPP');
+            }
+            break;
+
+          case \Config::get('scsiie.DOC_CLS.ORDER'):
+            if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+                return trans('userinterface.titles.LIST_OR_PUR_BY_SUPP');
+            }
+            else {
+                return trans('userinterface.titles.LIST_OR_SAL_BY_SUPP');
+            }
+            break;
+
+          case \Config::get('scsiie.DOC_CLS.ADJUST'):
+            if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+                return trans('userinterface.titles.LIST_CN_PUR_BY_SUPP');
+            }
+            else {
+                return trans('userinterface.titles.LIST_CN_SAL_BY_SUPP');
+            }
+            break;
+
+          default:
+                return '';
+            break;
+        }
+
+    }
+
+    public function getIndirectSupplied(Request $request)
+    {
+       $aRows = json_decode($request->value);
+       $oData = new SData();
+
+       foreach ($aRows as $row) {
+          $row->dQtyIndSupplied = SLinkSupplyCore::getIndirectSupplyRow($row->iIdMovRow, $row->iDocRowIndSupp);
+
+          foreach ($row->lAuxlotRows as $rowLot) {
+             $rowLot[1]->dQuantitySupplied = SLinkSupplyCore::getIndirectSupplyRowLot($rowLot[1]->iIdLotRow, $row->iDocRowIndSupp);
+          }
+       }
+
+       $oData->lRowsSupplied = $aRows;
+
+       return json_encode($oData);
     }
 
   }

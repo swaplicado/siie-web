@@ -482,6 +482,14 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SDocsBySuppController@Link',
         'as' => 'wms.docs.link'
       ]);
+      Route::post('docs/{doc_src}/{doc_pry}/link/indirectsupplied',[
+        'uses' => 'WMS\SDocsBySuppController@GetIndirectSupplied',
+        'as' => 'wms.docs.link.indirectsupplied'
+      ]);
+      Route::post('docs/storelinks',[
+        'uses' => 'WMS\SDocsBySuppController@StoreLinks',
+        'as' => 'wms.docs.storelinks'
+      ]);
   });
 
 

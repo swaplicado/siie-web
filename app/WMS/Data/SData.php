@@ -24,4 +24,6 @@ class SData
     public $lErrors = array();
     public $lNewLots = null;
     public $lLotRows = null;
+
+    public $lRowsSupplied = array();
 }

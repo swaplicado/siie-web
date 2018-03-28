@@ -12,11 +12,11 @@ class SIndSupplyLinkLot extends Model {
   public $timestamps = false;
 
   protected $fillable = [
-                          'id_indirect_supply_link_lot',
                           'quantity',
                           'is_deleted',
                           'indirect_supply_link_id',
                           'lot_id',
+                          'mvt_row_lot_id',
                         ];
 
   /**

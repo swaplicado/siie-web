@@ -128,6 +128,22 @@ class SWmsMenu {
                                                   \Config::get('scwms.DOC_VIEW_S.SUPP'),
                                                   trans('userinterface.titles.LIST_OR_PUR_SUPP_DET')
                                                 ])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    \Config::get('scwms.DOC_VIEW_S.SUPP'),
+                                                    trans('userinterface.titles.LIST_INVS_PUR_SUPP')
+                                                  ])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_SUPP_DET'),
+                                                  [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                  \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                  \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                  \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                  \Config::get('scwms.DOC_VIEW_S.SUPP'),
+                                                  trans('userinterface.titles.LIST_INVS_PUR_SUPP_DET')
+                                                ])
                 )
         )
         ->submenu(

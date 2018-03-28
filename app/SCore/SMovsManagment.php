@@ -12,7 +12,7 @@ use App\WMS\SFolio;
 use App\ERP\SDocument;
 use App\ERP\SDocumentRow;
 
-use App\SCore\SStockUtils;
+use App\SUtils\SStockUtils;
 
 /**
  * this class manages the movement process

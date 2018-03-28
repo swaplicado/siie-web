@@ -40,8 +40,8 @@ class WmsAddSupplyTable extends Migration {
           	$table->bigIncrements('id_indirect_supply_link');
           	$table->decimal('quantity', 23,8);
           	$table->boolean('is_deleted');
-          	$table->bigInteger('base_doc_row_id')->unsigned();
-          	$table->bigInteger('indirect_doc_row_id')->unsigned();
+          	$table->bigInteger('src_doc_row_id')->unsigned();
+          	$table->bigInteger('des_doc_row_id')->unsigned();
           	$table->bigInteger('mvt_row_id')->unsigned();
           	$table->integer('pallet_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
@@ -66,13 +66,15 @@ class WmsAddSupplyTable extends Migration {
           	$table->boolean('is_deleted');
           	$table->bigInteger('indirect_supply_link_id')->unsigned();
           	$table->integer('lot_id')->unsigned();
+          	$table->bigInteger('mvt_row_lot_id')->unsigned();
 
           	$table->foreign('indirect_supply_link_id')->references('id_indirect_supply_link')->on('wms_indirect_supply_links')->onDelete('cascade');
           	$table->foreign('lot_id')->references('id_lot')->on('wms_lots')->onDelete('cascade');
+            $table->foreign('mvt_row_lot_id')->references('id_mvt_row_lot')->on('wms_mvt_row_lots')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('wms_indirect_supply_link_lots')->insert([
-          	['id_indirect_supply_link_lot' => '1','quantity' => '0','is_deleted' => '1','indirect_supply_link_id' => '1','lot_id' => '1'],
+          	['id_indirect_supply_link_lot' => '1','quantity' => '0','is_deleted' => '1','indirect_supply_link_id' => '1','lot_id' => '1','mvt_row_lot_id' => '1'],
           ]);
         }
     }
