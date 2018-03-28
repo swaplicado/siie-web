@@ -49,13 +49,17 @@ class WmsAddLocationsTable extends Migration {
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
+            
           	$table->foreign('whs_id')->references('id_whs')->on('wmsu_whs')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('wmsu_whs_locations')->insert([
-          	['id_whs_location' => '1','code' => 'NA','name' => 'N/A','is_default' => '1','is_recondition' => '0','is_reprocess' => '0','is_destruction' => '0','is_deleted' => '0','whs_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_whs_location' => '1','code' => 'NA','name' => 'N/A',
+              'is_default' => '1','is_recondition' => '0','is_reprocess' => '0',
+                'is_destruction' => '0','is_deleted' => '0','whs_id' => '1',
+                'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }

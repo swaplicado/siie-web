@@ -54,7 +54,7 @@ class WmsAddLotsTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('wms_lots')->insert([
-          	['id_lot' => '1','lot' => 'NA','dt_expiry' => '2017-01-01', 'is_deleted' => '0','item_id' => '1','unit_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_lot' => '1','lot' => 'SIN LOTE','dt_expiry' => '2017-01-01', 'is_deleted' => '0','item_id' => '1','unit_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }

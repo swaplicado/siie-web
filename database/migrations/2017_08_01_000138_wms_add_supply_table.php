@@ -48,8 +48,8 @@ class WmsAddSupplyTable extends Migration {
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
 
-          	$table->foreign('base_doc_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
-          	$table->foreign('indirect_doc_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
+          	$table->foreign('src_doc_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
+          	$table->foreign('des_doc_row_id')->references('id_document_row')->on('erpu_document_rows')->onDelete('cascade');
           	$table->foreign('mvt_row_id')->references('id_mvt_row')->on('wms_mvt_rows')->onDelete('cascade');
           	$table->foreign('pallet_id')->references('id_pallet')->on('wms_pallets')->onDelete('cascade');
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
@@ -57,7 +57,7 @@ class WmsAddSupplyTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('wms_indirect_supply_links')->insert([
-          	['id_indirect_supply_link' => '1','quantity' => '0','is_deleted' => '1','base_doc_row_id' => '1','indirect_doc_row_id' => '1','mvt_row_id' => '1','pallet_id' => '1','created_by_id' => '1','updated_by_id' => '1'],
+          	['id_indirect_supply_link' => '1','quantity' => '0','is_deleted' => '1','src_doc_row_id' => '1','des_doc_row_id' => '1','mvt_row_id' => '1','pallet_id' => '1','created_by_id' => '1','updated_by_id' => '1'],
           ]);
 
           Schema::connection($this->sConnection)->create('wms_indirect_supply_link_lots', function (blueprint $table) {
