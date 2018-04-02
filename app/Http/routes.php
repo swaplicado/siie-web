@@ -322,15 +322,15 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@update',
         'as' => 'wms.movs.update'
       ]);
-      Route::get('/movs/{id?}/create/data', [
+      Route::get('/movs/{id?}/{title}/create/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.create.data'
       ]);
-      Route::get('/movs/{id?}/create/search', [
+      Route::get('/movs/{id?}/{title}/create/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.create.search'
       ]);
-      Route::post('/movs/{id?}/create/validaterow', [
+      Route::post('/movs/{id?}/{title}/create/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.create.validaterow'
       ]);
