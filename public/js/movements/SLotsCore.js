@@ -271,7 +271,8 @@ function cleanEntry() {
 function viewLots(iRow) {
   document.getElementById('lot_edition').style.display = 'none';
   document.getElementById('delete_lot').style.display = 'none';
-  document.getElementById('lot_accep_div').style.display = 'none';
+  // document.getElementById('lot_accep_div').style.display = 'none';
+  document.getElementById('accLots').disabled = true;
 
   oLotsTable.column( 5 ).visible( false );
 

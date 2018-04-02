@@ -41,7 +41,7 @@ class SWmsLotsController extends Controller
     public function index(Request $request)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $lLots = SWmsLot::Search($request->lot, $this->iFilter)->orderBy('id_lot', 'ASC')->paginate(10);
+      $lLots = SWmsLot::Search($request->name, $this->iFilter)->orderBy('id_lot', 'ASC')->paginate(10);
 
       $lLots->each(function($lLots) {
         $lLots->item;

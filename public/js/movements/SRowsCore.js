@@ -22,7 +22,9 @@ class SRowsCore {
     guiFunctions.setQuantity(0);
     guiFunctions.setPrice(0);
 
-    updateTable(globalData.lElementsType.ITEMS);
+    if (globalData.iMvtType != globalData.MVT_TP_IN_PUR && globalData.iMvtType != globalData.MVT_TP_OUT_SAL) {
+      updateTable(globalData.lElementsType.ITEMS);
+    }
     // updateLocationsTable();
 
     guiFunctions.changeClassToSecondary('btn_pallet');
@@ -35,7 +37,8 @@ class SRowsCore {
 
     document.getElementById('lot_edition').style.display = 'inline';
     document.getElementById('delete_lot').style.display = 'inline';
-    document.getElementById('lot_accep_div').style.display = 'inline';
+    // document.getElementById('lot_accep_div').style.display = 'inline';
+    document.getElementById('accLots').disabled = false;
 
     guiValidations.hideLots();
 
