@@ -298,19 +298,19 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@inventoryDocs',
       	'as' => 'wms.movs.docs'
       ]);
-      Route::get('/movs/{id}/create', [
+      Route::get('/movs/{id}/{title}/create', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'
       ]);
-      Route::get('/movs/{id}/edit', [
+      Route::get('/movs/{id}/{title}/edit', [
       	'uses' => 'WMS\SMovsController@edit',
       	'as' => 'wms.movs.edit'
       ]);
-      Route::get('/movs/{id}/destroy', [
+      Route::get('/movs/{id}/{title}/destroy', [
         'uses' => 'WMS\SMovsController@Destroy',
         'as' => 'wms.movs.destroy'
       ]);
-      Route::get('/movs/{id}/activate', [
+      Route::get('/movs/{id}/{title}/activate', [
         'uses' => 'WMS\SMovsController@Activate',
         'as' => 'wms.movs.activate'
       ]);
@@ -334,31 +334,31 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.create.validaterow'
       ]);
-      Route::get('/movs/{id}/{doc}/supply', [
+      Route::get('/movs/{id}/{title}/{doc}/supply', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.supply'
       ]);
-      Route::get('/movs/{id}/{doc}/supply/data', [
+      Route::get('/movs/{id}/{title}/{doc}/supply/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.supply.data'
       ]);
-      Route::get('/movs/{id}/{doc}/supply/search', [
+      Route::get('/movs/{id}/{title}/{doc}/supply/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.supply.search'
       ]);
-      Route::post('/movs/{id}/{doc}/supply/validaterow', [
+      Route::post('/movs/{id}/{title}/{doc}/supply/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.supply.validaterow'
       ]);
-      Route::get('/movs/{id}/edit/data', [
+      Route::get('/movs/{id}/{title}/edit/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.edit.data'
       ]);
-      Route::get('/movs/{id}/edit/search', [
+      Route::get('/movs/{id}/{title}/edit/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.edit.search'
       ]);
-      Route::post('/movs/{id}/edit/validaterow', [
+      Route::post('/movs/{id}/{title}/edit/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.edit.validaterow'
       ]);

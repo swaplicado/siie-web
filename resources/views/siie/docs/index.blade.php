@@ -80,7 +80,7 @@
 								</td>
 								<td>
 									{{-- {{ dd($doc->id_document) }} --}}
-									<a href="{{ route('wms.movs.supply', [\Config::get('scwms.MVT_TP_IN_PUR'), $doc->id_document]) }}" title="Surtir documento"
+									<a href="{{ route('wms.movs.supply', [\Config::get('scwms.MVT_TP_IN_PUR'), $title, $doc->id_document]) }}" title="Surtir documento"
 																															class="btn btn-default btn-sm">
 										<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 									</a>

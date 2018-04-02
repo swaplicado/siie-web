@@ -243,6 +243,8 @@
 											'CURP' => 'CURP',
 											'CREATED' => 'Creado',
 											'CREATED_BY' => 'Cr. por',
+											'DATE' => 'Fecha',
+											'DATE_DOC' => 'Fecha documento',
 											'DB_HOST' => 'Host',
 											'DB_NAME' => 'Nombre de base de datos',
 											'DB_PASS' => 'Contraseña',

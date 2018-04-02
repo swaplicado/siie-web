@@ -123,7 +123,7 @@ class SMovsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $mvtType, $iDocId = 0)
+    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
@@ -246,7 +246,8 @@ class SMovsController extends Controller
                           ->with('oTransitWarehouse', $oTransitWarehouse)
                           ->with('dPerSupp', $oDbPerSupply->val_decimal)
                           ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
-                          ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean);
+                          ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean)
+                          ->with('sTitle', $sTitle);
     }
 
     /**

@@ -182,23 +182,17 @@ class SGuiValidations {
      * hide the button to delete movement rows
      */
     hideDelete() {
-      try {
+      if (document.getElementById('div_delete') != null) {
         document.getElementById('div_delete').style.display = "none";
-      } catch (e) {
-        console.log(e);
       }
-
     }
 
     /**
      * show the button to delete movement rows
      */
     showDelete() {
-      try {
+      if (document.getElementById('div_delete') != null) {
         document.getElementById('div_delete').style.display = "inline";
-      }
-      catch (e) {
-        console.log(e);
       }
     }
 

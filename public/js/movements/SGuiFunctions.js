@@ -47,12 +47,9 @@ class SGuiFunctions {
      * @param {string} sText text to be set in input
      */
     setSearchCode(sText) {
-      try {
-        document.getElementById('item').value = sText;
-      }
-      catch (e) {
-        console.log(e);
-      }
+        if (document.getElementById('item') != null) {
+            document.getElementById('item').value = sText;
+        }
     }
 
     /**

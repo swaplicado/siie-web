@@ -8,7 +8,7 @@
 	@include('templates.menu.menumodules')
 @endsection
 
-@section('title', trans('userinterface.titles.WHS_MOVS'))
+@section('title', $sTitle)
 
 @section('content')
 @if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION'))
@@ -20,6 +20,9 @@
 		['route' => ['wms.movs.update', $oMovement->id_mvt], 'method' => 'POST', 'id' => 'theForm']
 		) !!}
 @endif
+	@if (is_object($oDocument))
+			@include('wms.movs.docheader')
+	@endif
   <div class="row">
     <div class="col-md-6">
 			@if (isset($oMovement->folio))
@@ -54,7 +57,7 @@
 						{!! Form::label('dt_date', trans('userinterface.labels.MVT_DATE').'*') !!}
 						{!! Form::date('dt_date',
 								isset($oMovement->dt_date) ? $oMovement->dt_date : session('work_date'),
-																											['class'=>'form-control',
+																											['class'=>'form-control input-sm',
 																											'id' => 'dt_date',
 																											isset($oMovement->id_mvt) ? 'readonly' : '']) !!}
 					</div>
