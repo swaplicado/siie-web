@@ -192,7 +192,7 @@
 																		'id' => 'label_unit']) !!}
 							</div>
 							<div class="col-md-2">
-									{!! Form::label('item', trans('userinterface.labels.PRICE').'*') !!}
+									{!! Form::label('price', trans('userinterface.labels.PRICE').'*') !!}
 									{!! Form::number('price', 1, ['class'=>'form-control input-sm', 'id' => 'price',
 																												'placeholder' => trans('userinterface.placeholders.PRICE'),
 																												'style' => 'text-align: right;',
