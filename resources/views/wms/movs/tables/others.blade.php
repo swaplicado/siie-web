@@ -8,7 +8,7 @@
             <th>{{ trans('wms.labels.CODE') }}</th>
             <th>{{ trans('wms.labels.MAT_PROD') }}</th>
             <th>Clase</th>
-            <th>{{ trans('wms.labels.PRICE') }}</th>
+            <th>{{ '$ '.trans('wms.labels.PRICE') }}</th>
             <th>{{ trans('wms.labels.QTY') }}</th>
             <th>Surtido</th>
             <th>Pendiente</th>

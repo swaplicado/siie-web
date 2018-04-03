@@ -110,7 +110,7 @@ oDocsTable = $('#doc_table').DataTable({
       },
       "columnDefs": [
         {
-            "targets": [7, 8, 9, 10], // your case first column
+            "targets": [7, 8, 9, 10],
             "className": "text-right"
         }
      ],

@@ -145,6 +145,26 @@ class SMovement extends Model {
     return $this->belongsTo('App\WMS\SMvtExpType', 'mvt_exp_type_id');
   }
 
+  /**
+   * [userCreation description]
+   * Return object User
+   * @return User
+   */
+  public function userCreation()
+  {
+    return $this->belongsTo('App\User', 'created_by_id');
+  }
+
+  /**
+   * [userUpdate description]
+   * Return object User
+   * @return User
+   */
+  public function userUpdate()
+  {
+    return $this->belongsTo('App\User', 'updated_by_id');
+  }
+
 
   /**
    * filter of movements

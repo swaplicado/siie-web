@@ -274,7 +274,7 @@ function searchElem(e) {
     }
 }
 
-$('#select_button').on('click', function(e) {
+$('#select_item_button').on('click', function(e) {
     var row = oItemsTable.row('.selected').data();
 
     if (row == undefined) {
@@ -282,37 +282,49 @@ $('#select_button').on('click', function(e) {
       return false;
     }
 
+    guiFunctions.setSearchCode(row['item_code']);
+    guiValidations.setItemLabel(row['item_name'] + '-' + row['unit_code']);
+    guiValidations.setUnitLabel(row['unit_code']);
+
+    elementToAdd = new SMovementRow(oMovement.rowIdentifier);
+
+    elementToAdd.iItemId = row['id_item'];
+    elementToAdd.iUnitId = row['id_unit'];
+    elementToAdd.iLocationId = oLocation.id_whs_location;
+
+    elementToAdd.sItem = row['item_name'];
+    elementToAdd.sItemCode = row['item_code'];
+    elementToAdd.sUnit = row['unit_code'];
+    elementToAdd.bIsLot = row['is_lot'];
+    elementToAdd.bIsBulk = row['is_bulk'];
+    elementToAdd.sLocation = oLocation.name;
+
+    elementToAdd.oElement = row;
+    elementToAdd.iElementType = itemSelection.getElementType();
+    if (! row['is_lot']) {
+      guiValidations.hideLots();
+      guiValidations.showPallet();
+    }
+    else {
+      guiValidations.showLots();
+      guiValidations.showPallet();
+    }
+
+});
+
+
+$('#select_button').on('click', function(e) {
+
+  var row = oElementsTable.row('.selected').data();
+
+  if (row == undefined) {
+    swal("Error", "Debe seleccionar un elemento.", "error");
+    return false;
+  }
+
     switch (itemSelection.getElementType()) {
       case globalData.lElementsType.ITEMS:
-
-            guiFunctions.setSearchCode(row['item_code']);
-            guiValidations.setItemLabel(row['item_name'] + '-' + row['unit_code']);
-            guiValidations.setUnitLabel(row['unit_code']);
-
-            elementToAdd = new SMovementRow(oMovement.rowIdentifier);
-
-            elementToAdd.iItemId = row['id_item'];
-            elementToAdd.iUnitId = row['id_unit'];
-            elementToAdd.iLocationId = oLocation.id_whs_location;
-
-            elementToAdd.sItem = row['item_name'];
-            elementToAdd.sItemCode = row['item_code'];
-            elementToAdd.sUnit = row['unit_code'];
-            elementToAdd.bIsLot = row['is_lot'];
-            elementToAdd.bIsBulk = row['is_bulk'];
-            elementToAdd.sLocation = oLocation.name;
-
-            elementToAdd.oElement = row;
-            elementToAdd.iElementType = itemSelection.getElementType();
-            if (! row['is_lot']) {
-              guiValidations.hideLots();
-              guiValidations.showPallet();
-            }
-            else {
-              guiValidations.showLots();
-              guiValidations.showPallet();
-            }
-            break;
+          break;
 
       case globalData.lElementsType.LOTS:
             lotToAdd = new SLotRow();
@@ -327,7 +339,6 @@ $('#select_button').on('click', function(e) {
             break;
 
       case globalData.lElementsType.PALLETS:
-            console.log(row);
             guiFunctions.setPalletNameLabel(row.pallet);
             elementToAdd.iPalletId = row.id_pallet;
             elementToAdd.sPallet = row.pallet;

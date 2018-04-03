@@ -7,7 +7,7 @@
           <th>{{ trans('wms.labels.UN') }}</th>
           <th>{{ trans('wms.labels.LOCATION') }}</th>
           <th>{{ trans('wms.labels.PALLET') }}</th>
-          <th>{{ trans('wms.labels.PRICE') }}</th>
+          <th>{{ '$ '.trans('wms.labels.PRICE') }}</th>
           <th>{{ trans('wms.labels.QTY') }}</th>
           <th>{{ trans('wms.labels.LOT') }}</th>
           <th>{{ trans('wms.labels.STOCK') }}</th>

@@ -240,6 +240,7 @@
 											'CONFIGURATION' => 'Configuración',
 											'COUNTY' => 'Condado',
 											'COUNTRY' => 'País',
+											'CURRENCY' => 'Moneda',
 											'CURP' => 'CURP',
 											'CREATED' => 'Creado',
 											'CREATED_BY' => 'Cr. por',

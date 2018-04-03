@@ -131,7 +131,7 @@
 								<div class="col-md-3">
 									{!! Form::label(trans('actions.SEARCH_LOCATION').'...') !!}
 										{!! Form::text('location',
-											isset($whs) ? $whs->code : null , ['class'=>'form-control',
+											isset($whs) ? $whs->code : null , ['class'=>'form-control input-sm',
 											'id' => 'location',
 											'placeholder' => trans('userinterface.placeholders.CODE'),
 											'onkeypress' => 'searchLoc(event)']) !!}
@@ -146,7 +146,7 @@
 								<div class="col-md-3">
 									{!! Form::label('Ubicación') !!}
 									{!! Form::label('label_loc', '--',
-																			['class' => 'form-control',
+																			['class' => 'form-control input-sm',
 																			'id' => 'label_loc']) !!}
 								</div>
 							@endif
@@ -157,28 +157,29 @@
 										($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')))
 									<div class="col-md-3">
 										{!! Form::label(trans('actions.SEARCH').'...') !!}
-										{!! Form::text('item', null, ['class'=>'form-control',
+										{!! Form::text('item', null, ['class'=>'form-control input-sm',
 																										'id' => 'item',
 																										'placeholder' => trans('userinterface.placeholders.CODE'),
 																										'onkeypress' => 'searchElem(event)']) !!}
 									</div>
 									<div class="col-md-1">
 											{!! Form::label('.') !!}
-											<button type="button" class="btn btn-info"
-															onclick="showItems()">{{ trans('actions.SEARCH') }}</button>
+											<button type="button" class="btn btn-info" data-toggle="modal"
+												data-target="#mat_prod_search">{{ trans('actions.SEARCH') }}
+											</button>
 									</div>
 							@endif
 							<div class="col-md-6">
 								{!! Form::label('seleccionado') !!}
 								{!! Form::label('label_sel', '--',
-																		['class' => 'form-control',
+																		['class' => 'form-control input-sm',
 																		'id' => 'label_sel']) !!}
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-2">
 									{!! Form::label(trans('userinterface.labels.QUANTITY').'*') !!}
-									{!! Form::number('quantity', 0, ['class'=>'form-control', 'id' => 'quantity',
+									{!! Form::number('quantity', 0, ['class'=>'form-control input-sm', 'id' => 'quantity',
 																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
 																												'style' => 'text-align: right;',
 																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ||
@@ -187,12 +188,12 @@
 							<div class="col-md-1">
 								{!! Form::label('Un.') !!}
 								{!! Form::label('label_unit', '--',
-																		['class' => 'form-control',
+																		['class' => 'form-control input-sm',
 																		'id' => 'label_unit']) !!}
 							</div>
 							<div class="col-md-2">
 									{!! Form::label('item', trans('userinterface.labels.PRICE').'*') !!}
-									{!! Form::number('price', 1, ['class'=>'form-control', 'id' => 'price',
+									{!! Form::number('price', 1, ['class'=>'form-control input-sm', 'id' => 'price',
 																												'placeholder' => trans('userinterface.placeholders.PRICE'),
 																												'style' => 'text-align: right;',
 																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ||
@@ -201,7 +202,7 @@
 							<div class="col-md-1">
 								{!! Form::label('Mon.') !!}
 								{!! Form::label('label_cur', session('currency')->code,
-																		['class' => 'form-control',
+																		['class' => 'form-control input-sm',
 																		'id' => 'label_cur']) !!}
 							</div>
 							<div class="col-md-1" id="div_pallets">
@@ -241,22 +242,40 @@
 	</div>
 	<br />
 	<div class="row">
-		{{-- @if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
-					$iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) --}}
-			<div class="col-md-2" id="div_delete" style="display: none;">
-				<button id="delButton" onclick="deleteElement()" type="button" class="btn btn-danger">{{ trans('actions.QUIT') }}</button>
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-2" id="div_delete" style="display: none;">
+					<button id="delButton" onclick="deleteElement()" type="button" class="btn btn-danger">{{ trans('actions.QUIT') }}</button>
+				</div>
+				@if($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
+					<div class="col-md-2">
+						<button id="stkButton" type='button' onClick='stockComplete()'
+									class='butstk btn btn-success'
+									data-toggle='modal' data-target='#stock_com_modal'
+									title='Ver existencias'>{{ trans('wms.WHS_IN_STK') }}
+						</button>
+					</div>
+				@endif
 			</div>
-		{{-- @endif --}}
-		@if($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
-			<div class="col-md-2">
-				<button id="stkButton" type='button' onClick='stockComplete()'
-							class='butstk btn btn-success'
-							data-toggle='modal' data-target='#stock_com_modal'
-							title='Ver existencias'>{{ trans('wms.WHS_IN_STK') }}
-				</button>
+		</div>
+		<div class="col-md-6">
+			<div class="row">
+				<div class="col-md-offset-6 col-md-3">
+					{!! '$ '.Form::label('Monto') !!}
+					{!! Form::label('label_amt', '--',
+															['class' => 'form-control input-sm',
+																'style' => 'text-align: right; color: blue;',
+																'id' => 'label_amt']) !!}
+				</div>
+				<div class="col-md-3">
+					{!! Form::label('Cantidad') !!}
+					{!! Form::label('label_qty', '--',
+															['class' => 'form-control input-sm',
+																'style' => 'text-align: right; color: blue;',
+																'id' => 'label_qty']) !!}
+				</div>
 			</div>
-		@endif
+		</div>
 	</div>
   <div class="row">
     <div class="col-xs-12">
@@ -286,7 +305,7 @@
 	<div class="form-group" align="right">
 		<a id="idFreeze" style="display:none" class="btn btn-info" onclick="unfreeze()" role="button">{{ trans('actions.FREEZE') }}</a>
 		{!! Form::submit(trans('actions.SAVE'), ['class' => 'btn btn-primary', 'id' => 'saveButton', 'disabled']) !!}
-		<input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="location.href='{{ route('wms.movs.docs') }}'"/>
+		<input type="button" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="window.history.back();"/>
 	</div>
 {!! Form::close() !!}
 @endsection
@@ -413,7 +432,8 @@
 @endsection
 
 @include('wms.movs.lotrows')
-@include('siie.items.itemsearch')
+@include('wms.movs.search.itemsearch')
+@include('wms.movs.search.items')
 @include('wms.locs.locationsearch')
 @include('wms.movs.lotsmodal')
 @include('wms.movs.palletmodal')

@@ -577,6 +577,7 @@ class SMovsController extends Controller
                         ->with('lStock', $lStock)
                         ->with('dPerSupp', $oDbPerSupply->val_decimal)
                         ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
+                        ->with('sTitle', 'Modificación')
                         ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean);
 
     }

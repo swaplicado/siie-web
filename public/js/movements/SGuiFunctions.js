@@ -218,6 +218,52 @@ class SGuiFunctions {
     }
 
     /**
+     * based in the current movement update the labels of quantity and amount
+     * 
+     */
+    updateAmtQtyLabels() {
+      var dQty = 0;
+      var dAmt = 0;
+      for (var row of oMovement.rows.values()) {
+          if (row.bIsLot) {
+            for (var rowLot of row.lotRows.values()) {
+                dQty += parseFloat(rowLot.dQuantity, 10);
+                dAmt += (parseFloat(rowLot.dQuantity, 10) * parseFloat(row.dPrice, 10));
+            }
+          }
+          else {
+            dQty += parseFloat(row.dQuantity, 10);
+            dAmt += (parseFloat(row.dQuantity, 10) * parseFloat(row.dPrice, 10));
+          }
+      }
+
+      guiFunctions.setQuantityMovLabel(dQty);
+      guiFunctions.setAmountMovLabel(dAmt);
+    }
+
+    /**
+     * set the value to movement quantity label formatted with the decimals configured
+     * in the company's configuration
+     *
+     * @param {double} dAmt value to be set in input
+     */
+    setAmountMovLabel(dAmt) {
+      document.getElementById('label_amt').innerText = parseFloat(dAmt, 10).
+                                                    toFixed(globalData.DEC_AMT);
+    }
+
+    /**
+    * set the value to movement quantity label formatted with the decimals configured
+    * in the company's configuration
+     *
+     * @param {double} dQty value to be set in input
+     */
+    setQuantityMovLabel(dQty) {
+      document.getElementById('label_qty').innerText = parseFloat(dQty, 10).
+                                                    toFixed(globalData.DEC_QTY);
+    }
+
+    /**
      *  change the class secondary to success of element
      *  with the id received
      *

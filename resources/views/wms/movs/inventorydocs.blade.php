@@ -47,6 +47,10 @@
 								<th>Clase</th>
 								<th>Cat</th>
 		            <th>Opciones</th>
+		            <th data-priority="2">Creación</th>
+		            <th data-priority="2">Usuario</th>
+		            <th data-priority="2">Modificación</th>
+		            <th data-priority="2">Usuario</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -96,13 +100,17 @@
       								$oRegistry = $mov;
       								$iRegistryId = $mov->id_mvt;
       								$loptions = [
-      									\Config::get('scsys.OPTIONS.EDIT'),
-      									\Config::get('scsys.OPTIONS.DESTROY'),
-      									\Config::get('scsys.OPTIONS.ACTIVATE'),
+      									\Config::get('scsys.OPTIONS.EDIT')
       								];
       						?>
-      						@include('templates.list.options')
+									<div>
+											@include('templates.list.options')
+									</div>
       					</td>
+								<td>{{ $mov->created_at }}</td>
+								<td>{{ $mov->userCreation->username }}</td>
+								<td>{{ $mov->updated_at }}</td>
+								<td>{{ $mov->userUpdate->username }}</td>
 		        </tr>
 					@endforeach
 		    </tbody>

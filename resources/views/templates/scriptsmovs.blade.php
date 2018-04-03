@@ -5,17 +5,11 @@
 <script src="{{ asset('bootstrap/js/bootstrap.min.js')}}"></script>
 <script src="{{ asset('vue/vue.min.js') }}"></script>
 <script src="{{ asset('datatables/datatables.min.js') }}"></script>
-{{-- https://sweetalert.js.org/ --}}
-{{-- <script src="{{ asset('sweet-alert/sweetalert.min.js') }}"></script> --}}
 <script src="{{ asset('sweet-alert/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('js/movements/SGuiFunctions.js')}}"></script>
 <script src="{{ asset('js/movements/SGuiValidations.js')}}"></script>
 <script src="{{ asset('js/movements/SHeaderCore.js')}}"></script>
 <script src="{{ asset('js/movements/Movements.js')}}"></script>
-{{-- <script src="{{ asset('js/movements/movementrows.js')}}"></script> --}}
-{{-- <script src="{{ asset('js/movements/lotrows.js')}}"></script> --}}
-{{-- <script src="{{ asset('js/movements/pallets.js')}}"></script> --}}
-{{-- <script src="{{ asset('js/movements/validations.js')}}"></script> --}}
 <script src="{{ asset('js/movements/SContainersValidation.js')}}"></script>
 <script src="{{ asset('js/movements/SPalletCore.js')}}"></script>
 <script src="{{ asset('js/movements/SItemSelection.js')}}"></script>
@@ -24,6 +18,7 @@
 <script src="{{ asset('js/movements/SStockCore.js')}}"></script>
 <script src="{{ asset('js/movements/SGuiTransSupp.js')}}"></script>
 <script src="{{ asset('js/movements/SSupplyCore.js')}}"></script>
+<script src="{{ asset('js/movements/search/SSearchCore.js')}}"></script>
 <script src="{{ asset('js/movements/tables.js')}}"></script>
 <script src="{{ asset('js/items/table.js')}}"></script>
 <script src="{{ asset('js/movements/lots_table.js')}}"></script>

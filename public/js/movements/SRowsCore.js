@@ -63,6 +63,8 @@ class SRowsCore {
           rowsCore.getStockButton(elementToAdd.iIdRow)
       ] ).draw( false );
 
+      guiFunctions.updateAmtQtyLabels();
+      
       guiValidations.hideModify();
       rowsCore.cleanAddPanel();
   }
@@ -82,6 +84,8 @@ class SRowsCore {
     if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
       supplyCore.updateRow(oRow, supplyCore.CLEAN);
     }
+
+    guiFunctions.updateAmtQtyLabels();
   }
 
   getLotsButton(id) {

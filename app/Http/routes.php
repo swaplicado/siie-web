@@ -302,15 +302,15 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'
       ]);
-      Route::get('/movs/{id}/{title}/edit', [
+      Route::get('/movs/{id}/edit', [
       	'uses' => 'WMS\SMovsController@edit',
       	'as' => 'wms.movs.edit'
       ]);
-      Route::get('/movs/{id}/{title}/destroy', [
+      Route::get('/movs/{id}/destroy', [
         'uses' => 'WMS\SMovsController@Destroy',
         'as' => 'wms.movs.destroy'
       ]);
-      Route::get('/movs/{id}/{title}/activate', [
+      Route::get('/movs/{id}/activate', [
         'uses' => 'WMS\SMovsController@Activate',
         'as' => 'wms.movs.activate'
       ]);

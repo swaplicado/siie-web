@@ -29,7 +29,7 @@ oDocsTable = $('#docs_table').DataTable({
         {
             "targets": 0,
             "className": "text-center",
-            "width": "7%"
+            "width": "10%"
         },
         {
             "targets": 1,
@@ -48,6 +48,10 @@ oDocsTable = $('#docs_table').DataTable({
         {
             "targets": [7,8,9],
             "width": "5%"
+        },
+        {
+            "targets": [10,11,12,13,14],
+            "width": "20%"
         }
       ],
   });

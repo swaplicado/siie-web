@@ -262,7 +262,7 @@ function initializePanel(serverData) {
 
     guiValidations.validatePrice();
     iElementType = globalData.lElementsType.ITEMS;
-    updateTable(globalData.lElementsType.ITEMS);
+    searchCore.initializateItems();
     updateLocationsTable();
 
     guiValidations.hideLots();
@@ -307,42 +307,7 @@ function updateTable(iElementType) {
   var aColumns = [];
   var oData = [];
 
-  if (iElementType == globalData.lElementsType.ITEMS) {
-    aColumns = [
-          {
-              "title": "idItem",
-              "data": "id_item"
-          }, {
-              "title": "idUnit",
-              "data": "id_unit"
-          }, {
-              "title": "-",
-              "data": "id_item"
-          }, {
-              "title": "-",
-              "data": "id_item"
-          }, {
-              "title": "-",
-              "data": "id_item"
-          }, {
-              "title": "Clave",
-              "data": "item_code"
-          }, {
-              "title": "Mat/prod",
-              "data": "item_name"
-          }, {
-              "title": "Un.",
-              "data": "unit_code"
-          }, {
-              "title": "Existencia.",
-              "data": "available_stock",
-              "className": "text-right"
-          }
-      ];
-
-      oData = globalData.lFItems;
-  }
-  else if (iElementType == globalData.lElementsType.LOTS) {
+  if (iElementType == globalData.lElementsType.LOTS) {
     aColumns = [
           {
               "title": "idItem",
@@ -431,11 +396,11 @@ function updateTable(iElementType) {
     oData = lPallets;
   }
 
-  if (oItemsTable != null) {
-    oItemsTable.destroy();
+  if (oElementsTable != null) {
+    oElementsTable.destroy();
   }
 
-  oItemsTable = $('#items_table').DataTable({
+  oElementsTable = $('#items_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -467,36 +432,27 @@ function updateTable(iElementType) {
       "columns": aColumns
   });
 
-  if (iElementType == globalData.lElementsType.ITEMS) {
-    oItemsTable.column( 0 ).visible( false );
-    oItemsTable.column( 1 ).visible( false );
-    oItemsTable.column( 2 ).visible( false );
-    oItemsTable.column( 3 ).visible( false );
-    oItemsTable.column( 4 ).visible( false );
-
-    document.getElementById('modal_title').innerText = 'Material/Producto';
-  }
-  else if (iElementType == globalData.lElementsType.LOTS) {
-    oItemsTable.column( 0 ).visible( false );
-    oItemsTable.column( 1 ).visible( false );
-    oItemsTable.column( 2 ).visible( false );
+  if (iElementType == globalData.lElementsType.LOTS) {
+    oElementsTable.column( 0 ).visible( false );
+    oElementsTable.column( 1 ).visible( false );
+    oElementsTable.column( 2 ).visible( false );
 
     document.getElementById('modal_title').innerText = 'Lotes';
   }
   else {
-    oItemsTable.column( 0 ).visible( false );
-    oItemsTable.column( 1 ).visible( false );
-    oItemsTable.column( 2 ).visible( false );
-    oItemsTable.column( 3 ).visible( false );
+    oElementsTable.column( 0 ).visible( false );
+    oElementsTable.column( 1 ).visible( false );
+    oElementsTable.column( 2 ).visible( false );
+    oElementsTable.column( 3 ).visible( false );
 
     document.getElementById('modal_title').innerText = 'Tarimas';
   }
   if (globalData.bIsInputMov) {
-    oItemsTable.column( 8 ).visible( false );
+    oElementsTable.column( 8 ).visible( false );
   }
 
-  oItemsTable.columns.adjust().draw();
-  oItemsTable.rows().invalidate().draw();
+  oElementsTable.columns.adjust().draw();
+  oElementsTable.rows().invalidate().draw();
 }
 
 function updateLocationsTable() {
