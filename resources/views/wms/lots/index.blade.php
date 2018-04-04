@@ -15,7 +15,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-condensed">
+	<table id="cat_lots_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.NAME') }}</th>
 			<th>{{ trans('userinterface.labels.EXPIRY') }}</th>
@@ -52,11 +52,12 @@
 						@include('templates.list.options')
 					</td>
 					<td>
-							<a href="{{ route('wms.lots.barcode', $lot->id_lot) }}" class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
+							<a href="{{ route('wms.lots.barcode', $lot->id_lot) }}" class="btn btn-success btn-xs">
+								<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+							</a>
 					</td>
 				</tr>
 			@endforeach
 		</tbody>
 	</table>
-	{!! $lots->render() !!}
 @endsection

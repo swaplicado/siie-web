@@ -208,6 +208,45 @@ class SWmsMenu {
                                                     \Config::get('scwms.DOC_VIEW_S.BY_SUPP'),
                                                     trans('userinterface.titles.LIST_CN_SAL_BY_SUPP_DET')])
                 )
+                ->submenu(
+                    Link::to('#', 'Surtido'.'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_SAL_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                    \Config::get('scsiie.DOC_TYPE.ORDER'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    \Config::get('scwms.DOC_VIEW_S.SUPP'),
+                                                    trans('userinterface.titles.LIST_OR_SAL_SUPP')
+                                                  ])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_OR_SAL_SUPP_DET'),
+                                                  [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                  \Config::get('scsiie.DOC_CLS.ORDER'),
+                                                  \Config::get('scsiie.DOC_TYPE.ORDER'),
+                                                  \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                  \Config::get('scwms.DOC_VIEW_S.SUPP'),
+                                                  trans('userinterface.titles.LIST_OR_SAL_SUPP_DET')
+                                                ])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_SUPP'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                    \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                    \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                    \Config::get('scwms.DOC_VIEW.NORMAL'),
+                                                    \Config::get('scwms.DOC_VIEW_S.SUPP'),
+                                                    trans('userinterface.titles.LIST_INVS_SAL_SUPP')
+                                                  ])
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_SAL_SUPP_DET'),
+                                                  [\Config::get('scsiie.DOC_CAT.SALES'),
+                                                  \Config::get('scsiie.DOC_CLS.DOCUMENT'),
+                                                  \Config::get('scsiie.DOC_TYPE.INVOICE'),
+                                                  \Config::get('scwms.DOC_VIEW.DETAIL'),
+                                                  \Config::get('scwms.DOC_VIEW_S.SUPP'),
+                                                  trans('userinterface.titles.LIST_INVS_SAL_SUPP_DET')
+                                                ])
+                )
         )
         ->submenu(
             Link::to('#', trans('wms.STOCK_QUERY').'<span class="caret"></span>')

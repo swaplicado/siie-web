@@ -52,7 +52,9 @@
 						@include('templates.list.options')
 					</td>
 					<td>
-							<a href="{{ route('wms.pallets.barcode', $pallet->id_pallet) }}" class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
+						<a href="{{ route('wms.pallets.barcode', $pallet->id_pallet) }}" class="btn btn-success btn-xs">
+							<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+						</a>
 					</td>
 				</tr>
 			@endforeach

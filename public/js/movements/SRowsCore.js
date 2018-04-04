@@ -3,17 +3,8 @@ var lLotsToCreate = new Array();
 class SRowsCore {
 
   cleanAddPanel() {
-    // oLocation = null;
     elementToAdd = null;
     iElementType = globalData.lElementsType.ITEMS;
-
-    // guiValidations.setSearchLocationText('');
-    // if (globalData.bIsInputMov) {
-    //   itemSelection.setDefaultLocation(globalData.lFDesLocations);
-    // }
-    // else {
-    //   itemSelection.setDefaultLocation(globalData.lFSrcLocations);
-    // }
 
     guiFunctions.setSearchCode('');
     guiValidations.setItemLabel('--');
@@ -21,11 +12,6 @@ class SRowsCore {
 
     guiFunctions.setQuantity(0);
     guiFunctions.setPrice(0);
-
-    if (globalData.iMvtType != globalData.MVT_TP_IN_PUR && globalData.iMvtType != globalData.MVT_TP_OUT_SAL) {
-      updateTable(globalData.lElementsType.ITEMS);
-    }
-    // updateLocationsTable();
 
     guiFunctions.changeClassToSecondary('btn_pallet');
     palletCore.cleanPallet();
@@ -37,12 +23,9 @@ class SRowsCore {
 
     document.getElementById('lot_edition').style.display = 'inline';
     document.getElementById('delete_lot').style.display = 'inline';
-    // document.getElementById('lot_accep_div').style.display = 'inline';
     document.getElementById('accLots').disabled = false;
 
     guiValidations.hideLots();
-
-    // guiValidations.hideAdd();
 
     $('#item').focus();
   }
@@ -64,7 +47,7 @@ class SRowsCore {
       ] ).draw( false );
 
       guiFunctions.updateAmtQtyLabels();
-      
+
       guiValidations.hideModify();
       rowsCore.cleanAddPanel();
   }
@@ -253,7 +236,6 @@ function addElement() {
         rowsCore.validateServerRow();
     }
     else {
-    //   guiValidations.hideAdd();
       return false;
     }
 }

@@ -56,19 +56,15 @@ $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
         },
         {
             "targets": 3,
-            "width": "15%"
+            "width": "2%"
+        },
+        {
+            "targets": 4,
+            "width": "20%"
         }
       ],
     });
 
     $(document).ready( function () {
       var table = $('#docTable').DataTable();
-
-      // Event listener to the two range filtering inputs to redraw on input
-      // document.getElementById('filter').addEventListener("change", function() {
-      //     table.draw();
-      // });
-      // $('#filter').change( function() {
-      //     table.draw();
-      // });
     });

@@ -258,7 +258,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="col-md-6">
+		<div id="info_div" style="display: none;" class="col-md-6">
 			<div class="row">
 				<div class="col-md-offset-6 col-md-3">
 					{!! '$ '.Form::label('Monto') !!}

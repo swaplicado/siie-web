@@ -279,6 +279,9 @@ function initializePanel(serverData) {
         guiValidations.hideDelete();
     }
 
+    guiFunctions.updateAmtQtyLabels();
+    guiValidations.showInfo();
+
     if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
         guiTransSupp.showSetDataButton();
     }

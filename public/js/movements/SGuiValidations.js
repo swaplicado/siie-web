@@ -30,6 +30,7 @@ function modifyHeader() {
     guiValidations.hidePanel();
     guiValidations.enableHeader();
     guiValidations.hideModify();
+    guiValidations.hideInfo();
 
     rowsCore.cleanAddPanel();
 }
@@ -176,6 +177,20 @@ class SGuiValidations {
      */
     showAdd() {
       document.getElementById('div_add').style.display = "inline";
+    }
+
+    /**
+     * hide the add button (to add new movement row)
+     */
+    hideInfo() {
+      document.getElementById('info_div').style.display = "none";
+    }
+
+    /**
+     * show the add button (to add new movement row)
+     */
+    showInfo() {
+      document.getElementById('info_div').style.display = "inline";
     }
 
     /**

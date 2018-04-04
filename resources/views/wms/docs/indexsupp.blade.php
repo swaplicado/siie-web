@@ -38,6 +38,7 @@
 								<th data-priority="1">Folio</th>
 		            <th data-priority="2">Fecha</th>
 								<th>ID ERP</th>
+								<th data-priority="2">Ref.</th>
 		            <th data-priority="1">Asociado de negocios</th>
 		            <th>RFC</th>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
@@ -64,6 +65,7 @@
                 <td class="small">{{ $doc->num }}</td>
                 <td class="small">{{ $doc->dt_doc }}</td>
                 <td class="small">{{ $doc->external_id }}</td>
+								<td class="small">{{ $doc->num_src }}</td>
 		            <td class="small">{{ $doc->name }}</td>
 		            <td class="small">{{ $doc->cve_an }}</td>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
