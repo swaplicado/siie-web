@@ -41,4 +41,6 @@ $('#table_seg').DataTable({
     table.column( 5 ).visible( false );
     table.column( 6 ).visible( false );
     table.column( 7 ).visible( false );
+    table.column( 20 ).visible(false );
+    table.column( 21 ).visible(false );
   });

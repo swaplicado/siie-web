@@ -203,6 +203,8 @@ Route::group(['prefix' => 'qms'], function () {
   			'uses' => 'QMS\SQualityController@Home'
   		]);
   		Route::resource('qms','QMS\SQualityController');
+      Route::get('/segregation/findWarehouse','QMS\SSegregationsController@findWarehouse');
+      Route::get('/segregation/findLocations','QMS\SSegregationsController@findLocations');
 
       /*
       * segregations

@@ -3,15 +3,15 @@
 
 return [
 
-    'TO_EVALUATE' => '1',
-    'REJECTED' => '2',
-    'QUARANTINE' => '3',
-    'PARTIAL_RELEASED' => '4',
-    'RELEASED' => '5',
-    'RELEASED_EARLY' => '6',
-    'RET_TO_EVALUATE' => '7',
-    'RECONDITIONING' => '8',
-    'REWORK' => '9',
+    'SHIPMENTS' => '1',
+    'PRODUCTIONS' => '2',
+    'BYINSPECTING' => '3',
+    'INQUARANTINE' => '4',
+    'ADVANCERELEASE' => '5',
+    'PARTIALRELEASE' => '6',
+    'TOTALRELEASE' => '7',
+    'RECONDITION' => '8',
+    'REPROCESS' => '9',
     'DESTROY' => '10',
 
     'SEGREGATION' => [
@@ -20,15 +20,18 @@ return [
                       ],
 
     'SEGREGATION_TYPE' => [
-                          'SHIPMENT' => '1',
+                          'SHIPMENT_ORDER' => '1',
                           'PRODUCTION_ORDER' => '2',
-                          'QUALITY' => '3',
+                          'INSPECTED' => '3',
+                          'QUARANTINE' => '4',
                         ],
 
     'QMS_VIEW' => [
                       'BY_STATUS' => '1',
                       'INSPECTION' => '2',
                       'CLASSIFY' => '3',
+                      'INSPECTIONCLASSIFY' => '4',
+                      'QUARANTINECLASSIFY' => '5',
                   ],
 
 ];

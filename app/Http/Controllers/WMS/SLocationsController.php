@@ -78,7 +78,6 @@ class SLocationsController extends Controller
     public function store(SLocRequest $request)
     {
       $location = new SLocation($request->all());
-
       $location->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
       $location->updated_by_id = \Auth::user()->id;
       $location->created_by_id = \Auth::user()->id;
@@ -129,8 +128,25 @@ class SLocationsController extends Controller
     {
         $location = SLocation::find($id);
         $location->fill($request->all());
+        if($request->is_recondition == NULL){
+          $location->is_recondition = '0';
+        }
+        else{
+          $location->is_recondition = '1';
+        };
+        if($request->is_reprocess == NULL){
+          $location->is_reprocess = '0';
+        }
+        else{
+          $location->is_reprocess = '1';
+        };
+        if($request->is_destruction == NULL){
+          $location->is_destruction = '0';
+        }
+        else{
+          $location->is_destruction = '1';
+        };
         $location->updated_by_id = \Auth::user()->id;
-
         $errors = $location->save();
         if (sizeof($errors) > 0)
         {

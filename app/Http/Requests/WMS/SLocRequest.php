@@ -27,7 +27,7 @@ class SLocRequest extends Request
       $location = new SLocation();
 
         return [
-            'code' => 'required|unique:siie.'.$location->getTable(),
+            'code' => 'required',
             'name' => 'required',
             'whs_id' => 'required|exists:siie.'.$whs->getTable().',id_whs',
           ];

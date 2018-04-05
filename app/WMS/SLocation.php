@@ -12,6 +12,9 @@ class SLocation extends SModel {
                           'code',
                           'name',
                           'is_deleted',
+                          'is_recondition',
+                          'is_reprocess',
+                          'is_destruction',
                           'whs_id',
                         ];
 

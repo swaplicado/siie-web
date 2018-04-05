@@ -5,11 +5,11 @@ use App\ERP\SModel;
 class SStatus extends SModel {
 
     protected $connection = 'siie';
-    protected $primaryKey = 'id_status';
-    protected $table = 'qmss_quality_status';
+    protected $primaryKey = 'id_segregation_event';
+    protected $table = 'qmss_segregation_events';
 
     protected $fillable = [
-                             'id_status',
+                             'id_segregation_event',
                               'code',
                               'name',
                               'is_deleted',

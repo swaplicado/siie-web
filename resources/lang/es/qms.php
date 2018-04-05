@@ -13,6 +13,9 @@ return [
       'CLASSIFICATION_T' => 'Aquí se pueden clasificar los ítems que se encuentran en almacén de calidad.',
       'LOTS' => 'Generación de lotes',
       'LOTS_T' => 'Apartado en el que se realiza la generación de lotes para la clasificación por este rubro.',
+      'STK_SEG_QLTY' => 'Existencias en calidad',
+      'VIEW_QUARENTINE' => 'Existencias en cuarentena',
+      'VIEW_INSPECTION' => 'Existencias por inspeccionar',
 
       'placeholders'  =>  [
                             'SELECT_STATUS' => 'Seleccione status',

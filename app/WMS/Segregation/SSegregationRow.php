@@ -7,20 +7,24 @@ class SSegregationRow extends SModel {
     protected $connection = 'siie';
     protected $primaryKey = 'id_segregation_row';
     protected $table = 'wms_segregation_rows';
-    public $timestamps = false;
 
     protected $fillable = [
                             'id_segregation_row',
-                            'quantity_increment',
-                            'quantity_decrement',
+                            'quantity',
+                            'is_deleted',
                             'segregation_id',
-                            'pallet_id',
-                            'whs_id',
+                            'segregation_mtv_type_id',
+                            'segregation_event_id',
                             'branch_id',
+                            'whs_id',
+                            'whs_location_id',
+                            'pallet_id',
+                            'lot_id',
                             'year_id',
                             'item_id',
                             'unit_id',
-                            'quality_status_id',
+                            'created_by_id',
+                            'updated_by_id',
                           ];
 
     /**
@@ -31,16 +35,6 @@ class SSegregationRow extends SModel {
     public function segregation()
     {
       return $this->belongsTo('App\WMS\Segregation\SSegregation');
-    }
-
-    /**
-     * [lotRows description]
-     * Return object SSegregationRow
-     * @return SSegregationRow
-     */
-    public function lotRows()
-    {
-      return $this->hasmany('App\WMS\Segregation\SSegregationRow', 'segregation_row_id', 'id_segregation_row');
     }
 
 }

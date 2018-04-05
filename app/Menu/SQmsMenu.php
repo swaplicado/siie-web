@@ -14,8 +14,20 @@ class SQmsMenu {
         ->route('qms.segregations.index', trans('wms.STK_SEG_QLTY'),
                                           [
                                             trans('wms.STK_SEG_QLTY'),
-                                            \Config::get('scqms.SEGREGATION_TYPE.QUALITY'),
+                                            \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'),
                                             \Config::get('scqms.QMS_VIEW.BY_STATUS')
+                                          ])
+        ->route('qms.segregations.index', trans('qms.VIEW_INSPECTION'),
+                                          [
+                                            trans('wms.STK_SEG_QLTY'),
+                                            \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'),
+                                            \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY')
+                                          ])
+        ->route('qms.segregations.index', trans('qms.VIEW_QUARENTINE'),
+                                          [
+                                            trans('wms.STK_SEG_QLTY'),
+                                            \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE'),
+                                            \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY')
                                           ])
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();

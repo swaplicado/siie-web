@@ -53,9 +53,13 @@
 		            <th>Almacén</th>
 		            <th data-priority="1">{{ trans('userinterface.labels.STATUS') }}</th>
 		            <th>Doc</th>
-								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY'))
+								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'))
+									<th>-</th>
+									<th>-</th>
 									<th>-</th>
 								@endif
+								<th>-</th>
+								<th>-</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -68,7 +72,7 @@
 		            <td>{{ $row->id_whs }}</td>
 		            <td>{{ $row->branch_id }}</td>
 		            <td>{{ $row->id_document }}</td>
-		            <td>{{ $row->id_status }}</td>
+		            <td>{{ $row->segregation_type_id }}</td>
 		            <td>{{ $row->item_code }}</td>
 		            <td>{{ $row->item }}</td>
 		            <td>{{ $row->unit }}</td>
@@ -77,21 +81,39 @@
 		            <td>{{ $row->segregated }}</td>
 		            <td>{{ $row->warehouse }}</td>
 		            <td>
-									<span class="{{ App\SUtils\SGuiUtils::getClassOfStatus($row->id_status) }}">
+									<span class="{{ App\SUtils\SGuiUtils::getClassOfStatus($row->id_segregation_event) }}">
 										{{ $row->status_qlty }}
 									</span>
 								</td>
 								<td>{{ $row->num_doc }}</td>
-								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY'))
+								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'))
 									<td>
 										<a data-toggle="modal" data-target="#classQlty"
 												title="Evaluar material/producto"
-												onclick="classificateUnits(this)"
+												onclick="classificateQlty(this)"
 												class="btn btn-default btn-sm">
-											<span class="glyphicon glyphicon-search" aria-hidden = "true"/>
+											<span class="glyphicon glyphicon-share" aria-hidden = "true"/>
+										</a>
+									</td>
+									<td>
+										<a data-toggle="modal" data-target="#classRls"
+												title="Liberar material/producto"
+												onclick="classificateRls(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-thumbs-up" aria-hidden = "true"/>
+										</a>
+									</td>
+									<td>
+										<a data-toggle="modal" data-target="#classRfs"
+												title="Evaluar material/producto"
+												onclick="classificateRfs(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-thumbs-down" aria-hidden = "true"/>
 										</a>
 									</td>
 								@endif
+									<td>{{ $row->id_segregation_event}}</td>
+									<td>{{ $row->whs_location_id}}</td>
 		        </tr>
 					@endforeach
 		    </tbody>
@@ -103,4 +125,68 @@
 	@include('templates.stock.scriptsstock')
 	<script src="{{ asset('js/segregation/segregation.js')}}"></script>
 	<script src="{{ asset('js/segregation/segregations_table.js')}}"></script>
+	<script type="text/javascript">
+
+	$(document).ready(function(){
+	var status = 0;
+	$(document).on('change', '.statusRF',function(){
+		console.log('entre');
+	  var eti_id=$(this).val();
+		console.log(eti_id);
+		 var opt=" ";
+		 status = eti_id;
+		$.ajax({
+			type:'get',
+			url:'{!!URL::to('qms/segregation/findWarehouse')!!}',
+			data:{'id':eti_id},
+
+				success:function(data){
+					console.log('success');
+					opt+='<select class="form-control almacen" id="almacen"  name="almacen" required>';
+						for(var i=0;i<data.length;i++){
+				 			opt+='<option value="'+data[i].id_whs+'">'+data[i].name+'</option>';
+					 }
+					 opt+='</select>';
+					 $('.warehouse').empty(" ");
+					 $('.warehouse').append(opt);
+
+				},
+				error:function(){
+						console.log('falle');
+				}
+		});
+
+		});
+
+		$(document).on('change', '.almacen',function(){
+			console.log('entre localicacion');
+			var eti_id=$(this).val();
+				console.log(eti_id);
+			console.log(status);
+			 var opt=" ";
+			$.ajax({
+				type:'get',
+				url:'{!!URL::to('qms/segregation/findLocations')!!}',
+				data:{'id':eti_id,'status':status},
+
+					success:function(data){
+						console.log('success');
+						opt+='<select class="form-control" id="ubicacion"  name="ubicacion" required>';
+							for(var i=0;i<data.length;i++){
+								opt+='<option value="'+data[i].id_whs_location+'">'+data[i].name+'</option>';
+						 }
+						 opt+='</select>';
+						 $('.location').empty(" ");
+						 $('.location').append(opt);
+
+					},
+					error:function(){
+							console.log('falle');
+					}
+			});
+
+			});
+	});
+	</script>
+
 @endsection

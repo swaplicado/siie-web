@@ -37,7 +37,7 @@ class SSegregationCore
        * ]
    */
   public function classify($aParameters)
-  {  
+  {
       \DB::connection('company')->transaction(function() use ($aParameters) {
 
         $iIdItem = $aParameters[\Config::get('scwms.SEG_PARAM.ID_ITEM')];
@@ -50,61 +50,141 @@ class SSegregationCore
         $iIdQltyPrev = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')];
         $iIdQltyNew = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')];
         $dQuantity = $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')];
+        $idEvent = $aParameters[10];
+        $idLoc = $aParameters[11];
+        $idWarehouse = $aParameters[12];
+        $idLocNew = $aParameters[13];
 
         $oSegregation = new SSegregation();
+        $oSegRow = new SSegregationRow();
 
         $oSegregation->dt_date = session('work_date')->format('Y-m-d');
         $oSegregation->is_deleted = false;
-        $oSegregation->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.QUALITY');
+
+        switch ($iIdQltyPrev) {
+          case 3:
+                $oSegregation->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.INSPECTED');
+                break;
+          case 4:
+                $oSegregation->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE');
+                break;
+          case 5:
+          case 6:
+          case 7:
+          case 1:
+          case 2:
+          case 8:
+          case 9:
+          case 10:
+                break;
+        }
+
+
         $oSegregation->reference_id = $iIdDocument;
         $oSegregation->created_by_id = \Auth::user()->id;
         $oSegregation->updated_by_id = \Auth::user()->id;
-
+        //Clonar el renglon ingresado para hacer el espejo
+        $oSegregationMirror = clone $oSegregation;
+        //Guardar primer renglon
         $oSegregation->save();
 
-        $oSegRow = new SSegregationRow();
+        //Renglon de segregacion de la primera entrada
 
-        $oSegRow->quantity = $iIdLot > 1 ? 0 : $dQuantity;
-        $oSegRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-        $oSegRow->pallet_id = $iIdPallet;
-        $oSegRow->whs_id = $iIdWhs;
+        $oSegRow->quantity = $dQuantity;
+        $oSegRow->is_deleted = false;
+        $oSegRow->segregation_id = $oSegregation->id_segregation;
+        $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
+
+        switch ($iIdQltyNew) {
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+                $oSegRow->segregation_event_id = $idEvent;
+                break;
+          case 5:
+          case 6:
+          case 7:
+          case 8:
+          case 9:
+          case 10:
+                $oSegRow->segregation_event_id = $iIdQltyNew;
+                break;
+        }
+
         $oSegRow->branch_id = $iIdBranch;
+        $oSegRow->whs_id = $iIdWhs;
+        $oSegRow->whs_location_id = $idLoc;
+        $oSegRow->pallet_id = $iIdPallet;
+        $oSegRow->lot_id = $iIdLot;
         $oSegRow->year_id = session('work_year');
         $oSegRow->item_id = $iIdItem;
         $oSegRow->unit_id = $iIdUnit;
-        $oSegRow->quality_status_id = $iIdQltyPrev;
+        $oSegRow->created_by_id = \Auth::user()->id;
+        $oSegRow->updated_by_id = \Auth::user()->id;
+        //Clonar el renglon para hacer el espejo
+        $oSegRowMirror = clone $oSegRow;
+        //Guardado primer renglon
+        $oSegRow->save();
 
-        if (! session('segregation')->isRelease($iIdQltyNew)) {
-          $oSegRowMirror = clone $oSegRow;
-          $oSegRowMirror->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-          $oSegRowMirror->quality_status_id = $iIdQltyNew;
+        switch ($iIdQltyNew) {
+          case 3:
+                $oSegregationMirror->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.INSPECTED');
 
-          $oSegregation->rows()->save($oSegRowMirror);
+                $oSegregationMirror->save();
+
+                //Insertar segundo registro contrario al Anterior
+                $oSegRowMirror->segregation_id = $oSegregationMirror->id_segregation;
+                $oSegRowMirror->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+                $oSegRowMirror->segregation_event_id = $iIdQltyNew;
+                $oSegRowMirror->save();
+                break;
+          case 4:
+                $oSegregationMirror->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE');
+
+                $oSegregationMirror->save();
+
+                //Insertar segundo registro contrario al Anterior
+                $oSegRowMirror->segregation_id = $oSegregationMirror->id_segregation;
+                $oSegRowMirror->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+                $oSegRowMirror->segregation_event_id = $iIdQltyNew;
+                $oSegRowMirror->save();
+                break;
+          case 1:
+          case 2:
+          case 5:
+          case 6:
+          case 7:
+                break;
+          case 8:
+          case 9:
+          case 10:
+                $oMovement = new SMovement();
+                $lDocData = array();
+                $lStock = null;
+                $oDocument = 0;
+                $oMovType = SMvtType::find($mvtType);
+                $iMvtSubType = 1;
+                $oMovement->mvt_whs_class_id = $oMovType->mvt_class_id;
+                $oMovement->mvt_whs_type_id = $oMovType->id_mvt_type;
+
+                $movTypes = SMvtType::where('is_deleted', false)
+                                      ->where('id_mvt_type', $oMovement->mvt_whs_type_id)
+                                      ->lists('name', 'id_mvt_type');
+
+                $warehouses = SWarehouse::where('is_deleted', false)
+                                        ->where('branch_id', session('branch')->id_branch)
+                                        ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                        ->orderBy('name', 'ASC')
+                                        ->lists('warehouse', 'id_whs');
+
+                $iWhsSrc = 0;
+                $iWhsDes = 0;
+                break;
         }
 
-        $oSegregation->rows()->save($oSegRow);
-
-        $oSegLotRow = new SSegregationLotRow();
-
-        if ($iIdLot > 1) {
-          $oSegLotRow->quantity = $dQuantity;
-          $oSegLotRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-          $oSegLotRow->lot_id = $iIdLot;
-          $oSegLotRow->year_id = 1;
-          $oSegLotRow->item_id = $iIdItem;
-          $oSegLotRow->unit_id = $iIdUnit;
-          $oSegLotRow->quality_status_id = $iIdQltyPrev;
-
-          if (! session('segregation')->isRelease($iIdQltyNew)) {
-            $oSegLotRowMirror = clone $oSegLotRow;
-            $oSegLotRowMirror->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-            $oSegLotRowMirror->quality_status_id = $iIdQltyNew;
-
-            $oSegRowMirror->lotRows()->save($oSegLotRowMirror);
-          }
-          $oSegRow->lotRows()->save($oSegLotRow);
-        }
       });
+
   }
 
   /**
@@ -217,55 +297,55 @@ class SSegregationCore
                   ww.id_whs,
                   ww.branch_id,
                   ed.id_document,
-                  qqs.id_status,
+                  qse.id_segregation_event,
+                  ws.segregation_type_id,
                   ei.code as item_code,
                   ei.name as item,
                   eu.code as unit,
                   wsr.quantity AS qty,
+                  wsr.whs_location_id,
                   COALESCE(wl.lot, \'N/A\') AS lot_name,
-                  SUM(IF(wsr.move_type_id = 1, IF(id_lot is null, wsr.quantity, wslr.quantity), 0)) AS increment,
-    SUM(IF(wsr.move_type_id = 2, IF(id_lot is null, wsr.quantity, wslr.quantity), 0)) AS decrement,
-    SUM(IF(wsr.move_type_id = 1, IF(id_lot is null, wsr.quantity, wslr.quantity), 0)) - SUM(IF(wsr.move_type_id = 2, IF(id_lot is null, wsr.quantity, wslr.quantity), 0)) AS segregated,
+                  SUM(IF(wsr.segregation_mvt_type_id = 1, wsr.quantity, 0)) AS increment,
+                  SUM(IF(wsr.segregation_mvt_type_id = 2, wsr.quantity, 0)) AS decrement,
+                  SUM(IF(wsr.segregation_mvt_type_id = 1, wsr.quantity, 0)) - SUM(IF(wsr.segregation_mvt_type_id = 2, wsr.quantity, 0)) AS segregated,
                   wp.pallet,
                   ww.name AS warehouse,
-                  qqs.name AS status_qlty,
-                  qqs.id_status,
+                  qse.name AS status_qlty,
                   ed.num AS num_doc';
 
       $query = \DB::connection(session('db_configuration')->getConnCompany())
                   ->table('wms_segregations AS ws')
                   ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
-                  ->leftJoin('wms_seg_lot_rows AS wslr', 'wsr.id_segregation_row', '=', 'wslr.segregation_row_id')
                   ->join('erpu_items AS ei', 'wsr.item_id', '=', 'ei.id_item')
                   ->join('erpu_units AS eu', 'wsr.unit_id', '=', 'eu.id_unit')
-                  ->leftJoin('wms_lots AS wl', 'wslr.lot_id', '=', 'wl.id_lot')
+                  ->leftJoin('wms_lots AS wl', 'wsr.lot_id', '=', 'wl.id_lot')
                   ->join('wms_pallets AS wp', 'wsr.pallet_id', '=', 'wp.id_pallet')
                   ->join('wmsu_whs AS ww', 'wsr.whs_id', '=', 'ww.id_whs')
-                  ->join('qmss_quality_status AS qqs', 'wsr.quality_status_id', '=', 'qqs.id_status')
+                  ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event')
                   ->join('erpu_documents AS ed', 'ws.reference_id', '=', 'ed.id_document')
                   ->where('ei.is_deleted', false)
                   ->where('ws.is_deleted', false)
-                  ->where('ws.segregation_type_id', $iSegregationType)
                   ->select(\DB::raw($sSelect))
                   ->groupBy('id_item',
                             'id_unit',
                             'id_lot',
                             'id_pallet',
-                            'ww.id_whs',
-                            'qqs.id_status'
+                            'ww.id_whs'
                             )
                   ->having('segregated', '>', 0);
-
       switch ($iQualityType) {
         case \Config::get('scqms.QMS_VIEW.BY_STATUS'):
         case \Config::get('scqms.QMS_VIEW.CLASSIFY'):
           $query = $query->get();
           break;
-        case \Config::get('scqms.QMS_VIEW.INSPECTION'):
-          $query = $query->where('wsr.quality_status_id', \Config::get('scqms.QUARANTINE'))
+        case \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY'):
+          $query = $query->where('ws.segregation_type_id', \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'))
                           ->get();
           break;
-
+        case \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'):
+          $query = $query->where('ws.segregation_type_id', \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE'))
+                        ->get();
+        break;
         default:
           break;
       }

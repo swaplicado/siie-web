@@ -52,5 +52,7 @@
 				{!! Form::checkbox('is_quality', 1, isset($whs) ? $whs->is_quality : false, ['class' => 'form-control', 'align' => 'left']) !!}
 			</div>
 		</div>
+		<br>
+		<br>
 
 @endsection
