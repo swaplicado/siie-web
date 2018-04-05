@@ -25,7 +25,7 @@ class SHeaderCore {
           movement.iDocumentId = globalData.oDocument.id_document;
         }
 
-        if (movement.iMvtType == globalData.MVT_TP_OUT_TRA) {
+        if (movement.iMvtType == globalData.MVT_TP_OUT_TRA && !globalData.bIsExternalTransfer) {
             movement.iWhsSrc = document.getElementById('whs_src').value;
             movement.iWhsDes = document.getElementById('whs_des').value;
         }
@@ -36,6 +36,11 @@ class SHeaderCore {
           else {
              movement.iWhsSrc = document.getElementById('whs_src').value;
           }
+        }
+
+        if (globalData.bIsExternalTransfer) {
+            movement.iBranchDes = document.getElementById('branch_des').value;
+            movement.iWhsDes = 2;
         }
     }
 
@@ -263,7 +268,7 @@ function initializePanel(serverData) {
     guiValidations.validatePrice();
     iElementType = globalData.lElementsType.ITEMS;
     searchCore.initializateItems();
-    updateLocationsTable();
+    locationsJs.updateLocationsTable();
 
     guiValidations.hideLots();
     oLotsTable.clear().draw();
@@ -287,10 +292,18 @@ function initializePanel(serverData) {
     }
 
     if (globalData.bIsInputMov) {
-      itemSelection.setDefaultLocation(globalData.lFDesLocations);
+        locationsJs.setDefaultLocation(globalData.lFDesLocations);
     }
     else {
-      itemSelection.setDefaultLocation(globalData.lFSrcLocations);
+        locationsJs.setDefaultLocation(globalData.lFSrcLocations);
+    }
+
+    if (globalData.bIsExternalTransfer) {
+        guiValidations.hideLocationDes();
+    }
+
+    if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+        locationsJs.setDefaultLocationDes(globalData.lFDesLocations);
     }
 
     $('#item').focus();
@@ -456,75 +469,6 @@ function updateTable(iElementType) {
 
   oElementsTable.columns.adjust().draw();
   oElementsTable.rows().invalidate().draw();
-}
-
-function updateLocationsTable() {
-  if (oLocationsTable != null) {
-    oLocationsTable.destroy();
-  }
-
-  var aColumns = [];
-  var oData = [];
-
-  aColumns = [
-        {
-            "title": "idLocation",
-            "data": "id_whs_location"
-        }, {
-            "title": "Código",
-            "data": "code"
-        }, {
-            "title": "Ubicación",
-            "data": "name"
-        }, {
-            "title": "Default",
-            "data": "is_default"
-        }
-    ];
-
-    if (globalData.bIsInputMov) {
-        oData = globalData.lFDesLocations;
-    }
-    else {
-        oData = globalData.lFSrcLocations;
-    }
-
-    oLocationsTable = $('#locations_table').DataTable({
-        "language": {
-          "sProcessing":     "Procesando...",
-          "sLengthMenu":     "Mostrar _MENU_ registros",
-          "sZeroRecords":    "No se encontraron resultados",
-          "sEmptyTable":     "Ningún dato disponible en esta tabla",
-          "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-          "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-          "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-          "sInfoPostFix":    "",
-          "sSearch":         "Buscar:",
-          "sUrl":            "",
-          "sInfoThousands":  ",",
-          "sLoadingRecords": "Cargando...",
-          "oPaginate": {
-              "sFirst":    "Primero",
-              "sLast":     "Último",
-              "sNext":     "Siguiente",
-              "sPrevious": "Anterior"
-          },
-          "oAria": {
-              "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-              "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-          }
-        },
-        "scrollY":        "50vh",
-        "scrollCollapse": true,
-        "paging":         false,
-        "data": oData,
-        "columns": aColumns
-    });
-
-    oLocationsTable.column( 0 ).visible( false );
-
-    oLocationsTable.columns.adjust().draw();
-    oLocationsTable.rows().invalidate().draw();
 }
 
 function showLoading(dTime) {

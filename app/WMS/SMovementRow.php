@@ -13,6 +13,7 @@ class SMovementRow extends Model {
   public $iAuxLotId = 0;
   public $aAuxStock = [];
   public $dIndSupplied = [];
+  public $iAuxLocationDesId = 0;
 
   protected $fillable = [
                           'id_mvt_row',

@@ -45,7 +45,9 @@
 				{!! Form::select('mvt_com', $mvtComp, $iMvtSubType, ['class'=>'form-control select-one',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'),
 																															'required', 'id' => 'mvt_com',
-																															isset($oMovement->id_mvt) ? 'disabled' : '']) !!}
+																															isset($oMovement->id_mvt) ||
+																															$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA') ?
+																															'disabled' : '']) !!}
   		</div>
 
     </div>
@@ -63,24 +65,7 @@
 					</div>
 
 					<div class="row">
-						<div class="col-md-8">
-							<div class="form-group">
-								@if (App\SUtils\SGuiUtils::isWhsShowed($oMovement->mvt_whs_class_id, $oMovement->mvt_whs_type_id, 'whs_src'))
-										{!! Form::label('whs_src', trans('userinterface.labels.MVT_WHS_SRC').'*') !!}
-										{!! Form::select('whs_src', $warehouses, $whs_src, ['class'=>'form-control border_red select-one',
-																				'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required',
-																				isset($oMovement->id_mvt) ? 'disabled' : '']) !!}
-								@endif
-								@if (App\SUtils\SGuiUtils::isWhsShowed($oMovement->mvt_whs_class_id, $oMovement->mvt_whs_type_id, 'whs_des'))
-										{!! Form::label('whs_des', ($oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ?
-											trans('wms.labels.WAREHOUSE') :
-													trans('userinterface.labels.MVT_WHS_DEST')).'*') !!}
-										{!! Form::select('whs_des', $warehouses, $whs_des, ['class'=>'form-control select-one',
-																					'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required',
-																					isset($oMovement->id_mvt) ? 'disabled' : '']) !!}
-								@endif
-							</div>
-						</div>
+						@include('wms.movs.subviews.whss')
 						<div id="div_modify" style="display: none;">
 							<br />
 							<br />
@@ -126,34 +111,11 @@
 	<div id="div_rows" style="display: none;">
 		<div class="row">
 			<div class="col-md-12">
-						<div class="row">
-							@if (session('location_enabled'))
-								<div class="col-md-3">
-									{!! Form::label(trans('actions.SEARCH_LOCATION').'...') !!}
-										{!! Form::text('location',
-											isset($whs) ? $whs->code : null , ['class'=>'form-control input-sm',
-											'id' => 'location',
-											'placeholder' => trans('userinterface.placeholders.CODE'),
-											'onkeypress' => 'searchLoc(event)']) !!}
-								</div>
-								<div class="col-md-1">
-									{!! Form::label('.') !!}
-									<button type="button"
-									class="btn btn-warning"
-									data-toggle="modal"
-									data-target="#location_search">Ubica.</button>
-								</div>
-								<div class="col-md-3">
-									{!! Form::label('Ubicación') !!}
-									{!! Form::label('label_loc', '--',
-																			['class' => 'form-control input-sm',
-																			'id' => 'label_loc']) !!}
-								</div>
-							@endif
-						</div>
+						@include('wms.movs.search.locations')
 						<div class="row">
 							@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
 										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
+										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA') ||
 										($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')))
 									<div class="col-md-3">
 										{!! Form::label(trans('actions.SEARCH').'...') !!}
@@ -280,14 +242,11 @@
   <div class="row">
     <div class="col-xs-12">
 			<div class="form-group">
-					{{-- @if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-								$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
-								$iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) --}}
+					@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA'))
+							@include('wms.movs.tables.whstransfers')
+					@else
 							@include('wms.movs.tables.adjustments')
-					{{-- @elseif ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') &&
-										$iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION'))
-
-					@endif --}}
+					@endif
 			</div>
     </div>
   </div>
@@ -331,6 +290,7 @@
 			this.lElementsType = <?php echo json_encode(\Config::get('scwms.ELEMENTS_TYPE')) ?>;
 			this.lOperationType = <?php echo json_encode(\Config::get('scwms.OPERATION_TYPE')) ?>;
 			this.lOperation = <?php echo json_encode(\Config::get('scwms.OPERATION')) ?>; //input-output
+			this.bIsExternalTransfer = <?php echo json_encode($bIsExternalTransfer) ?>;
 
 		  this.MVT_CLS_IN = <?php echo json_encode(\Config::get('scwms.MVT_CLS_IN')) ?>; //
 		  this.MVT_CLS_OUT = <?php echo json_encode(\Config::get('scwms.MVT_CLS_OUT')) ?>; //
@@ -435,6 +395,7 @@
 @include('wms.movs.search.itemsearch')
 @include('wms.movs.search.items')
 @include('wms.locs.locationsearch')
+@include('wms.locs.locationsearchdes')
 @include('wms.movs.lotsmodal')
 @include('wms.movs.palletmodal')
 @include('wms.movs.stockmodal')

@@ -60,17 +60,26 @@ class SGuiValidations {
           return false;
        }
 
-       if (oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || globalData.bIsInputMov) {
+       if (oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || !globalData.bIsInputMov) {
+         if (oMovement.iWhsSrc == 0) {
+           swal("Error", "Debe elegir un almacén origen.", "error");
+           return false;
+         }
+       }
+
+       if ((oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || globalData.bIsInputMov)
+            && !globalData.bIsExternalTransfer) {
           if (oMovement.iWhsDes == 0) {
             swal("Error", "Debe elegir un almacén destino.", "error");
             return false;
           }
        }
-       if (oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || !globalData.bIsInputMov) {
-          if (oMovement.iWhsSrc == 0) {
-            swal("Error", "Debe elegir un almacén origen.", "error");
-            return false;
-          }
+
+       if (globalData.bIsExternalTransfer) {
+           if (oMovement.iBranchDes == 0) {
+             swal("Error", "Debe elegir una sucursal destino.", "error");
+             return false;
+           }
        }
 
        return true;
@@ -98,6 +107,7 @@ class SGuiValidations {
         $('#mvt_com').attr("disabled", true).trigger("chosen:updated");
         $('#whs_src').attr("disabled", true).trigger("chosen:updated");
         $('#whs_des').attr("disabled", true).trigger("chosen:updated");
+        $('#branch_des').attr("disabled", true).trigger("chosen:updated");
     }
 
     /**
@@ -108,6 +118,7 @@ class SGuiValidations {
         $('#mvt_com').attr("disabled", false).trigger("chosen:updated");
         $('#whs_src').attr("disabled", false).trigger("chosen:updated");
         $('#whs_des').attr("disabled", false).trigger("chosen:updated");
+        $('#branch_des').attr("disabled", false).trigger("chosen:updated");
     }
 
     /**
@@ -135,6 +146,19 @@ class SGuiValidations {
      */
     showContinue() {
       document.getElementById('div_continue').style.display = "inline";
+    }
+
+    /**
+     * hide the continue button of header
+     */
+    hideLocationDes() {
+      document.getElementById('loccs').style.display = "none";
+    }
+    /**
+     * show the continue button of header
+     */
+    showLocationDes() {
+      document.getElementById('loccs').style.display = "inline";
     }
 
     /**
@@ -245,12 +269,30 @@ class SGuiValidations {
     }
 
     /**
+     * set the text to destiny location label on the principal view
+     *
+     * @param {string} sText
+     */
+    setLocationDesLabel(sText) {
+      document.getElementById('label_loc_des').innerText = sText;
+    }
+
+    /**
      * set a text to input of locations search
      *
      * @param {string} sText
      */
     setSearchLocationText(sText) {
       document.getElementById('location').value = sText;
+    }
+
+    /**
+     * set a text to input of destiny locations search
+     *
+     * @param {string} sText
+     */
+    setSearchLocationDesText(sText) {
+      document.getElementById('location_des').value = sText;
     }
 
     /**
@@ -280,6 +322,11 @@ class SGuiValidations {
       if (oLocation == null) {
           swal("Error", "Debe seleccionar una ubicación.", "error");
           return false;
+      }
+
+      if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA && oLocationDes == null) {
+        swal("Error", "Cuando realiza un traspeso debe seleccionar una ubicación destino.", "error");
+        return false;
       }
 
       if (guiFunctions.getSearchCode() == '' &&

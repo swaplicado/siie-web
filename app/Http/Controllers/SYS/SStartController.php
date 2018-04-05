@@ -203,9 +203,11 @@ class SStartController extends Controller
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOC_ENABLED'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
+        $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oCurrency = SCurrency::find($oErpConfLocCur->val_int);
+        $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
         $oStock = new SStockManagment();
         $oSegregations = new SSegregationCore();
 
@@ -217,6 +219,7 @@ class SStartController extends Controller
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
+        session(['transit_whs' => $oTransitWarehouse]);
 
 	      $sWorkDate =  $_COOKIE['tWorkDate'];
         $oWorkDate = Carbon::parse($sWorkDate);

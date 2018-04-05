@@ -10,6 +10,7 @@ class SMovement extends Model {
   protected $table = 'wms_mvts';
 
   public $aAuxRows = [];
+  public $iAuxBranchDes = [];
 
   protected $fillable = [
                     'dt_date',

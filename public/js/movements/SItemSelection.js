@@ -1,4 +1,3 @@
-var oLocation = null;
 var elementToAdd = null;
 var iElementType = null;
 
@@ -10,24 +9,6 @@ class SItemSelection {
 
     getElementType() {
       return iElementType;
-    }
-
-    setLocation(oLocationjs) {
-      oLocation = oLocationjs;
-    }
-
-    setDefaultLocation(lLocations) {
-      lLocations.forEach(function (loc) {
-        if (loc.is_default) {
-            itemSelection.setLocation(loc);
-            guiValidations.setLocationLabel(loc.code + '-' + loc.name);
-        }
-      });
-    }
-
-    searchLocation() {
-      var sCode = document.getElementById('location').value;
-      itemSelection.search(sCode);
     }
 
     searchElement() {
@@ -135,7 +116,7 @@ class SItemSelection {
 
               guiValidations.setLocationLabel(serverData.oElement.code + '-'
                                                   + serverData.oElement.name);
-              itemSelection.setLocation(serverData.oElement);
+              locationsJs.setLocation(serverData.oElement);
               guiValidations.setSearchLocationText('');
               return true;
 
@@ -262,12 +243,6 @@ function addElement() {
     guiValidations.cleanToNewRow();
 }
 
-function searchLoc(e) {
-    if (e.keyCode == 13) {
-      itemSelection.searchLocation();
-    }
-}
-
 function searchElem(e) {
     if (e.keyCode == 13) {
       itemSelection.searchElement();
@@ -349,26 +324,6 @@ $('#select_button').on('click', function(e) {
             break;
     }
 
-});
-
-$('#select_button_loc').on('click', function(e) {
-    var row = oLocationsTable.row('.selected').data();
-
-    if (row == undefined) {
-      swal("Error", "Debe seleccionar un elemento.", "error");
-      return false;
-    }
-
-    oLocation = new Object();
-
-    oLocation.id_whs_location = row['id_whs_location'];
-    oLocation.name = row['name'];
-    oLocation.code = row['code'];
-    oLocation.whs_id = row['whs_id'];
-    oLocation.created_by_id = row['created_by_id'];
-    oLocation.created_by_id = row['created_by_id'];
-
-    guiValidations.setLocationLabel(row['code'] + '-' + row['name']);
 });
 
 function showItems() {

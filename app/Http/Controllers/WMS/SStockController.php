@@ -241,7 +241,7 @@ class SStockController extends Controller
                 $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
                 $oStock->mfg_line_id = $oMovement->mfg_line_id;
                 $oStock->mfg_job_id = $oMovement->mfg_job_id;
-                $oStock->year_id = session('work_year');
+                $oStock->year_id = $oMovement->year_id;
 
                 $oStock->save();
               }

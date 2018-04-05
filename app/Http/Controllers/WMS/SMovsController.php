@@ -130,6 +130,8 @@ class SMovsController extends Controller
         }
 
         $iOperation = \Config::get('scwms.OPERATION_TYPE.CREATION');
+        $bIsExternalTransfer = false;
+        $branches = array();
 
         $oMovement = new SMovement();
         $lDocData = array();
@@ -169,8 +171,18 @@ class SMovsController extends Controller
         $warehouses = SWarehouse::where('is_deleted', false)
                                 ->where('branch_id', session('branch')->id_branch)
                                 ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
-                                ->orderBy('name', 'ASC')
+                                ->orderBy('code', 'ASC')
                                 ->lists('warehouse', 'id_whs');
+
+        if ($sTitle == trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT') ||
+              $sTitle == trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT')) {
+                $bIsExternalTransfer = true;
+                $branches = SBranch::where('is_deleted', false)
+                                        ->where('partner_id', session('partner')->id_partner)
+                                        ->select('id_branch', \DB::raw("CONCAT(code, '-', name) as branch"))
+                                        ->orderBy('code', 'ASC')
+                                        ->lists('branch', 'id_branch');
+        }
 
         $iWhsSrc = 0;
         $iWhsDes = 0;
@@ -201,8 +213,7 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_IN_TRA'):
             $mvtComp = SMvtAdjType::where('id_mvt_adj_type', 1)->lists('name', 'id_mvt_adj_type');
-            $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
-            $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
+            $oTransitWarehouse = session('transit_whs')->id_whs;
             break;
 
           case \Config::get('scwms.MVT_TP_IN_CON'):
@@ -235,12 +246,14 @@ class SMovsController extends Controller
                           ->with('oMovement', $oMovement)
                           ->with('lStock', $lStock)
                           ->with('iOperation', $iOperation)
+                          ->with('bIsExternalTransfer', $bIsExternalTransfer)
                           ->with('iMvtSubType', $iMvtSubType)
                           ->with('oDocument', $oDocument)
                           ->with('lDocData', $lDocData)
                           ->with('movTypes', $movTypes)
                           ->with('mvtComp', $mvtComp)
                           ->with('warehouses', $warehouses)
+                          ->with('branches', $branches)
                           ->with('whs_src', $iWhsSrc)
                           ->with('whs_des', $iWhsDes)
                           ->with('oTransitWarehouse', $oTransitWarehouse)
@@ -272,6 +285,7 @@ class SMovsController extends Controller
         {
             $iWhsSrc = $oMovementJs->iWhsSrc;
             $iWhsDes = $oMovementJs->iWhsDes;
+            $iWhsId = $iWhsSrc;
         }
         // if the movement is output implies that the warehouse is of source
         else if ($request->input('mvt_whs_class_id') == \Config::get('scwms.MVT_CLS_OUT'))
@@ -329,6 +343,7 @@ class SMovsController extends Controller
 
         $movement->whs_id = $iWhsId;
         $movement->branch_id = $movement->warehouse->branch_id;
+        $movement->iAuxBranchDes = $oMovementJs->iBranchDes;
         $movement->year_id = session('work_year');
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = 1;
@@ -360,6 +375,7 @@ class SMovsController extends Controller
            $oMvtRow->unit_id = $row->iUnitId;
            $oMvtRow->pallet_id = $row->iPalletId;
            $oMvtRow->location_id = $row->iLocationId;
+           $oMvtRow->iAuxLocationDesId = $row->iLocationDesId;
 
            $oMvtRow = $oProcess->assignForeignRow($oMvtRow, $movement->mvt_whs_type_id, $row->iAuxDocRowId);
 
@@ -779,6 +795,10 @@ class SMovsController extends Controller
         if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_OUT')) {
             $oData->lSrcLocations = SMovsUtils::getResWarehouseLocations($request->whs_source)->get();
             $iWhs = $request->whs_source;
+
+            if ($request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+                $oData->lDesLocations = SMovsUtils::getResWarehouseLocations($request->whs_des)->get();
+            }
         }
         else {
             $oData->lDesLocations = SMovsUtils::getResWarehouseLocations($request->whs_des)->get();

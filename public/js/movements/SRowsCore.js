@@ -31,20 +31,25 @@ class SRowsCore {
   }
 
   addRow(elementToAdd) {
-      oMovement.addRow(elementToAdd);
+      if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+        transfersCore.addRow(elementToAdd);
+      }
+      else {
+        oMovement.addRow(elementToAdd);
 
-      oMovsTable.row.add( [
-          elementToAdd.iIdRow,
-          elementToAdd.sItemCode,
-          elementToAdd.sItem,
-          elementToAdd.sUnit,
-          elementToAdd.sLocation,
-          elementToAdd.sPallet,
-          parseFloat(elementToAdd.dPrice, 10).toFixed(globalData.DEC_AMT),
-          parseFloat(elementToAdd.dQuantity, 10).toFixed(globalData.DEC_QTY),
-          elementToAdd.bIsLot ? rowsCore.getLotsButton(elementToAdd.iIdRow) : '-',
-          rowsCore.getStockButton(elementToAdd.iIdRow)
-      ] ).draw( false );
+        oMovsTable.row.add( [
+            elementToAdd.iIdRow,
+            elementToAdd.sItemCode,
+            elementToAdd.sItem,
+            elementToAdd.sUnit,
+            elementToAdd.sLocation,
+            elementToAdd.sPallet,
+            parseFloat(elementToAdd.dPrice, 10).toFixed(globalData.DEC_AMT),
+            parseFloat(elementToAdd.dQuantity, 10).toFixed(globalData.DEC_QTY),
+            elementToAdd.bIsLot ? rowsCore.getLotsButton(elementToAdd.iIdRow) : '-',
+            rowsCore.getStockButton(elementToAdd.iIdRow)
+        ] ).draw( false );
+      }
 
       guiFunctions.updateAmtQtyLabels();
 
@@ -241,8 +246,17 @@ function addElement() {
 }
 
 function deleteElement() {
-  var row = oMovsTable.row('.selected').data();
-  var index = oMovsTable.row('.selected').index();
+  var row = undefined;
+  var index = undefined;
+
+  if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+    row = oTransfersMovsTable.row('.selected').data();
+    index = oTransfersMovsTable.row('.selected').index();
+  }
+  else {
+    row = oMovsTable.row('.selected').data();
+    index = oMovsTable.row('.selected').index();
+  }
 
   if (row == undefined) {
     swal("Error", "Debe seleccionar un elemento.", "error");

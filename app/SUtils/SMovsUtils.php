@@ -30,8 +30,6 @@ class SMovsUtils {
    */
   public static function getElementsToWarehouse($iWhsSrc = 0, $iWhsDes = 0, $iElementType = 0)
   {
-    $lElementsToReturn = array();
-
     // initialize the select for the query
     $sSelect = 'ei.id_item,
                 eu.id_unit,
@@ -64,7 +62,7 @@ class SMovsUtils {
 
     // if the destiny warehouse is zero, means that the movement is input
     // just return the elements filtered by the configuration of storage
-    if ($iWhsDes != '0') {
+    if ($iWhsDes != '0' && $iWhsSrc == '0') {
       $lItemContainers = SMovsUtils::getContainerConfiguration($iWhsDes);
 
       $lElements = SMovsUtils::getFilteredElements($lItemContainers, $sSelect, $iElementType);
@@ -75,7 +73,12 @@ class SMovsUtils {
     //if the movement is output filter the elements by the configuration and
     //by the stock
     if ($iWhsSrc != '0') {
-      $lItemContainers = array();
+      if ($iWhsDes != '0') {
+        $lItemContainers = SMovsUtils::getContainerConfiguration($iWhsDes);
+      }
+      else {
+        $lItemContainers = array();
+      }
 
       $sSelect = $sSelect.',
                             (COALESCE(
@@ -88,6 +91,7 @@ class SMovsUtils {
                                                         $iWhsSrc, $iElementType);
       $lElements = $lElements->get();
 
+      $lElementsToReturn = array();
       // Filter the elements with stock available greater than zero
       foreach ($lElements as $oItem) {
         if ($oItem->stock > $oItem->segregated) {

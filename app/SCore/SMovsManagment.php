@@ -69,9 +69,17 @@ class SMovsManagment {
         try
         {
           \DB::connection('company')->transaction(function() use ($movements, $oRequest) {
+            $i = 0;
+            $iSrcId = 0;
             foreach ($movements as $mov) {
                 $movement = clone $mov;
+                if ($i == 1) {
+                  $movement->src_mvt_id = $iSrcId;
+                }
                 $movement->save();
+                if ($i == 0) {
+                  $iSrcId = $movement->id_mvt;
+                }
 
                 foreach ($mov->aAuxRows as $movRow) {
                   $row = clone $movRow;
@@ -99,6 +107,7 @@ class SMovsManagment {
                       // session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
                   }
                 }
+                $i++;
             }
           });
        }
@@ -470,7 +479,13 @@ class SMovsManagment {
         $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
         $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
         $oMirrorMovement->whs_id = $iWhsDes;
-        $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
+        
+        if ($iWhsDes == session('transit_whs')->id_whs) {
+          $oMirrorMovement->branch_id = $oMovement->iAuxBranchDes;
+        }
+        else {
+          $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
+        }
 
         $iWhsSrcDefLocation = 0;
         $iWhsDesDefLocation = 0;
@@ -494,7 +509,7 @@ class SMovsManagment {
                 $movRowM->location_id = $iWhsDesDefLocation;
             }
             else {
-              $movRow->location_id = 1;
+                $movRowM->location_id = $row->iAuxLocationDesId;
             }
 
             array_push($oMovement->aAuxRows, $movRow);

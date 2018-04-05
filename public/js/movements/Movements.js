@@ -19,6 +19,7 @@ class SMovement {
       this.lAuxlotsToCreate = null;
       this.auxPalletRow = '';
 
+      this.iBranchDes = 0;
       this.sBranch = '';
       this.sWarehouse = '';
       this.iAuxIndex = 0;
@@ -84,12 +85,15 @@ class SMovementRow {
       this.iAuxDocRowId = 0;
       this.bIsDeleted = false;
 
+      this.iLocationDesId = 0;
+
       this.sItem = 'NA';
       this.sItemCode = 'NA';
       this.sUnit = 'NA';
 
       this.sLocation = 'DEFAULT';
-      this.sPallet = 'NA';
+      this.sLocationDes = 'DEFAULT';
+      this.sPallet = 'SIN TARIMA';
 
       this.iLotId = 1;
       this.sLot = 'NA';
