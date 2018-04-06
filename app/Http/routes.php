@@ -376,7 +376,7 @@ Route::group(['prefix' => 'qms'], function () {
       /*
       * Stock
       **/
-      Route::get('/stock/{id}', [
+      Route::get('/stock/{title}/{id}', [
       	'uses' => 'WMS\SStockController@index',
       	'as' => 'wms.stock.index'
       ]);

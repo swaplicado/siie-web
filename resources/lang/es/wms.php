@@ -16,7 +16,7 @@ return [
       'CONFIGURATION' => 'Configuración',
 
       'INVENTORY' => 'Inventarios',
-          'ITEM_STK' => 'Existencias por material/producto',
+          'ITEM_STK' => 'Existencias por material-producto',
           'LOT_STK' => 'Existencias por lote',
           'PALLET_STK' => 'Existencias por tarima',
           'LOC_STK' => 'Existencias por ubicación',

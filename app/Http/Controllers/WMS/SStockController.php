@@ -37,7 +37,7 @@ class SStockController extends Controller
      *
      * @return \Illuminate\Http\Request
      */
-    public function index(Request $request, $iStockType = 1)
+    public function index(Request $request, $iStockType = 1, $sTitle = '')
     {
       $select = 'sum(ws.input) as inputs,
                          sum(ws.output) as outputs,
@@ -77,7 +77,7 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
-          $select = $select.', '.'wwl.name as location'.', '.'eb.id_branch as branchid'.', '.'ei.id_item as itemid'.', '.', '.'(SELECT * FROM wmsu_container_max_min
+          $select = $select.', wwl.name as location, eb.id_branch as branchid, ei.id_item as itemid, (SELECT max FROM wmsu_container_max_min
           INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
           INNER JOIN wmsu_whs_locations ON wmsu_whs_locations.id_whs_location = wmsu_container_max_min.container_id) as maxmin';
           $groupBy = ['ws.location_id','ws.item_id'];
@@ -173,6 +173,7 @@ class SStockController extends Controller
 
       return view('wms.stock.stock')
                         ->with('iStockType', $iStockType)
+                        ->with('sTitle', $sTitle)
                         ->with('tfilterDate', Carbon::parse($sFilterDate))
                         ->with('data', $stock);
     }

@@ -34,6 +34,8 @@ class SReceptions
                   // ->where('wm.branch_id', $iBranch)
                   ;
 
-        return $query->get();
+        $lResult = $query->get();
+
+        return $lResult;
     }
 }

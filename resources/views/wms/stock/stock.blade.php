@@ -8,7 +8,7 @@
 	@include('templates.menu.menumodules')
 @endsection
 
-@section('title', trans('userinterface.titles.WHS_STOCK'))
+@section('title', $sTitle)
 
 <?php $sRoute="wms.stock"?>
 
