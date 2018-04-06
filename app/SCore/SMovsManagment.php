@@ -104,7 +104,7 @@ class SMovsManagment {
 
                 if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
                   if ($movement->warehouse->is_quality) {
-                      // session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.QUALITY'));
+                      session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'));
                   }
                 }
                 $i++;
@@ -479,7 +479,7 @@ class SMovsManagment {
         $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
         $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
         $oMirrorMovement->whs_id = $iWhsDes;
-        
+
         if ($iWhsDes == session('transit_whs')->id_whs) {
           $oMirrorMovement->branch_id = $oMovement->iAuxBranchDes;
         }

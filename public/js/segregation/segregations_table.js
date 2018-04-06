@@ -1,7 +1,7 @@
 /*
 * language of datatables
 */
-$('#table_seg').DataTable({
+var oSegTable = $('#table_seg').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -25,22 +25,17 @@ $('#table_seg').DataTable({
             "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         }
-      }
+      },
+      "colReorder": true
   });
 
-  $(document).ready( function () {
-    $('#table_seg').DataTable();
-
-    var table = $('#table_seg').DataTable();
-
-    table.column( 0 ).visible( false );
-    table.column( 1 ).visible( false );
-    table.column( 2 ).visible( false );
-    table.column( 3 ).visible( false );
-    table.column( 4 ).visible( false );
-    table.column( 5 ).visible( false );
-    table.column( 6 ).visible( false );
-    table.column( 7 ).visible( false );
-    table.column( 20 ).visible(false );
-    table.column( 21 ).visible(false );
-  });
+  oSegTable.column( 0 ).visible( false );
+  oSegTable.column( 1 ).visible( false );
+  oSegTable.column( 2 ).visible( false );
+  oSegTable.column( 3 ).visible( false );
+  oSegTable.column( 4 ).visible( false );
+  oSegTable.column( 5 ).visible( false );
+  oSegTable.column( 6 ).visible( false );
+  oSegTable.column( 7 ).visible( false );
+  oSegTable.column( 20 ).visible(false );
+  oSegTable.column( 21 ).visible(false );

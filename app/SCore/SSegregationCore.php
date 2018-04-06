@@ -26,7 +26,7 @@ class SSegregationCore
    */
   public function segregate($oMovement, $iSegregationType)
   {
-      $this->processSegregation($oMovement, $iSegregationType, false, \Config::get('scqms.TO_EVALUATE'));
+      $this->processSegregation($oMovement, $iSegregationType, \Config::get('scqms.BYINSPECTING'));
   }
 
   /**
@@ -54,14 +54,19 @@ class SSegregationCore
         $iIdPallet = $aParameters[\Config::get('scwms.SEG_PARAM.ID_PALLET')];
         $iIdWhs = $aParameters[\Config::get('scwms.SEG_PARAM.ID_WHS')];
         $iIdBranch = $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')];
-        $iIdDocument = $aParameters[\Config::get('scwms.SEG_PARAM.ID_DOCUMENT')];
+        $iIdReference = $aParameters[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')];
         $iIdQltyPrev = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')];
         $iIdQltyNew = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')];
         $dQuantity = $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')];
         $idEvent = $aParameters[10];
         $idLoc = $aParameters[11];
-        $idWarehouse = $aParameters[12];
-        $idLocNew = $aParameters[13];
+        
+        if ($iIdQltyNew == \Config::get('scqms.RECONDITION') ||
+              $iIdQltyNew == \Config::get('scqms.REPROCESS') ||
+                $iIdQltyNew == \Config::get('scqms.DESTROY')) {
+          $idWarehouse = $aParameters[12];
+          $idLocNew = $aParameters[13];
+        }
 
         $oSegregation = new SSegregation();
         $oSegRow = new SSegregationRow();
@@ -88,7 +93,7 @@ class SSegregationCore
         }
 
 
-        $oSegregation->reference_id = $iIdDocument;
+        $oSegregation->reference_id = $iIdReference;
         $oSegregation->created_by_id = \Auth::user()->id;
         $oSegregation->updated_by_id = \Auth::user()->id;
         //Clonar el renglon ingresado para hacer el espejo
@@ -232,19 +237,6 @@ class SSegregationCore
   }
 
   /**
-   * release the units of a segregation from a movement
-   *
-   * @param  Request $request
-   * @param  SMovement  $oMovement
-   * @param  int  $iSegregationType
-   * @param  int  $iQltyStatus
-   */
-  public function release(Request $request, $oMovement, $iSegregationType, $iQltyStatus)
-  {
-      $this->processSegregation($oMovement, $iSegregationType, true, $iQltyStatus);
-  }
-
-  /**
    * Segregate or release units depend of the boolean var $bIsRelease
    * From a movement
    *
@@ -253,28 +245,28 @@ class SSegregationCore
    * @param  boolean $bIsRelease
    * @param  int $iQltyStatus
    */
-  public function processSegregation($oMovement, $iSegregationType, $bIsRelease, $iQltyStatus)
+  public function processSegregation($oMovement, $iSegregationType, $iQltyEvent)
   {
-    \DB::connection('company')->transaction(function() use ($oMovement, $iSegregationType, $bIsRelease, $iQltyStatus) {
+    \DB::connection('company')->transaction(function() use ($oMovement, $iSegregationType, $iQltyEvent) {
       $oSegregation = new SSegregation();
 
       $oSegregation->dt_date = $oMovement->dt_date;
       $oSegregation->is_deleted = false;
       $oSegregation->segregation_type_id = $iSegregationType; // Pendiente constantes
 
-      $iReference = 1;
-      if ($oMovement->doc_order_id > 1) {
-        $iReference = $oMovement->doc_order_id;
-      }
-      elseif ($oMovement->doc_invoice_id > 1) {
-        $iReference = $oMovement->doc_invoice_id;
-      }
-      elseif ($oMovement->doc_debit_note_id > 1) {
-        $iReference = $oMovement->doc_debit_note_id;
-      }
-      elseif ($oMovement->doc_credit_note_id > 1) {
-        $iReference = $oMovement->doc_credit_note_id;
-      }
+      $iReference = $oMovement->id_mvt;
+      // if ($oMovement->doc_order_id > 1) {
+      //   $iReference = $oMovement->doc_order_id;
+      // }
+      // elseif ($oMovement->doc_invoice_id > 1) {
+      //   $iReference = $oMovement->doc_invoice_id;
+      // }
+      // elseif ($oMovement->doc_debit_note_id > 1) {
+      //   $iReference = $oMovement->doc_debit_note_id;
+      // }
+      // elseif ($oMovement->doc_credit_note_id > 1) {
+      //   $iReference = $oMovement->doc_credit_note_id;
+      // }
 
       $oSegregation->reference_id = $iReference;
       $oSegregation->created_by_id = \Auth::user()->id;
@@ -282,44 +274,50 @@ class SSegregationCore
       $oSegregation->save();
 
       foreach ($oMovement->rows as $movRow) {
-        $oSegRow = new SSegregationRow();
+        if (sizeof($movRow->lotRows) > 0) {
+          $lSegRows = array();
+          foreach ($movRow->lotRows as $lotRow) {
+            $oSegRow = new SSegregationRow();
 
-        $oSegRow->quantity = sizeof($movRow->lotRows) > 0 ? 0 : $movRow->quantity;
-        if ($bIsRelease) {
-            $oSegRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
+            $oSegRow->quantity = $lotRow->quantity;
+            $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+            $oSegRow->segregation_event_id = $iQltyEvent;
+            $oSegRow->branch_id = $oMovement->branch_id;
+            $oSegRow->whs_id = $oMovement->whs_id;
+            $oSegRow->whs_location_id = $movRow->location_id;
+            $oSegRow->pallet_id = $movRow->pallet_id;
+            $oSegRow->lot_id = $lotRow->lot_id;
+            $oSegRow->year_id = session('work_year');
+            $oSegRow->item_id = $movRow->item_id;
+            $oSegRow->unit_id = $movRow->unit_id;
+            $oSegRow->created_by_id = \Auth::user()->id;
+            $oSegRow->updated_by_id = \Auth::user()->id;
+
+            array_push($lSegRows, $oSegRow);
+          }
+
+          $oSegregation->rows()->saveMany($lSegRows);
         }
         else {
-            $oSegRow->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+          $oSegRow = new SSegregationRow();
+
+          $oSegRow->quantity = $movRow->quantity;
+          $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+          $oSegRow->segregation_event_id = $iQltyEvent;
+          $oSegRow->branch_id = $oMovement->branch_id;
+          $oSegRow->whs_id = $oMovement->whs_id;
+          $oSegRow->whs_location_id = $movRow->location_id;
+          $oSegRow->pallet_id = $movRow->pallet_id;
+          $oSegRow->lot_id = 1;
+          $oSegRow->year_id = session('work_year');
+          $oSegRow->item_id = $movRow->item_id;
+          $oSegRow->unit_id = $movRow->unit_id;
+          $oSegRow->created_by_id = \Auth::user()->id;
+          $oSegRow->updated_by_id = \Auth::user()->id;
+
+          $oSegregation->rows()->save($oSegRow);
         }
 
-        $oSegRow->pallet_id = $movRow->pallet_id;
-        $oSegRow->whs_id = $oMovement->whs_id;
-        $oSegRow->branch_id = $oMovement->branch_id;
-        $oSegRow->year_id = session('work_year');
-        $oSegRow->item_id = $movRow->item_id;
-        $oSegRow->unit_id = $movRow->unit_id;
-        $oSegRow->quality_status_id = $iQltyStatus;
-
-        $oSegregation->rows()->save($oSegRow);
-
-        foreach ($movRow->lotRows as $lotRow) {
-          $oSegLotRow = new SSegregationLotRow();
-
-          $oSegLotRow->quantity = $lotRow->quantity;
-          if ($bIsRelease) {
-              $oSegLotRow->move_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-          }
-          else {
-              $oSegLotRow->move_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-          }
-          $oSegLotRow->lot_id = $lotRow->lot_id;
-          $oSegLotRow->year_id = session('work_year');
-          $oSegLotRow->item_id = $movRow->item_id;
-          $oSegLotRow->unit_id = $movRow->unit_id;
-          $oSegLotRow->quality_status_id = $iQltyStatus;
-
-          $oSegRow->lotRows()->save($oSegLotRow);
-        }
       }
     });
   }
@@ -340,7 +338,6 @@ class SSegregationCore
                   wp.id_pallet,
                   ww.id_whs,
                   ww.branch_id,
-                  ed.id_document,
                   qse.id_segregation_event,
                   ws.segregation_type_id,
                   ei.code as item_code,
@@ -355,7 +352,7 @@ class SSegregationCore
                   wp.pallet,
                   ww.name AS warehouse,
                   qse.name AS status_qlty,
-                  ed.num AS num_doc';
+                  ws.reference_id AS id_reference';
 
       $query = \DB::connection(session('db_configuration')->getConnCompany())
                   ->table('wms_segregations AS ws')
@@ -365,9 +362,9 @@ class SSegregationCore
                   ->leftJoin('wms_lots AS wl', 'wsr.lot_id', '=', 'wl.id_lot')
                   ->join('wms_pallets AS wp', 'wsr.pallet_id', '=', 'wp.id_pallet')
                   ->join('wmsu_whs AS ww', 'wsr.whs_id', '=', 'ww.id_whs')
-                  ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event')
-                  ->join('erpu_documents AS ed', 'ws.reference_id', '=', 'ed.id_document')
-                  ->where('ei.is_deleted', false)
+                  ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event');
+
+    $query = $query->where('ei.is_deleted', false)
                   ->where('ws.is_deleted', false)
                   ->select(\DB::raw($sSelect))
                   ->groupBy('id_item',
@@ -377,6 +374,7 @@ class SSegregationCore
                             'ww.id_whs'
                             )
                   ->having('segregated', '>', 0);
+
       switch ($iQualityType) {
         case \Config::get('scqms.QMS_VIEW.BY_STATUS'):
         case \Config::get('scqms.QMS_VIEW.CLASSIFY'):

@@ -33,17 +33,17 @@
 	@include('wms.segregations.classification')
 	<br />
 	<div class="row">
-		<table id="table_seg" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+		<table id="table_seg" class="table table-striped table-bordered responsive" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-		            <th>-</th>
-		            <th>-</th>
-		            <th>-</th>
-		            <th>-</th>
-		            <th>-</th>
-		            <th>-</th>
-		            <th>-</th>
-		            <th>-</th>
+		            <th>id_item</th>
+		            <th>id_unit</th>
+		            <th>id_lot</th>
+		            <th>id_pallet</th>
+		            <th>id_whs</th>
+		            <th>id_branch</th>
+		            <th>id_reference</th>
+		            <th>segregation_type_id</th>
 		            <th data-priority="1">Clave</th>
 		            <th>Item</th>
 		            <th data-priority="1">Unidad</th>
@@ -52,7 +52,7 @@
 		            <th data-priority="1">Segregado</th>
 		            <th>Almacén</th>
 		            <th data-priority="1">{{ trans('userinterface.labels.STATUS') }}</th>
-		            <th>Doc</th>
+		            <th>Ref</th>
 								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'))
 									<th>-</th>
 									<th>-</th>
@@ -71,7 +71,7 @@
 		            <td>{{ $row->id_pallet }}</td>
 		            <td>{{ $row->id_whs }}</td>
 		            <td>{{ $row->branch_id }}</td>
-		            <td>{{ $row->id_document }}</td>
+		            <td>{{ $row->id_reference }}</td>
 		            <td>{{ $row->segregation_type_id }}</td>
 		            <td>{{ $row->item_code }}</td>
 		            <td>{{ $row->item }}</td>
@@ -85,7 +85,7 @@
 										{{ $row->status_qlty }}
 									</span>
 								</td>
-								<td>{{ $row->num_doc }}</td>
+								<td>{{ $row->id_reference }}</td>
 								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'))
 									<td>
 										<a data-toggle="modal" data-target="#classQlty"

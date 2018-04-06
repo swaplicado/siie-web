@@ -91,7 +91,7 @@ class SSegregationsController extends Controller
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_PALLET')] = $val[\Config::get('scwms.SEG_PARAM.ID_PALLET')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_WHS')] = $val[\Config::get('scwms.SEG_PARAM.ID_WHS')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')] = $val[\Config::get('scwms.SEG_PARAM.ID_BRANCH')];
-        $aParameters[\Config::get('scwms.SEG_PARAM.ID_DOCUMENT')] = $val[\Config::get('scwms.SEG_PARAM.ID_DOCUMENT')];
+        $aParameters[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')] = $val[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')] = $val[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[23];
         $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[22];

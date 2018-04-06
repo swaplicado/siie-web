@@ -125,7 +125,7 @@ return [
                   'ID_PALLET' => '3',
                   'ID_WHS' => '4',
                   'ID_BRANCH' => '5',
-                  'ID_DOCUMENT' => '6',
+                  'ID_REFERENCE' => '6',
                   'ID_STATUS_QLTY_PREV' => '7',
                   'ID_STATUS_QLTY_NEW' => '8',
                   'QUANTITY' => '9',

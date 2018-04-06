@@ -144,6 +144,7 @@
 									{!! Form::number('quantity', 0, ['class'=>'form-control input-sm', 'id' => 'quantity',
 																												'placeholder' => trans('userinterface.placeholders.QUANTITY'),
 																												'style' => 'text-align: right;',
+																												'step' => '0.01',
 																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN') ||
 																												$oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_OUT') ? 'disabled' : '']) !!}
 							</div>
