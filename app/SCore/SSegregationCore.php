@@ -160,26 +160,53 @@ class SSegregationCore
           case 9:
           case 10:
                 $oMovement = new SMovement();
-                $lDocData = array();
-                $lStock = null;
-                $oDocument = 0;
-                $oMovType = SMvtType::find($mvtType);
-                $iMvtSubType = 1;
-                $oMovement->mvt_whs_class_id = $oMovType->mvt_class_id;
-                $oMovement->mvt_whs_type_id = $oMovType->id_mvt_type;
+                $oMovement->mvt_whs_class_id = 2;
+                $oMovement->mvt_whs_type_id = 11;
+                $oMovement->mvt_trn_type_id = 1;
+                $oMovement->mvt_adj_type_id = 1;
+                $oMovement->mvt_mfg_type_id = 1;
+                $oMovement->mvt_exp_type_id = 1;
+                $oMovement->branch_id = session('branch')->id_branch;
+                $oMovement->whs_id = $iIdWhs;
+                $oMovement->year_id = session('work_year');
+                $oMovement->auth_status_id = 1;
+                $oMovement->src_mvt_id = 1;
+                $oMovement->doc_order_id = 1;
+                $oMovement->doc_invoice_id = 1;
+                $oMovement->doc_debit_note_id = 1;
+                $oMovement->doc_credit_note_id = 1;
+                $oMovement->mfg_dept_id = 1;
+                $oMovement->mfg_line_id = 1;
+                $oMovement->mfg_job_id = 1;
+                $oMovement->auth_status_by_id = 1;
+                $oMovement->closed_shipment_by_id = 1;
+                $oMovement->created_by_id = \Auth::user()->id;
+                $oMovement->updated_by_id = \Auth::user()->id;
 
-                $movTypes = SMvtType::where('is_deleted', false)
-                                      ->where('id_mvt_type', $oMovement->mvt_whs_type_id)
-                                      ->lists('name', 'id_mvt_type');
+                $oMovementRow = new SMovementRow();
+                $oMovementRow->quantity = $dQuantity;
+                $oMovementRow->item_id = $iIdItem;
+                $oMovementRow->unit_id = $iIdUnit;
+                $oMovementRow->pallet_id = $iIdPallet;
+                $oMovementRow->location_id = $idLoc;
+                $oMovementRow->doc_order_row_id = 1;
+                $oMovementRow->doc_invoice_row_id = 1;
+                $oMovementRow->doc_debit_note_row_id = 1;
+                $oMovementRow->doc_credit_note_row_id = 1;
+                $oMovementRow->$iAuxLocationDesId = $idLocNew;
 
-                $warehouses = SWarehouse::where('is_deleted', false)
-                                        ->where('branch_id', session('branch')->id_branch)
-                                        ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
-                                        ->orderBy('name', 'ASC')
-                                        ->lists('warehouse', 'id_whs');
 
-                $iWhsSrc = 0;
-                $iWhsDes = 0;
+                if($iIdLot != 1){
+                $oMovementRowLots = new SMovementRowLot();
+                $oMovementRowLots->quantity = $dQuantity;
+                $oMovementRowLots->lot_id = $iIdLot;
+                $oMOvementRow->setAuxLots([$oMovementRowLots]);
+                }
+
+
+                $iWhsSrc = $iIdWhs;;
+                $iWhsDes = $idWarehouse;
+                SMovsManagment::processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),$oMovement,[$oMvtRow],$oMovement->mvt_whs_class_id,$oMovement->mvt_whs_type_id,$iWhsSrc,  $iWhsDes,null,null);
                 break;
         }
 
