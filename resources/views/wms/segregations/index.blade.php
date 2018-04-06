@@ -153,6 +153,7 @@
 					 $('.warehouse').append(opt);
 					 opt2+='<select class="form-control ubicacion" id="ubicacion"  name="ubicacion" required>';
  					 opt2+='<option value=0>Seleccione una ubicacion</option>';
+					  $('.location').empty(" ");
 					 $('.location').append(opt2);
 
 				},
