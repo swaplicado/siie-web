@@ -1,8 +1,16 @@
 <?php namespace App\SCore;
 
+use Illuminate\Http\Request;
+
 use App\WMS\Segregation\SSegregation;
 use App\WMS\Segregation\SSegregationRow;
 use App\WMS\Segregation\SSegregationLotRow;
+
+use App\WMS\SMovement;
+use App\WMS\SMovementRow;
+use App\WMS\SMovementRowLot;
+
+use App\SCore\SMovsManagment;
 
 /**
  *
@@ -193,20 +201,29 @@ class SSegregationCore
                 $oMovementRow->doc_invoice_row_id = 1;
                 $oMovementRow->doc_debit_note_row_id = 1;
                 $oMovementRow->doc_credit_note_row_id = 1;
-                $oMovementRow->$iAuxLocationDesId = $idLocNew;
+                $oMovementRow->iAuxLocationDesId = $idLocNew;
 
 
                 if($iIdLot != 1){
                 $oMovementRowLots = new SMovementRowLot();
                 $oMovementRowLots->quantity = $dQuantity;
                 $oMovementRowLots->lot_id = $iIdLot;
-                $oMOvementRow->setAuxLots([$oMovementRowLots]);
+                $oMovementRow->setAuxLots([$oMovementRowLots]);
                 }
 
-
-                $iWhsSrc = $iIdWhs;;
+                $oProcess = new SMovsManagment();
+                $iWhsSrc = $iIdWhs;
                 $iWhsDes = $idWarehouse;
-                SMovsManagment::processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),$oMovement,[$oMvtRow],$oMovement->mvt_whs_class_id,$oMovement->mvt_whs_type_id,$iWhsSrc,  $iWhsDes,null,null);
+
+                $request = new Request();
+                $oProcess->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
+                                                $oMovement,
+                                                [$oMovementRow],
+                                                $oMovement->mvt_whs_class_id,
+                                                $oMovement->mvt_whs_type_id,
+                                                $iWhsSrc,
+                                                $iWhsDes,
+                                                null, $request);
                 break;
         }
 
