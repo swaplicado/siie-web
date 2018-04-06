@@ -150,6 +150,7 @@ class SStockController extends Controller
                     // ->mergeBindings($sub)
                     ->where('ws.is_deleted', false)
                     ->where('ws.dt_date', '<=', $sFilterDate)
+                    ->where('eb.id_branch', session('branch')->id_branch)
                     ->groupBy($groupBy)
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)

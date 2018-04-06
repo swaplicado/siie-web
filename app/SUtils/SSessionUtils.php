@@ -137,4 +137,48 @@ class SSessionUtils {
                     ->first()->id_year;
   }
 
+
+  /**
+   * determines the type of received document and returns a String
+   *
+   * @param  SDocument $oDocument
+   *
+   * @return String type of document
+   */
+  public function getDocumentTypeName($oDocument)
+  {
+      switch ($oDocument->doc_class_id) {
+        case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
+          if ($oDocument->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+              return trans('siie.labels.PURCHASES_INVOICE');
+          }
+          else {
+              return trans('siie.labels.SALES_INVOICE');
+          }
+          break;
+
+        case \Config::get('scsiie.DOC_CLS.ORDER'):
+          if ($oDocument->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+              return trans('siie.labels.PURCHASES_ORDER');
+          }
+          else {
+              return trans('siie.labels.SALES_ORDER');
+          }
+          break;
+
+        case \Config::get('scsiie.DOC_CLS.ADJUST'):
+          if ($oDocument->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+              return trans('siie.labels.PURCHASES_ADJUST');
+          }
+          else {
+              return trans('siie.labels.SALES_ADJUST');
+          }
+          break;
+
+        default:
+              return '';
+          break;
+      }
+  }
+
 }

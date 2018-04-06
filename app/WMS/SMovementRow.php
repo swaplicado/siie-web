@@ -184,6 +184,7 @@ class SMovementRow extends Model {
 
       $query->join('erpu_items as ei', $this->table.'.item_id', '=', 'ei.id_item')
               ->join('wms_mvts as wm', $this->table.'.mvt_id', '=', 'wm.id_mvt')
+              ->where('branch_id', session('branch')->id_branch)
               ->select($this->table.'.*')
               ->whereBetween('wm.dt_date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 

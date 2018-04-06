@@ -199,10 +199,11 @@ class SDocsBySuppController extends Controller {
         return view('wms.movs.supplies.links')
                           ->with('oDocumentSrc', $oDocumentSrc)
                           ->with('oDocumentDes', $oDocumentDes)
+                          ->with('oDocument', $oDocumentDes)
                           ->with('lDocData', $lDocData)
                           ->with('lMovements', $lMovements)
                           ->with('actualUserPermission', $this->oCurrentUserPermission)
-                          ->with('title', '$sTitle');
+                          ->with('title', 'Surtido indirecto de documentos');
     }
 
     public function storeLinks(Request $request)

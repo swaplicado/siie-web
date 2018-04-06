@@ -15,6 +15,7 @@
 		'EDIT' => 'Editar',
 		'FREEZE' => 'Congelar',
 		'IMPORT' => 'Importar',
+		'LINK' => 'Enlazar',
 		'MODIFY' => 'Modificar',
 		'SAVE' => 'Guardar',
 		'SEARCH' => 'Buscar',

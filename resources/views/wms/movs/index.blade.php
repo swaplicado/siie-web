@@ -33,7 +33,7 @@
 	@endsection
 	<br />
 	<div class="row">
-		<table id="table_id" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
+		<table id="movs_table" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
 								<th data-priority="1">Fecha</th>
@@ -90,6 +90,7 @@
 	@include('templates.stock.scriptsstock')
 	<script src="{{ asset('moment/moment.js') }}"></script>
 	<script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
+	<script src="{{ asset('js/wms/movs.js') }}"></script>
 	<script>
 			 var folioParameter = <?php echo json_encode($iFolio); ?>;
 			 if (folioParameter != 0) {

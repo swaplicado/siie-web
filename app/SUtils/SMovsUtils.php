@@ -246,9 +246,9 @@ class SMovsUtils {
         break;
     }
 
-    // $sub = session('stock')->getSubSegregated($aParameters);
-    // $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
-    $sSelect = $sSelect.', "0" as segregated';
+    $sub = session('stock')->getSubSegregated($aParameters);
+    $sSelect = $sSelect.', ('.($sub->toSql()).') as segregated';
+    // $sSelect = $sSelect.', "0" as segregated';
 
     return $sSelect;
   }

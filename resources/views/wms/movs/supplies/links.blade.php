@@ -9,14 +9,15 @@
 @endsection
 
 @section('title', $title)
+@section('titlepanel', $title)
 
 @section('content')
-      <div class="row">
-
-      </div>
+			{!! Form::label('Documento destino:') !!}
+			@include('wms.movs.docheader')
+			<br />
 			<div class="row">
 				<div class="col-md-12">
-						<button type="button" onclick="setDataToLink()" class="btn btn-success">{{ trans('actions.SUPPLY') }}</button>
+						<button type="button" onclick="setDataToLink()" class="btn btn-success">{{ trans('actions.LINK') }}</button>
 				</div>
 			</div>
       <div class="row">
@@ -66,7 +67,7 @@
 											<th>{{ trans('userinterface.labels.QUANTITY') }}</th>
 											<th>{{ trans('wms.labels.INDIRECT_SUPPLY')  }}</th>
 											<th>{{ trans('wms.labels.PENDING')  }}</th>
-											<th>{{ trans('wms.labels.ASSIGNED') }}</th>
+											<th>{{ trans('wms.labels.LINKED') }}</th>
 											<th>{{ trans('wms.labels.LOTS') }}</th>
 									</tr>
 							</thead>

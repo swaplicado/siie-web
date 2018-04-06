@@ -152,13 +152,28 @@ class SGuiValidations {
      * hide the continue button of header
      */
     hideLocationDes() {
-      document.getElementById('loccs').style.display = "none";
+      document.getElementById('locss').style.display = "none";
     }
+
     /**
      * show the continue button of header
      */
     showLocationDes() {
-      document.getElementById('loccs').style.display = "inline";
+      document.getElementById('locss').style.display = "inline";
+    }
+
+    /**
+     * hide the label of destiny location
+     */
+    hideLocationDesLabel() {
+      document.getElementById('loc_des_lab').style.display = "none";
+    }
+
+    /**
+     * show the label of destiny location
+     */
+    showLocationDesLabel() {
+      document.getElementById('loc_des_lab').style.display = "inline";
     }
 
     /**

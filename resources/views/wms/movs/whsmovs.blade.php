@@ -28,7 +28,7 @@
 			@if (isset($oMovement->folio))
 				<div class="form-group">
 					{!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
-					{!! Form::text('folio', $oMovement->folio, ['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'readonly']) !!}
+					{!! Form::text('folio', $oMovement->folio, ['class'=>'form-control input-sm', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'readonly']) !!}
 				</div>
 			@endif
 

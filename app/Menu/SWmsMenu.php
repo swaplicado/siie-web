@@ -41,7 +41,7 @@ class SWmsMenu {
                 ->route('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ'),  trans('wms.MOV_STK_OUT_ADJ')])
                 ->route('wms.movs.create', trans('wms.MOV_WHS_INTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'), trans('wms.MOV_WHS_INTERNAL_TRS_OUT')])
                 ->route('wms.movs.create', trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'), trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT')])
-                ->route('wms.movs.create', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'), trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT')])
+                ->route('wms.movs.receptions', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'))
                 ->route('wms.movs.create', trans('wms.PALLET_DIVISION'), [\Config::get('scwms.PALLET_RECONFIG_IN'), trans('wms.PALLET_DIVISION')])
                 ->route('wms.movs.create', trans('wms.PALLET_ADD'), [\Config::get('scwms.PALLET_RECONFIG_OUT'), trans('wms.PALLET_ADD')])
         )

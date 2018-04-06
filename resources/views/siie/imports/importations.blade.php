@@ -114,23 +114,10 @@
             </div>
             @if ($rows1 > 0)
               <div class="col-md-4">
-                    {{ $rows1.' '.trans('siie.SYNCR.ROWS1') }}
+                    {{ $rows1.' '.trans('siie.SYNCR.ROWS') }}
               </div>
             @endif
           </div>
-          {{-- <div class="row">
-            <div class="col-md-4">
-              {!! Form::label('year', trans('siie.SYNCR.ROWS2')) !!}
-            </div>
-            <div class="col-md-4">
-              {!! Form::checkbox('rows2', 'rows2', true, ['class' => 'form-control']) !!}
-            </div>
-            @if ($rows2 > 0)
-              <div class="col-md-4">
-                    {{ $rows2.' '.trans('siie.SYNCR.ROWS2') }}
-              </div>
-            @endif
-          </div> --}}
           <div class="row">
             <div class="col-md-1">
             </div>

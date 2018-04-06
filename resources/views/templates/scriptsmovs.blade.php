@@ -18,7 +18,7 @@
 <script src="{{ asset('js/movements/SStockCore.js')}}"></script>
 <script src="{{ asset('js/movements/SGuiTransSupp.js')}}"></script>
 <script src="{{ asset('js/movements/SSupplyCore.js')}}"></script>
-<script src="{{ asset('js/movements/STransfersCore.js')}}"></script>
+<script src="{{ asset('js/movements/transfers/STransfersCore.js')}}"></script>
 <script src="{{ asset('js/movements/search/SSearchCore.js')}}"></script>
 <script src="{{ asset('js/movements/search/SLocations.js')}}"></script>
 <script src="{{ asset('js/movements/tables.js')}}"></script>

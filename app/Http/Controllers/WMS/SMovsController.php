@@ -10,8 +10,9 @@ use App\SBarcode\SBarcode;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SUtils\SStockUtils;
 use App\SCore\SMovsManagment;
-use App\SUtils\SMovsUtils;
+use App\SCore\SReceptions;
 use App\SCore\SLotsValidations;
+use App\SUtils\SMovsUtils;
 use App\ERP\SErpConfiguration;
 
 use Laracasts\Flash\Flash;
@@ -61,7 +62,9 @@ class SMovsController extends Controller
     public function index(Request $request, $iFolio = 0)
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
-        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate)->orderBy('item_id', 'ASC')->orderBy('item_id', 'ASC')->paginate(20);
+        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate)
+                                    ->orderBy('item_id', 'ASC')
+                                    ->orderBy('item_id', 'ASC')->paginate(20);
 
         foreach ($lMovRows as $row) {
             $row->movement->branch;
@@ -111,6 +114,52 @@ class SMovsController extends Controller
                     ->with('sFilterDate', $sFilterDate)
                     ->with('actualUserPermission', $this->oCurrentUserPermission)
                     ->with('lMovs', $lMovs);
+    }
+
+    public function receiveMovsIndex(Request $request)
+    {
+        $lList = SReceptions::getPendingReceptions(session('branch')->id_branch);
+
+        return view('wms.movs.transfers.receptions')->with('lList', $lList)
+                                                  ->with('sTitle', 'Recepción de traspasos');
+    }
+
+    public function receiveTransfer($iMov = 0)
+    {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
+        $iOperation = \Config::get('scwms.OPERATION_TYPE.CREATION');
+        $bIsReceiveTransfer = true;
+
+        $oMovement = new SMovement();
+        $oMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
+        $oMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
+        $oMovement->mvt_whs_type_id = 1;
+
+        $oMovementSrc = SMovement::find($iMov);
+        $oMovRef = SMovement::find($oMovementSrc->src_mvt_id);
+
+        $iWhsSrc = session('transit_whs')->id_whs;
+        $iWhsDes = 0;
+
+        $warehouses = SWarehouse::where('is_deleted', false)
+                                ->where('branch_id', session('branch')->id_branch)
+                                ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                ->orderBy('code', 'ASC')
+                                ->lists('warehouse', 'id_whs');
+
+        return view('wms.movs.transfers.receivetransfer')
+                                        ->with('oMovement', $oMovement)
+                                        ->with('oMovementSrc', $oMovementSrc)
+                                        ->with('iWhsSrc', $iWhsSrc)
+                                        ->with('oMovRef', $oMovRef)
+                                        ->with('iWhsDes', $iWhsDes)
+                                        ->with('warehouses', $warehouses)
+                                        ->with('sTitle', 'Recepción de traspaso')
+                                        ;
     }
 
     /**
@@ -399,6 +448,7 @@ class SMovsController extends Controller
                  $oMovLotRow = new SMovementRowLot();
                  $oMovLotRow->quantity = $rowsJs->dQuantity;
                  $oMovLotRow->amount_unit = $rowsJs->dPrice;
+                 $oMovLotRow->amount = $oMovLotRow->amount_unit * $oMovLotRow->quantity;
                  $oMovLotRow->lot_id = $rowsJs->iLotId;
                  $oMovLotRow->is_deleted = false;
 

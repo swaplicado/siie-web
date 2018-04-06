@@ -20,7 +20,7 @@
                           ['class' => 'form-control input-sm',
                           'id' => 'label_loc']) !!}
     </div>
-    <div id="loccs">
+    <div id="locss" style="display: none;">
       <div class="col-md-2">
         {!! Form::label(trans('actions.SEARCH_LOCATION').'...') !!}
           {!! Form::text('location_des', null, ['class'=>'form-control input-sm',
@@ -36,11 +36,11 @@
         data-target="#location_search_des">Ubica.</button>
       </div>
     </div>
-    <div class="col-md-3">
+    <div id="loc_des_lab" style="display: none;" class="col-md-3">
       {!! Form::label('Ubicación destino') !!}
       {!! Form::label('label_loc_des', '--',
                           ['class' => 'form-control input-sm',
                           'id' => 'label_loc_des']) !!}
-    </div>
+      </div>
   @endif
 </div>

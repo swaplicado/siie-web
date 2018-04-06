@@ -298,12 +298,16 @@ function initializePanel(serverData) {
         locationsJs.setDefaultLocation(globalData.lFSrcLocations);
     }
 
-    if (globalData.bIsExternalTransfer) {
-        guiValidations.hideLocationDes();
-    }
-
     if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
         locationsJs.setDefaultLocationDes(globalData.lFDesLocations);
+
+        if (globalData.bIsExternalTransfer) {
+            guiValidations.hideLocationDes();
+        }
+        else {
+            guiValidations.showLocationDes();
+        }
+        guiValidations.showLocationDesLabel();
     }
 
     $('#item').focus();
@@ -441,9 +445,11 @@ function updateTable(iElementType) {
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         }
       },
-      "scrollY":        "50vh",
+      "scrollY": "50vh",
+      "scrollX": true,
       "scrollCollapse": true,
-      "paging":         false,
+      "colReorder": true,
+      "paging": false,
       "data": oData,
       "columns": aColumns
   });
