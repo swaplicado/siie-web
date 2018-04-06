@@ -134,6 +134,7 @@
 	  var eti_id=$(this).val();
 		console.log(eti_id);
 		 var opt=" ";
+		 var opt2=" ";
 		 status = eti_id;
 		$.ajax({
 			type:'get',
@@ -143,12 +144,16 @@
 				success:function(data){
 					console.log('success');
 					opt+='<select class="form-control almacen" id="almacen"  name="almacen" required>';
+					opt+='<option value=0>Seleccione un almacen</option>';
 						for(var i=0;i<data.length;i++){
 				 			opt+='<option value="'+data[i].id_whs+'">'+data[i].name+'</option>';
 					 }
 					 opt+='</select>';
 					 $('.warehouse').empty(" ");
 					 $('.warehouse').append(opt);
+					 opt2+='<select class="form-control ubicacion" id="ubicacion"  name="ubicacion" required>';
+ 					 opt2+='<option value=0>Seleccione una ubicacion</option>';
+					 $('.location').append(opt2);
 
 				},
 				error:function(){
@@ -159,10 +164,7 @@
 		});
 
 		$(document).on('change', '.almacen',function(){
-			console.log('entre localicacion');
 			var eti_id=$(this).val();
-				console.log(eti_id);
-			console.log(status);
 			 var opt=" ";
 			$.ajax({
 				type:'get',

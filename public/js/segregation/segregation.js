@@ -389,6 +389,8 @@ $('#closeClassRl').on('click', function(e) {
 $('#closeClassRf').on('click', function(e) {
     var dQuantity = parseFloat(document.getElementById('quantityRf').value, 10);
     var iStatusNew = parseInt(document.getElementById('statusRf').value, 10);
+    var iLocation = parseInt(document.getElementById('ubicacion').value,10);
+    var iWarehouse = parseInt(document.getElementById('almacen').value,10);
 
     if (dQuantity <= 0) {
       swal("Error", "La cantidad debe ser mayor a cero.", "error");
@@ -408,6 +410,20 @@ $('#closeClassRf').on('click', function(e) {
       swal("Error", "Debe seleccionar un nuevo estatus.", "error");
       return false;
     }
+
+    if(iWarehouse == 0) {
+      swal("Error", "Debe seleccionar un almacen.", "error");
+      return false;
+    }
+
+    if(iLocation == 0) {
+      swal("Error", "Debe seleccionar una ubicacion.", "error");
+      return false;
+    }
+
+
+
+
 
     setDataRf();
 });
