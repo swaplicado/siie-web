@@ -310,7 +310,7 @@ class SStockManagment
                                 FROM
                                 erpu_documents eds
                                 INNER JOIN wms_mvts wmw ON (eds.doc_src_id = wmw.doc_invoice_id)
-                                WHERE eds.id_document = ed.doc_src_id
+                                WHERE wmw.doc_invoice_id = ed.doc_src_id
                                 AND NOT eds.is_deleted
                                 AND NOT wmw.is_deleted)";
 

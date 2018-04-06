@@ -134,7 +134,7 @@
 										</a>
 									</td>
 									<td>
-										@if (($doc->doc_src_id != 1 && ($doc->supp_ord > 0 || $doc->supp_cn)) || ($doc->supp_inv > 0 && $doc->doc_src_id == 1))
+										@if (($doc->doc_src_id != 1 && ($doc->supp_ord > 0 || $doc->supp_cn > 0)) || ($doc->supp_inv > 0 && $doc->doc_src_id == 1))
 											<a href="{{ route('wms.docs.link', [$iDocSource, $iDocDestiny]) }}" title="Enlazar surtido"
 																																	class="btn btn-default btn-sm">
 												<span class="glyphicon glyphicon-link" aria-hidden = "true"/>
