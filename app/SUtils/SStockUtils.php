@@ -223,7 +223,7 @@ class SStockUtils
        $lStockGral = $lStockGral->groupBy('id_branch')
                           ->groupBy('id_whs')
                           ->groupBy('id_whs_location')
-                          ->having('stock', '>', '0');
+                          ->having('stock', '>', '0')
                           ->get();
 
       $location = 0;
