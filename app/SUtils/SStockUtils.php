@@ -244,7 +244,7 @@ class SStockUtils
       $lPalletStock = session('stock')->getStockResult($aParameters);
 
       $lPalletStock = $lPalletStock->groupBy('ws.lot_id')
-                        ->having('stock', '>', '0');
+                        ->having('stock', '>', '0')
                         ->get();
 
       if ($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
