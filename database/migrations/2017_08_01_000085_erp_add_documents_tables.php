@@ -80,14 +80,17 @@ class ErpAddDocumentsTables extends Migration {
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
-          ['id_document' => '1','dt_date' => '2017-01-01','dt_doc' => '2017-01-01','num' => 'NA',
-          'subtotal' => '0','tax_charged' => '0','tax_retained' => '0','total' => '0',
-          'exchange_rate' => '0','exchange_rate_sys' => '0','subtotal_cur' => '0',
-          'tax_charged_cur' => '0','tax_retained_cur' => '0','total_cur' => '0',
-          'is_closed' => '0','is_deleted' => '0','external_id' => '0','year_id' => '1',
-          'doc_category_id' => '1','doc_class_id' => '1','doc_type_id' => '1','doc_status_id' => '1',
-          'doc_src_id' => '1','currency_id' => '1','partner_id' => '1','branch_id' => '1',
-          'created_by_id' => '1', 'updated_by_id' => '1'],
+          DB::connection($this->sConnection)->table('erpu_documents')->insert([
+          	['id_document' => '1','dt_date' => '2017-01-01','dt_doc' => '2017-01-01',
+            'num' => 'NA','subtotal' => '0','tax_charged' => '0','tax_retained' => '0',
+            'total' => '0','exchange_rate' => '0','exchange_rate_sys' => '0',
+            'subtotal_cur' => '0','tax_charged_cur' => '0','tax_retained_cur' => '0',
+            'total_cur' => '0','is_closed' => '0','is_deleted' => '0','external_id' => '0',
+            'year_id' => '1','doc_category_id' => '1','doc_class_id' => '1',
+            'doc_type_id' => '1','doc_status_id' => '1','doc_src_id' => '1',
+            'currency_id' => '1','partner_id' => '1','branch_id' => '1',
+            'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
 
           Schema::connection($this->sConnection)->create('erpu_document_rows', function (blueprint $table) {
           	$table->bigIncrements('id_document_row');
