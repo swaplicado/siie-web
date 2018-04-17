@@ -11,24 +11,19 @@ class SQmsMenu {
         ->addClass('nav navbar-nav')
         ->link('', '')
         ->route('qms.home', trans('qms.MODULE'))
-        ->route('qms.segregations.index', trans('wms.STK_SEG_QLTY'),
-                                          [
-                                            trans('wms.STK_SEG_QLTY'),
-                                            \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'),
-                                            \Config::get('scqms.QMS_VIEW.BY_STATUS')
-                                          ])
         ->route('qms.segregations.index', trans('qms.VIEW_INSPECTION'),
                                           [
-                                            trans('wms.STK_SEG_QLTY'),
+                                            trans('qms.VIEW_INSPECTION'),
                                             \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'),
                                             \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY')
                                           ])
         ->route('qms.segregations.index', trans('qms.VIEW_QUARENTINE'),
                                           [
-                                            trans('wms.STK_SEG_QLTY'),
+                                            trans('qms.VIEW_QUARENTINE'),
                                             \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE'),
                                             \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY')
                                           ])
+        ->route('qms.segregations.binnacle', trans('qms.BINNACLE'))
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
     });

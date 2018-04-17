@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\WMS\Segregation\SSegregation;
 use App\WMS\Segregation\SSegregationRow;
 use App\WMS\Segregation\SSegregationLotRow;
-
+use App\SUtils\SGuiUtils;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
@@ -60,7 +60,7 @@ class SSegregationCore
         $dQuantity = $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')];
         $idEvent = $aParameters[10];
         $idLoc = $aParameters[11];
-        
+
         if ($iIdQltyNew == \Config::get('scqms.RECONDITION') ||
               $iIdQltyNew == \Config::get('scqms.REPROCESS') ||
                 $iIdQltyNew == \Config::get('scqms.DESTROY')) {
@@ -393,6 +393,152 @@ class SSegregationCore
       }
 
       return $query;
+  }
+
+  public function segregatebinnacle($sFilterDate,$lot,$pallet,$item,$user,$segregationEvent){
+    $sSelect = '
+                ei.id_item as item_code,
+                ei.name as item,
+                eu.code as unit,
+                COALESCE(wl.lot, \'N/A\') AS lot_name,
+                wp.pallet,
+                qse.name as event,
+                wsr.updated_at as date,
+                wsr.quantity AS qty,
+                us.username AS username' ;
+
+
+    $query = \DB::connection(session('db_configuration')->getConnCompany())
+                ->table('wms_segregations AS ws')
+                ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                ->join('erpu_items AS ei', 'wsr.item_id', '=', 'ei.id_item')
+                ->join('erpu_units AS eu', 'wsr.unit_id', '=', 'eu.id_unit')
+                ->leftJoin('wms_lots AS wl', 'wsr.lot_id', '=', 'wl.id_lot')
+                ->join('wms_pallets AS wp', 'wsr.pallet_id', '=', 'wp.id_pallet')
+                ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event')
+                ->join('ssystem.users AS us', 'wsr.updated_by_id', '=', 'us.id');
+  $query = $query->where('ei.is_deleted', false)
+                ->where('ws.is_deleted', false)
+                ->select(\DB::raw($sSelect));
+
+
+if($sFilterDate != 0) {
+    $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+    $query = $query->whereBetween('wsr.updated_at',[$aDates[0]->toDateString(),$aDates[1]->toDateString()]);
+}
+
+if($item != 0) {
+   $query = $query->where('ei.id_item','=',$item);
+}
+
+if($lot != 0) {
+   $query = $query->where('wl.id_lot','=',$lot);
+}
+
+if($pallet != 0) {
+  $query = $query->where('wp.id_pallet','=',$pallet);
+}
+
+if($segregationEvent != 0) {
+  $query = $query->where('qse.id_segregation_event','=',$segregationEvent);
+}
+
+if($user != 0){
+  $query = $query->where('us.id','=',$user);
+}
+    $query = $query->get();
+
+    return $query;
+}
+
+  public function binnacleItem() {
+    $sSelect = '
+                ei.id_item as item_code,
+                ei.name as item';
+
+
+    $query = \DB::connection(session('db_configuration')->getConnCompany())
+                ->table('wms_segregations AS ws')
+                ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                ->join('erpu_items AS ei', 'wsr.item_id', '=', 'ei.id_item')
+                ;
+
+  $query = $query->where('ei.is_deleted', false)
+                ->where('ws.is_deleted', false)
+                ->select(\DB::raw($sSelect))
+                ->groupBy('id_item')
+                ->get();
+  return $query;
+  }
+
+  public function binnacleLot() {
+    $sSelect = '
+                id_lot,
+                lot';
+
+
+    $query = \DB::connection(session('db_configuration')->getConnCompany())
+                ->table('wms_segregations AS ws')
+                ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                ->leftJoin('wms_lots AS wl', 'wsr.lot_id', '=', 'wl.id_lot');
+
+  $query = $query->where('ws.is_deleted', false)
+                ->select(\DB::raw($sSelect))
+                ->groupBy('id_lot')
+                ->get();
+  return $query;
+  }
+
+  public function binnaclePallet() {
+    $sSelect = '
+                wp.id_pallet,
+                wp.pallet';
+
+
+    $query = \DB::connection(session('db_configuration')->getConnCompany())
+                ->table('wms_segregations AS ws')
+                ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                ->join('wms_pallets AS wp', 'wsr.pallet_id', '=', 'wp.id_pallet');
+
+  $query = $query->where('ws.is_deleted', false)
+                ->select(\DB::raw($sSelect))
+                ->groupBy('id_pallet')
+                ->get();
+  return $query;
+  }
+
+  public function binnacleUser() {
+    $sSelect = '
+                  us.id AS id_user,
+                  us.username AS username' ;
+
+
+      $query = \DB::connection(session('db_configuration')->getConnCompany())
+                  ->table('wms_segregations AS ws')
+                  ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                  ->join('ssystem.users AS us', 'wsr.updated_by_id', '=', 'us.id');
+    $query = $query->where('ws.is_deleted', false)
+                  ->select(\DB::raw($sSelect))
+                  ->groupBy('id_user')
+                  ->get();
+    return $query;
+  }
+
+  public function binnacleEvent() {
+    $sSelect = '
+                qse.id_segregation_event,
+                qse.name as event';
+
+    $query = \DB::connection(session('db_configuration')->getConnCompany())
+                ->table('wms_segregations AS ws')
+                ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event');
+
+  $query = $query->where('ws.is_deleted', false)
+                ->select(\DB::raw($sSelect))
+                ->groupBy('id_segregation_event')
+                ->get();
+  return $query;
   }
 
   public function isRelease($iStatus)

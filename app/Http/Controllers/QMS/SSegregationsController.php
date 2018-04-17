@@ -6,7 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SProcess;
 use Carbon\Carbon;
-
+use App\SUtils\SGuiUtils;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\WMS\Segregation\SSegregation;
@@ -73,6 +73,36 @@ class SSegregationsController extends Controller
                     ->with('sTitle', $sTitle)
                     ->with('iQualityType', $iQualityType)
                     ->with('data', $segregated);
+    }
+
+    public function binnacle(Request $request){
+      $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+
+      //$oFilterDate = Carbon::parse($sFilterDate);
+      $sFilterLot = $request->filterLot == null ? 0 : $request->filterLot;
+      $sFilterPallet = $request->filterPallet == null ? 0 : $request->filterPallet;
+      $sFilterItem = $request->filterItem == null ? 0 : $request->filterItem;
+      $sFilterUser = $request->filterUser == null ? 0 : $request->filterUser;
+      $sFilterEvent = $request->filterEvent == null ? 0 : $request->filterEvent;
+      $segregated = session('segregation')->segregatebinnacle($sFilterDate,$sFilterLot,$sFilterPallet,$sFilterItem,$sFilterUser,$sFilterEvent);
+      $lItem = session('segregation')->binnacleItem();
+      $lLot = session('segregation')->binnacleLot();
+      $lPallet = session('segregation')->binnaclePallet();
+      $lEvent = session('segregation')->binnacleEvent();
+      $lUser = session('segregation')->binnacleUser();
+      return view('wms.segregations.binnacle')
+                ->with('oFilterDate',$sFilterDate)
+                ->with('sFilterItem',$sFilterItem)
+                ->with('sFilterLot',$sFilterLot)
+                ->with('sFilterPallet',$sFilterPallet)
+                ->with('sFilterEvent',$sFilterEvent)
+                ->with('sFilterUser',$sFilterUser)
+                ->with('data', $segregated)
+                ->with('lItem', $lItem)
+                ->with('lLot',$lLot)
+                ->with('lPallet',$lPallet)
+                ->with('lEvent',$lEvent)
+                ->with('lUser',$lUser);
     }
 
     /**

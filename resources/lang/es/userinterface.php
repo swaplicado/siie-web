@@ -25,6 +25,7 @@
 		'SYS_PERMISSIONS' => 'Permisos del sistema',
 		'YES' => 'Sí',
 		'NO' => 'No',
+		'SELECT_WHS' => 'Seleccionar Almacén',
 
 		'administration' =>	[
 													'MSG_YES' => 'Sí',

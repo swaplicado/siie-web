@@ -1,7 +1,7 @@
 @extends('templates.start.mainStart')
 <br />
 <br />
-@section('title', 'Selecciona Almacen')
+@section('title',trans('userinterface.SELECT_WHS'))
 
 @section('content')
   <?php

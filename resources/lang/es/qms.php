@@ -16,6 +16,7 @@ return [
       'STK_SEG_QLTY' => 'Existencias en calidad',
       'VIEW_QUARENTINE' => 'Existencias en cuarentena',
       'VIEW_INSPECTION' => 'Existencias por inspeccionar',
+      'BINNACLE' => 'Bitácora de calidad',
 
       'placeholders'  =>  [
                             'SELECT_STATUS' => 'Seleccione status',

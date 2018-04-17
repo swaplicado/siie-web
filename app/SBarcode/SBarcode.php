@@ -13,7 +13,7 @@ use PDF;
 
   /**
    * [fill description]
-   * To have a certain size string
+   /-* To have a certain size string
    * @param  integer $lower  start of string
    * @param  integer $higher end of string
    * @return string        string with certain size

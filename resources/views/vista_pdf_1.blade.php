@@ -1,6 +1,6 @@
-<div style="font-size:25px; margin-top:0px;">
+<div style="font-size:18px; margin-top:0px;">
   <center><b>{{session('company')->name}}</b></center>
-  <b>Id Tarima:</b>{{$data->id_pallet}}<br> <b>Producto:</b> {{$data->item->name}}<br>
+  <b>Id Tarima:</b>{{$data->id_pallet}}<br><b>Producto:</b> {{$data->item->name}}<br>
   <b>Unidad:</b>{{$data->unit->name}}
   <br>
   <br>

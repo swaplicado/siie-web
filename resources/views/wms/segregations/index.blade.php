@@ -13,23 +13,7 @@
 <?php $sRoute='qms.segregations'?>
 
 @section('content')
-	@section('thefilters')
-		{!! Form::open(['route' => [ $sRoute.'.index'],
-										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
-			<div class="form-group">
-				<div class="input-group">
-					<span class="input-group-btn">
-						{!! Form::date('filterDate', $tFilterDate, ['class'=>'form-control']) !!}
-					</span>
-					<span class="input-group-btn">
-							<button id="searchbtn" type="submit" class="form-control">
-								<span class="glyphicon glyphicon-search"></span>
-							</button>
-					</span>
-				</div>
-			</div>
-		{!! Form::close() !!}
-	@endsection
+
 	@include('wms.segregations.classification')
 	<br />
 	<div class="row">
@@ -45,7 +29,7 @@
 		            <th>id_reference</th>
 		            <th>segregation_type_id</th>
 		            <th data-priority="1">Clave</th>
-		            <th>Item</th>
+		            <th>Ítem</th>
 		            <th data-priority="1">Unidad</th>
 		            <th>Lote</th>
 		            <th>Tarima</th>
