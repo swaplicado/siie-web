@@ -1,10 +1,53 @@
 class SPalletCore {
 
-  setPallet(elementToAdd) {
+  setPallet(elementToAdd, lPalletStock) {
       if (elementToAdd != null) {
         guiFunctions.setPalletItemLabel(elementToAdd.sItemCode + '-' + elementToAdd.sItem);
         guiFunctions.setPalletUnitLabel(elementToAdd.sUnit);
         guiFunctions.setPalletNameLabel(elementToAdd.sPallet);
+      }
+
+      if (! globalData.bIsInputMov) {
+        if (elementToAdd.bIsLot) {
+          lLotsToAdd = new Map();
+          var index = 0;
+          var dQuantity = 0;
+          var oLotRow;
+          lPalletStock.forEach(function (oStock) {
+              oLotRow = new SLotRow();
+
+              oLotRow.iLotId = oStock.id_lot;
+              oLotRow.sLot = oStock.lot;
+              oLotRow.tExpDate = oStock.dt_expiry;
+              oLotRow.dQuantity = parseFloat(oStock.stock, 10);
+              oLotRow.dPrice = 0;
+
+              lLotsToAdd.set(index, oLotRow);
+
+              elementToAdd.dAuxQuantity += oLotRow.dQuantity;
+
+              lotsCore.addRowToTable(oLotRow, index);
+
+              index++;
+          });
+
+          guiFunctions.setAccumQuantityLabel(elementToAdd.dAuxQuantity);
+          guiFunctions.setQuantity(elementToAdd.dAuxQuantity);
+          guiValidations.disableQuantity();
+
+          document.getElementById('lot_edition').style.display = 'none';
+          document.getElementById('delete_lot').style.display = 'none';
+          // document.getElementById('lot_accep_div').style.display = 'none';
+          document.getElementById('accLots').disabled = true;
+        }
+        else {
+          guiFunctions.setQuantity(lPalletStock[0].length > 0 ? lPalletStock[0].stock : 0);
+          guiValidations.disableQuantity();
+        }
+      }
+
+      if (globalData.isPalletReconfiguration) {
+        reconfigCore.iAuxPalletLocationDes = lPalletStock[0].length > 0 ? lPalletStock[0].id_whs_location : 0;
       }
   }
 
@@ -50,11 +93,15 @@ class SPalletCore {
           return false;
     }
 
+    if (! palletCore.validatePallet(serverData.lPalletStock)) {
+        return false;
+    }
+
     if (elementToAdd != null) {
       elementToAdd.iPalletId = serverData.oElement.id_pallet;
       elementToAdd.sPallet = serverData.oElement.pallet;
 
-      palletCore.setPallet(elementToAdd);
+      palletCore.setPallet(elementToAdd, serverData.lPalletStock);
     }
   }
 
@@ -64,11 +111,44 @@ class SPalletCore {
 
   cleanPallet() {
     guiFunctions.setPalletNameLabel('--');
-    
+
     if (elementToAdd != null) {
       elementToAdd.iPalletId = 1;
       elementToAdd.sPallet = 'N/A';
     }
+  }
+
+  validatePallet(lPalletStock) {
+      var bHaveSegregated = false;
+
+      if (lPalletStock.length > 0) {
+         if (globalData.isPalletReconfiguration) {
+              if ( reconfigCore.oPalletRow != null
+                && lPalletStock[0].id_pallet == reconfigCore.oPalletRow.iPalletId) {
+               swal("Error", "No puede agregar unidades a la misma tarima.", "error");
+               return false;
+             }
+
+             if (lPalletStock[0].id_whs != oMovement.iWhsDes) {
+               swal("Error", "La tarima no existe en el almacén destino.", "error");
+               return false;
+             }
+         }
+      }
+
+      lPalletStock.forEach(function (oStock) {
+          if (parseFloat(oStock.segregated, 10) > 0) {
+              bHaveSegregated = true;
+          }
+      });
+
+      if (bHaveSegregated) {
+        swal("Error", "La tarima tiene unidades segregadas y no se "+
+                      "pueden hacer operaciones con ella.", "error");
+        return false;
+      }
+
+      return true;
   }
 
 }

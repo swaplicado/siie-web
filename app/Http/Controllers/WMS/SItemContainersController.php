@@ -158,9 +158,15 @@ class SItemContainersController extends Controller
     {
         $itemcontainer = SItemContainer::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $itemcontainer->created_by_id)))
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $itemcontainer);
+
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($itemcontainer);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
         $itemcontainer->aux_branch_id = '';
@@ -254,20 +260,17 @@ class SItemContainersController extends Controller
 
         $itemcontainer->updated_by_id = \Auth::user()->id;
 
-        // $aErrors = SWmsValidations::validateLimits($itemcontainer, true);
-        //
-        // if(sizeof($aErrors) > 0)
-        // {
-        //     return redirect()->back()->withErrors($aErrors)->withInput();
-        // }
-
         unset($itemcontainer->aux_branch_id);
         unset($itemcontainer->aux_whs_id);
         unset($itemcontainer->aux_location_id);
 
-        $itemcontainer->save();
+        $errors = $itemcontainer->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
+        }
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('wms.itemcontainers.index');
     }
@@ -276,10 +279,7 @@ class SItemContainersController extends Controller
     {
         $itemcontainer = SItemContainer::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $itemcontainer->created_by_id)))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $itemcontainer);
 
         $itemcontainer->fill($request->all());
         $itemcontainer->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -300,10 +300,7 @@ class SItemContainersController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $itemcontainer = SItemContainer::find($id);
         $itemcontainer->fill($request->all());
@@ -313,7 +310,8 @@ class SItemContainersController extends Controller
         $itemcontainer->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
+
         return redirect()->route('wms.itemcontainers.index');
     }
 

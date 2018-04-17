@@ -76,7 +76,6 @@ class SLotsCore {
     }
 
     if (lotToAdd == null)  {
-
         lotToAdd = new SLotRow(elementToAdd.lotIdentifier);
         lotToAdd.iLotId = 0;
         lotToAdd.sLot = guiFunctions.getTextLot();
@@ -87,7 +86,7 @@ class SLotsCore {
     lotToAdd.tExpDate = guiFunctions.getExpDateLot();
     lotToAdd.dQuantity = guiFunctions.getQuantityLot();
 
-    lotToAdd.bCreate = guiFunctions.getCreateLot();
+    // lotToAdd.bCreate = guiFunctions.getCreateLot();
     lLotsToAdd.set(index, lotToAdd);
 
     elementToAdd.dAuxQuantity += lotToAdd.dQuantity;
@@ -106,8 +105,8 @@ class SLotsCore {
         oLot.iLotId,
         oLot.sLot,
         oLot.tExpDate,
-        parseFloat(oLot.dQuantity, 10).toFixed(globalData.DEC_QTY),
-        (oLot.bCreate ? 'SÍ' : 'NO')
+        parseFloat(oLot.dQuantity, 10).toFixed(globalData.DEC_QTY)
+        // (oLot.bCreate ? 'SÍ' : 'NO')
     ]).draw( false );
   }
 
@@ -168,7 +167,7 @@ class SLotsCore {
     guiFunctions.setTextLot('');
     guiFunctions.setExpDateLot(null);
     guiFunctions.setQuantityLot(0);
-    guiFunctions.setCreateLot(false);
+    // guiFunctions.setCreateLot(false);
 
     lotToAdd = null;
   }
@@ -208,14 +207,14 @@ var lotsCore = new SLotsCore();
 
 function searchLot(e) {
     if (e.keyCode == 13) {
-      if (lotsCore.validateInputSearchLot) {
+      if (lotsCore.validateInputSearchLot()) {
           lotsCore.searchLots();
       }
     }
 }
 
 function searchLotByButton() {
-    if (lotsCore.validateInputSearchLot) {
+    if (lotsCore.validateInputSearchLot()) {
         lotsCore.searchLots();
     }
 }
@@ -243,7 +242,7 @@ function showLotsModal() {
 
     lotsCore.setFoundLot();
 
-    oLotsTable.column( 5 ).visible( true );
+    // oLotsTable.column( 5 ).visible( true );
 
     $('#lotss_modal').modal('show');
     $('#search_lot').focus();
@@ -274,7 +273,7 @@ function viewLots(iRow) {
   // document.getElementById('lot_accep_div').style.display = 'none';
   document.getElementById('accLots').disabled = true;
 
-  oLotsTable.column( 5 ).visible( false );
+  // oLotsTable.column( 5 ).visible( false );
 
   oLotsTable.clear().draw();
 

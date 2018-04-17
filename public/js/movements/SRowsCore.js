@@ -11,6 +11,7 @@ class SRowsCore {
     guiValidations.setUnitLabel('-');
 
     guiFunctions.setQuantity(0);
+    guiValidations.enableQuantity();
     guiFunctions.setPrice(0);
 
     guiFunctions.changeClassToSecondary('btn_pallet');
@@ -58,7 +59,13 @@ class SRowsCore {
   }
 
   deleteMovRow(tRow, index) {
-    oMovsTable.row('.selected').remove().draw( false );
+    if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+      oTransfersMovsTable.row('.selected').remove().draw( false );
+    }
+    else {
+      oMovsTable.row('.selected').remove().draw( false );
+    }
+
     var oRow = oMovement.getRow(tRow[0]);
     oRow.iAuxIndex = index;
 
@@ -70,10 +77,14 @@ class SRowsCore {
     }
 
     if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
-      supplyCore.updateRow(oRow, supplyCore.CLEAN);
+        supplyCore.updateRow(oRow, supplyCore.CLEAN);
     }
 
     guiFunctions.updateAmtQtyLabels();
+    if (globalData.isPalletReconfiguration) {
+        guiReconfig.updatePallet(oMovement);
+    }
+    cleanPanel();
   }
 
   getLotsButton(id) {
@@ -87,7 +98,8 @@ class SRowsCore {
   getStockButton(id) {
     return  "<button type='button' onClick='viewStock(" + id + ")'" +
                 "class='butstk btn btn-success btn-md'" +
-                "data-toggle='modal' data-target='#stock_modal'" +
+                "data-toggle='modal' data-target='#stock_modal' " +
+                (globalData.bIsInputMov ? 'disabled ' : '') +
                 "title='Ver existencias'>" +
                 "<i class='glyphicon glyphicon-info-sign'></i>" +
                 "</button>"
@@ -99,7 +111,7 @@ class SRowsCore {
         return false;
       }
 
-      if (globalData.bIsInputMov) {
+      if (globalData.bIsInputMov && !globalData.isPalletReconfiguration) {
          if (guiFunctions.getPrice() <= 0) {
            swal("Error", "El precio debe ser mayor a cero.", "error");
            return false;
@@ -113,6 +125,23 @@ class SRowsCore {
 
       if (elementToAdd.bIsLot && ! lotsCore.validateLots()) {
           return false;
+      }
+
+      if (globalData.isPalletReconfiguration) {
+          if (globalData.isPalletDivision) {
+            if (reconfigCore.iAuxPalletLocationDes != 0
+                && reconfigCore.iAuxPalletLocationDes != oLocation.id_whs_location) {
+              swal("Error", "La tarima origen no está en la ubicación: " + oLocation.name + ".", "error");
+              return false;
+            }
+          }
+          // else {
+          //     if (reconfigCore.oPalletRow.iLocationId != oLocation.id_whs_location) {
+          //       swal("Error", "La tarima destino no está en la ubicación: " + oLocation.name + ".", "error");
+          //       return false;
+          //     }
+          // }
+
       }
 
       return true;
@@ -171,6 +200,10 @@ class SRowsCore {
                 }
                 rowsCore.addRow(elementToAdd);
                 guiValidations.showDelete();
+
+                if (globalData.isPalletReconfiguration) {
+                    guiReconfig.updatePallet(oMovement);
+                }
             }
          }
       }

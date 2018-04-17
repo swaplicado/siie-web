@@ -18,9 +18,10 @@
               <thead>
                   <tr class="titlerow">
                       <th>id_mov</th>
+                      <th>Folio</th>
                       <th>Pendiente</th>
-                      <th>id_mov</th>
-                      <th>id_mov</th>
+                      <th>Sucursal origen</th>
+                      <th>Sucursal destino</th>
                       <th>Recibir</th>
                   </tr>
               </thead>
@@ -28,6 +29,7 @@
                   @foreach ($lList as $mov)
                       <tr>
                         <td>{{ $mov->id_mvt }}</td>
+                        <td>{{ $mov->folio }}</td>
                         <td>{{ $mov->increment - $mov->decrement }}</td>
                         <td>{{ $mov->src_branch_name }}</td>
                         <td>{{ $mov->des_branch_name }}</td>
@@ -46,5 +48,5 @@
 
 @section('js')
 		<script type="text/javascript" src="{{ asset('js/movements/transfers/STransfersCore.js')}}"></script>
-		<script type="text/javascript" src="{{ asset('js/movements/transfers/receptions_table.js')}}"></script>
+		<script type="text/javascript" src="{{ asset('js/movements/transfers/tables.js')}}"></script>
 @endsection

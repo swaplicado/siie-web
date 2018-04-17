@@ -21,6 +21,8 @@
 <script src="{{ asset('js/movements/transfers/STransfersCore.js')}}"></script>
 <script src="{{ asset('js/movements/search/SSearchCore.js')}}"></script>
 <script src="{{ asset('js/movements/search/SLocations.js')}}"></script>
+<script src="{{ asset('js/movements/pallet_reconfig/SGuiReconfig.js')}}"></script>
+<script src="{{ asset('js/movements/pallet_reconfig/SReconfigurationCore.js')}}"></script>
 <script src="{{ asset('js/movements/tables.js')}}"></script>
 <script src="{{ asset('js/items/table.js')}}"></script>
 <script src="{{ asset('js/movements/lots_table.js')}}"></script>

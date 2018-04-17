@@ -36,7 +36,7 @@ class SGroupsController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lGroups = SItemGroup::Search($request->name, $this->iFilter)->orderBy('name', 'ASC')->paginate(10);
+      $lGroups = SItemGroup::Search($request->name, $this->iFilter)->orderBy('name', 'ASC');
 
       foreach ($lGroups as $group) {
         $group->family;
@@ -135,7 +135,7 @@ class SGroupsController extends Controller
         $group->updated_by_id = \Auth::user()->id;
         $group->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('siie.groups.index');
     }
@@ -203,7 +203,7 @@ class SGroupsController extends Controller
       $group->save();
       #$user->delete();
 
-      Flash::error(trans('messages.REG_DELETED'))->important();
+      Flash::success(trans('messages.REG_DELETED'))->important();
       return redirect()->route('siie.groups.index');
     }
 }

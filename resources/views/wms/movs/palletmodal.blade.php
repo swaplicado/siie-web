@@ -24,7 +24,8 @@
               <span class="glyphicon glyphicon-search" aria-hidden = "true"/>
             </a>
           </div>
-          @if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
+          @if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT') ||
+                  $oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN'))
             <div class="col-md-1">
               {!! Form::label('.') !!}
               <button type="button" onclick="showPallets()"

@@ -61,3 +61,6 @@
 		</tbody>
 	</table>
 @endsection
+@section('js')
+	<script src="{{ asset('js/wms/lots_catalog.js')}}"></script>
+@endsection

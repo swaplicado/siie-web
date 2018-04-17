@@ -22,8 +22,8 @@ class SStockManagment
                       ->join('wms_pallets as wp', 'ws.pallet_id', '=', 'wp.id_pallet')
                       ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
                       ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
-                      ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
-                      ->join('erpu_branches as eb', 'ws.branch_id', '=', 'eb.id_branch')
+                      ->join('wmsu_whs as ww', 'wwl.whs_id', '=', 'ww.id_whs')
+                      ->join('erpu_branches as eb', 'ww.branch_id', '=', 'eb.id_branch')
                       ->where('ei.is_deleted', false)
                       ->where('ws.is_deleted', false);
 
@@ -76,9 +76,19 @@ class SStockManagment
             $aSegregationParameters = $aSegParameters;
         }
 
-        $sub = session('stock')->getSubSegregated($aSegregationParameters);
-        $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ('.($sub->toSql()).') as segregated';
-        // $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ("0") as segregated';
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WITHOUT_SEGREGATED'), $aParameters)) {
+            if ($aParameters[\Config::get('scwms.STOCK_PARAMS.WITHOUT_SEGREGATED')]) {
+                $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ("0") as segregated';
+            }
+            else {
+              $sub = session('stock')->getSubSegregated($aSegregationParameters);
+              $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ('.($sub->toSql()).') as segregated';
+            }
+        }
+        else {
+          $sub = session('stock')->getSubSegregated($aSegregationParameters);
+          $sSelect = $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')].', ('.($sub->toSql()).') as segregated';
+        }
 
        $stock = SStockManagment::getStockBaseQuery($sSelect);
 
@@ -228,10 +238,18 @@ class SStockManagment
      */
     public function getSubSegregated($aParameters = []) {
 
-        $sSelect = '(COALESCE(
-                    SUM(IF(wsr.segregation_mvt_type_id = '.\Config::get('scqms.SEGREGATION.INCREMENT').', wsr.quantity, 0)) -
-                    SUM(IF(wsr.segregation_mvt_type_id = '.\Config::get('scqms.SEGREGATION.DECREMENT').', wsr.quantity, 0))
-                    , 0))';
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.AS_SEGREGATED'), $aParameters)) {
+          $sSelect = '(COALESCE(
+                      SUM(IF(wsr.segregation_mvt_type_id = '.\Config::get('scqms.SEGREGATION.INCREMENT').', wsr.quantity, 0)) -
+                      SUM(IF(wsr.segregation_mvt_type_id = '.\Config::get('scqms.SEGREGATION.DECREMENT').', wsr.quantity, 0))
+                      , 0)) AS '.$aParameters[\Config::get('scwms.STOCK_PARAMS.AS_SEGREGATED')];
+        }
+        else {
+          $sSelect = '(COALESCE(
+                      SUM(IF(wsr.segregation_mvt_type_id = '.\Config::get('scqms.SEGREGATION.INCREMENT').', wsr.quantity, 0)) -
+                      SUM(IF(wsr.segregation_mvt_type_id = '.\Config::get('scqms.SEGREGATION.DECREMENT').', wsr.quantity, 0))
+                      , 0))';
+        }
 
         $sub = \DB::connection(session('db_configuration')->getConnCompany())
                       ->table('wms_segregations AS ws')

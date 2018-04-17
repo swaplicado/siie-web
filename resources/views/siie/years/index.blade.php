@@ -10,7 +10,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-striped">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.YEAR') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>

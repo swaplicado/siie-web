@@ -26,7 +26,7 @@ class SWmsMenu {
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->route('wms.pallets.index', trans('wms.PALLETS'))
                 ->route('wms.lots.index', trans('wms.LOTS'))
-                ->route('wms.codes.start', trans('wms.BAR_CODES'))
+                ->route('wms.codes.start', trans('userinterface.titles.GENERATION_BARCODE'))
         )
         ->submenu(
             Link::to('#', trans('wms.WHS_MOVS_QUERY').'<span class="caret"></span>')
@@ -263,6 +263,7 @@ class SWmsMenu {
                 ->route('wms.stock.index', trans('wms.BRANCH_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'), trans('wms.BRANCH_STK')])
                 ->route('wms.stock.index', trans('wms.LOT_WHS_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'), trans('wms.LOT_WHS_STK')])
                 ->route('wms.stock.index', trans('wms.PALLET_LOT_STK'), [\Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'), trans('wms.PALLET_LOT_STK')])
+                ->route('wms.stock.index', trans('wms.GENERAL_STK'), [\Config::get('scwms.STOCK_TYPE.STK_GENERAL'), trans('wms.GENERAL_STK')])
         )
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();

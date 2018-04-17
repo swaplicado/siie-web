@@ -44,7 +44,7 @@ class SGendersController extends Controller
         session(['classIdAux' => $iClassId]);
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-        $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC')->paginate(10);
+        $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC');
 
         foreach ($lGenders as $gender) {
           $gender->group;
@@ -152,7 +152,7 @@ class SGendersController extends Controller
         $gender->updated_by_id = \Auth::user()->id;
         $gender->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('siie.genders.index', session('classIdAux'));
     }
@@ -228,7 +228,7 @@ class SGendersController extends Controller
         $gender->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
 
         return redirect()->route('siie.genders.index', session('classIdAux'));
     }

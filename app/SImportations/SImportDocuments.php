@@ -2,6 +2,7 @@
 
 use App\ERP\SDocument;
 use App\ERP\SPartner;
+use App\ERP\SBranch;
 use App\ERP\SCurrency;
 
 /**
@@ -84,6 +85,7 @@ class SImportDocuments
             fid_src_doc_n,
             fid_cur,
             fid_bp_r,
+            fid_bpb,
             ts_new,
             ts_edit,
             ts_del
@@ -102,9 +104,11 @@ class SImportDocuments
       $lSiieDocuments = array();
       $lWebDocuments = SDocument::get();
       $lPartners = SPartner::get();
+      $lBranches = SBranch::get();
       $lDocuments = array();
       $lDocumentsToWeb = array();
       $lWebPartners = array();
+      $lWebBranches = array();
 
       foreach ($lWebDocuments as $key => $value) {
           $lDocuments[$value->external_id] = $value;
@@ -116,6 +120,10 @@ class SImportDocuments
 
       foreach ($lPartners as $key => $partner) {
           $lWebPartners[$partner->external_id] = $partner->id_partner;
+      }
+
+      foreach ($lBranches as $key => $branch) {
+          $lWebBranches[$branch->external_id] = $branch->id_branch;
       }
 
       if ($result->num_rows > 0) {
@@ -155,6 +163,7 @@ class SImportDocuments
                     $lDocuments[$row["id_doc"]]->doc_status_id = 1;
                     $lDocuments[$row["id_doc"]]->currency_id = $lCurrencies[$row["fid_cur"]];
                     $lDocuments[$row["id_doc"]]->partner_id = $lWebPartners[$row["fid_bp_r"]];
+                    $lDocuments[$row["id_doc"]]->branch_id = $lWebBranches[$row["fid_bpb"]];
                     $lDocuments[$row["id_doc"]]->created_by_id = 1;
                     $lDocuments[$row["id_doc"]]->updated_by_id = 1;
                     $lDocuments[$row["id_doc"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
@@ -163,7 +172,12 @@ class SImportDocuments
                 }
              }
              else {
-                array_push($lDocumentsToWeb, SImportDocuments::siieToSiieWeb($row, $lYears, $lWebPartners, $lCurrencies, $lDocsYear));
+                array_push($lDocumentsToWeb, SImportDocuments::siieToSiieWeb($row,
+                                                                          $lYears,
+                                                                          $lWebPartners,
+                                                                          $lWebBranches,
+                                                                          $lCurrencies,
+                                                                          $lDocsYear));
              }
          }
       }
@@ -189,7 +203,7 @@ class SImportDocuments
    * @return SDocument
    */
   private static function siieToSiieWeb($oSiieDocument = null, $lYears = [], $lWebPartners = [],
-                                  $lCurrencies = [], $lDocsYear = []) {
+                                  $lWebBranches = [], $lCurrencies = [], $lDocsYear = []) {
        $oDocument = new SDocument();
        $oDocument->dt_date = $oSiieDocument["dt"];
        $oDocument->dt_doc = $oSiieDocument["dt_doc"];
@@ -223,6 +237,7 @@ class SImportDocuments
        $oDocument->doc_status_id = 1;
        $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
        $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];
+       $oDocument->branch_id = $lWebBranches[$oSiieDocument["fid_bpb"]];
        $oDocument->created_by_id = 1;
        $oDocument->updated_by_id = 1;
        $oDocument->created_at = $oSiieDocument["ts_new"];

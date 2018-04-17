@@ -40,3 +40,4 @@
       @endforeach
     </tbody>
 </table>
+<hr />

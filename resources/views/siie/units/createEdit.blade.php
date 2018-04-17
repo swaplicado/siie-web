@@ -30,21 +30,24 @@
 		<div class="form-group">
 			{!! Form::label('code', trans('userinterface.labels.SYMBOL').'*') !!}
 			{!! Form::text('code',
-				isset($unit) ? $unit->code : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+				isset($unit) ? $unit->code : null , ['class'=>'form-control',
+																							 'maxlength' => '50',
 																							'placeholder' => trans('userinterface.placeholders.SYMBOL'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('name', trans('userinterface.labels.UNIT').'*') !!}
 			{!! Form::text('name',
-				isset($unit) ? $unit->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+				isset($unit) ? $unit->name : null , ['class'=>'form-control', 'maxlength' => '255',
+																							'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
 																							'placeholder' => trans('userinterface.placeholders.UNIT'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('unit_base_equivalence_opt', trans('userinterface.labels.EQUIVALENCE')) !!}
-			{!! Form::text('unit_base_equivalence_opt',
-				isset($unit) ? $unit->unit_base_equivalence_opt : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+			{!! Form::number('unit_base_equivalence_opt',
+				isset($unit) ? $unit->unit_base_equivalence_opt : null , ['class'=>'form-control', 'max' => '1000000000',
+			 																															'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
 																																		'placeholder' => trans('userinterface.placeholders.EQUIVALENCE')]) !!}
 		</div>
 

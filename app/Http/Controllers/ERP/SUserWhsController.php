@@ -89,7 +89,7 @@ class SUserWhsController extends Controller
            $whs->save();
          }
 
-         Flash::warning(trans('messages.REG_EDITED'))->important();
+         Flash::success(trans('messages.REG_EDITED'))->important();
 
          return redirect()->route('admin.userwhs.index');
 

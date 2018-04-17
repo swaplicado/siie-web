@@ -16,7 +16,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-striped table-condensed">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.BP') }}</th>
 			<th>{{ trans('userinterface.labels.CODE') }}</th>
@@ -62,5 +62,4 @@
 			@endforeach
 		</tbody>
 	</table>
-	{!! $branches->render() !!}
 @endsection

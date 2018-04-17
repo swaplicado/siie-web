@@ -30,21 +30,21 @@
 		<div class="form-group">
 			{!! Form::label('max', trans('wms.labels.MAX').'*') !!}
 			{!! Form::number('max',
-				isset($limit) ? $limit->max : 0 , ['class'=>'form-control', 'min' => '0', 'step' => '1',
+				isset($limit) ? $limit->max : 0 , ['class'=>'form-control', 'min' => '0', 'max' => '1000000000', 'step' => '1',
 				 																						'placeholder' => '0.0', 'required']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('min', trans('wms.labels.MIN').'*') !!}
 			{!! Form::number('min',
-				isset($limit) ? $limit->min : 0 , ['class'=>'form-control', 'min' => '0', 'step' => '1',
+				isset($limit) ? $limit->min : 0 , ['class'=>'form-control', 'min' => '0', 'max' => '1000000000', 'step' => '1',
 				 																						'placeholder' => '0.0']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('reorder', trans('wms.labels.REORDER').'*') !!}
 			{!! Form::number('reorder',
-				isset($limit) ? $limit->reorder : 0 , ['class'=>'form-control', 'min' => '0', 'step' => '1',
+				isset($limit) ? $limit->reorder : 0 , ['class'=>'form-control', 'min' => '0', 'max' => '1000000000', 'step' => '1',
 				 																						'placeholder' => '0.0']) !!}
 		</div>
 
@@ -54,15 +54,17 @@
 		</div> --}}
 
 		<div class="form-group">
-			{!! Form::label('item_id', trans('wms.labels.MAT_PROD')) !!}
+			{!! Form::label('item_id', trans('wms.labels.MAT_PROD').'*') !!}
 			{!! Form::select('item_id', $items, isset($limit) ?  $limit->item_id : null,
-								['class'=>'form-control select-one', 'placeholder' => trans('wms.placeholders.SELECT_MAT_PROD')]) !!}
+								['class'=>'form-control select-one', 'required',
+								'placeholder' => trans('wms.placeholders.SELECT_MAT_PROD')]) !!}
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('aux_branch_id', trans('userinterface.labels.BRANCH')) !!}
+			{!! Form::label('aux_branch_id', trans('userinterface.labels.BRANCH').'*') !!}
 			{!! Form::select('aux_branch_id', $branches, isset($limit) ?  $limit->aux_branch_id : null,
-								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')', 'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH')]) !!}
+								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')', 'required',
+								'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH')]) !!}
 		</div>
 
 		<div class="form-group">
