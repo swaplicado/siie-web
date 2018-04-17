@@ -171,7 +171,7 @@ class SUserPermissionsController extends Controller
 
         $userPermission->save();
         #$userPermission->delete();
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
 
         return redirect()->route('admin.userPermissions.index');
     }

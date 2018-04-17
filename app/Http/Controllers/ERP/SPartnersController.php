@@ -37,7 +37,7 @@ class SPartnersController extends Controller {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
       $this->iFilterBp = $request->filterBp == null ? \Config::get('scsiie.ATT.ALL') : $request->filterBp;
 
-      $lBPartners = SPartner::Search($request->name, $this->iFilter, $this->iFilterBp)->orderBy('name', 'ASC')->paginate(20);
+      $lBPartners = SPartner::Search($request->name, $this->iFilter, $this->iFilterBp)->orderBy('name', 'ASC');
 
       return view('siie.bps.index')
           ->with('bps', $lBPartners)
@@ -126,7 +126,7 @@ class SPartnersController extends Controller {
          $bpartner->updated_by_id = \Auth::user()->id;
          $bpartner->save();
 
-         Flash::warning(trans('messages.REG_EDITED'))->important();
+         Flash::success(trans('messages.REG_EDITED'))->important();
 
          return redirect()->route('siie.bps.index');
      }
@@ -194,7 +194,7 @@ class SPartnersController extends Controller {
 
          $bpartner->save();
 
-         Flash::error(trans('messages.REG_DELETED'))->important();
+         Flash::success(trans('messages.REG_DELETED'))->important();
 
          return redirect()->route('siie.bps.index');
      }

@@ -30,8 +30,9 @@
 		<div class="form-group">
 			{!! Form::label('name', trans('userinterface.labels.FAMILY').'*') !!}
 			{!! Form::text('name',
-				isset($family) ? $family->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
-																																			'placeholder' => trans('userinterface.placeholders.FAMILY'), 'required']) !!}
+				isset($family) ? $family->name : null , ['class'=>'form-control', 'maxlength' => '100',
+				 																						'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																										'placeholder' => trans('userinterface.placeholders.FAMILY'), 'required']) !!}
 		</div>
 
 @endsection

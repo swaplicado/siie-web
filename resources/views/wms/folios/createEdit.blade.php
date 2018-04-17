@@ -29,8 +29,8 @@
 
 		<div class="form-group">
 			{!! Form::label('folio_start', trans('wms.labels.FOLIO_START').'*') !!}
-			{!! Form::text('folio_start',
-				isset($folio) ? $folio->folio_start : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+			{!! Form::number('folio_start',
+				isset($folio) ? $folio->folio_start : null , ['class'=>'form-control', 'max' => '1000000000', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
 				 																						'placeholder' => trans('wms.placeholders.FOLIO_START'), 'required']) !!}
 		</div>
 

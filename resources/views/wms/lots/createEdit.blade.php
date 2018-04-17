@@ -38,11 +38,13 @@
 						<div class="col-md-3">
 
 							{!! Form::text('lot',
-					    	isset($lots) ? $lots->lot : null , ['required','class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.NAME')]) !!}
+					    	isset($lots) ? $lots->lot : null , ['required','class'=>'form-control',
+									'maxlength' => '50', 'placeholder' => trans('userinterface.placeholders.NAME'), 'required']) !!}
 
 						</div>
 
-						{!! Form::label('dt_expiry', trans('userinterface.labels.EXPIRY').'*',['class'=>'col-md-2 control-label']) !!}
+						{!! Form::label('dt_expiry', trans('userinterface.labels.EXPIRY').'*',
+															['class'=>'col-md-2 control-label']) !!}
 
 						<div class="col-md-2">
 
@@ -67,7 +69,8 @@
 
 						<div class="col-md-2">
 
-							{!! Form::select('item_id', $items, isset($lots) ? $lots->item->id_item : null , ['class'=>'form-control select-item', 'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'), 'required']) !!}
+							{!! Form::select('item_id', $items, isset($lots) ? $lots->item->id_item : null ,
+											['class'=>'form-control select-item', 'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'), 'required']) !!}
 
 						</div>
 
@@ -77,7 +80,8 @@
 
 						<div class="col-md-2">
 
-						 {!! Form::select('unit_id', $units, isset($lots) ? $lots->unit->id_unit : null , ['class'=>'form-control select-unit', 'placeholder' => trans('userinterface.placeholders.SELECT_UNIT'), 'required']) !!}
+						 {!! Form::select('unit_id', $units, isset($lots) ? $lots->unit->id_unit : null ,
+					 	 					['class'=>'form-control select-unit', 'placeholder' => trans('userinterface.placeholders.SELECT_UNIT'), 'required']) !!}
 
 					 </div>
 

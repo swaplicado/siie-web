@@ -21,85 +21,6 @@ class SStockUtils
      * @return [array]  [returns an array with the erros description,
      *                    if the array is empty means that errors not found]
      */
-    public static function validateStock0($oMovement = '')
-    {
-        $aErrors = array();
-
-        if ($oMovement == '') {
-          array_push($aErrors, "El movimiento está vacío");
-          return $aErrors;
-        }
-
-        $aParameters = array();
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 0;
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 0;
-
-        foreach ($oMovement->aAuxRows as $movRow) {
-            $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
-            $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $movRow->item_id;
-            $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $movRow->unit_id;
-            $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $movRow->pallet_id;
-            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
-
-            if ($movRow->item->is_lot) {
-                if (sizeof($movRow->getAuxLots()) == 0) {
-                    array_push($aErrors, "El renglón ".$movRow['oAuxItem']['name']." no tiene lotes asignados");
-                }
-                else {
-                  foreach ($movRow->getAuxLots() as $lotRow) {
-                      $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = $lotRow->lot_id;
-
-                      $oStock = session('stock')->getStock($aParameters);
-                      if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $lotRow->quantity) {
-                          if ($movRow->pallet_id == 1) {
-                            array_push($aErrors, "No hay suficientes existencias SIN TARIMA del lote ".$lotRow->lot->lot."\n
-                                                  Total: ".$oStock[\Config::get('scwms.STOCK.GROSS')]."\n
-                                                  Segregadas: ".$oStock[\Config::get('scwms.STOCK.SEGREGATED')]."\n
-                                                  Disponibles: ".$oStock[\Config::get('scwms.STOCK.AVAILABLE')]);
-                          }
-                          else {
-                            array_push($aErrors, "No hay suficientes existencias del lote ".$lotRow->lot->lot." en la tarima ".$movRow->pallet->pallet);
-                          }
-
-                          return $aErrors;
-                      }
-                  }
-                }
-            }
-            else {
-                $oStock = session('stock')->getStock($aParameters);
-                if ($oStock[\Config::get('scwms.STOCK.AVAILABLE')] < $movRow->quantity) {
-                    if ($movRow->pallet_id == 1) {
-                      array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
-                                              material/producto ".$movRow->item->name."\n
-                                              Total:".$oStock[\Config::get('scwms.STOCK.GROSS')]."\n
-                                              Segregadas:".$oStock[\Config::get('scwms.STOCK.SEGREGATED')]."\n
-                                              Disponibles:".$oStock[\Config::get('scwms.STOCK.AVAILABLE')]);
-                    }
-                    else {
-                      array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name." en la tarima ".$movRow->pallet->pallet);
-                    }
-
-                    return $aErrors;
-                }
-            }
-        }
-
-        return $aErrors;
-    }
-    /**
-     * [validate the stock before the movement is made]
-     *
-     * @param  SMovement $oMovement
-     * @return [array]  [returns an array with the erros description,
-     *                    if the array is empty means that errors not found]
-     */
     public static function validateStock($oMovement = '')
     {
         $aErrors = array();
@@ -130,8 +51,14 @@ class SStockUtils
         $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oMovement->branch_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.WITHOUT_SEGREGATED')] = true;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.AS_SEGREGATED')] = 'segregated';
 
-        $lStock = session('stock')->getStockResult($aParameters, $aParameters);
+        if ($oMovement->id_mvt > 0) {
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $oMovement->id_mvt;
+        }
+
+        $lStock = session('stock')->getStockResult($aParameters);
 
         $lStock = $lStock->groupBy('id_item')
                             ->groupBy('id_unit')
@@ -140,8 +67,9 @@ class SStockUtils
                             ->groupBy('location_id')
                             ->get();
 
-        $bFound = false;
         $lStockC = $lStock;
+
+        $bFound = false;
 
         foreach ($oMovement->aAuxRows as $oRow) {
           foreach ($lStockC as $oStock) {
@@ -149,19 +77,50 @@ class SStockUtils
                 if ($oStock->location_id == $oRow->location_id) {
                    if ($oStock->pallet_id == $oRow->pallet_id) {
                       if ($oRow->item->is_lot) {
+                          if (sizeof($oRow->getAuxLots()) == 0) {
+                              array_push($aErrors, "El renglón ".$oRow->item->name." no tiene lotes asignados");
+                              return $aErrors;
+                          }
                           foreach ($oRow->getAuxLots() as $oLotRow) {
                              if ($oLotRow->lot_id == $oStock->lot_id) {
                                  $bFound = true;
-                                 if ($oStock->stock < $oLotRow->quantity) {
+
+                                 $lSegStock = session('stock')->getSubSegregated($aParameters);
+
+                                 $lSegStock = $lSegStock->where('item_id', $oRow->item_id)
+                                                     ->where('unit_id', $oRow->unit_id)
+                                                     ->where('whs_location_id', $oRow->location_id)
+                                                     ->where('pallet_id', $oRow->pallet_id)
+                                                     ->where('lot_id', $oLotRow->lot_id)
+                                                     ->groupBy('item_id')
+                                                     ->groupBy('unit_id')
+                                                     ->groupBy('lot_id')
+                                                     ->groupBy('pallet_id')
+                                                     ->groupBy('whs_location_id');
+                                 // dd($lSegStock->toSql());
+                                $lSegStock = $lSegStock->get();
+
+                                $dSegregated = 0;
+                                if (sizeof($lSegStock) > 0) {
+                                  $dSegregated = $lSegStock[0]->segregated;
+                                }
+
+                                 if (($oStock->stock - $dSegregated) < $oLotRow->quantity) {
                                    if ($oRow->pallet_id == 1) {
                                      array_push($aErrors, "No hay suficientes existencias
                                                             SIN TARIMA del lote ".$oLotRow->lot->lot."
-                                                              en la ubicación: ".$oRow->location->name);
+                                                              en la ubicación: ".$oRow->location->name."\n
+                                                              Total:".$oStock->stock."\n
+                                                              Segregadas:".$dSegregated."\n
+                                                              Disponibles:".$oStock->stock - $dSegregated);
                                    }
                                    else {
                                      array_push($aErrors, "No hay suficientes existencias del lote ".$oLotRow->lot->lot.
                                                             " en la tarima ".$oRow->pallet->pallet.
-                                                              " en la ubicación: ".$oRow->location->name);
+                                                              " en la ubicación: ".$oRow->location->name."\n
+                                                              Total:".$oStock->stock."\n
+                                                              Segregadas:".$dSegregated."\n
+                                                              Disponibles:".$oStock->stock - $dSegregated);
                                    }
                                  }
                                  else {
@@ -172,16 +131,42 @@ class SStockUtils
                       }
                       else {
                         $bFound = true;
-                        if ($oStock->stock < $oRow->quantity) {
+
+                        $lSegStock = session('stock')->getSubSegregated($aParameters);
+
+                        $lSegStock = $lSegStock->where('item_id', $oRow->item_id)
+                                            ->where('unit_id', $oRow->unit_id)
+                                            ->where('whs_location_id', $oRow->location_id)
+                                            ->where('pallet_id', $oRow->pallet_id)
+                                            ->where('lot_id', 1)
+                                            ->groupBy('item_id')
+                                            ->groupBy('unit_id')
+                                            ->groupBy('lot_id')
+                                            ->groupBy('pallet_id')
+                                            ->groupBy('whs_location_id')
+                                            ->get();
+
+                         $dSegregated = 0;
+                         if (sizeof($lSegStock) > 0) {
+                           $dSegregated = $lSegStock[0]->segregated;
+                         }
+
+                        if (($oStock->stock - $dSegregated) < $oRow->quantity) {
                             if ($movRow->pallet_id == 1) {
                               array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
                                                       material/producto ".$movRow->item->name.
-                                                      " en la ubicación: ".$oRow->location->name);
+                                                      " en la ubicación: ".$oRow->location->name."\n
+                                                      Total:".$oStock->stock."\n
+                                                      Segregadas:".$dSegregated."\n
+                                                      Disponibles:".$oStock->stock - $dSegregated);
                             }
                             else {
                               array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name.
                                                       " en la tarima ".$movRow->pallet->pallet."
-                                                        en la ubicación: ".$oRow->location->name);
+                                                        en la ubicación: ".$oRow->location->name."\n
+                                                        Total:".$oStock->stock."\n
+                                                        Segregadas:".$dSegregated."\n
+                                                        Disponibles:".$oStock->stock - $dSegregated);
                             }
                         }
                         else {
@@ -195,6 +180,108 @@ class SStockUtils
         }
 
         return $aErrors;
+    }
+
+    public static function validatePallet($iYear = 0, $iBranch = 0, $iWarehouse = 0,
+                                  $oRow = null, $iMovementType = 0,
+                                  $iMovement = 0)
+    {
+       $aErrors = array();
+       if ($oRow->pallet_id == 1) {
+          return $aErrors;
+       }
+
+       $sSelect = 'sum(ws.input) as inputs,
+                    sum(ws.output) as outputs,
+                    (sum(ws.input) - sum(ws.output)) as stock,
+                    AVG(ws.cost_unit) as cost_unit,
+                    ei.code as item_code,
+                    ei.name as item,
+                    eu.code as unit_code,
+                    ei.is_lot,
+                    ei.id_item,
+                    eu.id_unit,
+                    ws.lot_id,
+                    wl.lot,
+                    ws.pallet_id,
+                    ws.location_id
+                    ';
+
+       $aParameters = array();
+       $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+       $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $iYear;
+       $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $oRow->pallet_id;
+       $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oRow->unit_id;
+       $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oRow->item_id;
+
+       if ($iMovement > 0) {
+         $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMovement;
+       }
+
+       $lStockGral = session('stock')->getStockResult($aParameters);
+
+       $lStockGral = $lStockGral->groupBy('id_branch')
+                          ->groupBy('id_whs')
+                          ->groupBy('id_whs_location')
+                          ->having('stock', '>', '0');
+                          ->get();
+
+      $location = 0;
+      foreach ($lStockGral as $oStockGral) {
+        if ($location == 0) {
+           $location = $oStockGral->location_id;
+        }
+        else if ($location != $oStockGral->location_id){
+           array_push($aErrors, 'La tarima tiene existencias en diferentes ubicaciones');
+           return $aErrors;
+        }
+      }
+
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $iBranch;
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouse;
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = $oRow->location_id;
+
+      $lPalletStock = session('stock')->getStockResult($aParameters);
+
+      $lPalletStock = $lPalletStock->groupBy('ws.lot_id')
+                        ->having('stock', '>', '0');
+                        ->get();
+
+      if ($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
+          || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
+          return $aErrors;
+      }
+
+      $dQuantity = 0;
+      foreach ($lPalletStock as $oPalletStock) {
+        if ($oPalletStock->segregated > 0) {
+          array_push($aErrors, 'La tarima tiene unidades segregadas');
+          return $aErrors;
+        }
+        if ($oRow->item->is_lot) {
+          $bCurrentLotFound = false;
+          foreach ($oRow->getAuxLots() as $oAuxLot) {
+            if ($oAuxLot->lot_id == $oPalletStock->lot_id) {
+                if ($oAuxLot->quantity != $oPalletStock->stock) {
+                  array_push($aErrors, 'No pueden mover más unidades de las que contiene la tarima');
+                  return $aErrors;
+                }
+                $bCurrentLotFound = true;
+            }
+          }
+
+          if (! $bCurrentLotFound) {
+            array_push($aErrors, 'Los lotes que desea mover con la tarima no corresponden a los que esta contiene');
+            return $aErrors;
+          }
+        }
+        else {
+          if ($oRow->quantity != $oPalletStock->stock) {
+            array_push($aErrors, 'No pueden mover más unidades de las que contiene la tarima');
+            return $aErrors;
+          }
+        }
+      }
     }
 
     /**

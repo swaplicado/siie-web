@@ -1,9 +1,10 @@
 class SSearchCore {
 
-    initializateItems() {
+    initializateItems(iElementType) {
       var aColumns = [];
       var oData = [];
 
+    if (iElementType == globalData.lElementsType.ITEMS) {
       aColumns = [
             {
                 "title": "idItem",
@@ -37,6 +38,52 @@ class SSearchCore {
         ];
 
       oData = globalData.lFItems;
+
+    }
+    else {
+        aColumns = [
+              {
+                  "title": "idItem",
+                  "data": "id_item"
+              }, {
+                  "title": "idUnit",
+                  "data": "id_unit"
+              }, {
+                  "title": "idPallet",
+                  "data": "id_pallet"
+              }, {
+                  "title": "idPallet",
+                  "data": "id_pallet"
+              }, {
+                  "title": "Tarima",
+                  "data": "pallet"
+              }, {
+                  "title": "Clave",
+                  "data": "item_code"
+              }, {
+                  "title": "Mat/prod",
+                  "data": "item_name"
+              }, {
+                  "title": "Un.",
+                  "data": "unit_code"
+              }, {
+                  "title": "Existencia.",
+                  "data": "available_stock",
+                  "className": "text-right"
+              }
+          ];
+
+        // var lPallets = new Array();
+        //
+        // globalData.lFPallets.forEach(function(pallet) {
+        //     if (pallet.id_item == elementToAdd.iItemId &&
+        //           pallet.id_unit == elementToAdd.iUnitId) {
+        //         lPallets.push(pallet);
+        //     }
+        // });
+
+        oData = globalData.lFPallets;
+      }
 
       if (oItemsTable != null) {
         oItemsTable.destroy();
@@ -79,7 +126,10 @@ class SSearchCore {
       oItemsTable.column( 1 ).visible( false );
       oItemsTable.column( 2 ).visible( false );
       oItemsTable.column( 3 ).visible( false );
-      oItemsTable.column( 4 ).visible( false );
+
+      if (iElementType == globalData.lElementsType.ITEMS) {
+        oItemsTable.column( 4 ).visible( false );
+      }
 
       if (globalData.bIsInputMov) {
         oItemsTable.column( 8 ).visible( false );

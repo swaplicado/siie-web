@@ -54,6 +54,12 @@ return [
     'MVT_EXP_TP_PUR' => '1', // purchases
     'MVT_EXP_TP_PRO' => '2', // production
 
+    // applies only for internal movements
+    'MVT_INTERNAL_ADJUST' => '2', // purchases
+    'MVT_INTERNAL_TRANSFER' => '3', // production
+    'MVT_INTERNAL_DIV_PALLET' => '4', // production
+    'MVT_INTERNAL_ADD_TO_PALLET' => '5', // production
+
     'OPERATION_TYPE' => [
                             'CREATION' => '1',
                             'EDITION' => '2',
@@ -74,6 +80,7 @@ return [
                         'STK_BY_BRANCH' => '8',
                         'STK_BY_LOT_BY_WAREHOUSE' => '6',
                         'STK_BY_PALLET_BY_LOT' => '7',
+                        'STK_GENERAL' => '10',
                       ],
 
     'RECONFIG_PALLETS' => '100',
@@ -90,6 +97,8 @@ return [
                         'ID_YEAR' => '8',
                         'DATE' => '9',
                         'ID_MVT' => '10',
+                        'WITH_SEGREGATED' => '100',
+                        'AS_AS' => '101',
                       ],
 
     'STOCK' => [

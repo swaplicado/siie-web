@@ -68,14 +68,14 @@ class SLotsValidations {
     private function addToCreate($oLotJs = null)
     {
        foreach ($this->lLotsToCreate as $key => $oLotC) {
-          if ($oLotC->lot == $oLotJs->{'sLot'}) {
+          if ($oLotC->lot == $oLotJs->sLot) {
               return $key;
           }
        }
 
        $oLot = new SWmsLot();
-       $oLot->lot = $oLotJs->{'sLot'};
-       $oLot->dt_expiry = $oLotJs->{'tExpDate'};
+       $oLot->lot = $oLotJs->sLot;
+       $oLot->dt_expiry = $oLotJs->tExpDate;
        $oLot->item_id = $this->oItem->id_item;
        $oLot->unit_id = $this->oItem->unit_id;
 
@@ -103,8 +103,8 @@ class SLotsValidations {
      */
     private function assignLot($iKey = 0, $oLot = null)
     {
-       $this->lLots[$iKey]->{'iLotId'} = $oLot->id_lot;
-       $this->lLots[$iKey]->{'tExpDate'} = $oLot->dt_expiry;
+       $this->lLots[$iKey]->iLotId = $oLot->id_lot;
+       $this->lLots[$iKey]->tExpDate = $oLot->dt_expiry;
     }
 
     /**
@@ -113,13 +113,13 @@ class SLotsValidations {
     public function validateLots()
     {
        foreach ($this->lLots as $key => $oLot) {
-          if ($oLot->{'iLotId'} == '0') {
+          if ($oLot->iLotId == '0') {
               $this->processLotToCreate($oLot, $key);
           }
           else {
-             $oSearchLot = SWmsLot::find($oLot->{'iLotId'});
+             $oSearchLot = SWmsLot::find($oLot->iLotId);
 
-             if ($oLot->{'sLot'} != $oSearchLot->lot) {
+             if ($oLot->sLot != $oSearchLot->lot) {
                 $this->processLotToCreate($oLot, $key);
              }
           }
@@ -135,36 +135,20 @@ class SLotsValidations {
      */
     private function processLotToCreate($oLotJs = null, $iKey = 0)
     {
-        if ($oLotJs->{'bCreate'}) {
-            if ($this->canCreateTheLot($this->oItem->gender->item_class_id)) {
-                $oFoundLot = $this->lotExists($oLotJs->{'sLot'});
+        $oFoundLot = $this->lotExists($oLotJs->sLot);
 
-                if ($oFoundLot == null) {
-                  $oLotJs->{'iLotId'} = 0;
-                  $oLotJs->{'iKeyLot'} = $this->addToCreate($oLotJs);
-                }
-                else {
-                  $this->addError('El lote '.$oLotJs->{'sLot'}.' ya existe');
-                }
-            }
-            else {
-                $this->addError('No tiene permisos para crear el lote '.$oLotJs->{'sLot'});
-            }
+        if ($oFoundLot == null) {
+          $oLotJs->iLotId = 0;
+          $oLotJs->iKeyLot = $this->addToCreate($oLotJs);
         }
         else {
-           $oFoundLot = $this->lotExists($oLotJs->{'sLot'});
-
-           if ($oFoundLot != null) {
-             if ($oFoundLot->is_deleted) {
-                $this->addError('El lote '.$oLotJs->{'sLot'}.' está eliminado');
-             }
-             else {
-                $this->assignLot($iKey, $oFoundLot);
-             }
-           }
-           else {
-             $this->addError('El lote '.$oLotJs->{'sLot'}.' no existe');
-           }
+          if ($oFoundLot->dt_expiry == $oLotJs->tExpDate) {
+              $this->assignLot($iKey, $oFoundLot);
+          }
+          else {
+              $this->addError('El lote '.$oLotJs->sLot.' ya existe, pero
+                              la fecha de vencimiento no coincide.');
+          }
         }
     }
 

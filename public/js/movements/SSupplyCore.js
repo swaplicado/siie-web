@@ -39,6 +39,7 @@ class SSupplyCore {
         guiFunctions.setPrice(elementToAdd.dPrice);
 
         if (! oRow.bIsLot) {
+          guiValidations.showPallet();
           guiValidations.hideLots();
           guiValidations.showAdd();
         }

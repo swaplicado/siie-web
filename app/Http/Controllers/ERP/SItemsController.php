@@ -56,7 +56,7 @@ class SItemsController extends Controller
         $this->iFilterBulk = $request->filterBulk == null ? \Config::get('scsiie.FILTER_BULK.ALL') : $request->filterBulk;
         $this->iFilterLot = $request->filterLot == null ? \Config::get('scsiie.FILTER_LOT.ALL') : $request->filterLot;
         $this->iFilterGender = $request->filterGender == null ? \Config::get('scsiie.FILTER_GENDER.ALL') : $request->filterGender;
-        $lItems = SItem::Search($request->name, $this->iFilter, $this->iFilterLot, $this->iFilterBulk, $this->iFilterGender, $iClassId)->orderBy('name', 'ASC')->paginate(20);
+        $lItems = SItem::Search($request->name, $this->iFilter, $this->iFilterLot, $this->iFilterBulk, $this->iFilterGender, $iClassId)->orderBy('name', 'ASC')->paginate(50);
 
         $sTitle = '';
 
@@ -172,6 +172,7 @@ class SItemsController extends Controller
     public function edit($id)
     {
         $item = SItem::find($id);
+
         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $item);
 
         /*
@@ -230,15 +231,17 @@ class SItemsController extends Controller
     {
         $item = SItem::find($id);
         $item->fill($request->all());
+        $item->is_lot = $request->is_lot == true;
+        $item->is_bulk = $request->is_bulk == true;
         $item->updated_by_id = \Auth::user()->id;
 
         $errors = $item->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('siie.items.index', session('classIdAux'));
     }
@@ -278,7 +281,7 @@ class SItemsController extends Controller
         $errors = $item->save($item->toArray());
         if (sizeof($errors) > 0)
         {
-           return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
@@ -304,11 +307,11 @@ class SItemsController extends Controller
         $errors = $item->save($item->toArray());
         if (sizeof($errors) > 0)
         {
-           return redirect()->route('siie.items.index', session('classIdAux'))->withErrors($errors);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('siie.items.index', session('classIdAux'));
     }
 

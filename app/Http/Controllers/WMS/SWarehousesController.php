@@ -80,28 +80,37 @@ class SWarehousesController extends Controller
      */
     public function store(SWhsRequest $request)
     {
-      $whs = new SWarehouse($request->all());
+        $whs = new SWarehouse($request->all());
 
-      $whs->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-      $whs->updated_by_id = \Auth::user()->id;
-      $whs->created_by_id = \Auth::user()->id;
+        $whs->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $whs->updated_by_id = \Auth::user()->id;
+        $whs->created_by_id = \Auth::user()->id;
 
-      $whs->save();
+        $iValidCode = SWarehouse::where('code', $whs->code)
+                                  ->where('branch_id', $whs->branch_id)->get();
 
-      $location = new SLocation();
-      $location->code = 'def'.$whs->id_whs;
-      $location->name = 'default';
-      $location->is_deleted = false;
-      $location->is_default = true;
-      $location->whs_id = $whs->id_whs;
-      $location->created_by_id = 1;
-      $location->updated_by_id = 1;
+        if (sizeof($iValidCode) > 0) {
+           return redirect()->back()->withInput(
+                  $request->input())
+                  ->withErrors(['Ya hay un almacén con este código en la sucursal']);
+        }
 
-      $location->save();
+        $whs->save();
 
-      Flash::success(trans('messages.REG_CREATED'))->important();
+        $location = new SLocation();
+        $location->code = trans('wms.DEFAULT_CODE').$whs->id_whs;
+        $location->name = trans('wms.DEFAULT');
+        $location->is_deleted = false;
+        $location->is_default = true;
+        $location->whs_id = $whs->id_whs;
+        $location->created_by_id = 1;
+        $location->updated_by_id = 1;
 
-      return redirect()->route('wms.whs.index');
+        $location->save();
+
+        Flash::success(trans('messages.REG_CREATED'))->important();
+
+        return redirect()->route('wms.whs.index');
     }
 
     /**
@@ -125,9 +134,15 @@ class SWarehousesController extends Controller
     {
         $whs = SWarehouse::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $whs->created_by_id)))
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $whs);
+
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($whs);
+        if (sizeof($error) > 0)
         {
-          return redirect()->route('notauthorized');
+          return redirect()->back()->withErrors($error);
         }
 
         $lTypes = SWhsType::orderBy('name', 'ASC')->lists('name', 'id_whs_type');
@@ -151,9 +166,24 @@ class SWarehousesController extends Controller
         $whs = SWarehouse::find($id);
         $whs->fill($request->all());
         $whs->updated_by_id = \Auth::user()->id;
-        $whs->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        $iValidCode = SWarehouse::where('code', $whs->code)
+                                  ->where('branch_id', $whs->branch_id)
+                                  ->where('id_whs', '!=', $whs->id_whs)->get();
+
+        if (sizeof($iValidCode) > 0) {
+           return redirect()->back()->withInput(
+                  $request->input())
+                  ->withErrors(['Ya hay un almacén con este código en la sucursal']);
+        }
+
+        $errors = $whs->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
+        }
+
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('wms.whs.index');
     }
@@ -189,16 +219,17 @@ class SWarehousesController extends Controller
     {
         $whs = SWarehouse::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $whs->created_by_id)))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $whs);
 
         $whs->fill($request->all());
         $whs->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $whs->updated_by_id = \Auth::user()->id;
 
-        $whs->save();
+        $errors = $whs->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->back()->withErrors($errors);
+        }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
@@ -213,20 +244,22 @@ class SWarehousesController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $whs = SWarehouse::find($id);
         $whs->fill($request->all());
         $whs->is_deleted = \Config::get('scsys.STATUS.DEL');
         $whs->updated_by_id = \Auth::user()->id;
 
-        $whs->save();
+        $errors = $whs->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->back()->withErrors($errors);
+        }
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
+
         return redirect()->route('wms.whs.index');
     }
 }

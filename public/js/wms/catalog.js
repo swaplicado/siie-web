@@ -1,4 +1,4 @@
-var oCatalagTable = $('#cat_lots_table').DataTable({
+var oCatalogTable = $('#catalog_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -24,29 +24,5 @@ var oCatalagTable = $('#cat_lots_table').DataTable({
         }
       },
     "scrollX": true,
-    "colReorder": true,
-    "columnDefs": [
-      {
-          "targets": 0,
-          "width": "10%"
-      },
-      {
-          "targets": 1,
-          "className": "text-center",
-          "width": "10%"
-      },
-      {
-          "targets": 2,
-          "width": "20%"
-      },
-      {
-          "targets": [3],
-          "width": "5%"
-      },
-      {
-          "targets": [4,5,6],
-          "className": "text-center",
-          "width": "2%"
-      }
-    ],
+    "colReorder": true
   });

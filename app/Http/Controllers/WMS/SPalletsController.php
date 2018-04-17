@@ -30,7 +30,7 @@ class SPalletsController extends Controller
 
   public function __construct()
   {
-       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CENTRAL_CONFIG'), \Config::get('scsys.MODULES.ERP'));
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CENTRAL_CONFIG'), \Config::get('scsys.MODULES.WMS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
   }
@@ -75,12 +75,10 @@ class SPalletsController extends Controller
         $units = SUnit::select('id_unit', \DB::raw("CONCAT(code,' - ', name)as unit"))
                         ->where('is_deleted', false)
                         ->lists('unit','id_unit');
-        $locs = SLocation::orderBy('name', 'ASC')->lists('name', 'id_whs_location');
 
         return view('wms.pallets.createEdit')
                       ->with('items', $items)
-                      ->with('units', $units)
-                      ->with('locs', $locs);
+                      ->with('units', $units);
     }
 
     /**
@@ -144,7 +142,6 @@ class SPalletsController extends Controller
         $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
-
         return view('wms.pallets.createEdit')
                       ->with('pallets',$pallets)
                       ->with('items', $items)
@@ -168,16 +165,21 @@ class SPalletsController extends Controller
       $errors = $pallet->save();
       if (sizeof($errors) > 0)
       {
-         return redirect()->route('wms.pallets.index')->withErrors($errors);
+         return redirect()->back()->withInput($request->input())->withErrors($errors);
       }
 
-      Flash::warning(trans('messages.REG_EDITED'))->important();
+      Flash::success(trans('messages.REG_EDITED'))->important();
 
       return redirect()->route('wms.pallets.index');
     }
 
     public function copy(Request $request, $id)
     {
+        if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
+        {
+          return redirect()->route('notauthorized');
+        }
+
         $pallet = SPallet::find($id);
 
         $palletCopy = clone $pallet;
@@ -235,7 +237,7 @@ class SPalletsController extends Controller
         }
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('wms.pallets.index');
     }
 

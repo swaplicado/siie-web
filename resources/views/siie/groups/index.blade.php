@@ -15,7 +15,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-condensed">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.GROUP') }}</th>
 			<th>{{ trans('userinterface.labels.FAMILY') }}</th>
@@ -50,5 +50,4 @@
 			@endforeach
 		</tbody>
 	</table>
-	{!! $groups->render() !!}
 @endsection

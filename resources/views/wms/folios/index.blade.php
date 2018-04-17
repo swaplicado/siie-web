@@ -15,7 +15,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-condensed">
+	<table id="catalog_table" data-toggle="table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('wms.labels.FOLIO_START') }}</th>
 			<th>{{ trans('wms.labels.LOCATION') }}</th>

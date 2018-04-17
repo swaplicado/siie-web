@@ -70,16 +70,14 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'):
-          $select = $select.', '.'wl.lot as lot_';
+          $select = $select.', wl.lot as lot_, wl.dt_expiry';
           $groupBy = ['ws.lot_id','ws.item_id'];
           $orderBy1 = 'ws.lot_id';
           $orderBy2 = 'ws.item_id';
           $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
-          $select = $select.', wwl.name as location, eb.id_branch as branchid, ei.id_item as itemid, (SELECT max FROM wmsu_container_max_min
-          INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
-          INNER JOIN wmsu_whs_locations ON wmsu_whs_locations.id_whs_location = wmsu_container_max_min.container_id) as maxmin';
+          $select = $select.', wwl.name as location, eb.id_branch as branchid, ei.id_item as itemid, ("0") as maxmin';
           $groupBy = ['ws.location_id','ws.item_id'];
           $orderBy1 = 'ws.location_id';
           $orderBy2 = 'ws.item_id';
@@ -114,7 +112,7 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
-          $select = $select.', '.'wl.lot AS lot_, ww.name as warehouse'.', '.'ww.name as warehouse'.', '.'ww.id_whs as whsid'.', '.'ei.id_item as itemid'.', '.'(SELECT max FROM wmsu_container_max_min
+          $select = $select.', '.'wl.lot AS lot_, wl.dt_expiry, ww.name as warehouse'.', '.'ww.name as warehouse'.', '.'ww.id_whs as whsid'.', '.'ei.id_item as itemid'.', '.'(SELECT max FROM wmsu_container_max_min
           INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
           INNER JOIN wmsu_whs ON wmsu_whs.id_whs = wmsu_container_max_min.container_id WHERE item_id = itemid AND container_id = whsid) as maxi'.', '.'(SELECT min FROM wmsu_container_max_min
           INNER JOIN wmss_container_types ON wmss_container_types.id_container_type = wmsu_container_max_min.container_type_id
@@ -129,12 +127,26 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
-          $select = $select.', '.'wp.pallet as pallet, wl.lot AS lot_';
+          $select = $select.', '.'wp.pallet as pallet, wl.lot AS lot_, wl.dt_expiry';
           $groupBy = ['ws.pallet_id','ws.lot_id','ws.item_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.lot_id';
           $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
           $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
+          break;
+        case \Config::get('scwms.STOCK_TYPE.STK_GENERAL'):
+          $select = $select.' , wl.lot AS lot_, wl.dt_expiry ,
+                                wp.pallet as pallet,
+                                wwl.name as location,
+                                ww.name as warehouse
+                                ';
+
+          $groupBy = ['ws.whs_id', 'ws.location_id', 'ws.pallet_id', 'ws.lot_id', 'ws.item_id', 'ws.unit_id'];
+          $orderBy1 = 'ws.pallet_id';
+          $orderBy2 = 'ws.lot_id';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
           break;
 
         default:
@@ -251,7 +263,7 @@ class SStockController extends Controller
           }
           else {
             if ($movRow->is_deleted) {
-                $this->eraseStock($this->ROW, $lotRow->id_mvt_row);
+                $this->eraseStock($this->ROW, $movRow->id_mvt_row);
             }
             else {
               $oStock = new SStock();

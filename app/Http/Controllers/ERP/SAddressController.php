@@ -45,7 +45,7 @@ class SAddressController extends Controller
             $iBranchId = session('branchIdAux');
         }
 
-        $lAddress = SAddress::Search($request->name, $this->iFilter, $iBranchId)->orderBy('name', 'ASC')->paginate(20);
+        $lAddress = SAddress::Search($request->name, $this->iFilter, $iBranchId)->orderBy('name', 'ASC');
 
         return view('siie.address.index')
             ->with('address', $lAddress)
@@ -130,7 +130,7 @@ class SAddressController extends Controller
         $domicile->updated_by_id = \Auth::user()->id;
         $domicile->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('siie.address.index');
     }
@@ -204,7 +204,7 @@ class SAddressController extends Controller
         $domicile->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
 
         return redirect()->route('siie.address.index');
     }

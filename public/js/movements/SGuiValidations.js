@@ -33,6 +33,9 @@ function modifyHeader() {
     guiValidations.hideInfo();
 
     rowsCore.cleanAddPanel();
+    if (globalData.isPalletReconfiguration) {
+       reconfigCore.cleanAllPallet();
+    }
 }
 
 /**
@@ -174,6 +177,14 @@ class SGuiValidations {
      */
     showLocationDesLabel() {
       document.getElementById('loc_des_lab').style.display = "inline";
+    }
+
+    showSearchButton() {
+      document.getElementById('div_search_button').style.display = "block";
+    }
+
+    hideSearchButton() {
+      document.getElementById('div_search_button').style.display = "none";
     }
 
     /**
@@ -366,10 +377,20 @@ class SGuiValidations {
           return false;
       }
 
-      if (globalData.bIsInputMov && guiFunctions.getPrice() <= 0) {
+      if (globalData.bIsInputMov
+            && !globalData.isPalletReconfiguration
+              && guiFunctions.getPrice() <= 0) {
           swal("Error", "El precio debe ser mayor a cero.", "error");
           return false;
       }
+    }
+
+    disableQuantity() {
+       document.getElementById('quantity').disabled = true;
+    }
+
+    enableQuantity() {
+       document.getElementById('quantity').disabled = false;
     }
 
 

@@ -35,7 +35,7 @@ class SBranchesController extends Controller {
     public function index(Request $request)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $lBranches = SBranch::Search($request->name, $this->iFilter)->orderBy('erpu_partners.name', 'ASC')->paginate(10);
+      $lBranches = SBranch::Search($request->name, $this->iFilter)->orderBy('erpu_partners.name', 'ASC');
 
       $lBranches->each(function($lBranches) {
         $lBranches->company;
@@ -124,7 +124,7 @@ class SBranchesController extends Controller {
          $branch->is_headquarters = $request['is_headquarters'];
          $branch->save();
 
-         Flash::warning(trans('messages.REG_EDITED'))->important();
+         Flash::success(trans('messages.REG_EDITED'))->important();
 
          return redirect()->route('siie.branches.index');
      }
@@ -177,7 +177,7 @@ class SBranchesController extends Controller {
          $branch->save();
          #$user->delete();
 
-         Flash::error(trans('messages.REG_DELETED'))->important();
+         Flash::success(trans('messages.REG_DELETED'))->important();
 
          return redirect()->route('siie.branches.index');
      }

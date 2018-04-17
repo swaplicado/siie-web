@@ -28,23 +28,25 @@
 @section('content')
 
 		<div class="form-group">
-			{!! Form::label('item_link_type_id', trans('wms.labels.LEVEL')) !!}
+			{!! Form::label('item_link_type_id', trans('wms.labels.LEVEL').'*') !!}
 			{!! Form::select('item_link_type_id', $links, isset($itemcontainer) ?  $itemcontainer->item_link_type_id : null,
-								['class'=>'form-control select-one', 'onChange' => 'whenChangeLink(\'item_link_type_id\')', 'placeholder' => trans('wms.placeholders.SELECT_LEVEL')]) !!}
+								['class'=>'form-control select-one', 'onChange' => 'whenChangeLink(\'item_link_type_id\')',
+								 'placeholder' => trans('wms.placeholders.SELECT_LEVEL'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('item_link_id', trans('wms.labels.REFERENCE')) !!}
+			{!! Form::label('item_link_id', trans('wms.labels.REFERENCE').'*') !!}
 			<div class="linid">
 				{!! Form::select('item_link_id', array(), isset($itemcontainer) ?  $itemcontainer->item_link_id : null,
-									['class'=>'form-control select-one', 'placeholder' => trans('wms.placeholders.SELECT_REFERENCE')]) !!}
+									['class'=>'form-control select-one', 'required', 'placeholder' => trans('wms.placeholders.SELECT_REFERENCE')]) !!}
 			</div>
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('aux_branch_id', trans('userinterface.labels.BRANCH')) !!}
+			{!! Form::label('aux_branch_id', trans('userinterface.labels.BRANCH').'*') !!}
 			{!! Form::select('aux_branch_id', $branches, isset($itemcontainer) ?  $itemcontainer->aux_branch_id : null,
-								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')', 'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH')]) !!}
+								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')',
+								'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH'), 'required']) !!}
 		</div>
 
 		<div class="form-group">

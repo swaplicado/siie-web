@@ -11,6 +11,7 @@ class SData
 
     public $lStock = array();
     public $dStock = 0;
+    public $lPalletStock = array();
 
     public $lSrcLocations = array();
     public $lDesLocations = array();

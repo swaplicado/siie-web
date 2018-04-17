@@ -11,6 +11,7 @@ use App\WMS\SMovementRowLot;
 use App\WMS\SFolio;
 use App\ERP\SDocument;
 use App\ERP\SDocumentRow;
+use App\WMS\SStock;
 
 use App\SUtils\SStockUtils;
 
@@ -20,7 +21,7 @@ use App\SUtils\SStockUtils;
 class SMovsManagment {
 
     public function processTheMovement($iOperation, $oMovement, $aMovementRows, $iMvtClass,
-                                            $iMvtType, $iWhsSrc, $iWhsDes, $oPalletData, $oRequest)
+                                            $iMvtType, $iWhsSrc, $iWhsDes, $iPallet, $iPalletLocation, $oRequest)
     {
         $movements = $this->processMovement($oMovement,
                                                     $aMovementRows,
@@ -28,7 +29,9 @@ class SMovsManagment {
                                                     $iMvtType,
                                                     $iWhsSrc,
                                                     $iWhsDes,
-                                                    $oPalletData);
+                                                    $iPallet,
+                                                    $iPalletLocation,
+                                                    $iOperation);
 
         foreach ($movements as $mov) {
           if ($mov->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
@@ -38,6 +41,17 @@ class SMovsManagment {
             {
                 return $aErrors;
             }
+
+            foreach ($mov->aAuxRows as $row) {
+              $aErrors = SStockUtils::validatePallet($mov->year_id, $mov->branch_id, $mov->whs_id,
+                                                      $row, $mov->mvt_whs_type_id, $mov->id_mvt);
+
+              if(sizeof($aErrors) > 0)
+              {
+                return $aErrors;
+              }
+            }
+
           }
         }
 
@@ -68,28 +82,40 @@ class SMovsManagment {
     {
         try
         {
-          \DB::connection('company')->transaction(function() use ($movements, $oRequest) {
+          \DB::connection('company')->transaction(function() use ($movements, $iOperation, $oRequest) {
             $i = 0;
             $iSrcId = 0;
             foreach ($movements as $mov) {
                 $movement = clone $mov;
+
+                if ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) {
+                    $res = $this->eraseMovement($movement->id_mvt);
+                    if (! true) {
+                       throw new \Exception($res, 1);
+                    }
+                }
+
                 if ($i == 1) {
                   $movement->src_mvt_id = $iSrcId;
                 }
+
                 $movement->save();
+
                 if ($i == 0) {
                   $iSrcId = $movement->id_mvt;
                 }
 
                 foreach ($mov->aAuxRows as $movRow) {
-                  $row = clone $movRow;
-                  $row->mvt_id = $movement->id_mvt;
-                  $row->save();
+                  if (! $movRow->is_deleted) {
+                    $row = clone $movRow;
+                    $row->mvt_id = $movement->id_mvt;
+                    $row->save();
 
-                  foreach ($movRow->getAuxLots() as $lotRow) {
-                     $lRow = clone $lotRow;
-                     $lRow->mvt_row_id = $row->id_mvt_row;
-                     $lRow->save();
+                    foreach ($movRow->getAuxLots() as $lotRow) {
+                       $lRow = clone $lotRow;
+                       $lRow->mvt_row_id = $row->id_mvt_row;
+                       $lRow->save();
+                    }
                   }
                   // $row->lotRows()->saveMany($movRow->getAuxLots());
                 }
@@ -420,7 +446,7 @@ class SMovsManagment {
      * @param  [int] $iWhsDes
      * @return [array] [array of App\WMS\SMovement ready to save]
      */
-    private function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $oPalletData)
+    private function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $iPallet, $iPalletLocation, $iOperation)
     {
        // The movement is adjust or input by purchases
        if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
@@ -431,16 +457,16 @@ class SMovsManagment {
        }
        // The movement is trasfer
        else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA')) {
-          return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes);
+          return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
        }
        // the movement is pallet reconfiguration (pallet division)
        else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
-         return $this->divisionOfPallet($oMovement, $oPalletData, $aMovementRows);
+         return $this->divisionOfPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
 
        }
        // the movement is pallet reconfiguration (add to pallet)
        else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_OUT')) {
-         return $this->addToPallet($oMovement, $oPalletData, $aMovementRows);
+         return $this->addToPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
        }
     }
 
@@ -471,20 +497,25 @@ class SMovsManagment {
      * @return array with SMovement objects
      */
     private function createTransfer(SMovement $oMovement, $aMovementRows = null,
-                                                    $iWhsSrc = 0, $iWhsDes = 0)
+                                                    $iWhsSrc = 0, $iWhsDes = 0, $iOperation = 0)
     {
         $aMovements = array();
 
-        $oMirrorMovement = clone $oMovement;
-        $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
-        $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
-        $oMirrorMovement->whs_id = $iWhsDes;
-
-        if ($iWhsDes == session('transit_whs')->id_whs) {
-          $oMirrorMovement->branch_id = $oMovement->iAuxBranchDes;
+        if ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) {
+            $oMirrorMovement = SMovement::find($oMovement->src_mvt_id);
         }
         else {
-          $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
+            $oMirrorMovement = clone $oMovement;
+            $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
+            $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
+            $oMirrorMovement->whs_id = $iWhsDes;
+
+            if ($iWhsDes == session('transit_whs')->id_whs) {
+              $oMirrorMovement->branch_id = $oMovement->iAuxBranchDes;
+            }
+            else {
+              $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
+            }
         }
 
         $iWhsSrcDefLocation = 0;
@@ -529,7 +560,7 @@ class SMovsManagment {
      * @param  [type] $movementRows [description]
      * @return [type]               [description]
      */
-    private function divisionOfPallet($oMovement, $oPalletData, $movementRows)
+    private function divisionOfPallet($oMovement, $iPallet, $iPalletLocation, $movementRows)
     {
       $aMovements = array();
 
@@ -542,35 +573,16 @@ class SMovsManagment {
       $oMirrorMovement->mvt_mfg_type_id = 1;
       $oMirrorMovement->mvt_exp_type_id = 1;
 
+       $movementPalletRows = array();
+       foreach ($movementRows as $oMovRow) {
+          $palletRow = clone $oMovRow;
 
-       $oMvtPallet = new SMovementRow();
-       // transform the pallet row to row of mirror movement
-       $oMvtPallet->quantity = $oPalletData['dQuantity'];
-       $oMvtPallet->amount_unit = $oPalletData['dPrice'];
-       $oMvtPallet->item_id = $oPalletData['iItemId'];
-       $oMvtPallet->unit_id = $oPalletData['iUnitId'];
-       $oMvtPallet->pallet_id = $oPalletData['iPalletId'];
-       $oMvtPallet->location_id = $oPalletData['iLocationId'];
-       $oMvtPallet->doc_order_row_id =1;
-       $oMvtPallet->doc_invoice_row_id = 1;
-       $oMvtPallet->doc_debit_note_row_id = 1;
-       $oMvtPallet->doc_credit_note_row_id = 1;
+          $palletRow->pallet_id = $iPallet;
+          $palletRow->location_id = $iPalletLocation;
 
-       $movLotRows = array();
-       // process the lots of pallet
-       foreach ($oPalletData['lotRows'] as $lotRow) {
-           $oMovLotRow = new SMovementRowLot();
-           $oMovLotRow->quantity = $lotRow['dQuantity'];
-           $oMovLotRow->amount_unit = $lotRow['dPrice'];
-           $oMovLotRow->lot_id = $lotRow['iLotId'];
-
-           // adds the row lot to auxiliar array of lots
-           array_push($movLotRows, $oMovLotRow);
+          array_push($movementPalletRows, $palletRow);
        }
 
-       $oMvtPallet->setAuxLots($movLotRows); // set the auxiliar array of lots to movement row
-       $movementPalletRows = array();
-       array_push($movementPalletRows, $oMvtPallet); // add row of pallet to movement rows
        $oMovement->aAuxRows = $movementRows; // set the auxiliar array of movements to principal movement
        $oMirrorMovement->aAuxRows = $movementPalletRows; // set the auxiliar array of movements to mirror movement
 
@@ -587,7 +599,7 @@ class SMovsManagment {
      * @param Object $oPalletData
      * @param array $movementRows
      */
-    private function addToPallet(SMovement $oMovement, $oPalletData = null, $movementRows)
+    private function addToPallet(SMovement $oMovement = null, $iPallet = 0, $iPalletLocation = 0, $movementRows = [])
     {
       $aMovements = array();
 
@@ -605,8 +617,8 @@ class SMovsManagment {
       foreach ($movementRows as $row) {
           $movRowM = clone $row;
 
-          $movRowM->pallet_id = $oPalletData['iPalletId'];
-          $movRowM->location_id = $oPalletData['iLocationId'];
+          $movRowM->pallet_id = $iPallet;
+          $movRowM->location_id = $iPalletLocation;
 
           array_push($oMirrorMovement->aAuxRows, $movRowM);
       }
@@ -615,5 +627,41 @@ class SMovsManagment {
       array_push($aMovements, $oMirrorMovement); // add the mirror movement
       // dd($aMovements);
       return $aMovements;
+    }
+
+    private function eraseMovement($iMovement)
+    {
+        try
+        {
+          \DB::connection('company')->transaction(function() use ($iMovement) {
+            $oMovement = SMovement::find($iMovement);
+
+            foreach ($oMovement->rows as $oRow) {
+               if (! $oRow->is_deleted) {
+                 $oRow->is_deleted = true;
+                 $oRow->save();
+               }
+
+               foreach ($oRow->lotRows as $lotRow) {
+                  $lotRow->is_deleted = true;
+                  $lotRow->save();
+               }
+            }
+
+            // $lStock = SStock::where('mvt_id', $iMovement)->get();
+            //
+            // foreach ($lStock as $oStock) {
+            //   $oStock->is_deleted = true;
+            //   $oStock->save();
+            // }
+
+          });
+
+          return true;
+       }
+       catch (\Exception $e)
+       {
+           return $e;
+       }
     }
 }

@@ -219,22 +219,25 @@ class SGuiFunctions {
 
     /**
      * based in the current movement update the labels of quantity and amount
-     * 
+     *
      */
     updateAmtQtyLabels() {
       var dQty = 0;
       var dAmt = 0;
       for (var row of oMovement.rows.values()) {
-          if (row.bIsLot) {
-            for (var rowLot of row.lotRows.values()) {
-                dQty += parseFloat(rowLot.dQuantity, 10);
-                dAmt += (parseFloat(rowLot.dQuantity, 10) * parseFloat(row.dPrice, 10));
+          if (! row.bIsDeleted) {
+            if (row.bIsLot) {
+              for (var rowLot of row.lotRows.values()) {
+                  dQty += parseFloat(rowLot.dQuantity, 10);
+                  dAmt += (parseFloat(rowLot.dQuantity, 10) * parseFloat(row.dPrice, 10));
+              }
+            }
+            else {
+              dQty += parseFloat(row.dQuantity, 10);
+              dAmt += (parseFloat(row.dQuantity, 10) * parseFloat(row.dPrice, 10));
             }
           }
-          else {
-            dQty += parseFloat(row.dQuantity, 10);
-            dAmt += (parseFloat(row.dQuantity, 10) * parseFloat(row.dPrice, 10));
-          }
+
       }
 
       guiFunctions.setQuantityMovLabel(dQty);

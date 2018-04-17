@@ -154,7 +154,9 @@
 									<td class="small">{{ $doc->item }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur + $doc->qty_sur_ind, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->advance, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">
+										{{ session('utils')->formatNumber((($doc->qty_sur + $doc->qty_sur_ind) * 100) / $doc->qty_row, \Config::get('scsiie.FRMT.QTY')) }}
+									</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td class="small">{{ $doc->unit }}</td>
 								@endif

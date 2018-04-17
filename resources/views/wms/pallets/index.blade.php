@@ -8,19 +8,18 @@
 	@include('templates.list.search')
 @endsection
 
-@section('title', 'Listado Tarimas')
+@section('title', 'Tarimas')
 
 @section('content')
 	<?php $sRoute="wms.pallets"?>
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-condensed">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
-			<th>{{ trans('userinterface.labels.NAME') }}</th>
-			<th>{{ trans('userinterface.labels.ITEM') }}</th>
+			<th>{{ trans('wms.labels.PALLET') }}</th>
+			<th>{{ trans('wms.labels.MAT_PROD') }}</th>
 			<th>{{ trans('userinterface.labels.UNIT') }}</th>
-      <th>{{ 'Cantidad' }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 			<th>{{'Etiqueta'}}</th>
@@ -31,7 +30,6 @@
 					<td>{{ $pallet->pallet }}</td>
 					<td>{{$pallet->item->code.'-'}}{{ $pallet->item->name }}</td>
 					<td>{{ $pallet->unit->code.'-' }}{{ $pallet->unit->name }}</td>
-          <td>{{ $pallet->quantity }}</td>
 					<td>
 						@if (! $pallet->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
