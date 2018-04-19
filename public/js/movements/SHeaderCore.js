@@ -62,7 +62,7 @@ class SHeaderCore {
       console.log(movement);
       var idMov = (globalData.iOperation == globalData.lOperationType.EDITION ? globalData.iMvtId : 0);
 
-      showLoading(2000);
+      showLoading(5000);
       $.get('./' + (globalData.sRoute) +
                     '/data?whs_source=' + movement.iWhsSrc +
                     '&whs_des=' + movement.iWhsDes +
