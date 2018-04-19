@@ -93,8 +93,8 @@ class SMovementRow {
       this.sItemCode = 'NA';
       this.sUnit = 'NA';
 
-      this.sLocation = 'DEFAULT';
-      this.sLocationDes = 'DEFAULT';
+      this.sLocation = 'DEF';
+      this.sLocationDes = 'DEF';
       this.sPallet = 'SIN TARIMA';
 
       this.iLotId = 1;

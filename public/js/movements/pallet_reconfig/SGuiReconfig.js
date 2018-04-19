@@ -40,32 +40,65 @@ class SGuiReconfig {
       guiReconfig.hidePalletDiv();
     }
 
-    addRowToPalletTable(index, sLot, sExpDate, dQuantity) {
-      oPalletTable.row.add( [
-          index,
-          sLot,
-          sExpDate,
-          parseFloat(dQuantity, 10).toFixed(globalData.DEC_QTY),
-          parseFloat(0, 10).toFixed(globalData.DEC_QTY),
-          parseFloat(dQuantity, 10).toFixed(globalData.DEC_QTY)
-          // parseFloat(elementToAdd.dQuantity, 10).toFixed(globalData.DEC_QTY),
-      ] ).draw( false );
-    }
-
     updatePallet(oMovement) {
        if (reconfigCore.oPalletRow.bIsLot) {
-         var dQuantity;
-         for (var [key, rowLot] of reconfigCore.oPalletRow.lotRows) {
-           dQuantity = 0;
+         if (globalData.isPalletDivision) {
+           var dQuantity;
+           for (var [key, rowLot] of reconfigCore.oPalletRow.lotRows) {
+             dQuantity = 0;
+             for (var [key, movRow] of oMovement.rows) {
+               for (var [key, movLotRow] of movRow.lotRows) {
+                  if (movLotRow.iLotId == rowLot.iLotId) {
+                      dQuantity += parseFloat(movLotRow.dQuantity, 10);
+                  }
+               }
+             }
+
+             guiReconfig.updateTableRow(rowLot.iTableIndex, dQuantity, rowLot.dQuantity - dQuantity);
+           }
+         }
+         else {
+           var mLots = new Map();
            for (var [key, movRow] of oMovement.rows) {
-             for (var [key, movLotRow] of movRow.lotRows) {
-                if (movLotRow.iLotId == rowLot.iLotId) {
-                    dQuantity += parseFloat(movLotRow.dQuantity, 10);
+             for (var [keyL, movLotRow] of movRow.lotRows) {
+                if (mLots.has(movLotRow.iLotId)) {
+                   mLots.set(movLotRow.iLotId, mLots.get(movLotRow.iLotId) + parseFloat(movLotRow.dQuantity, 10));
+                }
+                else {
+                   mLots.set(movLotRow.iLotId, parseFloat(movLotRow.dQuantity, 10));
+                }
+              }
+            }
+
+           var bFound = false;
+           mLots.forEach(function(dLotQuantity, idLot, mLots) {
+             bFound = false;
+             for (var [keyR, rowLot] of reconfigCore.oPalletRow.lotRows) {
+                if (rowLot.iLotId == idLot) {
+                    bFound = true;
+                    guiReconfig.updateTableRow(rowLot.iTableIndex,
+                                                dLotQuantity,
+                                                rowLot.dQuantity + dLotQuantity);
+                    break;
                 }
              }
-           }
 
-           guiReconfig.updateTableRow(rowLot.iTableIndex, dQuantity, rowLot.dQuantity - dQuantity);
+             if (! bFound) {
+               var iIndex = !oPalletTable.rows().count() ? 0 : oPalletTable.rows().count() + 1;
+               var oLotObj = null;
+               globalData.lFLots.forEach(function (row) {
+                  if (row.id_lot == idLot) {
+                      oLotObj = row;
+                  }
+               });
+               guiReconfig.addRowToPalletTable(iIndex,
+                                               oLotObj.lot,
+                                               oLotObj.dt_expiry,
+                                               0,
+                                               dLotQuantity,
+                                               dLotQuantity);
+             }
+           });
          }
        }
        else {
@@ -74,7 +107,12 @@ class SGuiReconfig {
              dQuantity += parseFloat(row.dQuantity, 10);
          }
 
-         guiReconfig.updateTableRow(0, dQuantity, reconfigCore.oPalletRow.dQuantity - dQuantity);
+         if (globalData.isPalletDivision) {
+            guiReconfig.updateTableRow(0, dQuantity, reconfigCore.oPalletRow.dQuantity - dQuantity);
+         }
+         else {
+            guiReconfig.updateTableRow(0, dQuantity, reconfigCore.oPalletRow.dQuantity + dQuantity);
+         }
        }
     }
 
@@ -85,6 +123,18 @@ class SGuiReconfig {
       temp[5] = parseFloat(dQuantityRem, 10).toFixed(globalData.DEC_QTY);
 
       $('#pallet_table').dataTable().fnUpdate(temp, iIndex, undefined, false);
+    }
+
+    addRowToPalletTable(index, sLot, sExpDate, dQuantity1, dQuantity2, dQuantity3) {
+      oPalletTable.row.add( [
+        index,
+        sLot,
+        sExpDate,
+        parseFloat(dQuantity1, 10).toFixed(globalData.DEC_QTY),
+        parseFloat(dQuantity2, 10).toFixed(globalData.DEC_QTY),
+        parseFloat(dQuantity3, 10).toFixed(globalData.DEC_QTY)
+        // parseFloat(elementToAdd.dQuantity, 10).toFixed(globalData.DEC_QTY),
+      ] ).draw( false );
     }
 }
 

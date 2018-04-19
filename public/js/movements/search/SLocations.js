@@ -30,6 +30,17 @@ class SLocations {
   }
 
   /**
+   * set the location to current object and update the label
+   */
+  setPalletLocation(lLocations, iLocation) {
+    lLocations.forEach(function (loc) {
+      if (iLocation == loc.id_whs_location) {
+        guiReconfig.setPalletLocationLabel(loc.code + '-' + loc.name);
+      }
+    });
+  }
+
+  /**
    * set the destiny location object to global object
    */
   setDefaultLocationDes(lLocations) {

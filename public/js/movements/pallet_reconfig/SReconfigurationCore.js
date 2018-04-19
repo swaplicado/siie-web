@@ -66,8 +66,14 @@ class SReconfigurationCore {
      oMovement.iAuxPallet = oElement.id_pallet;
      oMovement.iAuxPalletLocation = oElement.location_id;
 
+     if (globalData.bIsInputMov) {
+         locationsJs.setPalletLocation(globalData.lFDesLocations, oElement.location_id);
+     }
+     else {
+         locationsJs.setPalletLocation(globalData.lFSrcLocations, oElement.location_id);
+     }
+
      guiReconfig.setPalletLabel(reconfigCore.oPalletRow.sPallet);
-     guiReconfig.setPalletLocationLabel(reconfigCore.oPalletRow.sLocation);
      guiReconfig.setPalletItemCodeLabel(reconfigCore.oPalletRow.sItemCode);
      guiReconfig.setPalletItemLabel(reconfigCore.oPalletRow.sItem);
      guiReconfig.setPalletItemUnitLabel(reconfigCore.oPalletRow.sUnit);
@@ -202,13 +208,23 @@ class SReconfigurationCore {
 
     if (reconfigCore.oPalletRow.bIsLot) {
       for (var [key, oLotRow] of reconfigCore.oPalletRow.lotRows) {
-          guiReconfig.addRowToPalletTable(iTableIndex, oLotRow.sLot, oLotRow.tExpDate, oLotRow.dQuantity);
+          guiReconfig.addRowToPalletTable(iTableIndex,
+                                          oLotRow.sLot,
+                                          oLotRow.tExpDate,
+                                          oLotRow.dQuantity,
+                                          0,
+                                          oLotRow.dQuantity);
           oLotRow.iTableIndex = iTableIndex;
           iTableIndex++;
       }
     }
     else {
-        guiReconfig.addRowToPalletTable(0, 'SIN LOTE', '----/--/--', reconfigCore.oPalletRow.dQuantity);
+        guiReconfig.addRowToPalletTable(0,
+                                        'SIN LOTE',
+                                        '----/--/--',
+                                        reconfigCore.oPalletRow.dQuantity,
+                                        0,
+                                        reconfigCore.oPalletRow.dQuantity);
     }
   }
 }

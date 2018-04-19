@@ -42,7 +42,7 @@ class SPalletsController extends Controller
     public function index(Request $request)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->paginate(10);
+      $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->get();
 
       $Pallets->each(function($Pallets) {
         $Pallets->item;

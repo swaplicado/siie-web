@@ -6,7 +6,7 @@ class STransfersCore {
   addRow(elementToAdd) {
       if (oLocationDes != null) {
         elementToAdd.iLocationDesId = oLocationDes.id_whs_location;
-        elementToAdd.sLocationDes = oLocationDes.name;
+        elementToAdd.sLocationDes = oLocationDes.code;
       }
 
       oMovement.addRow(elementToAdd);

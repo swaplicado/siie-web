@@ -291,7 +291,7 @@ $('#select_item_button').on('click', function(e) {
     elementToAdd.sUnit = row['unit_code'];
     elementToAdd.bIsLot = row['is_lot'];
     elementToAdd.bIsBulk = row['is_bulk'];
-    elementToAdd.sLocation = oLocation.name;
+    elementToAdd.sLocation = oLocation.code;
 
     elementToAdd.oElement = row;
     elementToAdd.iElementType = itemSelection.getElementType();
