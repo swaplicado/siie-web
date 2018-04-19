@@ -50,7 +50,7 @@ class SDocsBySuppController extends Controller {
     public function viewDocs(Request $request, $iDocCategory, $iDocClass, $iDocType, $iViewType, $iSuppType, $sTitle)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $sFilterDate = null;
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $iDocId = 0;
         $bWithPending = $iSuppType == \Config::get('scwms.DOC_VIEW_S.SUPP');
 
@@ -85,6 +85,7 @@ class SDocsBySuppController extends Controller {
                           ->with('actualUserPermission', $this->oCurrentUserPermission)
                           ->with('documents', $lDocuments)
                           ->with('iViewType', $iViewType)
+                          ->with('iSuppType', $iSuppType)
                           ->with('title', $sTitle);
     }
 

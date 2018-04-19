@@ -186,7 +186,10 @@ class SFoliosController extends Controller
 
         $lClasses = SMvtClass::orderBy('name', 'ASC')->lists('name', 'id_mvt_class');
         $lTypes = SMvtType::orderBy('name', 'ASC')->get();
-        $lBranches = SBranch::where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_branch');
+        $lBranches = SBranch::where('is_deleted', false)
+                              ->where('partner_id', session('partner')->id_partner)
+                              ->orderBy('name', 'ASC')
+                              ->lists('name', 'id_branch');
         $lWarehouses = SWarehouse::where('is_deleted', false)->get();
         $lLocations = SLocation::where('is_deleted', false)->get();
 

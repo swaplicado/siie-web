@@ -231,7 +231,7 @@ class SWmsMenu {
                                                   \Config::get('scwms.DOC_VIEW_S.SUPP'),
                                                   trans('userinterface.titles.LIST_OR_SAL_SUPP_DET')
                                                 ])
-                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_PUR_SUPP'),
+                        ->route('wms.docs.index', trans('userinterface.titles.LIST_INVS_SAL_SUPP'),
                                                     [\Config::get('scsiie.DOC_CAT.SALES'),
                                                     \Config::get('scsiie.DOC_CLS.DOCUMENT'),
                                                     \Config::get('scsiie.DOC_TYPE.INVOICE'),

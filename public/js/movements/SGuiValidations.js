@@ -426,7 +426,7 @@ async function sleepFunction(dTime) {
  * go to previous page after sleep
  */
 async function goToBack() {
-  await sleep(4000);
+  // await sleep(1000);
   window.history.back();
 }
 

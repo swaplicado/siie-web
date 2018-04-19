@@ -14,14 +14,14 @@
 
 @section('content')
   @section('thefilters')
-		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $iDocType, $iViewType, $title],
+		{!! Form::open(['route' => [ $sRoute.'.index', $iDocCategory, $iDocClass, $iDocType, $iViewType, $iSuppType, $title],
 										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 		    <div class="input-group">
 					@include('templates.list.search')
-					{{-- <span class="input-group-btn">
+					<span class="input-group-btn">
 					  {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
-					</span> --}}
+					</span>
 			    <span class="input-group-btn">
 			        <button id="searchbtn" type="submit" class="form-control">
 								<span class="glyphicon glyphicon-search"></span>
@@ -118,4 +118,18 @@
 	<script src="{{ asset('moment/moment.js') }}"></script>
 	<script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
 	<script src="{{ asset('js/docs/docsbysupp.js') }}"></script>
+	<script>
+			 $(function() {
+				 $('input[id="filterDate"]').daterangepicker({
+					 locale: {
+									format: 'DD/MM/YYYY'
+							}
+				 });
+			 });
+
+			 $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
+				 console.log(picker.startDate.format('YYYY-MM-DD'));
+				 console.log(picker.endDate.format('YYYY-MM-DD'));
+			 });
+	</script>
 @endsection

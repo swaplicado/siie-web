@@ -254,13 +254,15 @@ function initializePanel(serverData) {
 
     if (globalData.bIsInputMov) {
         if (serverData.iFolioDes == 0) {
-          swal("Error", "No hay folio asignado para el movimiento.", "error");
+          alert("No hay folio asignado para el movimiento.");
+          // swal("Error", "No hay folio asignado para el movimiento.", "error");
           goToBack();
         }
     }
     else {
         if (serverData.iFolioSrc == 0) {
-          swal("Error", "No hay folio asignado para el movimiento.", "error");
+          alert("No hay folio asignado para el movimiento.");
+          // swal("Error", "No hay folio asignado para el movimiento.", "error");
           goToBack();
         }
     }
@@ -295,7 +297,9 @@ function initializePanel(serverData) {
     guiFunctions.updateAmtQtyLabels();
     guiValidations.showInfo();
 
-    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR ||
+        globalData.iMvtType == globalData.MVT_TP_IN_SAL ||
+          globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
         guiTransSupp.showSetDataButton();
     }
 

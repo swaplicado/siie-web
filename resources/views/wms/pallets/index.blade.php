@@ -17,6 +17,7 @@
 	@endsection
 	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
+			<th>ID</th>
 			<th>{{ trans('wms.labels.PALLET') }}</th>
 			<th>{{ trans('wms.labels.MAT_PROD') }}</th>
 			<th>{{ trans('userinterface.labels.UNIT') }}</th>
@@ -27,6 +28,7 @@
 		<tbody>
 			@foreach($pallets as $pallet)
 				<tr>
+					<td>{{ $pallet->id_pallet }}</td>
 					<td>{{ $pallet->pallet }}</td>
 					<td>{{$pallet->item->code.'-'}}{{ $pallet->item->name }}</td>
 					<td>{{ $pallet->unit->code.'-' }}{{ $pallet->unit->name }}</td>

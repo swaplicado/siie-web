@@ -98,7 +98,8 @@
 	<hr />
 	<div class="row">
 		@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
-					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL'))
+					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL') ||
+					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_SAL'))
 			<div class="col-md-1" id="div_setdata" style="display: none;">
 				<button id="sData" type='button' onClick='setRowData()'
 							class='btn btn-success'
@@ -107,6 +108,7 @@
 			</div>
 		@endif
 		@if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
+				$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_SAL') ||
 					$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL'))
 			<div class="col-md-12">
 					@include('wms.movs.tables.others')
@@ -124,6 +126,7 @@
 							@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
 										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
 										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA') ||
+										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL') ||
 										($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) ||
 										App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
 									<div class="col-md-3">

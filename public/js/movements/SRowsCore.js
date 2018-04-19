@@ -67,7 +67,7 @@ class SRowsCore {
     }
 
     var oRow = oMovement.getRow(tRow[0]);
-    oRow.iAuxIndex = index;
+    // oRow.iAuxIndex = index;
 
     if (! oRow.bAuxToStock) {
         oMovement.removeRow(tRow[0]);
@@ -76,7 +76,9 @@ class SRowsCore {
         oMovement.removeRow(tRow[0]);
     }
 
-    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR
+        || globalData.iMvtType == globalData.MVT_TP_IN_SAL
+          || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
         supplyCore.updateRow(oRow, supplyCore.CLEAN);
     }
 
@@ -188,7 +190,9 @@ class SRowsCore {
             elementToAdd.sLocation = oLocation.code.toUpperCase();
 
             if (headerCore.validateAndUdpateStock(elementToAdd, globalData.lOperation.INPUT)) {
-                if (globalData.iMvtType == globalData.MVT_TP_IN_PUR || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+                if (globalData.iMvtType == globalData.MVT_TP_IN_PUR
+                      || globalData.iMvtType == globalData.MVT_TP_IN_SAL
+                        || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
                   supplyCore.updateRow(elementToAdd, supplyCore.ADD);
                 }
                 rowsCore.addRow(elementToAdd);

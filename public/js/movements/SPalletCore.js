@@ -111,6 +111,7 @@ class SPalletCore {
 
   cleanPallet() {
     guiFunctions.setPalletNameLabel('--');
+    guiFunctions.setSearchPallet('');
 
     if (elementToAdd != null) {
       elementToAdd.iPalletId = 1;

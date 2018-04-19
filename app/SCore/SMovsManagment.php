@@ -453,6 +453,7 @@ class SMovsManagment {
        if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
             $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
               $iMovType == \Config::get('scwms.MVT_TP_IN_PUR') ||
+               $iMovType == \Config::get('scwms.MVT_TP_IN_SAL') ||
                 $iMovType == \Config::get('scwms.MVT_TP_OUT_SAL')) {
           return $this->createTheMovement($oMovement, $aMovementRows);
        }
