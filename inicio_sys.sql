@@ -1,3 +1,6 @@
+#CONFIGURACIÓN DEL SISTEMA
+
+
 # Configurar nombres de bases de datos en App\Database\Config.php******************
 # Configurar PHP max_execution_time=300 y memory_limit=512
 
@@ -26,3 +29,7 @@ UPDATE `ssystem`.`users` SET `username`='reader', `email`='reader@mail.com' WHER
 UPDATE `ssystem`.`users` SET `username`='author', `email`='author@mail.com' WHERE `id`='4';
 UPDATE `ssystem`.`users` SET `username`='editor', `email`='editor@mail.com' WHERE `id`='5';
 UPDATE `ssystem`.`users` SET `username`='manager', `email`='manager@mail.com', user_type_id = '2' WHERE `id`='6';
+
+#configurar almacenes
+#configurar folios de movimientos de almacén
+

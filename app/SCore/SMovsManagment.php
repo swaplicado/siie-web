@@ -51,7 +51,6 @@ class SMovsManagment {
                 return $aErrors;
               }
             }
-
           }
         }
 
@@ -117,7 +116,6 @@ class SMovsManagment {
                        $lRow->save();
                     }
                   }
-                  // $row->lotRows()->saveMany($movRow->getAuxLots());
                 }
 
                 $movement = SMovement::find($movement->id_mvt);
@@ -143,6 +141,7 @@ class SMovsManagment {
        }
     }
 
+
     public function saveLots($lNewLots = []) {
       try {
           $lKeys = array();
@@ -165,10 +164,12 @@ class SMovsManagment {
 
             return $lKeys;
           });
-
+      }
+      catch (\Exception $e) {
+          \Log::error($e);
+      }
+      finally {
           return $lKeys;
-      } catch (\Exception $e) {
-          return $e;
       }
     }
 

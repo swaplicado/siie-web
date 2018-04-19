@@ -117,6 +117,8 @@ class SSearchCore {
           "scrollY":        "50vh",
           "scrollCollapse": true,
           "paging":         false,
+          "colReorder": true,
+          "scrollX": true,
           "data": oData,
           "columns": aColumns
       });

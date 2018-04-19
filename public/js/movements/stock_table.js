@@ -23,6 +23,8 @@ oStockTable = $('#stock_table').DataTable({
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         }
       },
+      "colReorder": true,
+      "scrollX": true,
       "columnDefs": [
         {
             "targets": 0,
@@ -77,6 +79,8 @@ oCompleteStockTable = $('#stock_com_table').DataTable({
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         }
       },
+      "colReorder": true,
+      "scrollX": true,
       "columnDefs": [
         {
             "targets": 0,

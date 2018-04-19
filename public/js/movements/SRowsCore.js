@@ -128,20 +128,13 @@ class SRowsCore {
       }
 
       if (globalData.isPalletReconfiguration) {
-          if (globalData.isPalletDivision) {
-            if (reconfigCore.iAuxPalletLocationDes != 0
-                && reconfigCore.iAuxPalletLocationDes != oLocation.id_whs_location) {
-              swal("Error", "La tarima origen no está en la ubicación: " + oLocation.name + ".", "error");
-              return false;
-            }
+          if (! globalData.isPalletDivision) {
+            // if (reconfigCore.iAuxPalletLocationDes != 0
+            //     && reconfigCore.iAuxPalletLocationDes != oLocation.id_whs_location) {
+            //   swal("Error", "La tarima origen no está en la ubicación: " + oLocation.name + ".", "error");
+            //   return false;
+            // }
           }
-          // else {
-          //     if (reconfigCore.oPalletRow.iLocationId != oLocation.id_whs_location) {
-          //       swal("Error", "La tarima destino no está en la ubicación: " + oLocation.name + ".", "error");
-          //       return false;
-          //     }
-          // }
-
       }
 
       return true;
@@ -252,7 +245,7 @@ class SRowsCore {
      oJsRow.sItemCode = oRow.item.code;
      oJsRow.sUnit = oRow.unit.code;
 
-     oJsRow.sLocation = oRow.location.name;
+     oJsRow.sLocation = oRow.location.code;
      oJsRow.sPallet = oRow.pallet.pallet;
 
      if (oJsRow.bIsLot) {

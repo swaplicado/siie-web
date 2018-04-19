@@ -307,7 +307,8 @@ class SMovsUtils {
 
       $lElements = $lElements->orderBy('ei.code', 'ASC')
       ->orderBy('ei.name', 'ASC')
-      ->orderBy('eu.id_unit', 'ASC');
+      ->orderBy('ei.name', 'ASC')
+      ->having('stock', '>', '0');
 
       return $lElements;
   }

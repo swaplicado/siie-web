@@ -889,6 +889,7 @@ class SMovsController extends Controller
                                             ->groupBy('id_lot')
                                             ->groupBy('id_item')
                                             ->groupBy('id_unit')
+                                            ->having('stock', '>', 0)
                                             ->get();
         }
         elseif ($oObject instanceof SLocation) {

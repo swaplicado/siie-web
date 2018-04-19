@@ -1,5 +1,5 @@
 <div class="col-md-10">
-  {!! Form::label(trans('wms.labels.PALLET').'*') !!}
+  {!! Form::label(trans('wms.labels.PALLET')) !!}
   <div class="row">
     <div class="col-md-6">
       {!! Form::text('search_pallet', null, ['class'=>'form-control input-sm',

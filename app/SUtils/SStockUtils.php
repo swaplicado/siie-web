@@ -232,7 +232,7 @@ class SStockUtils
            $location = $oStockGral->location_id;
         }
         else if ($location != $oStockGral->location_id){
-           array_push($aErrors, 'La tarima tiene existencias en diferentes ubicaciones');
+           array_push($aErrors, '¡LA TARIMA TIENE EXISTENCIAS EN DIFERENTES UBICACIONES!');
            return $aErrors;
         }
       }
@@ -244,26 +244,29 @@ class SStockUtils
       $lPalletStock = session('stock')->getStockResult($aParameters);
 
       $lPalletStock = $lPalletStock->groupBy('ws.lot_id')
-                        ->having('stock', '>', '0');
+                        ->having('stock', '>', '0')
                         ->get();
 
       if ($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
-          || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
+          || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_OUT')) {
           return $aErrors;
       }
 
       $dQuantity = 0;
       foreach ($lPalletStock as $oPalletStock) {
         if ($oPalletStock->segregated > 0) {
-          array_push($aErrors, 'La tarima tiene unidades segregadas');
+          array_push($aErrors, 'La tarima tiene unidades segregadas.');
           return $aErrors;
         }
         if ($oRow->item->is_lot) {
           $bCurrentLotFound = false;
           foreach ($oRow->getAuxLots() as $oAuxLot) {
+            if ($oAuxLot->is_deleted) {
+               continue;
+            }
             if ($oAuxLot->lot_id == $oPalletStock->lot_id) {
                 if ($oAuxLot->quantity != $oPalletStock->stock) {
-                  array_push($aErrors, 'No pueden mover más unidades de las que contiene la tarima');
+                  array_push($aErrors, 'La tarima debe moverse completa.');
                   return $aErrors;
                 }
                 $bCurrentLotFound = true;
@@ -271,13 +274,13 @@ class SStockUtils
           }
 
           if (! $bCurrentLotFound) {
-            array_push($aErrors, 'Los lotes que desea mover con la tarima no corresponden a los que esta contiene');
+            array_push($aErrors, 'Los lotes que desea mover no corresponden a los que contiene la tarima.');
             return $aErrors;
           }
         }
         else {
           if ($oRow->quantity != $oPalletStock->stock) {
-            array_push($aErrors, 'No pueden mover más unidades de las que contiene la tarima');
+            array_push($aErrors, 'No puede mover más unidades de las que contiene la tarima.');
             return $aErrors;
           }
         }
