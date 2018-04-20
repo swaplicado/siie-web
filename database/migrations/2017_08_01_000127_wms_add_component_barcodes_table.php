@@ -36,8 +36,8 @@ class WmsAddComponentBarcodesTable extends Migration {
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-        Schema::connection($this->sConnection)->create('wms_componet_barcodes', function (blueprint $table) {
-        	$table->increments('id_componet');
+        Schema::connection($this->sConnection)->create('wms_component_barcodes', function (blueprint $table) {
+        	$table->increments('id_component');
         	$table->char('name', 100);
         	$table->integer('digits');
         	$table->enum('type_barcode',['Item', 'Tarima','Ubicacion']);
@@ -49,17 +49,17 @@ class WmsAddComponentBarcodesTable extends Migration {
         	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
         });
 
-        DB::connection($this->sConnection)->table('wms_componet_barcodes')->insert([
-        	['id_componet' => '1','name' => 'id_lot','digits' => '6','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '2','name' => 'text_lot','digits' => '12','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '3','name' => 'id_item','digits' => '6','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '4','name' => 'id_unit','digits' => '4','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '5','name' => 'id_pallet','digits' => '6','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '6','name' => 'text_pallet','digits' => '15','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '7','name' => 'id_item','digits' => '5','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '8','name' => 'id_unit','digits' => '4','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '9','name' => 'id_whs','digits' => '6','type_barcode' => 'Ubicacion','created_by_id' => '1','updated_by_id' => '1'],
-        	['id_componet' => '10','name' => 'id_loc','digits' => '6','type_barcode' => 'Ubicacion','created_by_id' => '1','updated_by_id' => '1'],
+        DB::connection($this->sConnection)->table('wms_component_barcodes')->insert([
+        	['id_component' => '1','name' => 'id_lot','digits' => '6','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '2','name' => 'text_lot','digits' => '12','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '3','name' => 'id_item','digits' => '6','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '4','name' => 'id_unit','digits' => '4','type_barcode' => 'Item','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '5','name' => 'id_pallet','digits' => '6','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '6','name' => 'text_pallet','digits' => '15','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '7','name' => 'id_item','digits' => '5','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '8','name' => 'id_unit','digits' => '4','type_barcode' => 'Tarima','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '9','name' => 'id_whs','digits' => '6','type_barcode' => 'Ubicacion','created_by_id' => '1','updated_by_id' => '1'],
+        	['id_component' => '10','name' => 'id_loc','digits' => '6','type_barcode' => 'Ubicacion','created_by_id' => '1','updated_by_id' => '1'],
         ]);
       }
     }
@@ -75,7 +75,7 @@ class WmsAddComponentBarcodesTable extends Migration {
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-        Schema::connection($this->sConnection)->drop('wms_componet_barcodes');
+        Schema::connection($this->sConnection)->drop('wms_component_barcodes');
       }
     }
 }
