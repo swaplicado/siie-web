@@ -8,7 +8,7 @@ class SComponetBarcode extends Model
 {
   protected $connection = 'siie';
   protected $primaryKey = 'id_component';
-  protected $table = "wms_componet_barcodes";
+  protected $table = "wms_component_barcodes";
 
   public function getTable()
   {
