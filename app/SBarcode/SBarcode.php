@@ -83,7 +83,7 @@ use PDF;
       }
       else{
           $auxTextLot = SBarcode::fill($digitTextLot,$textLot);
-          $auxTexLot = $auxTexLot.$data->lot;
+          $auxTextLot = $auxTextLot.$data->lot;
       }
 
       $auxLot = SBarcode::fill($digitLot,$numLot);
