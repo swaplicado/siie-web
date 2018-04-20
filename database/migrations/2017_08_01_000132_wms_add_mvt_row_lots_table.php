@@ -45,16 +45,18 @@ class WmsAddMvtRowLotsTable extends Migration {
           	$table->decimal('surface', 23,8);
           	$table->decimal('volume', 23,8);
           	$table->decimal('mass', 23,8);
+          	$table->boolean('is_deleted');
           	$table->bigInteger('mvt_row_id')->unsigned();
           	$table->integer('lot_id')->unsigned();
-          	
+
           	$table->foreign('mvt_row_id')->references('id_mvt_row')->on('wms_mvt_rows')->onDelete('cascade');
           	$table->foreign('lot_id')->references('id_lot')->on('wms_lots')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('wms_mvt_row_lots')->insert([
-            ['id_mvt_row_lot' => '1','quantity' => '0','amount_unit' => '0','amount' => '0',
-            'length' => '0','surface' => '0','volume' => '0','mass' => '0','mvt_row_id' => '1','lot_id' => '1'],
+          	['id_mvt_row_lot' => '1','quantity' => '0','amount_unit' => '0',
+            'amount' => '0','length' => '0','surface' => '0','volume' => '0',
+            'mass' => '0', 'is_deleted' => '1','mvt_row_id' => '1','lot_id' => '1'],
           ]);
 
         }
