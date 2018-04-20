@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div id="mat_prod_search" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">

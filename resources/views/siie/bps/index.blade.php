@@ -25,10 +25,10 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table id="table"
+	<table
                data-toggle="table"
                data-toolbar="#toolbar"
-							 class="table table-condensed">
+							 id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th data-field="id" data-sortable="true">{{ trans('userinterface.labels.BP') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.RFC') }}</th>

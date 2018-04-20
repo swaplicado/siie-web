@@ -23,6 +23,8 @@ class SMovement {
       this.sBranch = '';
       this.sWarehouse = '';
       this.iAuxIndex = 0;
+      this.iAuxPallet = 0;
+      this.iAuxPalletLocation = 0;
     }
 
     get newId() {
@@ -91,8 +93,8 @@ class SMovementRow {
       this.sItemCode = 'NA';
       this.sUnit = 'NA';
 
-      this.sLocation = 'DEFAULT';
-      this.sLocationDes = 'DEFAULT';
+      this.sLocation = 'DEF';
+      this.sLocationDes = 'DEF';
       this.sPallet = 'SIN TARIMA';
 
       this.iLotId = 1;
@@ -209,6 +211,7 @@ function loadMovement(obj) {
      rowN.iIdMovRow = rowS.iIdMovRow;
      rowN.iIdRow = rowS.iIdRow;
      rowN.iLocationId = rowS.iLocationId;
+     rowN.iLocationDesId = rowS.iLocationDesId;
      rowN.iLotId = rowS.iLotId;
      rowN.iPalletId = rowS.iPalletId;
 
@@ -216,6 +219,7 @@ function loadMovement(obj) {
      rowN.sItem = rowS.sItem;
      rowN.sItemCode = rowS.sItemCode;
      rowN.sLocation = rowS.sLocation;
+     rowN.sLocationDes = rowS.sLocationDes;
      rowN.sLot = rowS.sLot;
      rowN.sPallet = rowS.sPallet;
      rowN.sUnit = rowS.sUnit;

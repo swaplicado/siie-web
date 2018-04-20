@@ -1,4 +1,4 @@
-oLotsTable = $('#receptions_table').DataTable({
+var oCatalagTable = $('#cat_lots_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -23,6 +23,30 @@ oLotsTable = $('#receptions_table').DataTable({
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
         }
       },
-      "colReorder": true,
-      "scrollX": true
+    "scrollX": true,
+    "colReorder": true,
+    "columnDefs": [
+      {
+          "targets": 0,
+          "width": "10%"
+      },
+      {
+          "targets": 1,
+          "className": "text-center",
+          "width": "10%"
+      },
+      {
+          "targets": 2,
+          "width": "20%"
+      },
+      {
+          "targets": [3],
+          "width": "5%"
+      },
+      {
+          "targets": [4,5,6],
+          "className": "text-center",
+          "width": "2%"
+      }
+    ],
   });

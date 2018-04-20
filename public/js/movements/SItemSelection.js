@@ -29,6 +29,13 @@ class SItemSelection {
     processSearch(serverData) {
         guiFunctions.setSearchCode('');
         var bLoc = false;
+
+        if (globalData.isPalletReconfiguration) {
+           if (! reconfigCore.isValidSearch(serverData.iElementType, serverData.oElement)) {
+              return false;
+           }
+        }
+
         switch (serverData.iElementType) {
           case globalData.lElementsType.ITEMS:
                 if (! itemSelection.validateElement(serverData.oElement.id_item,
@@ -41,6 +48,7 @@ class SItemSelection {
                 elementToAdd = itemSelection.itemToElement(serverData.oElement);
 
                 if (! serverData.oElement.is_lot) {
+                  guiValidations.showPallet();
                   guiValidations.hideLots();
                   guiValidations.showAdd();
                 }
@@ -66,7 +74,9 @@ class SItemSelection {
               break;
 
           case globalData.lElementsType.PALLETS:
-              if (parseFloat(serverData.dStock, 10) > 0 && globalData.bIsInputMov) {
+              if (parseFloat(serverData.dStock, 10) > 0
+                    && globalData.bIsInputMov
+                        && !globalData.isPalletReconfiguration) {
                     elementToAdd = null;
                     swal("Error", "No se puede agregar unidades a una tarima.", "error");
                     return false;
@@ -77,10 +87,13 @@ class SItemSelection {
                     swal("Error", "No se puede agregar este material/producto al movimiento.", "error");
                     return false;
               }
+              if (! palletCore.validatePallet(serverData.lPalletStock)) {
+                  return false;
+              }
 
               elementToAdd = itemSelection.palletToElement(serverData.oElement);
 
-              palletCore.setPallet(elementToAdd);
+              palletCore.setPallet(elementToAdd, serverData.lPalletStock);
               acceptPallet();
               guiValidations.showPallet();
 
@@ -257,6 +270,12 @@ $('#select_item_button').on('click', function(e) {
       return false;
     }
 
+    if (globalData.isPalletReconfiguration && itemSelection.getElementType() == globalData.lElementsType.PALLETS) {
+       if (! reconfigCore.isValidSearch(itemSelection.getElementType(), row)) {
+          return true;
+       }
+    }
+
     guiFunctions.setSearchCode(row['item_code']);
     guiValidations.setItemLabel(row['item_name'] + '-' + row['unit_code']);
     guiValidations.setUnitLabel(row['unit_code']);
@@ -272,7 +291,7 @@ $('#select_item_button').on('click', function(e) {
     elementToAdd.sUnit = row['unit_code'];
     elementToAdd.bIsLot = row['is_lot'];
     elementToAdd.bIsBulk = row['is_bulk'];
-    elementToAdd.sLocation = oLocation.name;
+    elementToAdd.sLocation = oLocation.code;
 
     elementToAdd.oElement = row;
     elementToAdd.iElementType = itemSelection.getElementType();
@@ -289,17 +308,16 @@ $('#select_item_button').on('click', function(e) {
 
 
 $('#select_button').on('click', function(e) {
+    var row = oElementsTable.row('.selected').data();
 
-  var row = oElementsTable.row('.selected').data();
-
-  if (row == undefined) {
-    swal("Error", "Debe seleccionar un elemento.", "error");
-    return false;
-  }
+    if (row == undefined) {
+      swal("Error", "Debe seleccionar un elemento.", "error");
+      return false;
+    }
 
     switch (itemSelection.getElementType()) {
       case globalData.lElementsType.ITEMS:
-          break;
+            break;
 
       case globalData.lElementsType.LOTS:
             lotToAdd = new SLotRow();
@@ -323,7 +341,6 @@ $('#select_button').on('click', function(e) {
       default:
             break;
     }
-
 });
 
 function showItems() {

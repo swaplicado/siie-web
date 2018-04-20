@@ -366,7 +366,7 @@ class SFormulasController extends Controller {
               $oFormula->notes()->saveMany($aFormulaNotes);
           });
 
-          Flash::warning(trans('messages.REG_EDITED'))->important();
+          Flash::success(trans('messages.REG_EDITED'))->important();
 
           return redirect()->route('mms.formulas.index');
         }

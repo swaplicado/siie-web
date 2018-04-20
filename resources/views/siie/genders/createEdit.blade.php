@@ -33,12 +33,13 @@
 			<div class="form-group">
 				{!! Form::label('name', trans('userinterface.labels.GENDER').'*') !!}
 				{!! Form::text('name',
-					isset($gender) ? $gender->name : null , ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
-																																	'placeholder' => trans('userinterface.placeholders.GENDER'), 'required']) !!}
+					isset($gender) ? $gender->name : null , ['class'=>'form-control', 'maxlength' => '100',
+					 																								'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																													'placeholder' => trans('userinterface.placeholders.GENDER'), 'required']) !!}
 			</div>
 
 			<div class="form-group">
-				{!! Form::label('item_group_id', trans('userinterface.labels.GROUP')) !!}
+				{!! Form::label('item_group_id', trans('userinterface.labels.GROUP').'*') !!}
 				{!! Form::select('item_group_id', $groups, isset($gender) ?  $gender->item_group_id : null , ['class'=>'form-control select-one',
 																															'placeholder' => trans('userinterface.placeholders.SELECT_GROUP'), 'required']) !!}
 			</div>
@@ -47,14 +48,14 @@
 	  <div class="col-md-6">
 
 			<div class="form-group">
-				{!! Form::label('item_class_id', trans('userinterface.labels.CLASS')) !!}
+				{!! Form::label('item_class_id', trans('userinterface.labels.CLASS').'*') !!}
 				{!! Form::select('item_class_id', $classes, isset($gender) ?  $gender->item_class_id : null, ['class'=>'form-control select-one',
 																																'placeholder' => trans('userinterface.placeholders.SELECT_CLASS'), 'required']) !!}
 			</div>
 
 			<div class="form-group">
-				{!! Form::label('item_type', trans('userinterface.labels.TYPE')) !!}
-				<select class='form-control' name="item_type_id" id="item_type_id" value="{{ isset($gender) ?  $gender->item_type_id : null }}">
+				{!! Form::label('item_type', trans('userinterface.labels.TYPE').'*') !!}
+				<select class='form-control' name="item_type_id" id="item_type_id" required value="{{ isset($gender) ?  $gender->item_type_id : null }}">
 					@if (isset($gender))
 						<option value="{{ $gender->item_type_id }}">{{ $gender->type->name }}</option>
 					@else

@@ -1,9 +1,10 @@
 <?php namespace App\WMS;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ERP\SModel;
+
 use App\WMS\SLocation;
 
-class SWarehouse extends Model {
+class SWarehouse extends SModel {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_whs';

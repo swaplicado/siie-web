@@ -5,6 +5,9 @@
 return [
       'MODULE'  => 'Módulo Almacenes',
       'STOCK_QUERY'  => 'Consulta de existencias',
+      'DEFAULT_CODE'  => 'PRED',
+      'DEFAULT'  => 'PREDETERMINADA',
+      'STOCK_QUERY'  => 'Consulta de existencias',
 
       'CATALOGUES' => 'Catálogos',
           'WAREHOUSES' => 'Almacenes',
@@ -25,6 +28,7 @@ return [
           'BRANCH_STK' => 'Existencias por sucursal',
           'LOT_WHS_STK' => 'Existencias por lote por almacén',
           'PALLET_LOT_STK' => 'Existencias por tarima por lote',
+          'GENERAL_STK' => 'Existencias generales',
           'STK_SEGREGATIONS' => 'Existencias segregadas',
           'STK_SEG_QLTY' => 'Existencias en calidad',
           'MOV_STK' => 'Operaciones',
@@ -35,10 +39,10 @@ return [
           'MOV_WHS_SEND_EXTERNAL_TRS_OUT' => 'Enviar traspaso externo de almacén',
           'MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT' => 'Recibir traspaso externo de almacén',
           'MOV_WHS_PUR_IN' => 'Entrada por compra',
-          'WHS_MOVS_QUERY' => 'Movimientos de inventario',
-          'WHS_MOVS' => 'Movimientos de inventario',
-          'WHS_DOCS' => 'Documentos de inventario',
-          'WHS_MOVS_FOLIOS' => 'Folios de movimientos de inventario',
+          'WHS_MOVS_QUERY' => 'Movimientos de almacén',
+          'WHS_MOVS' => 'Movimientos de almacén',
+          'WHS_DOCS' => 'Documentos de almacén',
+          'WHS_MOVS_FOLIOS' => 'Folios de movimientos de almacén',
           'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
           'PALLET_DIVISION' => 'Dividir tarima',
           'PALLET_ADD' => 'Agregar a tarima',
@@ -78,6 +82,8 @@ return [
                       'PALLET' => 'Tarima',
                       'PRICE' => 'Precio',
                       'QTY' => 'Cantidad',
+                      'QTY_TO_MOVE' => 'Cantidad a mover',
+                      'QTY_REMAINING' => 'Cantidad restante',
                       'LOTS_ASSIGNAMENT' => 'Asignación de lotes',
                       'QTY_FOR_COMPLETE' => 'Cantidad por completar',
                       'WAREHOUSE' => 'Almacén',
@@ -91,6 +97,7 @@ return [
                       'ELEMENTS_TO_MOVE' => 'Elementos a mover',
                       'LEVEL' => 'Nivel',
                       'REFERENCE' => 'Referencia',
+                      'RECEPTION_DATE' => 'Fecha de recepción',
                       'ITEM_TYPE' => 'Tipo de ítem',
                       'INDIRECT_SUPPLY' => 'Surtido indirecto',
                       'REORDER' => 'Punto Reorden',
@@ -106,18 +113,30 @@ return [
                           'SELECT_MVT_TYPE' => 'Seleccione tipo de movimiento...',
                           'SELECT_MAT_PROD' => 'Seleccione material/producto...',
                           'SELECT_LEVEL' => 'Seleccione nivel...',
+                          'SELECT_PALLET' => 'Seleccione tarima...',
                           'SELECT_REFERENCE' => 'Seleccione referencia...',
+                          'BAR_CODE_LOCATION' => 'Código barras ubicación...',
+                          'SEARCH_ELEMENT' => 'Tarima, lote, material/producto...',
+                        ],
+
+      'tooltips'     => [
+                          'ONLY_BARCODES' => 'Sólo se podrán buscar códigos de barras',
+                          'ELEMENT_MULTIPLE' => 'Se pueden buscar códigos de barras de materiales/productos, '.
+                                                'de tarimas y de lotes, así como código de un material/productos '.
+                                                'en específico',
+                          'LOTS' => 'Introduzca un lote nuevo o uno existente, si la fecha de vencimiento del lote '.
+                                      'existente no coincide, se generará un error',
                         ],
 
       'buttons'  => [
                       'ADD_LOT' => 'Agregar lote',
                     ],
 
-      'QRY_INVENTORY' =>  'Consulta de inventarios',
+      'QRY_INVENTORY' =>  'Consulta de existencias',
       'QRY_INVENTORY_T' =>  'Apartado en el que se pueden consultar las existencias de la empresa por diferentes niveles y agrupaciones.',
 
-      'MOV_WAREHOUSES' =>  'Movimientos de inventarios',
-      'MOV_WAREHOUSES_T' =>  'Consulta de los movimientos de inventarios realizados en la empresa por períodos.',
+      'MOV_WAREHOUSES' =>  'Movimientos de almacén',
+      'MOV_WAREHOUSES_T' =>  'Consulta de los movimientos de almacén realizados en la empresa por períodos.',
 
       'LBL_GENERATION' =>  'Generación de etiquetas',
       'LBL_GENERATION_T' =>  'En este apartado se generan las etiquetas para lotes y tarimas.',

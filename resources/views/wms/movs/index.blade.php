@@ -36,23 +36,24 @@
 		<table id="movs_table" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-								<th data-priority="1">Fecha</th>
-		            <th data-priority="1">Clave</th>
-		            <th data-priority="1">Item</th>
+								<th data-priority="1">Folio</th>
+								<th data-priority="1">{{ trans('userinterface.labels.DATE') }}</th>
+		            <th data-priority="1">{{ trans('userinterface.labels.CODE') }}</th>
+		            <th data-priority="1">{{ trans('wms.labels.MAT_PROD') }}</th>
 								<th data-priority="1">Entradas</th>
 								<th data-priority="1">Salidas</th>
 								<th data-priority="1">Unidad</th>
 		            <th>Sucursal</th>
 		            <th>Almacén</th>
 		            <th>Tipo movimiento</th>
-								<th data-priority="1">Folio</th>
 		            <th>Tipo</th>
 		        </tr>
 		    </thead>
 		    <tbody>
 					@foreach ($rows as $row)
 						<tr>
-								<td>{{ \Carbon\Carbon::parse($row->movement->dt_date)->format('d-m-Y') }}</td>
+								<td>{{ $row->movement->folio }}</td>
+								<td>{{ \Carbon\Carbon::parse($row->movement->dt_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 		            <td>{{ $row->item->code }}</td>
 		            <td>{{ $row->item->name }}</td>
@@ -67,7 +68,6 @@
 								<td>{{ $row->movement->branch->name }}</td>
 								<td>{{ $row->movement->warehouse->name }}</td>
 								<td>{{ $row->movement->mvtType->name }}</td>
-								<td>{{ $row->movement->folio }}</td>
 								@if ($row->movement->mvt_trn_type_id != 1)
 									<td>{{ $row->movement->trnType->name }}</td>
 								@elseif($row->movement->mvt_adj_type_id != 1)

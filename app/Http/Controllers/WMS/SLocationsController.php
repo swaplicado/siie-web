@@ -40,7 +40,7 @@ class SLocationsController extends Controller
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-        $lLocations = SLocation::Search($request->name, $this->iFilter)->orderBy('name', 'ASC')->paginate(20);
+        $lLocations = SLocation::Search($request->name, $this->iFilter)->orderBy('name', 'ASC')->get();
         $lLocations->each(function($lLocations) {
           $lLocations->warehouse;
         });
@@ -63,7 +63,10 @@ class SLocationsController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+        $lWarehouses = SWarehouse::orderBy('code', 'ASC')
+                                  ->select('id_whs', \DB::raw("CONCAT(code, ' - ', name) as whs_name"))
+                                  ->where('is_deleted', false)
+                                  ->lists('whs_name', 'id_whs');
 
         return view('wms.locs.createEdit')
                       ->with('warehouses', $lWarehouses);
@@ -81,6 +84,15 @@ class SLocationsController extends Controller
       $location->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
       $location->updated_by_id = \Auth::user()->id;
       $location->created_by_id = \Auth::user()->id;
+
+      $iValidCode = sLocation::where('code', $location->code)
+                                ->where('whs_id', $location->whs_id)->get();
+
+      if (sizeof($iValidCode) > 0) {
+         return redirect()->back()->withInput(
+                $request->input())
+                ->withErrors(['Ya hay una ubicación con este código en el almacén']);
+      }
 
       $location->save();
 
@@ -110,7 +122,10 @@ class SLocationsController extends Controller
           return redirect()->back()->withErrors($error);
         }
 
-        $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+        $lWarehouses = SWarehouse::orderBy('code', 'ASC')
+                                  ->select('id_whs', \DB::raw("CONCAT(code, ' - ', name) as whs_name"))
+                                  ->where('is_deleted', false)
+                                  ->lists('whs_name', 'id_whs');
 
         return view('wms.locs.createEdit')
                     ->with('location', $location)
@@ -128,6 +143,17 @@ class SLocationsController extends Controller
     {
         $location = SLocation::find($id);
         $location->fill($request->all());
+
+        $iValidCode = SLocation::where('code', $location->code)
+                                  ->where('whs_id', $location->whs_id)
+                                  ->where('id_whs_location', '!=', $location->id_whs_location)->get();
+
+        if (sizeof($iValidCode) > 0) {
+           return redirect()->back()->withInput(
+                  $request->input())
+                  ->withErrors(['Ya hay una ubicación con este código en el almacén']);
+        }
+
         if($request->is_recondition == NULL){
           $location->is_recondition = '0';
         }
@@ -147,13 +173,14 @@ class SLocationsController extends Controller
           $location->is_destruction = '1';
         };
         $location->updated_by_id = \Auth::user()->id;
+
         $errors = $location->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->route('wms.locs.index')->withErrors($errors);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('wms.locs.index');
     }
@@ -176,7 +203,9 @@ class SLocationsController extends Controller
         $locationCopy = clone $location;
         $locationCopy->id_whs_location = 0;
 
-        $lWarehouses = SWarehouse::orderBy('name', 'ASC')->lists('name', 'id_whs');
+        $lWarehouses = SWarehouse::orderBy('name', 'ASC')
+                                  ->where('is_deleted', false)
+                                  ->lists('name', 'id_whs');
 
         return view('wms.locs.createEdit')->with('location', $locationCopy)
                                         ->with('warehouses', $lWarehouses)
@@ -226,7 +255,7 @@ class SLocationsController extends Controller
         }
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('wms.locs.index');
     }
 

@@ -15,11 +15,12 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table data-toggle="table" class="table table-condensed">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.CODE') }}</th>
 			<th>{{ trans('userinterface.labels.LOCATION') }}</th>
 			<th>{{ trans('userinterface.labels.WAREHOUSE') }}</th>
+			<th>{{ trans('userinterface.labels.BRANCH') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 			<th>{{'Etiqueta'}}</th>
@@ -30,6 +31,7 @@
 					<td>{{ $location->code }}</td>
 					<td>{{ $location->name }}</td>
 					<td>{{ $location->warehouse->name }}</td>
+					<td>{{ $location->warehouse->branch->name }}</td>
 					<td>
 						@if (! $location->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
@@ -50,11 +52,10 @@
 						@include('templates.list.options')
 					</td>
 					<td>
-							<a href="{{ route('wms.locations.barcode', $location->id_whs_location) }}" class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
+							<a href="{{ route('wms.locations.barcode', $location->id_whs_location) }}" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 					</td>
 				</tr>
 			@endforeach
 		</tbody>
 	</table>
-	{!! $locations->render() !!}
 @endsection

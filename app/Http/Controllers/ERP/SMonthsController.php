@@ -79,7 +79,7 @@ class SMonthsController extends Controller
 
        $oMonth->save();
 
-       Flash::warning(trans('messages.REG_EDITED'))->important();
+       Flash::success(trans('messages.REG_EDITED'))->important();
 
        return redirect()->route('siie.months.index', $oMonth->year_id);
      }

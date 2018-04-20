@@ -138,10 +138,7 @@ class SLimitsController extends Controller
     {
         $limit = SLimit::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $limit->created_by_id)))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $limit);
 
         $limit->aux_branch_id = '';
         $limit->aux_whs_id = '';
@@ -234,7 +231,7 @@ class SLimitsController extends Controller
 
         $limit->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('wms.limits.index');
     }
@@ -243,10 +240,7 @@ class SLimitsController extends Controller
     {
         $limit = SLimit::find($id);
 
-        if (! (SValidation::canEdit($this->oCurrentUserPermission->privilege_id) || SValidation::canAuthorEdit($this->oCurrentUserPermission->privilege_id, $limit->created_by_id)))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $limit);
 
         $limit->fill($request->all());
         $limit->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -267,10 +261,7 @@ class SLimitsController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if (! SValidation::canDestroy($this->oCurrentUserPermission->privilege_id))
-        {
-          return redirect()->route('notauthorized');
-        }
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $limit = SLimit::find($id);
         $limit->fill($request->all());
@@ -280,7 +271,7 @@ class SLimitsController extends Controller
         $limit->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('wms.limits.index');
     }
 

@@ -73,7 +73,7 @@ class SCompaniesController extends Controller
       $company->updated_by_id = \Auth::user()->id;
       $company->save();
 
-      Flash::warning(trans('messages.REG_EDITED'))->important();
+      Flash::success(trans('messages.REG_EDITED'))->important();
 
       return redirect()->route('admin.companies.index');
     }
@@ -110,7 +110,7 @@ class SCompaniesController extends Controller
       $company->save();
       #$user->delete();
 
-      Flash::error(trans('messages.REG_DELETED'))->important();
+      Flash::success(trans('messages.REG_DELETED'))->important();
 
       return redirect()->route('admin.companies.index');
     }

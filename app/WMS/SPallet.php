@@ -15,8 +15,6 @@ class SPallet extends SModel {
                           'is_deleted',
                           'item_id',
                           'unit_id',
-                          'loc_id',
-                          'quantity',
                         ];
 
 

@@ -245,10 +245,10 @@ class SFoliosController extends Controller
         $errors = $folio->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->route('wms.folios.index')->withErrors($errors);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('wms.folios.index');
     }
@@ -266,7 +266,7 @@ class SFoliosController extends Controller
         $errors = $folio->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->route('wms.folios.index')->withErrors($errors);
+           return redirect()->back()->withInput($request->input())->withErrors($error);
         }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
@@ -296,7 +296,8 @@ class SFoliosController extends Controller
         }
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
+
         return redirect()->route('wms.folios.index');
     }
 

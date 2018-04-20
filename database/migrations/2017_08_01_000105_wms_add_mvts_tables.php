@@ -147,6 +147,22 @@ class WmsAddMvtsTables extends Migration {
           	['id_mvt_exp_type' => '2','code' => 'C','name' => 'COMPRAS','is_deleted' => '0'],
           	['id_mvt_exp_type' => '3','code' => 'P','name' => 'PRODUCCIÓN','is_deleted' => '0'],
           ]);
+
+          Schema::connection($this->sConnection)->create('wmss_mvt_internal_types', function (blueprint $table) {
+          	$table->increments('id_mvt_internal_type');
+          	$table->char('code', 10)->unique();
+          	$table->char('name', 100);
+          	$table->boolean('is_deleted');
+          	$table->timestamps();
+          });
+
+          DB::connection($this->sConnection)->table('wmss_mvt_internal_types')->insert([
+          	['id_mvt_internal_type' => '1','code' => 'NA','name' => 'N/A','is_deleted' => '0'],
+          	['id_mvt_internal_type' => '2','code' => 'AJUSTE','name' => 'AJUSTE DE ALMACÉN','is_deleted' => '0'],
+          	['id_mvt_internal_type' => '3','code' => 'TRASPASO','name' => 'TRASPASO DE ALMACÉN','is_deleted' => '0'],
+          	['id_mvt_internal_type' => '4','code' => 'DIV_TAR','name' => 'DIVISIÓN DE TARIMA','is_deleted' => '0'],
+          	['id_mvt_internal_type' => '5','code' => 'AGR_TAR','name' => 'AGREGAR A TARIMA','is_deleted' => '0'],
+          ]);
         }
     }
 
@@ -161,6 +177,7 @@ class WmsAddMvtsTables extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
+          Schema::connection($this->sConnection)->drop('wmss_mvt_internal_types');
           Schema::connection($this->sConnection)->drop('wmss_mvt_exp_types');
           Schema::connection($this->sConnection)->drop('wmss_mvt_mfg_types');
           Schema::connection($this->sConnection)->drop('wmss_mvt_adj_types');

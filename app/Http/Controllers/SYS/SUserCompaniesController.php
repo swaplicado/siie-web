@@ -86,7 +86,7 @@ class SUserCompaniesController extends Controller
           }
         }
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('admin.usraccess.index');
     }

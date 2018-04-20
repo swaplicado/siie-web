@@ -7,7 +7,7 @@
 
 @section('content')
 	<?php $sRoute="siie.months"?>
-	<table data-toggle="table" class="table table-striped">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.MONTH') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
@@ -25,7 +25,7 @@
 						@endif
 					</td>
 					<td>
-						<a href="{{ route('siie.months.edit', $month->id_month) }}" data-toggle = "editar" title="{{ trans('userinterface.tooltips.EDIT') }}"
+						<a href="{{ route('siie.months.edit', $month->id_month) }}" data-toggle = "modificar" title="{{ trans('userinterface.tooltips.EDIT') }}"
 																												style="visibility: {{ App\SUtils\SValidation::isRendered(\Config::get('scsys.OPERATION.EDIT'), $actualUserPermission, $month->created_by_id) }};"
 																												class="btn btn-info">
 							<span class="glyphicon glyphicon-pencil" aria-hidden = "true"/>

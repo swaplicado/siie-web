@@ -12,7 +12,7 @@
 		'CONTINUE' => 'Continuar',
 		'CREATE' => 'Crear',
 		'DEVOLVE' => 'Devolver',
-		'EDIT' => 'Editar',
+		'EDIT' => 'Modificar',
 		'FREEZE' => 'Congelar',
 		'IMPORT' => 'Importar',
 		'LINK' => 'Enlazar',
@@ -21,7 +21,9 @@
 		'SEARCH' => 'Buscar',
 		'SSELECT' => 'Seleccionar',
 		'SUPPLY' => 'Surtir',
+		'SUPPLY_ROW' => 'Surtir renglón',
 		'QUIT' => 'Eliminar',
 
 		'SEARCH_LOCATION' => 'Buscar ubicación',
+		'SEARCH_ELEMENT' => 'Buscar elemento',
     ];

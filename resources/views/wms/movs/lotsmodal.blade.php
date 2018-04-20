@@ -18,18 +18,20 @@
                 'id' => 'search_lot',
                 'placeholder' => trans('wms.labels.LOT').'...',
                 'onkeypress' => 'searchLot(event)',
+                'title' => trans('wms.tooltips.ONLY_BARCODES'),
                 'required']) !!}
             </div>
             <div class="col-sm-1 paddingsm">
-              {!! Form::label('.') !!}
+              {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}
               <a onclick="searchLotByButton()" title="{{ trans('actions.SEARCH') }}"
                   class="btn btn-primary">
                 <span class="glyphicon glyphicon-search" aria-hidden = "true"/>
               </a>
             </div>
-            @if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT'))
+            @if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT') ||
+                  $oMovement->mvt_whs_type_id == \Config::get('scwms.PALLET_RECONFIG_IN'))
               <div class="col-md-1">
-                {!! Form::label('.') !!}
+                {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}
                 <button type="button" onclick="showLots()"
                         class="btn btn-info">
                         {{ trans('actions.SEARCH') }}
@@ -41,8 +43,12 @@
             <div class="col-sm-4 paddingsm">
               {!! Form::label(trans('wms.labels.LOT')) !!}
               {!! Form::text('lot',
-                null, ['class' => 'form-control input-sm',
+                null, [
+                'class' => 'form-control input-sm',
                 'id' => 'lot',
+                'title' => trans('wms.tooltips.LOTS'),
+                'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+                'maxlength' => '50',
                 'placeholder' => trans('wms.labels.LOT').'...']) !!}
             </div>
             <div class="col-sm-3 paddingsm">
@@ -54,18 +60,19 @@
               {!! Form::label(trans('userinterface.labels.QUANTITY').'*') !!}
               {!! Form::number('quantity_lot', 1, ['class'=>'form-control input-sm', 'id' => 'quantity_lot',
                                                     'placeholder' => trans('userinterface.placeholders.QUANTITY'),
+                                                    'max' => '1000000000',
                                                     'style' => 'text-align: right;']) !!}
             </div>
           </div>
           <div class="row">
-            <div class="col-md-1 col-md-offset-5">
+            <div class="col-md-1 col-md-offset-7">
             </div>
-            @if ($bCanCreateLotMat || $bCanCreateLotProd)
+            {{-- @if ($bCanCreateLotMat || $bCanCreateLotProd)
               <div class="col-md-2 paddingsm" id="div_cancreate">
                 {!! Form::checkbox('is_lot_new', 'value', false, [ 'id' => 'is_lot_new']); !!}
                 {!! Form::label(trans('actions.CREATE')) !!}
               </div>
-            @endif
+            @endif --}}
             <div class="col-md-2 paddingsm">
               <button onclick="addLotRow()" type="button" class="btn btn-info">
                       {{ trans('actions.ADD') }}
@@ -105,7 +112,7 @@
                         <th>{{ trans('wms.labels.LOT') }}</th>
                         <th>{{ trans('wms.labels.EXPIRATION') }}</th>
                         <th>{{ trans('userinterface.labels.QUANTITY') }}</th>
-                        <th>{{ trans('actions.CREATE') }}</th>
+                        {{-- <th>{{ trans('actions.CREATE') }}</th> --}}
                     </tr>
                 </thead>
                 <tbody>

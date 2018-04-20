@@ -35,7 +35,7 @@ class SFamiliesController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lFamilies = SItemFamily::Search($request->name, $this->iFilter)->orderBy('name', 'ASC')->paginate(20);
+      $lFamilies = SItemFamily::Search($request->name, $this->iFilter)->orderBy('name', 'ASC');
 
       return view('siie.families.index')
           ->with('families', $lFamilies)
@@ -122,7 +122,7 @@ class SFamiliesController extends Controller
         $family->updated_by_id = \Auth::user()->id;
         $family->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('siie.families.index');
     }
@@ -190,7 +190,7 @@ class SFamiliesController extends Controller
         $family->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
 
         return redirect()->route('siie.families.index');
     }

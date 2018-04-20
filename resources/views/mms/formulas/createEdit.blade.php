@@ -71,7 +71,7 @@
           <button type="button" id='btnEdit' class="btn btn-info"
                       data-toggle="modal"
                       onclick="setIngredient()"
-                      data-target="#modalIngredient">Editar ingrediente</button>
+                      data-target="#modalIngredient">Modificar ingrediente</button>
           <button type="button" id='btnDel' class="btn btn-danger">Borrar ingrediente</button>
           <button type="button" id='btnNote' data-toggle="modal"
                   class="btn btn-primary"

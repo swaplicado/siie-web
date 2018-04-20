@@ -29,23 +29,27 @@ $('#movs_table').DataTable({
         {
             "targets": 0,
             "className": "text-center",
-            "width": "7%"
+            "width": "5%"
         },
         {
             "targets": 1,
             "className": "text-center",
-            "width": "5%"
+            "width": "7%"
         },
         {
             "targets": 2,
+            "width": "5%"
+        },
+        {
+            "targets": 3,
             "width": "15%"
         },
         {
-            "targets": [3, 4],
+            "targets": [4, 5],
             "width": "10%"
         },
         {
-            "targets": [5, 9],
+            "targets": 6,
             "className": "text-center",
             "width": "5%"
         }

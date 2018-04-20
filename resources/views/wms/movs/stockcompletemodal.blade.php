@@ -12,7 +12,7 @@
       <div id="divTable" class="modal-body">
         <div class="row">
           <div class="col-md-12">
-            <table id="stock_com_table" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+            <table id="stock_com_table" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>{{ trans('userinterface.labels.CODE') }}</th>

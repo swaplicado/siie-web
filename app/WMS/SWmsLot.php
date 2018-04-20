@@ -1,6 +1,4 @@
-<?php
-
-namespace App\WMS;
+<?php namespace App\WMS;
 
 use App\ERP\SModel;
 

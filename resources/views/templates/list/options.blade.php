@@ -3,6 +3,10 @@
 		$v_route_edit = $sRoute.'.edit';
 		$v_route_destroy = $sRoute.'.destroy';
 		$v_created_by = $oRegistry->created_by_id;
+
+		if (!$oRegistry->is_deleted) {
+				unset($loptions[2]);
+		}
 ?>
 
 @if (in_array(\Config::get('scsys.OPTIONS.EDIT'), $loptions) &&

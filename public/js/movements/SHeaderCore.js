@@ -62,7 +62,7 @@ class SHeaderCore {
       console.log(movement);
       var idMov = (globalData.iOperation == globalData.lOperationType.EDITION ? globalData.iMvtId : 0);
 
-      showLoading(5000);
+      showLoading(2000);
       $.get('./' + (globalData.sRoute) +
                     '/data?whs_source=' + movement.iWhsSrc +
                     '&whs_des=' + movement.iWhsDes +
@@ -266,8 +266,16 @@ function initializePanel(serverData) {
     }
 
     guiValidations.validatePrice();
-    iElementType = globalData.lElementsType.ITEMS;
-    searchCore.initializateItems();
+    guiFunctions.setQuantity(0);
+    if (globalData.isPalletReconfiguration) {
+      iElementType = globalData.lElementsType.PALLETS;
+      searchCore.initializateItems(iElementType);
+    }
+    else {
+      iElementType = globalData.lElementsType.ITEMS;
+      searchCore.initializateItems(iElementType);
+    }
+
     locationsJs.updateLocationsTable();
 
     guiValidations.hideLots();

@@ -112,7 +112,7 @@ class SUsersController extends Controller
         $user->updated_by_id = \Auth::user()->id;
         $user->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
         return redirect()->route('admin.users.index');
     }
 
@@ -201,7 +201,7 @@ class SUsersController extends Controller
         $user->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('admin.users.index');
     }
 

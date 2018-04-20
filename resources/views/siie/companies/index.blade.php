@@ -7,7 +7,7 @@
 
 @section('content')
 	<?php $sRoute="siie.companies"?>
-	<table data-toggle="table" class="table table-striped">
+	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.COMPANY') }}</th>
 			<th>{{ trans('userinterface.labels.RFC') }}</th>

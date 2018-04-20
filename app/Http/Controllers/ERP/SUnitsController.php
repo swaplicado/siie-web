@@ -34,7 +34,7 @@ class SUnitsController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lUnits = SUnit::Search($request->name, $this->iFilter)->orderBy('name', 'ASC')->paginate(20);
+      $lUnits = SUnit::Search($request->name, $this->iFilter)->orderBy('name', 'ASC');
       $lUnits->each(function($lUnits) {
         $lUnits->equivalence;
       });
@@ -130,7 +130,7 @@ class SUnitsController extends Controller
         $unit->updated_by_id = \Auth::user()->id;
         $unit->save();
 
-        Flash::warning(trans('messages.REG_EDITED'))->important();
+        Flash::success(trans('messages.REG_EDITED'))->important();
 
         return redirect()->route('siie.units.index');
     }
@@ -200,7 +200,7 @@ class SUnitsController extends Controller
         $unit->save();
         #$user->delete();
 
-        Flash::error(trans('messages.REG_DELETED'))->important();
+        Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('siie.units.index');
     }
 }

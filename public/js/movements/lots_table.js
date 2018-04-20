@@ -40,11 +40,6 @@ oLotsTable = $('#lots_table').DataTable({
             "targets": 4, // your case first column
             "className": "text-right",
             "width": "30%"
-        },
-        {
-            "targets": 5, // your case first column
-            "className": "text-center",
-            "width": "5%"
         }
       ],
   });

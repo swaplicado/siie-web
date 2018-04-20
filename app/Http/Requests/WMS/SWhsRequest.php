@@ -24,12 +24,12 @@ class SWhsRequest extends Request
      */
     public function rules()
     {
-      $whs = new SWarehouse();
-      $branch = new SBranch();
-      $whstype = new SWhsType();
+        $whs = new SWarehouse();
+        $branch = new SBranch();
+        $whstype = new SWhsType();
 
         return [
-            'code' => 'required|unique:siie.'.$whs->getTable(),
+            'code' => 'required',
             'name' => 'required',
             'branch_id' => 'required|exists:siie.'.$branch->getTable().',id_branch',
             'whs_type_id' => 'required|exists:siie.'.$whstype->getTable().',id_whs_type',

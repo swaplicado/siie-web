@@ -307,7 +307,8 @@ class SMovsUtils {
 
       $lElements = $lElements->orderBy('ei.code', 'ASC')
       ->orderBy('ei.name', 'ASC')
-      ->orderBy('eu.id_unit', 'ASC');
+      ->orderBy('ei.name', 'ASC')
+      ->having('stock', '>', '0');
 
       return $lElements;
   }
@@ -397,6 +398,7 @@ class SMovsUtils {
                                      wwl.code as location,
                                      wp.pallet,
                                      wl.lot,
+                                     wl.dt_expiry,
                                      ei.code as item_code,
                                      ei.name as item,
                                      eu.code as unit,
@@ -418,11 +420,12 @@ class SMovsUtils {
 
       $oStock = session('stock')->getStockResult($aParameters, $aSegParameters);
 
-      $oStock = $oStock->groupBy('ws.location_id')
-                        ->groupBy('ws.pallet_id')
-                        ->groupBy('ws.lot_id')
+      $oStock = $oStock->groupBy('wwl.id_whs_location')
+                        ->groupBy('wp.id_pallet')
+                        ->groupBy('wl.id_lot')
                         ->groupBy('ws.item_id')
-                        ->groupBy('ws.unit_id');
+                        ->groupBy('ws.unit_id')
+                        ->having('stock', '>', '0');
 
       $oStock = $oStock->get();
 

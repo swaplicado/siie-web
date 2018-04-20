@@ -189,11 +189,20 @@ Route::post('/start/whs',[
 		]);
 
 //****************************************/ Manufacturing /*************************
-		Route::get('/mms/home',[
-			'as' => 'mms.home',
-			'uses' => 'MMS\SProductionController@Home'
-		]);
-		Route::resource('mms','MMS\SProductionController');
+
+    Route::group(['prefix' => 'mms'], function () {
+      Route::get('/home',[
+        'as' => 'mms.home',
+        'uses' => 'MMS\SProductionController@Home'
+      ]);
+      // Route::resource('mms','MMS\SProductionController');
+
+      /*
+      * Formulas
+      **/
+      Route::resource('formulas','MMS\SFormulasController');
+    });
+
 
 //****************************************/ Quality Module /*************************
 
@@ -365,15 +374,15 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.supply.validaterow'
       ]);
-      Route::get('/movs/{id}/{title}/edit/data', [
+      Route::get('/movs/{id}/edit/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.edit.data'
       ]);
-      Route::get('/movs/{id}/{title}/edit/search', [
+      Route::get('/movs/{id}/edit/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.edit.search'
       ]);
-      Route::post('/movs/{id}/{title}/edit/validaterow', [
+      Route::post('/movs/{id}/edit/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.edit.validaterow'
       ]);

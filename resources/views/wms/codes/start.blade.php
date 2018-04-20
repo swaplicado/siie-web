@@ -1,10 +1,11 @@
-@extends('templates.basic_form')
 @include('templates.head')
+@extends('templates.basic_form')
 
 @section('menu')
 	@include('templates.menu.menumodules')
 @endsection
 
+@section('titlepanel', trans('userinterface.titles.GENERATION_BARCODE'))
 @section('title', trans('userinterface.titles.GENERATION_BARCODE'))
 
 @section('content')

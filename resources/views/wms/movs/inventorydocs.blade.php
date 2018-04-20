@@ -36,8 +36,8 @@
 		<table id="docs_table" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
+								<th data-priority="1">Folio</th>
 								<th data-priority="1">Fecha</th>
-		            <th data-priority="1">Folio</th>
 		            <th>Monto</th>
 								<th data-priority="1">Tipo movimiento</th>
 								<th data-priority="1">Subtipo</th>
@@ -56,9 +56,9 @@
 		    <tbody>
 					@foreach ($lMovs as $mov)
 						<tr>
-								<td>{{ \Carbon\Carbon::parse($mov->dt_date)->format('d-m-Y') }}</td>
+								<td>{{ $mov->folio }}</td>
+								<td>{{ \Carbon\Carbon::parse($mov->dt_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
-		            <td>{{ $mov->folio }}</td>
 								<td align="right">{{ session('utils')->formatNumber($mov->total_amount, \Config::get('scsiie.FRMT.AMT')) }}</td>
 								<td>{{ $mov->mvtType->name }}</td>
 								@if ($mov->mvt_trn_type_id != 1)
