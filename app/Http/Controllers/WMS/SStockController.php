@@ -163,14 +163,11 @@ class SStockController extends Controller
                     ->where('ws.is_deleted', false)
                     ->where('ws.dt_date', '<=', $sFilterDate)
                     ->where('eb.id_branch', session('branch')->id_branch)
+                    ->whereIn('ws.whs_id', session('utils')->getUserWarehousesArray())
                     ->groupBy($groupBy)
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)
                     ->having('stock', '>', '0');
-
-      if (\Auth::user()->user_type_id != \Config::get('scsys.TP_USER.MANAGER')) {
-          $stock = $stock->where('ww.id_whs', session()->has('whs') ? session('whs')->id_whs : 1);
-      }
 
       if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
       {

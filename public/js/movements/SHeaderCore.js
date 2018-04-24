@@ -227,7 +227,9 @@ class SHeaderCore {
       }
 
       if (! globalData.bIsInputMov && !bFound) {
-        swal("Error", "El material/producto no tiene existencias en el almacén.", "error");
+        swal("Error", "El material/producto " +  oMovRow.sItemCode +
+                       "-" + oMovRow.sItem + " no tiene existencias en " +
+                      "la tarima, lote, ubicación y almacén seleccionados.", "error");
         return false;
       }
 

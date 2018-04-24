@@ -1,5 +1,7 @@
 <?php namespace App\SUtils;
 
+use App\User;
+
 class SValidation {
 
   /**
@@ -124,7 +126,7 @@ class SValidation {
 
          foreach (\Auth::user()->userPermission as $oUserPermission)
          {
-           if ($oUserPermission->permission->type_permission_id == $iPermissionType)
+           if ($oUserPermission->permission_type_id == $iPermissionType)
            {
              if ($oUserPermission->permission->code == $iPermissionCode)
              {
@@ -188,7 +190,7 @@ class SValidation {
    *
    * @param  User  $oUser
    * @param  int  $iIdCompany Company id
-   * 
+   *
    * @return true or false
    */
   public static function canAccessToCompany($oUser, $iIdCompany)

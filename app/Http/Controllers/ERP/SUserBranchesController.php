@@ -36,8 +36,8 @@ class SUserBranchesController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $branches = SBranch::orderBy('name', 'ASC')->where('partner_id',session('partner')->id_partner)->get();
-      $users = SUserCompany::orderBy('user_id','ASC')->where('company_id',session('company')->id_company)->get();
+      $branches = SBranch::orderBy('name', 'ASC')->where('partner_id', session('partner')->id_partner)->get();
+      $users = SUserCompany::orderBy('user_id','ASC')->where('company_id', session('company')->id_company)->get();
       $users->each(function($users){
             $users->user;
             $users->company;

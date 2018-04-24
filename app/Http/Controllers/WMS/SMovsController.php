@@ -96,6 +96,7 @@ class SMovsController extends Controller
     public function inventoryDocs(Request $request)
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+        $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC');
 
         $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))->get();
@@ -223,6 +224,7 @@ class SMovsController extends Controller
         $warehouses = SWarehouse::where('is_deleted', false)
                                 ->where('branch_id', session('branch')->id_branch)
                                 ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as warehouse"))
+                                ->whereIn('id_whs', session('utils')->getUserWarehousesArray())
                                 ->orderBy('code', 'ASC')
                                 ->lists('warehouse', 'id_whs');
 
@@ -669,6 +671,58 @@ class SMovsController extends Controller
        }
 
        return redirect()->route('wms.movs.index', $aResult);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, $id)
+    {
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
+
+        $oMov = SMovement::find($id);
+        $oMov->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $oMov->updated_by_id = \Auth::user()->id;
+
+        try
+        {
+          $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
+            $aErrors = $oMov->save();
+            if (is_array($aErrors) && sizeof($aErrors) > 0) {
+               return $aErrors;
+            }
+
+            foreach ($oMov->rows as $oRow) {
+               if (! $oRow->is_deleted) {
+                 $oRow->is_deleted = true;
+                 $oRow->save();
+               }
+
+               foreach ($oRow->lotRows as $lotRow) {
+                  $lotRow->is_deleted = true;
+                  $lotRow->save();
+               }
+            }
+
+            $stkController = new SStockController();
+            $stkController->store($request, $oMov);
+          });
+
+          if (is_array($errors) && sizeof($errors) > 0) {
+             redirect()->back()->withErrors($errors);
+          }
+        }
+        catch (\Exception $e)
+        {
+           return redirect()->back()->withErrors([$e]);
+        }
+
+        Flash::success(trans('messages.REG_DELETED'))->important();
+
+        return redirect()->back();
     }
 
     /**

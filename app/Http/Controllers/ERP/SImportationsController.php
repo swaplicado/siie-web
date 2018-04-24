@@ -30,7 +30,7 @@ class SImportationsController extends Controller {
 
     public function __construct()
     {
-        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CENTRAL_CONFIG'), \Config::get('scsys.MODULES.ERP'));
+        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.IMPORTATIONS'), \Config::get('scsys.MODULES.ERP'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
         $this->iFilterBp = \Config::get('scsiie.ATT.ALL');

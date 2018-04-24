@@ -14,7 +14,7 @@
 
 @section('content')
 	@section('thefilters')
-		{!! Form::open(['route' => [$sRoute.'.index'],
+		{!! Form::open(['route' => ['wms.movs.docs'],
 										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 				<div class="input-group">
@@ -100,7 +100,8 @@
       								$oRegistry = $mov;
       								$iRegistryId = $mov->id_mvt;
       								$loptions = [
-      									\Config::get('scsys.OPTIONS.EDIT')
+      									\Config::get('scsys.OPTIONS.EDIT'),
+      									\Config::get('scsys.OPTIONS.DESTROY')
       								];
       						?>
 									<div>

@@ -177,7 +177,17 @@ class SRowsCore {
          }
          else {
             if (elementToAdd.bIsLot) {
-              lLotsToCreate = serverData.lNewLots;
+              if (globalData.isPalletReconfiguration || !globalData.bIsInputMov) {
+                 if (lLotsToCreate.length > 0) {
+                   swal("Error", "No pueden crearse lotes en esta opreación", "error");
+                   return false;
+                 }
+                 
+                 lLotsToCreate = new Array();
+              }
+              else {
+                 lLotsToCreate = serverData.lNewLots;
+              }
 
               rowsCore.completeRow(serverData.lLotRows);
             }

@@ -116,6 +116,15 @@ class User extends Model implements AuthenticatableContract,
     }
 
     /**
+     * Return object SUserBranch
+     * @return SUserWhs
+     */
+    public function userWarehouses()
+    {
+      return $this->hasMany('App\ERP\SUserWhs');
+    }
+
+    /**
      * [userCreation description]
      * Return object User
      * @return User
