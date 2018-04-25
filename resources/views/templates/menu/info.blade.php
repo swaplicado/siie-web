@@ -19,6 +19,11 @@
          <div class="well well-sm"><b>{{ session()->has('whs') ? session('whs')->name : '' }}</b></div>
          <p>{{ trans('userinterface.labels.USER') }}</p>
          <div class="well well-sm"><b>{{ Auth::check() ? Auth::user()->username : '' }}</b></div>
+         <div class="well well-sm">
+           <a href="https://docs.google.com/document/d/1tYdh6WbB724pQdGyTVSIK-j6LUMaLXKuQtvA_E_BuzU/edit?usp=sharing">
+             Manual de usuario
+           </a>
+         </div>
        </div>
        <div class="modal-footer">
          <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('actions.CLOSE') }}</button>
