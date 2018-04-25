@@ -126,7 +126,6 @@
 							@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
 										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
 										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA') ||
-										$oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL') ||
 										($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) ||
 										App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
 									<div class="col-md-3">

@@ -1,6 +1,4 @@
-<?php
-
-namespace App\ERP;
+<?php namespace App\ERP;
 
 use Illuminate\Database\Eloquent\Model;
 

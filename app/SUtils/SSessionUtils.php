@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\User;
 use App\ERP\SYear;
+use App\WMS\SWarehouse;
 
 class SSessionUtils {
 
@@ -179,6 +180,40 @@ class SSessionUtils {
               return '';
           break;
       }
+  }
+
+  /**
+   * get the warehouses that the user has access, if a user is not received
+   * take the user of session
+   *
+   * @param  integer $iUser user id
+   *
+   * @return array array of integers with the id of the warehouses
+   */
+  public static function getUserWarehousesArray($iUser = 0)
+  {
+     $oUser = $iUser == 0 ? \Auth::user() : User::find($iUser);
+
+     $whss = array();
+     if (session('utils')->isSuperUser($oUser)) {
+        $warehouses = SWarehouse::where('is_deleted', false)->get();
+
+        foreach ($warehouses as $whs) {
+          array_push($whss, $whs->id_whs);
+        }
+
+        return $whss;
+     }
+
+     $whsAccess = $oUser->userWarehouses;
+
+     foreach ($whsAccess as $access) {
+        if (! $access->warehouses->is_deleted) {
+            array_push($whss, $access->whs_id);
+        }
+     }
+
+     return $whss;
   }
 
 }

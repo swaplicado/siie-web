@@ -65,7 +65,9 @@ class SStartController extends Controller
 
       if (session('utils')->isSuperUser(\Auth::user()))
       {
-        $lBranch = SBranch::where('is_deleted', 0)->where('partner_id', '=', session('partner')->id_partner )->paginate(10);
+        $lBranch = SBranch::where('is_deleted', 0)
+                          ->where('partner_id', '=', session('partner')->id_partner )
+                          ->paginate(10);
 
         $i = 0;
         foreach ($lBranch as $oBranch) {
@@ -80,7 +82,7 @@ class SStartController extends Controller
         }
 
         return view('start.branchwhs')
-                  ->with('branch',$lUserBranch)
+                  ->with('branch', $lUserBranch)
                   ->with('flag',0);
       }
       else
@@ -89,7 +91,8 @@ class SStartController extends Controller
         //                             ->paginate(10);
         $lUserBranch = \DB::table('erpu_access_branch')
                             ->join('erpu_branches', 'branch_id', '=', 'erpu_branches.id_branch')
-                            ->where('erpu_branches.partner_id',session('partner')->id_partner)
+                            ->where('erpu_branches.partner_id', session('partner')->id_partner)
+                            ->where('user_id', \Auth::user()->id)
                             ->get();
 
         return view('start.branchwhs')
@@ -130,7 +133,9 @@ class SStartController extends Controller
 
                 if (session('utils')->isSuperUser(\Auth::user()))
                 {
-                  $lWhs = SWarehouse::where('is_deleted', 0)->where('branch_id', '=', session('branch')->id_branch )->paginate(10);
+                  $lWhs = SWarehouse::where('is_deleted', 0)
+                                      ->where('branch_id', '=', session('branch')->id_branch)
+                                      ->paginate(10);
 
                   $i = 0;
                   foreach ($lWhs as $oWhs) {
@@ -150,11 +155,11 @@ class SStartController extends Controller
                 }
                 else
                 {
-                  // $lUserBranch = SUserBranch::where('user_id', '=', (\Auth::user()))
-                  //                             ->paginate(10);
-                  $lUserWhs = \DB::table('erpu_access_whs')
-                                      ->join('wmsu_whs', 'whs_id', '=', 'wmsu_whs.id_whs')
-                                      ->where('wmsu_whs.branch_id',session('branch')->id_branch)
+
+                  $lUserWhs = SUserWhs::join('wmsu_whs', 'whs_id', '=', 'wmsu_whs.id_whs')
+                                      ->where('wmsu_whs.branch_id', session('branch')->id_branch)
+                                      ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
+                                      ->where('user_id', \Auth::user()->id)
                                       ->get();
 
                   return view('start.whs')
