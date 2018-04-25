@@ -272,8 +272,8 @@ class SLocationsController extends Controller
       view()->share('barcode',$barcode);
       view()->share('data',$data);
       $pdf = PDF::loadView('vista_pdf_2');
-      $paper_size = array(0,0,612,750);
+      $paper_size = array(0,0,431,287);
       $pdf->setPaper($paper_size);
-      return $pdf->download('etiqueta.pdf');
+      return $pdf->stream();
     }
 }

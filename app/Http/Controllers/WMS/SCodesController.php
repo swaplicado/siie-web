@@ -101,7 +101,7 @@ class SCodesController extends Controller
         $pdf = PDF::loadView('vista_pdf_1');
         $paper_size = array(0,0,431,287);
         $pdf->setPaper($paper_size);
-        return $pdf->download('etiqueta.pdf');
+        return $pdf->stream();
       }
       if($request->etiqueta==1){
         $dataBarcode = SComponetBarcode::select('digits','id_component')
@@ -119,7 +119,7 @@ class SCodesController extends Controller
         $pdf = PDF::loadView('vista_pdf');
         $paper_size = array(0,0,215,141);
         $pdf->setPaper($paper_size);
-        return $pdf->download('etiqueta.pdf');
+        return $pdf->stream();
       }
 
       if($request->etiqueta==2){
@@ -134,9 +134,9 @@ class SCodesController extends Controller
         view()->share('barcode',$barcode);
         view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf_2');
-        $paper_size = array(0,0,612,750);
+        $paper_size = array(0,0,431,287);
         $pdf->setPaper($paper_size);
-        return $pdf->download('etiqueta.pdf');
+        return $pdf->stream();
       }
 
 

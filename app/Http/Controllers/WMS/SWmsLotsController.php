@@ -269,6 +269,6 @@ class SWmsLotsController extends Controller
        $paper_size = array(0,0,215,141);
        $pdf->setPaper($paper_size);
 
-       return $pdf->download('etiqueta.pdf');
+       return $pdf->stream();
      }
 }

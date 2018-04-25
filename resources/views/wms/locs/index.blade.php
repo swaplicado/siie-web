@@ -52,7 +52,7 @@
 						@include('templates.list.options')
 					</td>
 					<td>
-							<a href="{{ route('wms.locations.barcode', $location->id_whs_location) }}" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
+							<a href="{{ route('wms.locations.barcode', $location->id_whs_location) }}" target="_blank" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 					</td>
 				</tr>
 			@endforeach

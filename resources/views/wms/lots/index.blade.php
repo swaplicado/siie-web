@@ -52,7 +52,7 @@
 						@include('templates.list.options')
 					</td>
 					<td>
-							<a href="{{ route('wms.lots.barcode', $lot->id_lot) }}" class="btn btn-success btn-xs">
+							<a href="{{ route('wms.lots.barcode', $lot->id_lot) }}" target="_blank" class="btn btn-success btn-xs">
 								<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
 							</a>
 					</td>

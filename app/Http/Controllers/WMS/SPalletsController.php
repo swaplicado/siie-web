@@ -257,6 +257,6 @@ class SPalletsController extends Controller
       $pdf = PDF::loadView('vista_pdf_1');
       $paper_size = array(0,0,431,287);
       $pdf->setPaper($paper_size);
-      return $pdf->download('etiqueta.pdf');
+      return $pdf->stream();
     }
 }
