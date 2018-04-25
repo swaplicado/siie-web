@@ -9,6 +9,7 @@ use App\SUtils\SGuiUtils;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
+use App\Database\Config;
 
 use App\SCore\SMovsManagment;
 
@@ -416,7 +417,7 @@ class SSegregationCore
                 ->leftJoin('wms_lots AS wl', 'wsr.lot_id', '=', 'wl.id_lot')
                 ->join('wms_pallets AS wp', 'wsr.pallet_id', '=', 'wp.id_pallet')
                 ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event')
-                ->join('ssystem.users AS us', 'wsr.updated_by_id', '=', 'us.id');
+                ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users AS us', 'wsr.updated_by_id', '=', 'us.id');
   $query = $query->where('ei.is_deleted', false)
                 ->where('ws.is_deleted', false)
                 ->select(\DB::raw($sSelect));
