@@ -68,16 +68,13 @@ class SWmsLotsController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $items = SItem::select('id_item', \DB::raw("CONCAT(code, ' - ', name)as item"))
-                        ->where('is_deleted', false)
+        $items = SItem::select('id_item', \DB::raw("CONCAT(erpu_items.code, '_', erpu_items.name, '-', eu.code) as item"))
+                        ->join('erpu_units AS eu', 'unit_id', '=', 'eu.id_unit')
+                        ->where('erpu_items.is_deleted', false)
                         ->lists('item','id_item');
-        $units = SUnit::select('id_unit', \DB::raw("CONCAT(code,' - ', name)as unit"))
-                        ->where('is_deleted', false)
-                        ->lists('unit','id_unit');
 
         return view('wms.lots.createEdit')
-                      ->with('items', $items)
-                      ->with('units', $units);
+                      ->with('items', $items);
     }
 
     /**
@@ -91,6 +88,7 @@ class SWmsLotsController extends Controller
         $lot = new SWmsLot($request->all());
 
         $lot->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $lot->unit_id = $lot->item->unit_id;
         $lot->updated_by_id = \Auth::user()->id;
         $lot->created_by_id = \Auth::user()->id;
 
@@ -138,18 +136,15 @@ class SWmsLotsController extends Controller
         $lot->userCreation;
         $lot->userUpdate;
 
-        $items = SItem::orderBy('name', 'ASC')
-                        ->where('is_deleted', false)
-                        ->lists('name', 'id_item');
-        $units = SUnit::orderBy('name', 'ASC')
-                          ->where('is_deleted', false)
-                          ->lists('name', 'id_unit');
+        $items = SItem::select('id_item', \DB::raw("CONCAT(erpu_items.code, '_', erpu_items.name, '-', eu.code) as item"))
+                        ->join('erpu_units AS eu', 'unit_id', '=', 'eu.id_unit')
+                        ->where('erpu_items.is_deleted', false)
+                        ->lists('item','id_item');
 
 
         return view('wms.lots.createEdit')
                       ->with('lots', $lot)
-                      ->with('items', $items)
-                      ->with('units', $units);
+                      ->with('items', $items);
     }
 
     /**
@@ -163,6 +158,7 @@ class SWmsLotsController extends Controller
     {
         $lot = SWmsLot::find($id);
         $lot->fill($request->all());
+        $lot->unit_id = $lot->item->unit_id;
         $lot->updated_by_id = \Auth::user()->id;
         $lot->created_by_id = \Auth::user()->id;
 

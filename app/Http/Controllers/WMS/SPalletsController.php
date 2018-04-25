@@ -69,16 +69,13 @@ class SPalletsController extends Controller
           return redirect()->route('notauthorized');
         }
 
-        $items = SItem::select('id_item', \DB::raw("CONCAT(code, ' - ', name)as item"))
-                        ->where('is_deleted', false)
+        $items = SItem::select('id_item', \DB::raw("CONCAT(erpu_items.code, '_', erpu_items.name, '-', eu.code) as item"))
+                        ->join('erpu_units AS eu', 'unit_id', '=', 'eu.id_unit')
+                        ->where('erpu_items.is_deleted', false)
                         ->lists('item','id_item');
-        $units = SUnit::select('id_unit', \DB::raw("CONCAT(code,' - ', name)as unit"))
-                        ->where('is_deleted', false)
-                        ->lists('unit','id_unit');
 
         return view('wms.pallets.createEdit')
-                      ->with('items', $items)
-                      ->with('units', $units);
+                      ->with('items', $items);
     }
 
     /**
@@ -92,6 +89,7 @@ class SPalletsController extends Controller
         $pallets = new SPallet($request->all());
 
         $pallets->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $pallets->unit_id = $pallets->item->unit_id;
         $pallets->updated_by_id = \Auth::user()->id;
         $pallets->created_by_id = \Auth::user()->id;
 
@@ -139,13 +137,14 @@ class SPalletsController extends Controller
         $pallets->userCreation;
         $pallets->userUpdate;
 
-        $items = SItem::orderBy('name', 'ASC')->lists('name', 'id_item');
-        $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
+        $items = SItem::select('id_item', \DB::raw("CONCAT(erpu_items.code, '_', erpu_items.name, '-', eu.code) as item"))
+                        ->join('erpu_units AS eu', 'unit_id', '=', 'eu.id_unit')
+                        ->where('erpu_items.is_deleted', false)
+                        ->lists('item','id_item');
 
         return view('wms.pallets.createEdit')
-                      ->with('pallets',$pallets)
-                      ->with('items', $items)
-                      ->with('units', $units);
+                      ->with('pallets', $pallets)
+                      ->with('items', $items);
     }
 
     /**
@@ -159,6 +158,7 @@ class SPalletsController extends Controller
     {
       $pallet = SPallet::find($id);
       $pallet->fill($request->all());
+      $pallets->unit_id = $pallets->item->unit_id;
       $pallet->updated_by_id = \Auth::user()->id;
       $pallet->created_by_id = \Auth::user()->id;
 
