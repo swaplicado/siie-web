@@ -36,19 +36,20 @@ return [
     'MVT_MFG_TP_PRO' => '2', // products
 
     // applies only for adjustments
-    'MVT_ADJ_TP_IFI' => '1', // initial and final inventory
-    'MVT_ADJ_TP_DIS' => '2', // discrepancy
-    'MVT_ADJ_TP_MAL' => '3', // malfunction
-    'MVT_ADJ_TP_OBS' => '4', // obsolescence
-    'MVT_ADJ_TP_EXP' => '5', // expiration
-    'MVT_ADJ_TP_DAM' => '6', // damage
-    'MVT_ADJ_TP_COM' => '7', // commercial sample
-    'MVT_ADJ_TP_PRO' => '8', // promotional sample
-    'MVT_ADJ_TP_IYD' => '9', // investigation and development
-    'MVT_ADJ_TP_LAB' => '10', // laboratory
-    'MVT_ADJ_TP_TAS' => '11', // tasting
-    'MVT_ADJ_TP_DON' => '12', // donation
-    'MVT_ADJ_TP_OTH' => '13', // others
+    'MVT_ADJ_TP_IFI' => '2', // initial and final inventory
+    'MVT_ADJ_TP_DIS' => '3', // discrepancy
+    'MVT_ADJ_TP_MAL' => '4', // malfunction
+    'MVT_ADJ_TP_OBS' => '5', // obsolescence
+    'MVT_ADJ_TP_EXP' => '6', // expiration
+    'MVT_ADJ_TP_DAM' => '7', // damage
+    'MVT_ADJ_TP_COM' => '8', // commercial sample
+    'MVT_ADJ_TP_PRO' => '9', // promotional sample
+    'MVT_ADJ_TP_IYD' => '10', // investigation and development
+    'MVT_ADJ_TP_LAB' => '11', // laboratory
+    'MVT_ADJ_TP_TAS' => '12', // tasting
+    'MVT_ADJ_TP_DON' => '13', // donation
+    'MVT_ADJ_TP_OTH' => '14', // others
+    'MVT_ADJ_TP_PRO' => '15', // others
 
     // applies only for expenses
     'MVT_EXP_TP_PUR' => '1', // purchases

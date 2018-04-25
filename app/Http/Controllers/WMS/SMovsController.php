@@ -263,6 +263,7 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_TP_IN_ADJ'):
           case \Config::get('scwms.MVT_TP_OUT_ADJ'):
             $mvtComp = SMvtAdjType::where('is_deleted', false)->lists('name', 'id_mvt_adj_type');
+            $iMvtSubType = \Config::get('scwms.MVT_ADJ_TP_PRO');
             break;
 
           case \Config::get('scwms.MVT_TP_OUT_TRA'):
