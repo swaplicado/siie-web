@@ -28,7 +28,7 @@ class SWmsLotsController extends Controller
 
     public function __construct()
     {
-         $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CENTRAL_CONFIG'), \Config::get('scsys.MODULES.WMS'));
+         $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.CONFIG_WHS_STD'), \Config::get('scsys.MODULES.WMS'));
 
          $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
