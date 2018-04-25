@@ -47,7 +47,10 @@
 						<div class="col-md-4">
 
 							{!! Form::select('item_id', $items, isset($pallets) ? $pallets->item->id_item : null ,
-																	['class'=>'form-control select-item', 'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'), 'required']) !!}
+																	['class'=>'form-control select-item',
+																	'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'),
+																	isset($pallets) ? 'disabled' : '',
+																	'required']) !!}
 
 						</div>
 

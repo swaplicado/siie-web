@@ -70,7 +70,10 @@
 						<div class="col-md-8">
 
 							{!! Form::select('item_id', $items, isset($lots) ? $lots->item->id_item : null ,
-											['class'=>'form-control select-item', 'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'), 'required']) !!}
+											['class'=>'form-control select-item',
+											isset($lots) ? 'disabled' : '',
+											'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'),
+											'required']) !!}
 
 						</div>
 
