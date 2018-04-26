@@ -31,6 +31,7 @@
 		<table id="docTable" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
+								<th data-priority="2">{{ trans('userinterface.labels.FOLIO') }}</th>
 		            <th data-priority="2">{{ trans('siie.labels.DATE') }}</th>
 		            <th data-priority="1">{{ trans('siie.labels.DATE_DOC') }}</th>
 		            <th data-priority="1">{{ trans('siie.labels.PARTNER') }}</th>
@@ -45,7 +46,6 @@
 		            <th>{{ trans('siie.labels.CUR_ABB') }}</th>
 		            <th>{{ trans('siie.labels.STATUS') }}</th>
 		            <th>{{ trans('siie.labels.SEE') }}</th>
-		            <th>{{ trans('siie.labels.SUPPLY') }}</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -53,6 +53,7 @@
 						<tr>
                 {{-- <td class="small">{{ \Carbon\Carbon::parse($doc->dt_date)->format('d-m-Y') }}</td>
                 <td class="small">{{ \Carbon\Carbon::parse($doc->dt_doc)->format('d-m-Y') }}</td> --}}
+                <td class="small">{{ $doc->service_num == '' ? $doc->num : $doc->service_num.'-'.$doc->num}}</td>
                 <td class="small">{{ $doc->dt_date }}</td>
                 <td class="small">{{ $doc->dt_doc }}</td>
 		            <td class="small">{{ $doc->name }}</td>
@@ -76,13 +77,6 @@
 									<a href="{{ route('siie.docs.view', $doc->id_document) }}" title="Ver documento"
 																															class="btn btn-info btn-sm">
 										<span class=" glyphicon glyphicon-eye-open" aria-hidden = "true"/>
-									</a>
-								</td>
-								<td>
-									{{-- {{ dd($doc->id_document) }} --}}
-									<a href="{{ route('wms.movs.supply', [\Config::get('scwms.MVT_TP_IN_PUR'), $title, $doc->id_document]) }}" title="Surtir documento"
-																															class="btn btn-default btn-sm">
-										<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 									</a>
 								</td>
 		        </tr>

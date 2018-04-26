@@ -43,11 +43,6 @@
 			            <th>Avance %</th>
 			            <th>Cant. pendiente</th>
 									<th>Ver</th>
-									@if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'))
-										<th data-priority="1">Devolver</th>
-									@else
-										<th data-priority="1">Surtir</th>
-									@endif
 									<th>Ligar</th>
 									<th>Cerrar</th>
 								@else
@@ -59,6 +54,11 @@
 									<th>Pendiente</th>
 									<th>Un.</th>
 								@endif
+								@if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'))
+									<th data-priority="1">Devolver</th>
+								@else
+									<th data-priority="1">Surtir</th>
+								@endif
 								<th>ID ERP</th>
 								<th>Status</th>
 		        </tr>
@@ -68,7 +68,7 @@
 						<tr>
                 {{-- <td class="small">{{ \Carbon\Carbon::parse($doc->dt_date)->format('d-m-Y') }}</td>
                 <td class="small">{{ \Carbon\Carbon::parse($doc->dt_doc)->format('d-m-Y') }}</td> --}}
-                <td class="small">{{ $doc->num }}</td>
+                <td class="small">{{ $doc->folio }}</td>
                 <td class="small">{{ $doc->dt_doc }}</td>
                 <td class="small">{{ $doc->num_src }}</td>
 		            <td class="small">{{ $doc->name }}</td>
@@ -82,55 +82,6 @@
 										<a href="{{ route('siie.docs.view', $doc->id_document) }}" title="Ver documento"
 																																class="btn btn-info btn-sm">
 											<span class=" glyphicon glyphicon-eye-open" aria-hidden = "true"/>
-										</a>
-									</td>
-									<td>
-										{{-- {{ dd($doc->id_document) }} --}}
-											<?php
-												if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
-														if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
-																		$iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_PUR');
-														}
-														else {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_IN_PUR');
-														}
-
-
-												}
-												else {
-														if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
-																	$iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_IN_SAL');
-														}
-														else {
-																$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_SAL');
-														}
-												}
-
-												switch ($iDocClass) {
-													case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
-														$iDocSource = $doc->doc_src_id;
-														$iDocDestiny = $doc->id_document;
-														break;
-													case \Config::get('scsiie.DOC_CLS.ORDER'):
-														$iDocSource = 0;
-														$iDocDestiny = $doc->id_document;
-														break;
-													case \Config::get('scsiie.DOC_CLS.ADJUST'):
-														$iDocSource = $doc->doc_src_id;
-														$iDocDestiny = $doc->id_document;
-														break;
-
-													default:
-														$iDocSource = 1;
-														$iDocDestiny = 1;
-														break;
-												}
-										 ?>
-										<a href="{{ route('wms.movs.supply', [$iMvtInvType, $title, $doc->id_document]) }}" title="Surtir documento"
-																																class="btn btn-default btn-sm">
-											<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 										</a>
 									</td>
 									<td>
@@ -160,6 +111,55 @@
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->pending, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td class="small">{{ $doc->unit }}</td>
 								@endif
+								<td>
+									{{-- {{ dd($doc->id_document) }} --}}
+									<?php
+									if ($iDocCategory == \Config::get('scsiie.DOC_CAT.PURCHASES')) {
+										if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
+										$iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
+											$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_PUR');
+										}
+										else {
+											$iMvtInvType = \Config::get('scwms.MVT_TP_IN_PUR');
+										}
+
+
+									}
+									else {
+										if ($iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
+										$iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE')) {
+											$iMvtInvType = \Config::get('scwms.MVT_TP_IN_SAL');
+										}
+										else {
+											$iMvtInvType = \Config::get('scwms.MVT_TP_OUT_SAL');
+										}
+									}
+
+									switch ($iDocClass) {
+										case \Config::get('scsiie.DOC_CLS.DOCUMENT'):
+										$iDocSource = $doc->doc_src_id;
+										$iDocDestiny = $doc->id_document;
+										break;
+										case \Config::get('scsiie.DOC_CLS.ORDER'):
+										$iDocSource = 0;
+										$iDocDestiny = $doc->id_document;
+										break;
+										case \Config::get('scsiie.DOC_CLS.ADJUST'):
+										$iDocSource = $doc->doc_src_id;
+										$iDocDestiny = $doc->id_document;
+										break;
+
+										default:
+										$iDocSource = 1;
+										$iDocDestiny = 1;
+										break;
+									}
+									?>
+									<a href="{{ route('wms.movs.supply', [$iMvtInvType, $title, $doc->id_document]) }}" title="Surtir documento"
+										class="btn btn-default btn-sm">
+										<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
+									</a>
+								</td>
 								<td class="small">{{ $doc->external_id }}</td>
 								<td class="small">
 									@if (! $doc->is_deleted)
