@@ -131,8 +131,8 @@ class SImportDocuments
          // output data of each row
          while($row = $result->fetch_assoc()) {
              if (array_key_exists($row["id_doc"], $lDocuments)) {
-                if ($row["ts_edit"] > $lDocuments[$row["id_doc"]]->updated_at ||
-                      $row["ts_del"] > $lDocuments[$row["id_doc"]]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
 
                     $lDocuments[$row["id_doc"]]->dt_date = $row["dt"];
                     $lDocuments[$row["id_doc"]]->dt_doc = $row["dt_doc"];
