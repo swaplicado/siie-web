@@ -66,6 +66,7 @@ class SImportDocuments
             dt,
             dt_doc,
             num,
+            num_ser,
             stot_r,
             tax_charged_r,
             tax_retained_r,
@@ -130,12 +131,13 @@ class SImportDocuments
          // output data of each row
          while($row = $result->fetch_assoc()) {
              if (array_key_exists($row["id_doc"], $lDocuments)) {
-                if ($row["ts_edit"] > $lDocuments[$row["id_doc"]]->updated_at ||
-                      $row["ts_del"] > $lDocuments[$row["id_doc"]]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
 
                     $lDocuments[$row["id_doc"]]->dt_date = $row["dt"];
                     $lDocuments[$row["id_doc"]]->dt_doc = $row["dt_doc"];
                     $lDocuments[$row["id_doc"]]->num = $row["num"];
+                    $lDocuments[$row["id_doc"]]->service_num = $row["num_ser"];
                     $lDocuments[$row["id_doc"]]->subtotal = $row["stot_r"];
                     $lDocuments[$row["id_doc"]]->tax_charged = $row["tax_charged_r"];
                     $lDocuments[$row["id_doc"]]->tax_retained = $row["tax_retained_r"];
@@ -208,6 +210,7 @@ class SImportDocuments
        $oDocument->dt_date = $oSiieDocument["dt"];
        $oDocument->dt_doc = $oSiieDocument["dt_doc"];
        $oDocument->num = $oSiieDocument["num"];
+       $oDocument->service_num = $oSiieDocument["num_ser"];
        $oDocument->subtotal = $oSiieDocument["stot_r"];
        $oDocument->tax_charged = $oSiieDocument["tax_charged_r"];
        $oDocument->tax_retained = $oSiieDocument["tax_retained_r"];

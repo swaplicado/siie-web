@@ -13,6 +13,7 @@ class SDocument extends SModel {
                           'dt_date',
                           'dt_doc',
                           'num',
+                          'service_num',
                           'subtotal',
                           'tax_charged',
                           'tax_retained',
