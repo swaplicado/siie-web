@@ -62,43 +62,15 @@ use PDF;
    */
   public static function generateItemBarcode($dataBarcode,$data){
       $auxLot = "";
-      $auxTextLot = "";
-      $auxItem = "";
-      $auxUnit = "";
-
       $numLot = $dataBarcode[1];
-      $textLot = $dataBarcode[2];
-      $numItem = $dataBarcode[3];
-      $numUnit = $dataBarcode[4];
-
-
       $digitLot = strlen($data->id_lot);
-      $digitItem = strlen($data->item_id);
-      $digitUnit = strlen($data->unit_id);
-      $digitTextLot = strlen($data->lot);
-
-
-      if($digitTextLot>=$textLot){
-          $auxTextLot = substr($data->lot,0,$textLot);
-      }
-      else{
-          $auxTextLot = SBarcode::fill($digitTextLot,$textLot);
-          $auxTextLot = $auxTextLot.$data->lot;
-      }
-
       $auxLot = SBarcode::fill($digitLot,$numLot);
-      $auxItem = SBarcode::fill($digitItem,$numItem);
-      $auxUnit = SBarcode::fill($digitUnit,$numUnit);
-      //dd($auxLot);
-      //dd($auxTextLot);
-      //dd($auxItem);
-      //dd($auxUnit);
-      $barcode = '1'.$auxLot.$data->id_lot.$auxTextLot.$auxItem.$data->item_id.$auxUnit.$data->unit_id;
+
+      $barcode = '1'.$auxLot.$data->id_lot;
 
       return $barcode;
 
   }
-
 
   /**
    * [generatePalletBarcode description]
@@ -109,40 +81,11 @@ use PDF;
    */
   public static function generatePalletBarcode($dataBarcode,$data){
       $auxPallet = "";
-      $auxTextPallet = "";
-
-
       $numPallet = $dataBarcode[5];
-      $textPallet = $dataBarcode[6];
-      $numItem = $dataBarcode[7];
-      $numUnit = $dataBarcode[8];
-
-
-
       $digitPallet = strlen($data->id_pallet);
-      $digitTextPallet = strlen($data->pallet);
-      $digitUnit = strlen($data->unit_id);
-      $digitItem = strlen($data->item_id);
-
-      if($digitTextPallet>=$textPallet){
-        $auxTextPallet = substr($data->pallet,0,$textPallet);
-      }
-      else{
-        $auxTextPallet = SBarcode::fill($digitTextPallet,$textPallet);
-        $auxTextPallet = $auxTextPallet.$data->pallet;
-      }
-
-
       $auxPallet = SBarcode::fill($digitPallet,$numPallet);
 
-      $auxUnit = SBarcode::fill($digitUnit,$numUnit);
-      $auxItem = SBarcode::fill($digitItem,$numItem);
-
-      //dd($auxLot);
-      //dd($auxTextLot);
-      //dd($auxItem);
-      //dd($auxUnit);
-      $barcode = '2'.$auxPallet.$data->id_pallet.$auxTextPallet.$auxItem.$data->item_id.$auxUnit.$data->unit_id;
+      $barcode = '2'.$auxPallet.$data->id_pallet;
 
       return $barcode;
 
@@ -187,35 +130,12 @@ use PDF;
                                       ->where('type_barcode','Item')
                                       ->get()->lists('digits','id_component');
       $numLot = $dataBarcode[1];
-      $numtextLot = $dataBarcode[2];
-      $numItem = $dataBarcode[3];
-      $numUnit = $dataBarcode[4];
-
       $idLot = substr($code, 0, $numLot);
-      $textLot = substr($code, $numLot,$numtextLot);
-      $idItem = substr($code, $numLot+$numtextLot, $numItem);
-      $idUnit = substr($code, $numLot+$numtextLot+$numItem, $numUnit);
-
       $Lot = SBarcode::remove($numLot,$idLot);
-      $Text = SBarcode::remove($numtextLot,$textLot);
-      $Item = SBarcode::remove($numItem,$idItem);
-      $Unit = SBarcode::remove($numUnit,$idUnit);
 
       $answer = SWmsLot::find($Lot);
-      if($answer != null){
-
-          if($answer->item_id == $Item && $answer->unit_id == $Unit)
-          {
-                return $answer;
-          }
-          $answer = SItem::where('id_lot',$Lot)
-                            ->first();
-
-      }
 
       return $answer;
-
-
 
     }
     //barcode Pallets
@@ -227,32 +147,9 @@ use PDF;
 
 
       $numPallet = $dataBarcode[5];
-      $numtextPallet = $dataBarcode[6];
-      $numItem = $dataBarcode[7];
-      $numUnit = $dataBarcode[8];
-
       $idPallet = substr($code, 0, $numPallet);
-      $textPallet = substr($code, $numPallet,$numtextPallet);
-      $idItem = substr($code, $numPallet+$numtextPallet, $numItem);
-      $idUnit = substr($code, $numPallet+$numtextPallet+$numItem, $numUnit);
-
       $Pallet = SBarcode::remove($numPallet,$idPallet);
-      $Text = SBarcode::remove($numtextPallet,$textPallet);
-      $Item = SBarcode::remove($numItem,$idItem);
-      $Unit = SBarcode::remove($numUnit,$idUnit);
-
       $answer = SPallet::find($Pallet);
-
-      if($answer != null){
-
-        if($answer->item_id == $Item && $answer->unit_id == $Unit)
-        {
-          return $answer;
-        }
-
-        $answer = SItem::where('id_lot',$Item)
-                          ->first();
-      }
 
       return $answer;
 
@@ -275,16 +172,6 @@ use PDF;
       $Loc = SBarcode::remove($numLoc,$idLoc);
 
       $answer = SLocation::find($Loc);
-
-      if($answer != null){
-
-        if($answer->whs_id == $Whs)
-        {
-          return $answer;
-        }
-
-        $answer = null;
-      }
 
       return $answer;
 

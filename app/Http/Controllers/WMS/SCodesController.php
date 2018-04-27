@@ -117,7 +117,7 @@ class SCodesController extends Controller
         view()->share('barcode',$barcode);
         view()->share('data',$data);
         $pdf = PDF::loadView('vista_pdf');
-        $paper_size = array(0,0,215,141);
+        $paper_size = array(0,0,215,130);
         $pdf->setPaper($paper_size);
         return $pdf->stream();
       }
