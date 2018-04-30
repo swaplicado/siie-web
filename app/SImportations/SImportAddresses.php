@@ -108,8 +108,8 @@ class SImportAddresses {
          while($row = $result->fetch_assoc()) {
            $rowId = $row["id_bpb"];
              if (array_key_exists($rowId, $lAddresses)) {
-                if ($row["ts_edit"] > $lAddresses[$row["id_bpb"]]->updated_at ||
-                      $row["ts_del"] > $lAddresses[$row["id_bpb"]]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
 
                     $lAddresses[$rowId]->name = $row["bpb_add"];
                     $lAddresses[$rowId]->street = $row["street"];

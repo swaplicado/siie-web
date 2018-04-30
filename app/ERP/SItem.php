@@ -11,6 +11,7 @@ class SItem extends SModel {
   protected $fillable = [
                           'code',
                           'name',
+                          'short_name',
                           'length',
                           'surface',
                           'volume',

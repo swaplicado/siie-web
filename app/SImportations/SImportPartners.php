@@ -61,8 +61,8 @@ class SImportPartners {
          // output data of each row
          while($row = $result->fetch_assoc()) {
              if (array_key_exists($row["id_bp"], $lPartners)) {
-                if ($row["ts_edit"] > $lPartners[$row["id_bp"]]->updated_at ||
-                      $row["ts_del"] > $lPartners[$row["id_bp"]]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
                     $lPartners[$row["id_bp"]]->code = $row["fiscal_id"];
                     $lPartners[$row["id_bp"]]->name = $row["bp"];
                     $lPartners[$row["id_bp"]]->last_name = $row["lastname"];
