@@ -56,7 +56,7 @@
 		    <tbody>
 					@foreach ($lMovs as $mov)
 						<tr>
-								<td>{{ $mov->folio }}</td>
+								<td>{{ $mov->mvtType->code.'-'.$mov->folio }}</td>
 								<td>{{ \Carbon\Carbon::parse($mov->dt_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 								<td align="right">{{ session('utils')->formatNumber($mov->total_amount, \Config::get('scsiie.FRMT.AMT')) }}</td>

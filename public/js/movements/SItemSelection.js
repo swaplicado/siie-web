@@ -224,7 +224,7 @@ class SItemSelection {
         obElement.iPalletId = oPallet.id_pallet;
         obElement.bIsLot = oPallet.item.is_lot;
         obElement.bIsBulk = oPallet.item.is_bulk;
-        obElement.sPallet = oPallet.pallet;
+        obElement.sPallet = oPallet.id_pallet;
 
         obElement.sItem = oPallet.item.name;
         obElement.sItemCode = oPallet.item.code;
@@ -332,9 +332,9 @@ $('#select_button').on('click', function(e) {
             break;
 
       case globalData.lElementsType.PALLETS:
-            guiFunctions.setPalletNameLabel(row.pallet);
+            guiFunctions.setPalletNameLabel(row.id_pallet);
             elementToAdd.iPalletId = row.id_pallet;
-            elementToAdd.sPallet = row.pallet;
+            elementToAdd.sPallet = row.id_pallet;
 
             break;
 

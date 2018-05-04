@@ -386,6 +386,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.edit.validaterow'
       ]);
+      Route::get('/movs/receivetransfer/{idMov}/data', [
+      	'uses' => 'WMS\SMovsController@getMovementData',
+      	'as' => 'wms.movs.receivetransfer.data'
+      ]);
 
       /*
       * Stock

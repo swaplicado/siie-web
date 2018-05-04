@@ -52,7 +52,7 @@ class SMovsUtils {
         break;
       case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
         $sSelect = $sSelect.',
-                    wp.pallet AS pallet,
+                    wp.id_pallet AS pallet,
                     wp.id_pallet';
         break;
 
@@ -62,7 +62,7 @@ class SMovsUtils {
 
     // if the destiny warehouse is zero, means that the movement is input
     // just return the elements filtered by the configuration of storage
-    if ($iWhsDes != '0' && $iWhsSrc == '0') {
+    if ($iWhsDes != '0' && ($iWhsSrc == '0' || $iWhsSrc == session('transit_whs')->id_whs)) {
       $lItemContainers = SMovsUtils::getContainerConfiguration($iWhsDes);
 
       $lElements = SMovsUtils::getFilteredElements($lItemContainers, $sSelect, $iElementType);
@@ -72,7 +72,7 @@ class SMovsUtils {
 
     //if the movement is output filter the elements by the configuration and
     //by the stock
-    if ($iWhsSrc != '0') {
+    if ($iWhsSrc != '0' && $iWhsSrc != session('transit_whs')->id_whs) {
       if ($iWhsDes != '0') {
         $lItemContainers = SMovsUtils::getContainerConfiguration($iWhsDes);
       }
@@ -396,7 +396,7 @@ class SMovsUtils {
                                      ws.item_id,
                                      ws.unit_id,
                                      wwl.code as location,
-                                     wp.pallet,
+                                     IF (wp.id_pallet = 1, \'SIN TARIMA\', wp.id_pallet) as pallet,
                                      wl.lot,
                                      wl.dt_expiry,
                                      ei.code as item_code,

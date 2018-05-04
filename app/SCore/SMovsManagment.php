@@ -12,6 +12,7 @@ use App\WMS\SFolio;
 use App\ERP\SDocument;
 use App\ERP\SDocumentRow;
 use App\WMS\SStock;
+use App\WMS\SExternalTransfer;
 
 use App\SUtils\SStockUtils;
 
@@ -52,6 +53,17 @@ class SMovsManagment {
               }
             }
           }
+          else {
+              foreach ($mov->aAuxRows as $row) {
+                $aErrors = SStockUtils::validateInputPallet($mov->year_id, $mov->branch_id, $mov->whs_id,
+                                                        $row, $mov->mvt_whs_type_id, $mov->id_mvt);
+
+                if(sizeof($aErrors) > 0)
+                {
+                  return $aErrors;
+                }
+              }
+          }
         }
 
         if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
@@ -76,7 +88,6 @@ class SMovsManagment {
         return $movements[0]->folio;
     }
 
-
     private function saveMovement($movements, $oRequest, $iOperation)
     {
         try
@@ -84,6 +95,8 @@ class SMovsManagment {
           \DB::connection('company')->transaction(function() use ($movements, $iOperation, $oRequest) {
             $i = 0;
             $iSrcId = 0;
+            $lSavedMovements = array();
+
             foreach ($movements as $mov) {
                 $movement = clone $mov;
 
@@ -131,8 +144,12 @@ class SMovsManagment {
                       session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'));
                   }
                 }
+
                 $i++;
+                array_push($lSavedMovements, $movement);
             }
+
+            $this->createExternalTransfer($lSavedMovements, $iOperation, $movements[0]->iAuxBranchDes);
           });
        }
        catch (\Exception $e)
@@ -140,7 +157,6 @@ class SMovsManagment {
            dd($e);
        }
     }
-
 
     public function saveLots($lNewLots = []) {
       try {
@@ -511,13 +527,8 @@ class SMovsManagment {
             $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
             $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
             $oMirrorMovement->whs_id = $iWhsDes;
-
-            if ($iWhsDes == session('transit_whs')->id_whs) {
-              $oMirrorMovement->branch_id = $oMovement->iAuxBranchDes;
-            }
-            else {
-              $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
-            }
+            $oWhs = SWarehouse::find($iWhsDes);
+            $oMirrorMovement->branch_id = $oWhs->branch_id;
         }
 
         $iWhsSrcDefLocation = 0;
@@ -664,6 +675,24 @@ class SMovsManagment {
        catch (\Exception $e)
        {
            return $e;
+       }
+    }
+
+    private function createExternalTransfer($lMovements = [], $iOperation = 0, $iBranchDes = 0)
+    {
+       if (sizeof($lMovements) > 1) {
+         if ($lMovements[1]->whs_id == session('transit_whs')->id_whs
+              && $iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
+            $extTransfer = new SExternalTransfer();
+            $extTransfer->is_deleted = false;
+            $extTransfer->src_branch_id = $lMovements[0]->branch_id;
+            $extTransfer->des_branch_id = $iBranchDes;
+            $extTransfer->mvt_reference_id = $lMovements[1]->id_mvt;
+            $extTransfer->created_by_id = \Auth::user()->id;
+            $extTransfer->updated_by_id = \Auth::user()->id;
+
+            $extTransfer->save();
+         }
        }
     }
 }

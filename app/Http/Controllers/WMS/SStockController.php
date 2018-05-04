@@ -63,7 +63,7 @@ class SStockController extends Controller
           $orderBy2 = 'ws.item_id';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
-          $select = $select.', '.'wp.pallet as pallet, ww.name as warehouse';
+          $select = $select.', '.'wp.id_pallet as pallet, ww.name as warehouse';
           $groupBy = ['ws.pallet_id','ws.item_id','ws.whs_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.item_id';
@@ -127,7 +127,7 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
-          $select = $select.', '.'wp.pallet as pallet, wl.lot AS lot_, wl.dt_expiry';
+          $select = $select.', '.'wp.id_pallet as pallet, wl.lot AS lot_, wl.dt_expiry';
           $groupBy = ['ws.pallet_id','ws.lot_id','ws.item_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.lot_id';
@@ -136,7 +136,7 @@ class SStockController extends Controller
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_GENERAL'):
           $select = $select.' , wl.lot AS lot_, wl.dt_expiry ,
-                                wp.pallet as pallet,
+                                wp.id_pallet as pallet,
                                 wwl.name as location,
                                 ww.name as warehouse
                                 ';

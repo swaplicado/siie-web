@@ -6,21 +6,22 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
 use App\Http\Controllers\QMS\SSegregationsController;
-use App\SBarcode\SBarcode;
+use Laracasts\Flash\Flash;
 use App\Http\Requests\WMS\SMovRequest;
+use App\SBarcode\SBarcode;
 use App\SUtils\SStockUtils;
 use App\SCore\SMovsManagment;
 use App\SCore\SReceptions;
 use App\SCore\SLotsValidations;
-use App\SUtils\SMovsUtils;
-use App\ERP\SErpConfiguration;
+use App\SCore\StransfersCore;
 
-use Laracasts\Flash\Flash;
+use App\SUtils\SMovsUtils;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SProcess;
 use App\SUtils\SValidation;
 use App\SUtils\SGuiUtils;
+use App\ERP\SErpConfiguration;
 use App\ERP\SBranch;
 use App\ERP\SItem;
 use App\ERP\SDocument;
@@ -99,7 +100,9 @@ class SMovsController extends Controller
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC');
 
-        $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))->get();
+        $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))
+                        ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
+                        ->get();
 
         foreach ($lMovs as $mov) {
             $mov->order;
@@ -135,16 +138,30 @@ class SMovsController extends Controller
           return redirect()->route('notauthorized');
         }
 
+        $oCore = new StransfersCore();
+
         $iOperation = \Config::get('scwms.OPERATION_TYPE.CREATION');
         $bIsReceiveTransfer = true;
 
-        $oMovement = new SMovement();
-        $oMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
-        $oMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
-        $oMovement->mvt_whs_type_id = 1;
+        $oMovementSrc = $oCore->getReceivedFromMovement($iMov);
 
-        $oMovementSrc = SMovement::find($iMov);
         $oMovRef = SMovement::find($oMovementSrc->src_mvt_id);
+
+        foreach ($oMovementSrc->rows as $row) {
+           $row->location;
+           $row->quantity_received = $row->dReceived;
+           foreach ($row->lotRows as $lotRow) {
+              $lotRow->lot;
+              $lotRow->quantity_received = $lotRow->dReceived;
+           }
+        }
+
+        $oMovement = new SMovement();
+        $oMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_OUT');
+        $oMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_OUT_TRA');
+        $oMovement->mvt_trn_type_id = \Config::get('scwms.MVT_INTERNAL_TRANSFER');
+        $oMovement->src_mvt_id = $oMovementSrc->id_mvt;
+        $oMovement->branch_id = session('branch')->id_branch;
 
         $iWhsSrc = session('transit_whs')->id_whs;
         $iWhsDes = 0;
@@ -156,12 +173,13 @@ class SMovsController extends Controller
                                 ->lists('warehouse', 'id_whs');
 
         return view('wms.movs.transfers.receivetransfer')
-                                        ->with('oMovement', $oMovement)
                                         ->with('oMovementSrc', $oMovementSrc)
+                                        ->with('oMovement', $oMovement)
                                         ->with('iWhsSrc', $iWhsSrc)
                                         ->with('oMovRef', $oMovRef)
                                         ->with('iWhsDes', $iWhsDes)
                                         ->with('warehouses', $warehouses)
+                                        ->with('iOperation', $iOperation)
                                         ->with('sTitle', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'))
                                         ;
     }
@@ -385,10 +403,13 @@ class SMovsController extends Controller
             $movement->mvt_adj_type_id = $oMovementJs->iMvtSubType;
             break;
 
+          case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_IN_TRA'):
+            $movement->mvt_adj_type_id = 1;
+            break;
+
           case \Config::get('scwms.MVT_TP_IN_CON'):
           case \Config::get('scwms.MVT_TP_IN_PRO'):
-          case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_OUT_CON'):
           case \Config::get('scwms.MVT_TP_OUT_PRO'):
             $movement->mvt_mfg_type_id = $oMovementJs->iMvtSubType;
@@ -411,7 +432,7 @@ class SMovsController extends Controller
         $movement->iAuxBranchDes = $oMovementJs->iBranchDes;
         $movement->year_id = session('work_year');
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
-        $movement->src_mvt_id = 1;
+        $movement->src_mvt_id = $movement->src_mvt_id > 0 ? $movement->src_mvt_id : 1;
         $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, $oMovementJs->iDocumentId);
         $movement->auth_status_by_id = 1;
         $movement->closed_shipment_by_id = 1;

@@ -87,20 +87,20 @@ class SPallet extends SModel {
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                        ->where('pallet', 'LIKE', "%".$name."%");
+                        ->where('id_pallet', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
             return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                          ->where('pallet', 'LIKE', "%".$name."%");
+                          ->where('id_pallet', 'LIKE', "%".$name."%");
           break;
 
         case \Config::get('scsys.FILTER.ALL'):
-            return $query->where('pallet', 'LIKE', "%".$name."%");
+            return $query->where('id_pallet', 'LIKE', "%".$name."%");
           break;
 
         default:
-            return $query->where('pallet', 'LIKE', "%".$name."%");
+            return $query->where('id_pallet', 'LIKE', "%".$name."%");
           break;
       }
   }

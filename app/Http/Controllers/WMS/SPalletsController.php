@@ -88,6 +88,13 @@ class SPalletsController extends Controller
     {
         $pallets = new SPallet($request->all());
 
+        $iLastId =  \DB::connection(session('db_configuration')->getConnCompany())
+                          ->table('wms_pallets')
+                          ->select(\DB::raw("(select max(id_pallet) from wms_pallets) AS id_max"))
+                          ->take(1)
+                          ->get();
+
+        $pallets->pallet = ($iLastId[0]->id_max) + 1;
         $pallets->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $pallets->unit_id = $pallets->item->unit_id;
         $pallets->updated_by_id = \Auth::user()->id;

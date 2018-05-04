@@ -60,7 +60,7 @@ class SLotsCore {
 
        guiFunctions.setTextLot(elementToAdd.sLot);
        guiFunctions.setExpDateLot(elementToAdd.tExpDate);
-       guiFunctions.setQuantityLot(1);
+       // guiFunctions.setQuantityLot(1);
 
        elementToAdd.iLotId = 0;
        elementToAdd.sLot = '';
@@ -239,6 +239,7 @@ function showLotsModal() {
 
     guiFunctions.setLotsQuantityLabel(dQuantity);
     guiFunctions.setAccumQuantityLabel(elementToAdd.dAuxQuantity);
+    guiFunctions.setQuantityLot(dQuantity);
 
     lotsCore.setFoundLot();
 

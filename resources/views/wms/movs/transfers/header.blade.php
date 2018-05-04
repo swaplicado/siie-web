@@ -27,7 +27,9 @@
   <div class="col-md-4">
     {!! Form::label('whs_id', trans('userinterface.labels.MVT_WHS_DEST').'*') !!}
     {!! Form::select('whs_id', $warehouses, session('whs')->id_whs, ['class'=>'form-control select-one',
-                        'placeholder' => trans('userinterface.placeholders.SELECT_WHS'), 'required']) !!}
+                        'placeholder' => trans('userinterface.placeholders.SELECT_WHS'),
+                        'id' => 'whs_id',
+                        'required']) !!}
   </div>
   <div class="col-md-1" id="div_continue">
     {!! Form::label('') !!}

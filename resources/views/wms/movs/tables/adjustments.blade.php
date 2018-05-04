@@ -25,7 +25,7 @@
             <td>{{ $oRow->item->name }}</td>
             <td>{{ $oRow->unit->code }}</td>
             <td>{{ $oRow->location->name }}</td>
-            <td>{{ $oRow->pallet->pallet }}</td>
+            <td>{{ $oRow->pallet_id }}</td>
             <td>{{ session('utils')->formatNumber($oRow->amount_unit, \Config::get('scsiie.FRMT.AMT')) }}</td>
             <td>{{ session('utils')->formatNumber($oRow->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
             <td>@if ($oRow->item->is_lot)

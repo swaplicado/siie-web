@@ -1,6 +1,7 @@
 <?php namespace App\SCore;
 
 use App\WMS\SMovement;
+use App\Database\Config;
 
 /**
  *
@@ -12,27 +13,28 @@ class SReceptions
         $sSelect = "
           wm.id_mvt,
           wm.src_mvt_id,
+          wm.dt_date,
           wm.folio,
-          (SUM(IF(wm.mvt_whs_class_id = 1, wmr.quantity, 0))) AS increment,
-          (SUM(IF(wm.mvt_whs_class_id = 2, wmr.quantity, 0))) AS decrement,
-          wm1.branch_id AS src_branch,
+          (SELECT SUM(quantity) FROM wms_mvt_rows WHERE mvt_id = mvt_reference_id) AS total_quantity,
+          (SUM(IF(wm1.mvt_whs_class_id = 2, wmr1.quantity, 0))) AS received,
+          wet.src_branch_id AS src_branch,
+          wet.des_branch_id AS des_branch,
           eb_src.name AS src_branch_name,
-          wm.branch_id AS des_branch,
-          eb_des.name AS des_branch_name
+          eb_des.name AS des_branch_name,
+          u.username
         ";
 
         $query = \DB::connection(session('db_configuration')->getConnCompany())
-                  ->table('wms_mvts AS wm')
-                  ->join('wms_mvts AS wm1', 'wm.src_mvt_id', '=', 'wm1.id_mvt')
-                  ->join('wms_mvt_rows AS wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
-                  ->join('erpu_branches AS eb_des', 'wm.branch_id', '=', 'eb_des.id_branch')
-                  ->join('erpu_branches AS eb_src', 'wm1.branch_id', '=', 'eb_src.id_branch')
-                  ->leftJoin('wms_mvt_row_lots AS wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
+                  ->table('wms_external_transfers AS wet')
+                  ->join('erpu_branches AS eb_des', 'wet.src_branch_id', '=', 'eb_des.id_branch')
+                  ->join('erpu_branches AS eb_src', 'wet.des_branch_id', '=', 'eb_src.id_branch')
+                  ->join('wms_mvts AS wm', 'wet.mvt_reference_id', '=', 'wm.id_mvt')
+                  ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users AS u', 'wm.created_by_id', '=', 'u.id')
+                  ->leftJoin('wms_mvts AS wm1', 'wm.id_mvt', '=', 'wm1.src_mvt_id')
+                  ->leftJoin('wms_mvt_rows AS wmr1', 'wm1.id_mvt', '=', 'wmr1.mvt_id')
                   ->where('wm.is_deleted', false)
                   ->where('wm.whs_id', session('transit_whs')->id_whs)
-                  ->where('wm.src_mvt_id', '>', 1)
-                  ->where('wm.branch_id', '!=', 'wm1.branch_id')
-                  // ->where('wm.branch_id', $iBranch)
+                  ->where('wet.des_branch_id', $iBranch)
                   ->select(\DB::raw($sSelect))
                   ->groupBy('wm.id_mvt')
                   ;

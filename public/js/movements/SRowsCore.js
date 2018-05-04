@@ -182,7 +182,7 @@ class SRowsCore {
                    swal("Error", "No pueden crearse lotes en esta opreación", "error");
                    return false;
                  }
-                 
+
                  lLotsToCreate = new Array();
               }
               else {
@@ -260,7 +260,7 @@ class SRowsCore {
      oJsRow.sUnit = oRow.unit.code;
 
      oJsRow.sLocation = oRow.location.code;
-     oJsRow.sPallet = oRow.pallet.pallet;
+     oJsRow.sPallet = oRow.pallet_id == '1' ? 'SIN TARIMA' : oRow.pallet_id;
 
      if (oJsRow.bIsLot) {
        oRow.lot_rows.forEach(function(lotRow) {

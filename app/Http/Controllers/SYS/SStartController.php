@@ -224,6 +224,7 @@ class SStartController extends Controller
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
+        $oTransitWarehouse->locations;
         session(['transit_whs' => $oTransitWarehouse]);
 
 	      $sWorkDate =  $_COOKIE['tWorkDate'];

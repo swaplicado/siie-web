@@ -51,7 +51,7 @@ class SWarehouse extends SModel {
    */
   public function locations()
   {
-    return $this->hasMany('App\ERP\SLocation');
+    return $this->hasMany('App\WMS\SLocation', 'whs_id');
   }
 
   /**

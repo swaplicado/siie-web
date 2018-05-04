@@ -52,7 +52,7 @@
 		    <tbody>
 					@foreach ($rows as $row)
 						<tr>
-								<td>{{ $row->movement->folio }}</td>
+								<td>{{ $row->movement->mvtType->code.'-'.$row->movement->folio }}</td>
 								<td>{{ \Carbon\Carbon::parse($row->movement->dt_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 		            <td>{{ $row->item->code }}</td>

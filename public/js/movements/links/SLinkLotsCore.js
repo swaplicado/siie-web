@@ -83,7 +83,7 @@ class SLinkLotsCore {
           return false;
         }
         if (dAssigned < 0 ) {
-          swal("Error", "La cantidad asgnada no puede ser menor a cero.", "error");
+          swal("Error", "La cantidad asignada no puede ser menor a cero.", "error");
           return false;
         }
         if ((oLotRow.dQuantity - oLotRow.dQuantitySupplied) <  dAssigned) {

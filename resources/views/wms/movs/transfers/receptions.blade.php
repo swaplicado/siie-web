@@ -19,10 +19,14 @@
                   <tr class="titlerow">
                       <th>id_mov</th>
                       <th>Folio</th>
+                      <th>Fecha</th>
+                      <th>Total</th>
+                      <th>Recibido</th>
                       <th>Pendiente</th>
                       <th>Sucursal origen</th>
                       <th>Sucursal destino</th>
                       <th>Recibir</th>
+                      <th>Enviado por</th>
                   </tr>
               </thead>
               <tbody>
@@ -30,14 +34,18 @@
                       <tr>
                         <td>{{ $mov->id_mvt }}</td>
                         <td>{{ $mov->folio }}</td>
-                        <td>{{ $mov->increment - $mov->decrement }}</td>
+                        <td>{{ $mov->dt_date }}</td>
+												<td align="right">{{ session('utils')->formatNumber($mov->total_quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
+												<td align="right">{{ session('utils')->formatNumber($mov->received, \Config::get('scsiie.FRMT.QTY')) }}</td>
+												<td align="right">{{ session('utils')->formatNumber($mov->total_quantity - $mov->received, \Config::get('scsiie.FRMT.QTY')) }}</td>
                         <td>{{ $mov->src_branch_name }}</td>
                         <td>{{ $mov->des_branch_name }}</td>
 												<td>
-													<a href="{{ route('wms.movs.receivetransfer', [$mov->id_mvt]) }}" class="btn btn-default btn-md">
+													<a href="{{ route('wms.movs.receivetransfer', [$mov->id_mvt]) }}" class="btn btn-success btn-md">
 														<i class="glyphicon glyphicon-log-in"></i>
 													</a>
 												</td>
+												<td>{{ $mov->username }}</td>
                       </tr>
                   @endforeach
               </tbody>
