@@ -706,45 +706,63 @@ class SMovsController extends Controller
         session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $oMov = SMovement::find($id);
+        $oProcess = new SMovsManagment();
+
+        $aErrors = $oProcess->canMovBeErased($oMov);
+
+        if (is_array($aErrors) && sizeof($aErrors) > 0) {
+           redirect()->back()->withErrors($aErrors);
+        }
+
         $oMov->is_deleted = \Config::get('scsys.STATUS.DEL');
         $oMov->updated_by_id = \Auth::user()->id;
 
-        try
-        {
-          $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
-            $aErrors = $oMov->save();
-            if (is_array($aErrors) && sizeof($aErrors) > 0) {
-               return $aErrors;
-            }
+        $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
+                                    ->where('is_deleted', false)
+                                    ->get();
 
-            foreach ($oMov->rows as $oRow) {
-               if (! $oRow->is_deleted) {
-                 $oRow->is_deleted = true;
-                 $oRow->save();
-               }
-
-               foreach ($oRow->lotRows as $lotRow) {
-                  $lotRow->is_deleted = true;
-                  $lotRow->save();
-               }
-            }
-
-            $stkController = new SStockController();
-            $stkController->store($request, $oMov);
-          });
+        foreach ($lReferencedMovs as $mov) {
+          $mov->is_deleted = \Config::get('scsys.STATUS.DEL');
+          $mov->updated_by_id = \Auth::user()->id;
+          $errors = $this->deleteMov($mov);
 
           if (is_array($errors) && sizeof($errors) > 0) {
              redirect()->back()->withErrors($errors);
           }
         }
-        catch (\Exception $e)
-        {
-           return redirect()->back()->withErrors([$e]);
+
+        $errors = $this->deleteMov($oMov);
+        if (is_array($errors) && sizeof($errors) > 0) {
+           redirect()->back()->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_DELETED'))->important();
 
         return redirect()->back();
+    }
+
+    private function deleteMov($oMov)
+    {
+      try
+      {
+        $errors = \DB::connection('company')->transaction(function() use ($oMov) {
+          $aErrors = $oMov->save();
+          if (is_array($aErrors) && sizeof($aErrors) > 0) {
+             return $aErrors;
+          }
+
+          $stkController = new SStockController();
+          $stkController->store($request, $oMov);
+        });
+
+        if (is_array($errors) && sizeof($errors) > 0) {
+           return $errors;
+        }
+      }
+      catch (\Exception $e)
+      {
+         return [$e];
+      }
     }
 
     /**

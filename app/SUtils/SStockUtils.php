@@ -334,9 +334,11 @@ class SStockUtils
         }
         elseif (sizeof($lStockGral) > 0
                   && !($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
-                        || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_OUT')) {
+                        || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_OUT'))) {
             array_push($aErrors, 'La tarima no está vacía, no puede agregar unidades');
         }
+
+        return $aErrors;
     }
 
     /**
