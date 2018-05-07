@@ -84,5 +84,4 @@
 			@endforeach
 		</tbody>
 	</table>
-	{!! $bps->render() !!}
 @endsection
