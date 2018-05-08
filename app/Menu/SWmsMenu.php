@@ -22,12 +22,12 @@ class SWmsMenu {
                           Link::toRoute('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.limits.index', trans('userinterface.titles.LIST_LIMITS')))
-                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.itemcontainers.index', trans('userinterface.titles.LIST_ITEM_CONTAINERS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.whs.index', trans('wms.WAREHOUSES')))
-                ->addIf(session('location_enabled') && SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
+                ->addIf(session('location_enabled') && SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.locs.index', trans('wms.LOCATIONS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_STD')),

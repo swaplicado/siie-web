@@ -137,35 +137,6 @@ class SUsersController extends Controller
     }
 
     /**
-     * Updates the user's password
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     */
-    public function updatePass(SPasswordRequest $request, $id)
-    {
-       $user = User::find($id);
-       $request_data = $request->All();
-
-       if(password_verify($request_data['current_password'], $user->password))
-       {
-         $user->password = bcrypt($request_data['password']);
-         $user->updated_by_id = \Auth::user()->id;
-         $user->save();
-
-         Flash::success(trans('messages.PASS_CHANGED'))->important();
-
-         return redirect()->route('admin.users.index');
-       }
-       else
-       {
-         $error = array(trans('messages.PASS_CURRENT') => trans('messages.PASS_ERROR'));
-
-         return redirect()->back()->withErrors($error)->withInput();
-       }
-    }
-
-    /**
      * Inactive the registry setting the flag is_deleted to true
      *
      * @param  \Illuminate\Http\Request  $request
@@ -203,18 +174,5 @@ class SUsersController extends Controller
 
         Flash::success(trans('messages.REG_DELETED'))->important();
         return redirect()->route('admin.users.index');
-    }
-
-    /**
-     * change the password of user
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function changePass(Request $request, $id)
-    {
-        $user = User::find($id);
-
-        return view('admin.users.changepass')->with('user', $user);
     }
 }

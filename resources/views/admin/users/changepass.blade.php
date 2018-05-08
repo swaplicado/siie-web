@@ -6,7 +6,7 @@
 
 <?php
 	$aux = $user;
-	$sRoute = 'admin.users.updatepass';
+	$sRoute = 'manage.users.updatepass';
   $sRoute2 = 'admin.users.index';
 ?>
 

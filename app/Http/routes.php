@@ -59,6 +59,14 @@ Route::post('/start/whs',[
   'as' => 'start.whs',
   'uses' => 'SYS\SStartController@whs'
 ]);
+Route::get('manage/{id}/changepass',[
+  'uses' => 'SPassController@ChangePass',
+  'as' => 'manage.users.changepass'
+]);
+Route::put('manage/{id}/updatepass',[
+  'uses' => 'SPassController@UpdatePass',
+  'as' => 'manage.users.updatepass'
+]);
 
 //****************************************/ Admin/*************************
 	Route::group(['middleware' => ['mdadmin']], function() {
@@ -87,11 +95,11 @@ Route::post('/start/whs',[
   			'as' => 'admin.users.destroy'
   		]);
   		Route::get('users/{id}/changepass',[
-  			'uses' => 'SUsersController@ChangePass',
+  			'uses' => 'SPassController@ChangePass',
   			'as' => 'admin.users.changepass'
   		]);
   		Route::put('users/{id}/updatepass',[
-  			'uses' => 'SUsersController@UpdatePass',
+  			'uses' => 'SPassController@UpdatePass',
   			'as' => 'admin.users.updatepass'
   		]);
 

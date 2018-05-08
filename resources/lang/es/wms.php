@@ -4,10 +4,9 @@
 
 return [
       'MODULE'  => 'Módulo Almacenes',
-      'STOCK_QUERY'  => 'Consulta de existencias',
+      'STOCK_QUERY'  => 'Consulta existencias',
       'DEFAULT_CODE'  => 'PRED',
       'DEFAULT'  => 'PREDETERMINADA',
-      'STOCK_QUERY'  => 'Consulta de existencias',
 
       'CATALOGUES' => 'Catálogos',
           'WAREHOUSES' => 'Almacenes',
@@ -39,7 +38,7 @@ return [
           'MOV_WHS_SEND_EXTERNAL_TRS_OUT' => 'Enviar traspaso externo de almacén',
           'MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT' => 'Recibir traspaso externo de almacén',
           'MOV_WHS_PUR_IN' => 'Entrada por compra',
-          'WHS_MOVS_QUERY' => 'Movimientos de almacén',
+          'WHS_MOVS_QUERY' => 'Movimientos almacén',
           'WHS_MOVS' => 'Movimientos de almacén',
           'WHS_DOCS' => 'Documentos de almacén',
           'WHS_MOVS_FOLIOS' => 'Folios de movimientos de almacén',
@@ -48,8 +47,8 @@ return [
           'PALLET_ADD' => 'Agregar a tarima',
 
       'DOCS' => 'Documentos',
-      'PUR_DOCS' => 'Documentos de compra',
-      'SAL_DOCS' => 'Documentos de venta',
+      'PUR_DOCS' => 'Documentos compra',
+      'SAL_DOCS' => 'Documentos venta',
 
       'REPORTS' => 'Reportes',
           'REPORT_STK' => 'Reporte de existencias',
