@@ -79,7 +79,7 @@ class SBranch extends Model {
    * @param  integer $iFilter type of filter
    * @return string        query
    */
-  public function scopeSearch($query, $name, $iFilter)
+  public function scopeSearch($query, $name, $iFilter, $iBp)
   {
       $select = 'erpu_branches.*';
       $query->join('erpu_partners', 'erpu_partners.id_partner', '=', 'erpu_branches.partner_id')
@@ -88,14 +88,17 @@ class SBranch extends Model {
                       ->orWhere('erpu_branches.name', 'LIKE', "%".$name."%");
                   })
                   ->select(\DB::raw($select));
+      if ($iBp != 0) {
+        $query = $query->where('partner_id', $iBp);
+      }
 
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
-          return $query->where('erpu_partners.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+          return $query->where('erpu_branches.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
           break;
 
         case \Config::get('scsys.FILTER.DELETED'):
-          return $query->where('erpu_partners.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+          return $query->where('erpu_branches.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
           break;
 
         case \Config::get('scsys.FILTER.ALL'):

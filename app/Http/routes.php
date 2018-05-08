@@ -579,6 +579,10 @@ Route::group(['prefix' => 'qms'], function () {
       **/
 
       Route::resource('branches','ERP\SBranchesController');
+      Route::get('branches/index/{bp?}',[
+        'uses' => 'ERP\SBranchesController@index',
+        'as' => 'siie.branches.index'
+      ]);
       Route::get('branches/{id}/create',[
         'uses' => 'ERP\SBranchesController@Create',
         'as' => 'siie.branches.create'

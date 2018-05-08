@@ -64,5 +64,4 @@
 			@endforeach
 		</tbody>
 	</table>
-	{!! $address->render() !!}
 @endsection

@@ -25,10 +25,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table
-               data-toggle="table"
-               data-toolbar="#toolbar"
-							 id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
+	<table class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th data-field="id" data-sortable="true">{{ trans('userinterface.labels.BP') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.RFC') }}</th>
@@ -79,9 +76,13 @@
 								];
 						?>
 						@include('templates.list.options')
+						<a href="{{ route('siie.branches.index', $bpartner->id_partner) }}" class="btn btn-success btn-xs">
+							<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+						</a>
 					</td>
 				</tr>
 			@endforeach
 		</tbody>
 	</table>
+	{!! $bps->render() !!}
 @endsection

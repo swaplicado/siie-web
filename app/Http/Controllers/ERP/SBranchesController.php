@@ -32,10 +32,10 @@ class SBranchesController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $iBp = 0)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $lBranches = SBranch::Search($request->name, $this->iFilter)->orderBy('erpu_partners.name', 'ASC')->get();
+      $lBranches = SBranch::Search($request->name, $this->iFilter, $iBp)->orderBy('erpu_partners.name', 'ASC')->get();
 
       $lBranches->each(function($lBranches) {
         $lBranches->company;

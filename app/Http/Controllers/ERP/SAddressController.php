@@ -45,7 +45,7 @@ class SAddressController extends Controller
             $iBranchId = session('branchIdAux');
         }
 
-        $lAddress = SAddress::Search($request->name, $this->iFilter, $iBranchId)->orderBy('name', 'ASC');
+        $lAddress = SAddress::Search($request->name, $this->iFilter, $iBranchId)->orderBy('name', 'ASC')->get();
 
         return view('siie.address.index')
             ->with('address', $lAddress)

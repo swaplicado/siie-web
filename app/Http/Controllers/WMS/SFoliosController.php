@@ -42,7 +42,7 @@ class SFoliosController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lFolios = SFolio::Search($request->name, $this->iFilter)->orderBy('folio_start', 'ASC')->paginate(20);
+      $lFolios = SFolio::Search($request->name, $this->iFilter)->orderBy('folio_start', 'ASC')->get();
 
       // dd($lFolios);
 
