@@ -116,6 +116,11 @@ use PDF;
     $answer = SItem::where('code',$data)
                       ->first();
     if($answer==null){
+    $answer = sPallet::where('id_pallet',$data)
+                      ->first();
+    }
+
+    if($answer==null){
     //$type can be
     //1= lots
     //2= Pallets
