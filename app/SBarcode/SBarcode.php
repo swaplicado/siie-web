@@ -13,7 +13,7 @@ use PDF;
 
   /**
    * [fill description]
-   /-* To have a certain size string
+   * To have a certain size string
    * @param  integer $lower  start of string
    * @param  integer $higher end of string
    * @return string        string with certain size
@@ -115,6 +115,11 @@ use PDF;
     //If $data is a code of item return SITem
     $answer = SItem::where('code',$data)
                       ->first();
+    if($answer==null){
+    $answer = sPallet::where('id_pallet',$data)
+                      ->first();
+    }
+
     if($answer==null){
     //$type can be
     //1= lots
