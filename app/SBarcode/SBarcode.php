@@ -112,15 +112,31 @@ use PDF;
    * @return SItem,SWLot,SPallet      depending on the barcode
    */
   public static function decodeBarcode($data){
+    $i1 = substr($data, 0, 1);
+
+    $answer = null;
+
+    if ($i1 == '*') {
+      $answer = SWmsLot::where('lot', substr($data, 1, strlen($data)))->first();
+    }
     //If $data is a code of item return SITem
-    $answer = SItem::where('code',$data)
-                      ->first();
-    if($answer==null){
-    $answer = sPallet::where('id_pallet',$data)
-                      ->first();
+    if ($answer == null) {
+       $answer = SItem::where('code', $data)
+                        ->first();
+    }
+    else {
+       return $answer;
     }
 
-    if($answer==null){
+    if($answer == null){
+      $answer = sPallet::where('id_pallet',$data)
+                      ->first();
+    }
+    else {
+       return $answer;
+    }
+
+    if($answer == null){
     //$type can be
     //1= lots
     //2= Pallets
