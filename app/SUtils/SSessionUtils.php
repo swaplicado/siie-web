@@ -216,4 +216,48 @@ class SSessionUtils {
      return $whss;
   }
 
+  /**
+   * get the warehouses that the user has access, if a user is not received
+   * take the user of session
+   *
+   * @param  integer $iUser user id
+   * @param  integer $iBranch branch id
+   *
+   * @return array array of integers and name with the warehouses
+   */
+  public static function getUserWarehousesArrayWithName($iUser = 0, $iBranch = 0)
+  {
+     $oUser = $iUser == 0 ? \Auth::user() : User::find($iUser);
+
+     $whss = array();
+     if (session('utils')->isSuperUser($oUser)) {
+        $warehouses = SWarehouse::where('is_deleted', false);
+
+        if ($iBranch > 0) {
+          $warehouses = $warehouses->where('branch_id', $iBranch);
+        }
+
+        $warehouses = $warehouses->get();
+
+        foreach ($warehouses as $whs) {
+          $whss[$whs->id_whs] = $whs->name;
+        }
+
+        return $whss;
+     }
+
+     $whsAccess = $oUser->userWarehouses;
+
+     foreach ($whsAccess as $access) {
+        if (! $access->warehouses->is_deleted) {
+          if ($iBranch == 0 || $access->warehouses->branch_id == $iBranch) {
+            $whss[$access->whs_id] = $access->warehouses->name;
+          }
+
+        }
+     }
+
+     return $whss;
+  }
+
 }

@@ -47,6 +47,7 @@ class SStockController extends Controller
                          eu.code as unit';
 
      $sFilterDate = $request->filterDate == null ? session('work_date')->format('Y-m-d') : $request->filterDate;
+     $iFilterWhs = $request->warehouse == null ? \Config::get('scwms.FILTER_ALL_WHS') : $request->warehouse;
      $oFilterDate = Carbon::parse($sFilterDate);
      $iYearId = session('utils')->getYearId($oFilterDate->year);
 
@@ -169,6 +170,10 @@ class SStockController extends Controller
                     ->orderBy($orderBy2)
                     ->having('stock', '>', '0');
 
+      if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
+          $stock = $stock->where('ws.whs_id', $iFilterWhs);
+      }
+
       if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
       {
           $stock = $stock->orderBy('ws.whs_id');
@@ -180,10 +185,15 @@ class SStockController extends Controller
 
       $stock = $stock->get();
 
+      $lWhss = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch);
+      $lWhss['0'] = 'TODOS';
+
       return view('wms.stock.stock')
                         ->with('iStockType', $iStockType)
                         ->with('sTitle', $sTitle)
                         ->with('tfilterDate', Carbon::parse($sFilterDate))
+                        ->with('lWarehouses', $lWhss)
+                        ->with('iFilterWhs', $iFilterWhs)
                         ->with('data', $stock);
     }
 

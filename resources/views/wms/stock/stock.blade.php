@@ -18,6 +18,10 @@
 										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 		    <div class="input-group">
+					<span class="input-group">
+						{!! Form::select('warehouse', $lWarehouses, $iFilterWhs,
+															['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE')]) !!}
+					</span>
 					<span class="input-group-btn">
 					  {!! Form::date('filterDate', $tfilterDate, ['class'=>'form-control']) !!}
 					</span>

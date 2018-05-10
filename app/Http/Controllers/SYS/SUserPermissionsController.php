@@ -73,7 +73,9 @@ class SUserPermissionsController extends Controller
       $Syspermission = SPermissionType::orderBy('name', 'ASC')->lists('name', 'id_permission_type');
       $Module = SModule::orderBy('name', 'ASC')->lists('name', 'id_module');
       $permission = SPermission::orderBy('name', 'ASC')->lists('name', 'id_permission');
-      $Privilege = SPrivilege::orderBy('name', 'ASC')->lists('name', 'id_privilege');
+      $Privilege = SPrivilege::orderBy('name', 'ASC')
+                                ->where('id_privilege', '!=', '1')
+                                ->lists('name', 'id_privilege');
 
       $id_id = preg_split("/[,,]+/", $id);
       $nameUser = $id_id[0];

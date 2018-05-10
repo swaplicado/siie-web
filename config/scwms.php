@@ -61,6 +61,8 @@ return [
     'MVT_INTERNAL_DIV_PALLET' => '4', // production
     'MVT_INTERNAL_ADD_TO_PALLET' => '5', // production
 
+    'FILTER_ALL_WHS' => '0',
+
     'OPERATION_TYPE' => [
                             'CREATION' => '1',
                             'EDITION' => '2',
