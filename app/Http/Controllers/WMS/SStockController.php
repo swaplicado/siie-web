@@ -47,7 +47,7 @@ class SStockController extends Controller
                          eu.code as unit';
 
      $sFilterDate = $request->filterDate == null ? session('work_date')->format('Y-m-d') : $request->filterDate;
-     $iFilterWhs = $request->warehouse == null ? \Config::get('scwms.FILTER_ALL_WHS') : $request->warehouse;
+     $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
      $oFilterDate = Carbon::parse($sFilterDate);
      $iYearId = session('utils')->getYearId($oFilterDate->year);
 
