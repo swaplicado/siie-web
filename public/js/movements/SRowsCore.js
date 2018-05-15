@@ -191,9 +191,9 @@ class SRowsCore {
 
               rowsCore.completeRow(serverData.lLotRows);
 
-              if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
-                return false;
-              }
+              // if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
+              //   return false;
+              // }
             }
             else {
               elementToAdd.dPrice = guiFunctions.getPrice();
