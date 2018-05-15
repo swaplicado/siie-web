@@ -64,9 +64,19 @@ class SMovsController extends Controller
     public function index(Request $request, $iFolio = 0)
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
-        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate)
-                                    ->orderBy('item_id', 'ASC')
-                                    ->orderBy('item_id', 'ASC')->paginate(20);
+        $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
+
+        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate);
+
+        if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
+            $lMovRows = $lMovRows->where('wm.whs_id', $iFilterWhs);
+        }
+
+        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch);
+        $lWarehouses['0'] = 'TODOS';
+
+        $lMovRows = $lMovRows->orderBy('mvt_id', 'DESC')
+                              ->orderBy('item_id', 'ASC')->get();
 
         foreach ($lMovRows as $row) {
             $row->movement->branch;
@@ -82,8 +92,10 @@ class SMovsController extends Controller
 
         return view('wms.movs.index')
                     ->with('iFolio', $iFolio)
+                    ->with('lWarehouses', $lWarehouses)
                     ->with('iFilter', $this->iFilter)
                     ->with('sFilterDate', $sFilterDate)
+                    ->with('iFilterWhs', $iFilterWhs)
                     ->with('rows', $lMovRows);
     }
 
