@@ -45,6 +45,11 @@ class SMovement {
 
     removeRow(id) {
       var key = parseInt(id);
+
+      if (! this.rows.has(key)) {
+        return false;
+      }
+
       var row = this.rows.get(key);
 
       if (row.iIdMovRow > 0) {
@@ -136,6 +141,10 @@ class SMovementRow {
 
     removeLotRow(id) {
       var key = parseInt(id);
+      if (! this.lotRows.has(key)) {
+        return false;
+      }
+
       var lotRow = this.lotRows.get(key);
 
       if (lotRow.iIdLotRow > 0) {

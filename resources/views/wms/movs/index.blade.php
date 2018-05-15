@@ -19,6 +19,10 @@
 			<div class="form-group">
 				<div class="input-group">
 					@include('templates.list.search')
+					<span class="input-group">
+						{!! Form::select('warehouse', $lWarehouses, $iFilterWhs,
+															['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE')]) !!}
+					</span>
 					<span class="input-group-btn">
 						{!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
 					</span>

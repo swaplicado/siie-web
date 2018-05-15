@@ -18,8 +18,8 @@
                 'id' => 'search_lot',
                 'placeholder' => trans('wms.labels.LOT').'...',
                 'onkeypress' => 'searchLot(event)',
-                'title' => trans('wms.tooltips.ONLY_BARCODES'),
-                'required']) !!}
+                'title' => trans('wms.tooltips.ONLY_BARCODES')
+                ]) !!}
             </div>
             <div class="col-sm-1 paddingsm">
               {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}

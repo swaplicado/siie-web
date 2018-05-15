@@ -327,7 +327,7 @@ $('#select_button').on('click', function(e) {
 
             guiFunctions.setTextLot(row.lot);
             guiFunctions.setExpDateLot(row.dt_expiry);
-            guiFunctions.setQuantityLot(1);
+            guiFunctions.setQuantityLot(guiFunctions.getQuantity());
 
             break;
 

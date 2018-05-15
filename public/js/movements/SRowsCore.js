@@ -178,7 +178,7 @@ class SRowsCore {
          else {
             if (elementToAdd.bIsLot) {
               if (globalData.isPalletReconfiguration || !globalData.bIsInputMov) {
-                 if (lLotsToCreate.length > 0) {
+                 if (serverData.lNewLots.length > 0) {
                    swal("Error", "No pueden crearse lotes en esta opreación", "error");
                    return false;
                  }
@@ -190,6 +190,10 @@ class SRowsCore {
               }
 
               rowsCore.completeRow(serverData.lLotRows);
+
+              if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
+                return false;
+              }
             }
             else {
               elementToAdd.dPrice = guiFunctions.getPrice();

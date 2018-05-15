@@ -12,9 +12,10 @@
                   {!! Form::label('', trans('actions.SEARCH_ELEMENT').'...') !!}
                   {!! Form::text('item', null, ['class'=>'form-control input-sm',
                                                   'id' => 'item',
-                                                  'title' => trans('wms.tooltips.ELEMENT_MULTIPLE'),
                                                   'placeholder' => trans('wms.placeholders.SEARCH_ELEMENT'),
-                                                  'onkeypress' => 'searchElem(event)']) !!}
+                                                  'onkeypress' => 'searchElem(event)',
+                                                  'title' => trans('wms.tooltips.ELEMENT_MULTIPLE')
+                                                ]) !!}
                 </div>
                 <div class="col-md-1" id="div_search_button">
                     {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}

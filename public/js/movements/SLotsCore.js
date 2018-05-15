@@ -46,7 +46,7 @@ class SLotsCore {
 
      guiFunctions.setTextLot(serverData.oElement.lot);
      guiFunctions.setExpDateLot(serverData.oElement.dt_expiry);
-     guiFunctions.setQuantityLot(1);
+     guiFunctions.setQuantityLot(guiFunctions.getQuantity());
 
      guiFunctions.setSearchLot('');
   }
@@ -113,6 +113,7 @@ class SLotsCore {
   deleteLotRow(oRow) {
     oLotsTable.row('.selected').remove().draw( false );
     lLotsToAdd.delete(oRow[0]);
+    elementToAdd.removeLotRow(oRow[0]);
 
     elementToAdd.dAuxQuantity -= oRow[4];
     guiFunctions.setAccumQuantityLabel(elementToAdd.dAuxQuantity);
