@@ -24,7 +24,6 @@ class SStockManagment
                       ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
                       ->join('wmsu_whs as ww', 'wwl.whs_id', '=', 'ww.id_whs')
                       ->join('erpu_branches as eb', 'ww.branch_id', '=', 'eb.id_branch')
-                      ->where('ei.is_deleted', false)
                       ->where('ws.is_deleted', false);
 
         if ($sSelect != '') {
