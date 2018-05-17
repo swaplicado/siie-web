@@ -720,7 +720,7 @@ class SMovsController extends Controller
         $oMov = SMovement::find($id);
         $oProcess = new SMovsManagment();
 
-        $aErrors = $oProcess->canMovBeErased($oMov);
+        $aErrors = $oProcess->canMovBeErasedOrActivated($oMov, \Config::get('scwms.MOV_ACTION.ERASE'));
 
         if (is_array($aErrors) && sizeof($aErrors) > 0) {
            redirect()->back()->withErrors($aErrors);
@@ -736,14 +736,14 @@ class SMovsController extends Controller
         foreach ($lReferencedMovs as $mov) {
           $mov->is_deleted = \Config::get('scsys.STATUS.DEL');
           $mov->updated_by_id = \Auth::user()->id;
-          $errors = $this->deleteMov($mov);
+          $errors = $this->deleteMov($mov, $request);
 
           if (is_array($errors) && sizeof($errors) > 0) {
              redirect()->back()->withErrors($errors);
           }
         }
 
-        $errors = $this->deleteMov($oMov);
+        $errors = $this->deleteMov($oMov, $request);
         if (is_array($errors) && sizeof($errors) > 0) {
            redirect()->back()->withErrors($errors);
         }
@@ -753,11 +753,11 @@ class SMovsController extends Controller
         return redirect()->back();
     }
 
-    private function deleteMov($oMov)
+    private function deleteMov($oMov, $request)
     {
       try
       {
-        $errors = \DB::connection('company')->transaction(function() use ($oMov) {
+        $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
           $aErrors = $oMov->save();
           if (is_array($aErrors) && sizeof($aErrors) > 0) {
              return $aErrors;
@@ -775,6 +775,64 @@ class SMovsController extends Controller
       {
          return [$e];
       }
+    }
+
+    public function activate(Request $request, $id)
+    {
+        $oMov = SMovement::find($id);
+
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $oMov);
+
+        $oProcess = new SMovsManagment();
+
+        $aErrors = $oProcess->canMovBeErasedOrActivated($oMov, \Config::get('scwms.MOV_ACTION.ACTIVATE'));
+
+        if (is_array($aErrors) && sizeof($aErrors) > 0) {
+           redirect()->back()->withErrors($aErrors);
+        }
+
+        $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
+                                    ->where('is_deleted', true)
+                                    ->get();
+
+        foreach ($lReferencedMovs as $mov) {
+          $mov->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+          $mov->updated_by_id = \Auth::user()->id;
+          $errors = $oMov->save();
+
+          if (is_array($errors) && sizeof($errors) > 0) {
+             redirect()->back()->withErrors($errors);
+          }
+        }
+
+        $oMov->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $oMov->updated_by_id = \Auth::user()->id;
+
+        $errors = $oMov->save();
+        if (is_array($errors) && sizeof($errors) > 0)
+        {
+           return redirect()->back()->withErrors($errors);
+        }
+
+        try
+        {
+          $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
+            $stkController = new SStockController();
+            $stkController->store($request, $oMov);
+          });
+
+          if (is_array($errors) && sizeof($errors) > 0) {
+             return $errors;
+          }
+        }
+        catch (\Exception $e)
+        {
+           return [$e];
+        }
+
+        Flash::success(trans('messages.REG_ACTIVATED'))->important();
+
+        return redirect()->back();
     }
 
     /**
@@ -1034,12 +1092,17 @@ class SMovsController extends Controller
                   $lLots[$key] = $value['1'];
                }
 
-               $oValidation = new SLotsValidations($lLots, $lLotsToCreateJs, $oItem);
+               $oValidation = new SLotsValidations($lLots, $lLotsToCreateJs, $oRow->iItemId, $oRow->iUnitId);
 
                $oValidation->validateLots();
                $oData->lErrors = $oValidation->getErrors();
                $oData->lNewLots = $oValidation->getLotsToCreate();
                $oData->lLotRows = $oValidation->getLots();
+
+               // if (sizeof($oData->lErrors == 0)) {
+               //   $oValidation->validatelotsByExpiration($request->iMvtType, $request->iPartner, $request->iAddress);
+               //   $oData->lErrors = $oValidation->getErrors();
+               // }
            }
 
         }

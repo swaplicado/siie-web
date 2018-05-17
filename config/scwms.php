@@ -74,6 +74,11 @@ return [
                             'OUTPUT' => '2',
                         ],
 
+   'MOV_ACTION' =>     [
+                          'ERASE' => '0',
+                          'ACTIVATE' => '1',
+                       ],
+
     'STOCK_TYPE'  =>  [
                         'STK_BY_ITEM' => '1',
                         'STK_BY_PALLET' => '2',

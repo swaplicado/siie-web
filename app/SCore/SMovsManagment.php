@@ -662,15 +662,25 @@ class SMovsManagment {
       return $aMovements;
     }
 
-    public function canMovBeErased($oMovement = null)
+    /**
+     * Determine if the movement can be erased or activated depending of validations of stock
+     * and referenced movements
+     *
+     * @param  SMovement $oMovement
+     * @param  integer $iAction  \Config::get('scwms.MOV_ACTION.ACTIVATE')
+     *                           \Config::get('scwms.MOV_ACTION.ERASE')
+     *
+     * @return array if the size of array is grater than 0 the movement can't be erased
+     */
+    public function canMovBeErasedOrActivated($oMovement = null, $iAction = 0)
     {
         $aErrors = array();
         $lReferencedMovs = SMovement::where('src_mvt_id', $oMovement->id_mvt)
-                                      ->where('is_deleted', false)
+                                      ->where('is_deleted', $iAction == \Config::get('scwms.MOV_ACTION.ACTIVATE'))
                                       ->get();
 
         foreach ($lReferencedMovs as $oMov) {
-           $aInternalErrors = $this->canMovBeErased($oMov);
+           $aInternalErrors = $this->canMovBeErasedOrActivated($oMov, $iAction);
 
            if (sizeof($aInternalErrors) > 0) {
               array_push($aInternalErrors, 'Problema con movimiento referenciado.');
@@ -678,28 +688,55 @@ class SMovsManagment {
            }
         }
 
-        if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
-            $oAuxMov = clone $oMovement;
-            $oAuxMov->id_mvt = 0;
-            $aErrors = SStockUtils::validateStock($oAuxMov);
-
-            if(sizeof($aErrors) > 0)
-            {
-               return $aErrors;
-            }
-        }
-        else {
-            foreach ($oMovement->rows as $row) {
-              $aErrors = SStockUtils::validateInputPallet($row,
-                                                      $oMovement->year_id,
-                                                      $oMovement->mvt_whs_type_id,
-                                                      0);
+        if ($iAction == \Config::get('scwms.MOV_ACTION.ERASE')) {
+          if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+              $oAuxMov = clone $oMovement;
+              $oAuxMov->id_mvt = 0;
+              $aErrors = SStockUtils::validateStock($oAuxMov);
 
               if(sizeof($aErrors) > 0)
               {
-                return $aErrors;
+                 return $aErrors;
               }
-            }
+          }
+          else {
+              foreach ($oMovement->rows as $row) {
+                $aErrors = SStockUtils::validateInputPallet($row,
+                                                        $oMovement->year_id,
+                                                        $oMovement->mvt_whs_type_id,
+                                                        0);
+
+                if(sizeof($aErrors) > 0)
+                {
+                  return $aErrors;
+                }
+              }
+          }
+        }
+        else {
+          if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
+              $oAuxMov = clone $oMovement;
+              $oAuxMov->id_mvt = 0;
+              $aErrors = SStockUtils::validateStock($oAuxMov);
+
+              if(sizeof($aErrors) > 0)
+              {
+                 return $aErrors;
+              }
+          }
+          else {
+              foreach ($oMovement->rows as $row) {
+                $aErrors = SStockUtils::validateInputPallet($row,
+                                                        $oMovement->year_id,
+                                                        $oMovement->mvt_whs_type_id,
+                                                        0);
+
+                if(sizeof($aErrors) > 0)
+                {
+                  return $aErrors;
+                }
+              }
+          }
         }
 
         return $aErrors;

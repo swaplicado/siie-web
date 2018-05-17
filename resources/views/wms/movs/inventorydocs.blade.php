@@ -101,7 +101,8 @@
       								$iRegistryId = $mov->id_mvt;
       								$loptions = [
       									\Config::get('scsys.OPTIONS.EDIT'),
-      									\Config::get('scsys.OPTIONS.DESTROY')
+      									\Config::get('scsys.OPTIONS.DESTROY'),
+      									\Config::get('scsys.OPTIONS.ACTIVATE')
       								];
       						?>
 									<div>

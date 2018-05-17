@@ -98,58 +98,34 @@ class SPartner extends Model {
           break;
       }
 
+      if ($bAtt) {
+          $query = $query->where($sAtt, '=',  1);
+      }
+
+      $query = $query->where(function ($query) use ($bpName) {
+                    $query->where('name', 'LIKE', "%".$bpName."%")
+                          ->orWhere('external_id', 'LIKE', "%".$bpName."%")
+                          ->orWhere('last_name', 'LIKE', "%".$bpName."%")
+                          ->orWhere('first_name', 'LIKE', "%".$bpName."%")
+                          ->orWhere('fiscal_id', 'LIKE', "%".$bpName."%");
+               });
+
       switch ($iFilter) {
         case \Config::get('scsys.FILTER.ACTIVES'):
-          if ($bAtt)
-          {
-            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                        ->where($sAtt, '=',  1)
-                        ->where('name', 'LIKE', "%".$bpName."%");
-          }
-          else
-          {
-            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'))
-                        ->where('name', 'LIKE', "%".$bpName."%");
-          }
-          break;
+            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+            break;
 
         case \Config::get('scsys.FILTER.DELETED'):
-          if ($bAtt)
-          {
-            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                          ->where($sAtt, '=', 1)
-                          ->where('name', 'LIKE', "%".$bpName."%");
-          }
-          else
-          {
-            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'))
-                          ->where('name', 'LIKE', "%".$bpName."%");
-          }
-          break;
+            return $query->where('is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+            break;
 
         case \Config::get('scsys.FILTER.ALL'):
-          if ($bAtt)
-          {
-            return $query->where('name', 'LIKE', "%".$bpName."%")
-                          ->where($sAtt, '=', 1);
-          }
-          else
-          {
-            return $query->where('name', 'LIKE', "%".$bpName."%");
-          }
-          break;
+            return $query;
+            break;
 
         default:
-          if ($bAtt)
-          {
-            return $query->where('name', 'LIKE', "%".$bpName."%")
-                          ->where($sAtt, '=', 1);
-          }
-          else
-          {
-            return $query->where('name', 'LIKE', "%".$bpName."%");
-          }
-          break;
+            return $query;
+            break;
       }
   }
 

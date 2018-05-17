@@ -1,9 +1,9 @@
 <?php namespace App\WMS;
 
-use Illuminate\Database\Eloquent\Model;
+use App\ERP\SModel;
 use App\SUtils\SGuiUtils;
 
-class SMovement extends Model {
+class SMovement extends SModel {
 
   protected $connection = 'siie';
   protected $primaryKey = 'id_mvt';

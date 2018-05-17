@@ -14,21 +14,23 @@ class SLotsValidations {
     protected $lLotsToCreate = null;
     protected $lErrors = null;
     protected $lLots = null;
-    protected $oItem = null;
+    protected $iItem = 0;
+    protected $iUnit = 0;
 
     /**
      * initialize the lots, lots ti create, the current item
      *
      * @param array  $theLots lots implied in row
      * @param array  $theLotsToCreate array of lots that will be created by the movement
-     *
-     * @param SItem $theItem  object of current SItem
+     * @param int $theItemId id of current Item
+     * @param int $theUnitId id of current Unit
      */
-    public function __construct($theLots = [], $theLotsToCreate = [], $theItem = null) {
+    public function __construct($theLots = [], $theLotsToCreate = [], $theItemId = 0, $theUnitId = 0) {
       $this->lErrors = array();
       $this->lLots = $theLots;
       $this->lLotsToCreate = $theLotsToCreate;
-      $this->oItem = $theItem;
+      $this->iItem = $theItemId;
+      $this->iUnit = $theUnitId;
     }
 
     /**
@@ -76,8 +78,8 @@ class SLotsValidations {
        $oLot = new SWmsLot();
        $oLot->lot = $oLotJs->sLot;
        $oLot->dt_expiry = $oLotJs->tExpDate;
-       $oLot->item_id = $this->oItem->id_item;
-       $oLot->unit_id = $this->oItem->unit_id;
+       $oLot->item_id = $this->iItem;
+       $oLot->unit_id = $this->iUnit;
 
        $iPKey = array_push($this->lLotsToCreate, $oLot);
 
@@ -165,7 +167,7 @@ class SLotsValidations {
 
         $oFoundLot = null;
         foreach ($oSearchLot as $lot) {
-           if ($lot->item_id == $this->oItem->id_item && $lot->unit_id == $this->oItem->unit_id) {
+           if ($lot->item_id == $this->iItem && $lot->unit_id == $this->iUnit) {
              $oFoundLot = $lot;
              break;
            }
@@ -197,5 +199,55 @@ class SLotsValidations {
         }
 
         return false;
+    }
+
+    public function validatelotsByExpiration($iMvtType = 0, $iPartner = 0, $iAddress = 0)
+    {
+        // $sSelect = 'wm.id_mvt,
+        //             wmr.id_mvt_row,
+        //             wmrl.id_mvt_row_lot,
+        //             wmr.item_id,
+        //             wmr.unit_id,
+        //             wmrl.lot_id,
+        //             wl.lot,
+        //             wl.dt_expiry,
+        //             eba.id_branch_address,
+        //             eba.name,
+        //             eba.street,
+        //             eba.locality';
+
+        $lLastLot = \DB::connection(session('db_configuration')->getConnCompany())
+                      ->table('wms_mvts AS wm')
+                      ->join('wms_mvt_rows AS wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
+                      ->join('wms_mvt_row_lots AS wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
+                      ->join('wms_lots AS wl', 'wmrl.lot_id', '=', 'wl.id_lot')
+                      ->join('erpu_documents AS ed', 'wm.doc_invoice_id', '=', 'ed.id_document')
+                      ->join('erpu_branch_addresses AS eba', 'ed.address_id', '=', 'eba.id_branch_address')
+                      ->select('wm.id_mvt', 'wmrl.lot_id', 'wl.lot', 'wl.dt_expiry', 'eba.name')
+                      ->where('wmr.item_id', $this->iItem)
+                      ->where('wmr.unit_id', $this->iUnit)
+                      ->where('wm.mvt_whs_type_id', $iMvtType)
+                      ->where('ed.partner_id', $iPartner)
+                      ->where('eba.id_branch_address', $iAddress)
+                      ->groupBy(['eba.id_branch_address', 'lot_id'])
+                      ->orderBy('dt_expiry', 'DESC')
+                      ->take(1)
+                      ->get();
+
+        if (sizeof($lLastLot) > 0) {
+          $tLastLotDate = Carbon::parse($lLastLot[0]->dt_expiry);
+
+          foreach ($this->lLots as $oLot) {
+             $lotExpDate = Carbon::parse($oLot->tExpDate);
+
+             if ($tLastLotDate->gt($lotExpDate)) {
+                $this->addError('La fecha de vencimiento del último lote del producto
+                                entregado a este cliente en el centro: '.$lLastLot[0]->name.'
+                                es '.$lLastLot[0]->dt_expiry.', no se pueden entregar lotes con una
+                                fecha de vencimiento anterior');
+                break;
+             }
+          }
+        }
     }
 }
