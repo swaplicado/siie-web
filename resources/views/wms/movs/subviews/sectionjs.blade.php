@@ -82,6 +82,7 @@
 
   if (lRows.length > 0) {
       headerCore.transformServerToClientRows(lRows);
+      oMovement.iIdMovement = <?php echo json_encode($oMovement->id_mvt) ?>;
   }
 
   if (localStorage.getItem('movement') !== null) {

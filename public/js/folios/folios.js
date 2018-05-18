@@ -4,7 +4,6 @@
  * @return {[type]}                [description]
  */
 function whenChangeClass(idSelectClass) {
-    // console.log("here");
     var iClassId = parseInt(document.getElementById(idSelectClass).value);
 
     var opt = '<select class="form-control select-one"  name="mvt_type_id" id="mvt_type_id">';
@@ -29,7 +28,6 @@ function whenChangeClass(idSelectClass) {
  * @return {[type]}                [description]
  */
 function whenChangeBranch(idSelectBranch) {
-    // console.log("here");
     var iBranchId = parseInt(document.getElementById(idSelectBranch).value);
 
     var opt = '<select onChange="whenChangeWarehouse(\'aux_whs_id\')" class="form-control select-one wh"  name="aux_whs_id" id="aux_whs_id">';
@@ -57,7 +55,6 @@ function whenChangeBranch(idSelectBranch) {
  * @return {[type]}             [description]
  */
 function whenChangeWarehouse(idSelectWhs) {
-    // console.log("here");
     var iWhsId = parseInt(document.getElementById(idSelectWhs).value);
 
     var opt = '<select class="form-control select-one lc"  name="aux_location_id" id="aux_location_id">';

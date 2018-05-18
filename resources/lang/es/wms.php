@@ -100,6 +100,7 @@ return [
                       'ITEM_TYPE' => 'Tipo de ítem',
                       'IN_MOVEMENT' => 'En movimiento',
                       'INDIRECT_SUPPLY' => 'Surtido indirecto',
+                      'IS_ROTATION' => 'Requiere rotación de lotes',
                       'REORDER' => 'Punto Reorden',
                       'RECEIVED' => 'Recibido',
                       'SUPPLIED' => 'Surtido',

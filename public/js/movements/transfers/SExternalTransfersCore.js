@@ -24,7 +24,6 @@ class SExternalTransfers {
                   '&mvt_id=' + globalData.oMovementSrc.id_mvt,
      function(data) {
         var serverData = JSON.parse(data);
-        console.log(serverData);
 
         guiTransfers.showSearchPanel();
         guiTransfers.showButtonReceive();

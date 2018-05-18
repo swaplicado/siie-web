@@ -29,7 +29,7 @@
 		<thead>
 			<th data-field="id" data-sortable="true">{{ trans('userinterface.labels.BP') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.RFC') }}</th>
-			<th data-sortable="true">{{ trans('userinterface.labels.CURP') }}</th>
+			<th data-sortable="true">Rot. lotes</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.ERP_ID') }}</th>
 			<th>ATT</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.STATUS') }}</th>
@@ -40,7 +40,13 @@
 				<tr>
 					<td>{{ $bpartner->name }}</td>
 					<td>{{ $bpartner->fiscal_id }}</td>
-					<td>{{ $bpartner->person_id }}</td>
+					<td>
+						@if ($bpartner->is_rotation_required)
+								<span class="label label-success">{{ 'REQUERIDA' }}</span>
+						@else
+								<span class="label label-danger">{{ 'NO' }}</span>
+						@endif
+					</td>
 					<td>{{ $bpartner->external_id }}</td>
 					<td>
 						@if ($bpartner->is_company)

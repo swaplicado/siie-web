@@ -6,7 +6,8 @@
             @if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
                   $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ') ||
                   $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA') ||
-                  ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) ||
+                  ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION') &&
+                    $oMovement->mvt_whs_type_id != \Config::get('scwms.MVT_TP_OUT_SAL')) ||
                   App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
                 <div class="col-md-3">
                   {!! Form::label('', trans('actions.SEARCH_ELEMENT').'...') !!}

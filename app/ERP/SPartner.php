@@ -27,6 +27,7 @@ class SPartner extends Model {
                           'is_agt_sales',
                           'is_related_party',
                           'is_deleted',
+                          'is_rotation_required',
                         ];
   /**
    * [userCreation description]

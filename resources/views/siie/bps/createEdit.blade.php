@@ -28,6 +28,22 @@
 @section('content')
 
 		<div class="form-group">
+			<div class="row">
+				<div class="col-md-1"></div>
+				<div class="col-md-4">
+					<div class="row">
+						{!! Form::label('is_rotation_required', trans('wms.labels.IS_ROTATION')) !!}
+					</div>
+					<div class="row">
+						{!! Form::checkbox('is_rotation_required', 1,
+															isset($bpartner) ? $bpartner->is_rotation_required : false,
+															['class' => 'form-control']) !!}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-group">
 			{!! Form::label('name', trans('userinterface.labels.BP').'*') !!}
 			{!! Form::text('name',
 				isset($bpartner) ? $bpartner->name : null , ['class'=>'form-control', 'maxlength' => '200',

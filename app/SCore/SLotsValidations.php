@@ -1,9 +1,11 @@
 <?php namespace App\SCore;
 
-use App\WMS\SWmsLot;
+use Carbon\Carbon;
 use App\ERP\SErpConfiguration;
 
-use Carbon\Carbon;
+use App\WMS\SWmsLot;
+use App\ERP\SPartner;
+
 
 /**
  * this class contains functions of validation
@@ -201,7 +203,7 @@ class SLotsValidations {
         return false;
     }
 
-    public function validatelotsByExpiration($iMvtType = 0, $iPartner = 0, $iAddress = 0)
+    public function validatelotsByExpiration($iMovement = 0, $iPartner = 0, $iAddress = 0)
     {
         // $sSelect = 'wm.id_mvt,
         //             wmr.id_mvt_row,
@@ -216,6 +218,12 @@ class SLotsValidations {
         //             eba.street,
         //             eba.locality';
 
+        $oPartner = SPartner::find($iPartner);
+
+        if (! $oPartner->is_rotation_required) {
+            return false;
+        }
+
         $lLastLot = \DB::connection(session('db_configuration')->getConnCompany())
                       ->table('wms_mvts AS wm')
                       ->join('wms_mvt_rows AS wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
@@ -226,13 +234,21 @@ class SLotsValidations {
                       ->select('wm.id_mvt', 'wmrl.lot_id', 'wl.lot', 'wl.dt_expiry', 'eba.name')
                       ->where('wmr.item_id', $this->iItem)
                       ->where('wmr.unit_id', $this->iUnit)
-                      ->where('wm.mvt_whs_type_id', $iMvtType)
+                      ->where('wm.mvt_whs_type_id', \Config::get('scwms.MVT_TP_OUT_SAL'))
                       ->where('ed.partner_id', $iPartner)
                       ->where('eba.id_branch_address', $iAddress)
-                      ->groupBy(['eba.id_branch_address', 'lot_id'])
-                      ->orderBy('dt_expiry', 'DESC')
-                      ->take(1)
-                      ->get();
+                      ->where('wm.is_deleted', false)
+                      ->where('wmr.is_deleted', false)
+                      ->where('wmrl.is_deleted', false);
+
+        if ($iMovement > 0) {
+          $lLastLot = $lLastLot->where('wm.id_mvt', '!=', $iMovement);
+        }
+
+        $lLastLot = $lLastLot->groupBy(['eba.id_branch_address', 'lot_id'])
+                              ->orderBy('dt_expiry', 'DESC')
+                              ->take(1)
+                              ->get();
 
         if (sizeof($lLastLot) > 0) {
           $tLastLotDate = Carbon::parse($lLastLot[0]->dt_expiry);

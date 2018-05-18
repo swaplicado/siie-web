@@ -133,7 +133,6 @@ class SLinksCore {
       },
       success: function(data) {
           var serverData = JSON.parse(data);
-          console.log(serverData);
 
           for (var index = 0; index < serverData.lRowsSupplied.length; index++) {
               var oRow = serverData.lRowsSupplied[index];

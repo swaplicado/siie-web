@@ -9,7 +9,6 @@ $(document).on('click', 'button.buttlots', function () {
     // document.getElementById("qtyComplete").value = parseFloat(movement.getRow(idParentTr).dQuantity).toFixed(globalData.DEC_QTY);
 
     // $('#lotsbody').empty();
-    console.log("readed " + idParentTr);
 
     var row = movement.getRow(idParentTr);
 
@@ -156,7 +155,6 @@ $(document).on('click', 'button.removeLotbutton', function () {
 
     $(this).closest('tr').remove();
     movement.getRow(idParentTr).removeLotRow(id);
-    console.log("removed " + id);
     // validateLots(idParentTr);
     return false;
 });
@@ -202,7 +200,6 @@ function pushLotTableRows(parent) {
   const LOT_VALUE = 6;
 
   var tableObj = document.getElementById('lotsTable');
-  console.log("push " + parent);
 
   movement.getRow(idParentTr).lotRows = [];
   $('#lotsbody tr').each(function(index, element) {

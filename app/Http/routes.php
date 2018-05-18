@@ -67,6 +67,10 @@ Route::put('manage/{id}/updatepass',[
   'uses' => 'SPassController@UpdatePass',
   'as' => 'manage.users.updatepass'
 ]);
+Route::post('manage/changedate',[
+  'uses' => 'SPassController@changeDate',
+  'as' => 'manage.changedate'
+]);
 
 //****************************************/ Admin/*************************
 	Route::group(['middleware' => ['mdadmin']], function() {

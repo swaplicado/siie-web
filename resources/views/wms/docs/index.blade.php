@@ -43,7 +43,6 @@
 			            <th>Avance %</th>
 			            <th>Cant. pendiente</th>
 									<th>Ver</th>
-									<th>Ligar</th>
 									<th>Cerrar</th>
 								@else
 									<th>Cve m/p</th>
@@ -58,6 +57,9 @@
 									<th data-priority="1">Devolver</th>
 								@else
 									<th data-priority="1">Surtir</th>
+								@endif
+								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
+									<th>Ligar</th>
 								@endif
 								<th>ID ERP</th>
 								<th>Status</th>
@@ -83,16 +85,6 @@
 																																class="btn btn-info btn-sm">
 											<span class=" glyphicon glyphicon-eye-open" aria-hidden = "true"/>
 										</a>
-									</td>
-									<td>
-										@if (($doc->doc_src_id != 1 && ($doc->supp_ord > 0 || $doc->supp_cn > 0)) || ($doc->supp_inv > 0 && $doc->doc_src_id == 1))
-											<a href="{{ route('wms.docs.link', [$iDocSource, $iDocDestiny]) }}" title="Enlazar surtido"
-																																	class="btn btn-default btn-sm">
-												<span class="glyphicon glyphicon-link" aria-hidden = "true"/>
-											</a>
-										@else
-											--
-										@endif
 									</td>
 									<td>
 										<a href="{{ route('wms.docs.openclose', [\Config::get('scsiie.DOC_OPER.CLOSE'), $doc->id_document]) }}" title="Cerrar para surtido"
@@ -159,6 +151,16 @@
 										class="btn btn-default btn-sm">
 										<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 									</a>
+								</td>
+								<td>
+									@if (($doc->doc_src_id != 1 && ($doc->supp_ord > 0 || $doc->supp_cn > 0)) || ($doc->supp_inv > 0 && $doc->doc_src_id == 1))
+										<a href="{{ route('wms.docs.link', [$iDocSource, $iDocDestiny]) }}" title="Enlazar surtido"
+																																class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-link" aria-hidden = "true"/>
+										</a>
+									@else
+										--
+									@endif
 								</td>
 								<td class="small">{{ $doc->external_id }}</td>
 								<td class="small">

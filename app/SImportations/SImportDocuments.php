@@ -3,6 +3,7 @@
 use App\ERP\SDocument;
 use App\ERP\SPartner;
 use App\ERP\SBranch;
+use App\ERP\SAddress;
 use App\ERP\SCurrency;
 
 /**
@@ -84,9 +85,11 @@ class SImportDocuments
             fid_tp_dps,
             fid_src_year_n,
             fid_src_doc_n,
+            fid_cob,
             fid_cur,
             fid_bp_r,
             fid_bpb,
+            fid_add,
             ts_new,
             ts_edit,
             ts_del
@@ -106,10 +109,12 @@ class SImportDocuments
       $lWebDocuments = SDocument::get();
       $lPartners = SPartner::get();
       $lBranches = SBranch::get();
+      $lAddress = SAddress::get();
       $lDocuments = array();
       $lDocumentsToWeb = array();
       $lWebPartners = array();
       $lWebBranches = array();
+      $lWebAddresses = array();
 
       foreach ($lWebDocuments as $key => $value) {
           $lDocuments[$value->external_id] = $value;
@@ -125,6 +130,10 @@ class SImportDocuments
 
       foreach ($lBranches as $key => $branch) {
           $lWebBranches[$branch->external_id] = $branch->id_branch;
+      }
+
+      foreach ($lAddress as $key => $address) {
+          $lWebAddresses[$address->external_id.'-'.$address->external_ad_id] = $address->id_branch_address;
       }
 
       if ($result->num_rows > 0) {
@@ -152,6 +161,7 @@ class SImportDocuments
                     $lDocuments[$row["id_doc"]]->is_deleted = $row["b_del"];
                     $lDocuments[$row["id_doc"]]->external_id = $row["id_doc"];
                     $lDocuments[$row["id_doc"]]->year_id = $lYears[$row["id_year"]];
+                    $lDocuments[$row["id_doc"]]->billing_branch_id = $lWebBranches[$row["fid_cob"]];
                     $lDocuments[$row["id_doc"]]->doc_category_id = $row["fid_ct_dps"];
                     $lDocuments[$row["id_doc"]]->doc_class_id = $row["fid_cl_dps"];
                     $lDocuments[$row["id_doc"]]->doc_type_id = $row["fid_tp_dps"];
@@ -166,6 +176,7 @@ class SImportDocuments
                     $lDocuments[$row["id_doc"]]->currency_id = $lCurrencies[$row["fid_cur"]];
                     $lDocuments[$row["id_doc"]]->partner_id = $lWebPartners[$row["fid_bp_r"]];
                     $lDocuments[$row["id_doc"]]->branch_id = $lWebBranches[$row["fid_bpb"]];
+                    $lDocuments[$row["id_doc"]]->address_id = $lWebAddresses[$row["fid_bpb"].'-'.$row["fid_add"]];
                     $lDocuments[$row["id_doc"]]->created_by_id = 1;
                     $lDocuments[$row["id_doc"]]->updated_by_id = 1;
                     $lDocuments[$row["id_doc"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
@@ -178,6 +189,7 @@ class SImportDocuments
                                                                           $lYears,
                                                                           $lWebPartners,
                                                                           $lWebBranches,
+                                                                          $lWebAddresses,
                                                                           $lCurrencies,
                                                                           $lDocsYear));
              }
@@ -205,7 +217,7 @@ class SImportDocuments
    * @return SDocument
    */
   private static function siieToSiieWeb($oSiieDocument = null, $lYears = [], $lWebPartners = [],
-                                  $lWebBranches = [], $lCurrencies = [], $lDocsYear = []) {
+                                  $lWebBranches = [], $lWebAddresses = [], $lCurrencies = [], $lDocsYear = []) {
        $oDocument = new SDocument();
        $oDocument->dt_date = $oSiieDocument["dt"];
        $oDocument->dt_doc = $oSiieDocument["dt_doc"];
@@ -225,6 +237,7 @@ class SImportDocuments
        $oDocument->is_deleted = $oSiieDocument["b_del"];
        $oDocument->external_id = $oSiieDocument["id_doc"];
        $oDocument->year_id = $lYears[$oSiieDocument["id_year"]];
+       $oDocument->billing_branch_id = $lWebBranches[$oSiieDocument["fid_cob"]];
        $oDocument->doc_category_id = $oSiieDocument["fid_ct_dps"];
        $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
        $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
@@ -235,12 +248,12 @@ class SImportDocuments
          $src_id = 1;
        }
 
-
        $oDocument->doc_src_id = $src_id;
        $oDocument->doc_status_id = 1;
        $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
        $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];
        $oDocument->branch_id = $lWebBranches[$oSiieDocument["fid_bpb"]];
+       $oDocument->address_id = $lWebAddresses[$oSiieDocument["fid_bpb"].'-'.$oSiieDocument["fid_add"]];
        $oDocument->created_by_id = 1;
        $oDocument->updated_by_id = 1;
        $oDocument->created_at = $oSiieDocument["ts_new"];

@@ -150,15 +150,16 @@ class SRowsCore {
     var data = { value : JSON.stringify(elementToAdd) };
     $.ajax({
       type: "POST",
-      url: './' + (globalData.sRoute) + '/validaterow',
+      url: './' + (globalData.sRoute) + '/validaterow?iMvtType=' + globalData.iMvtType
+                                      + '&iMovement=' + oMovement.iIdMovement
+                                      + '&iPartner=' + globalData.oDocument.partner_id
+                                      + '&iAddress=' + globalData.oDocument.address_id,
       data: data,
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(data) {
          var serverData = JSON.parse(data);
-         console.log(serverData);
-
 
          if (serverData.lErrors.length > 0) {
             guiValidations.hideAdd();
@@ -191,9 +192,9 @@ class SRowsCore {
 
               rowsCore.completeRow(serverData.lLotRows);
 
-              // if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
-              //   return false;
-              // }
+              if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
+                return false;
+              }
             }
             else {
               elementToAdd.dPrice = guiFunctions.getPrice();

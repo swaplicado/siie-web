@@ -21,6 +21,7 @@ class SAddress extends Model {
                           'state',
                           'zip_code',
                           'external_id',
+                          'external_ad_id',
                           'is_main',
                           'is_deleted',
                           'branch_id',

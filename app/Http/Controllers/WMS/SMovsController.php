@@ -93,9 +93,9 @@ class SMovsController extends Controller
         return view('wms.movs.index')
                     ->with('iFolio', $iFolio)
                     ->with('lWarehouses', $lWarehouses)
+                    ->with('iFilterWhs', $iFilterWhs)
                     ->with('iFilter', $this->iFilter)
                     ->with('sFilterDate', $sFilterDate)
-                    ->with('iFilterWhs', $iFilterWhs)
                     ->with('rows', $lMovRows);
     }
 
@@ -110,11 +110,20 @@ class SMovsController extends Controller
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+        $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
+
         $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC');
+
+        if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
+            $lMovs = $lMovs->where('whs_id', $iFilterWhs);
+        }
 
         $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))
                         ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
                         ->get();
+
+        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch);
+        $lWarehouses['0'] = 'TODOS';
 
         foreach ($lMovs as $mov) {
             $mov->order;
@@ -131,6 +140,8 @@ class SMovsController extends Controller
         return view('wms.movs.inventorydocs')
                     ->with('iFilter', $this->iFilter)
                     ->with('sFilterDate', $sFilterDate)
+                    ->with('lWarehouses', $lWarehouses)
+                    ->with('iFilterWhs', $iFilterWhs)
                     ->with('actualUserPermission', $this->oCurrentUserPermission)
                     ->with('lMovs', $lMovs);
     }
@@ -574,6 +585,7 @@ class SMovsController extends Controller
         case \Config::get('scwms.MVT_TP_OUT_SAL'):
         case \Config::get('scwms.MVT_TP_OUT_PUR'):
           $mvtComp = SMvtTrnType::where('is_deleted', false)->lists('name', 'id_mvt_trn_type');
+          $iMvtSubType = $oMovement->mvt_trn_type_id;
           break;
 
         case \Config::get('scwms.MVT_TP_IN_ADJ'):
@@ -1099,10 +1111,11 @@ class SMovsController extends Controller
                $oData->lNewLots = $oValidation->getLotsToCreate();
                $oData->lLotRows = $oValidation->getLots();
 
-               // if (sizeof($oData->lErrors == 0)) {
-               //   $oValidation->validatelotsByExpiration($request->iMvtType, $request->iPartner, $request->iAddress);
-               //   $oData->lErrors = $oValidation->getErrors();
-               // }
+
+               if ($request->iMvtType == \Config::get('scwms.MVT_TP_OUT_SAL') && sizeof($oData->lErrors == 0)) {
+                 $oValidation->validatelotsByExpiration($request->iMovement, $request->iPartner, $request->iAddress);
+                 $oData->lErrors = $oValidation->getErrors();
+               }
            }
 
         }

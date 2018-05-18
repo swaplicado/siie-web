@@ -69,7 +69,6 @@ class SLocations {
                   '/search?code=' + sCode,
      function(data) {
         var serverData = JSON.parse(data);
-        console.log(serverData);
         guiFunctions.setSearchCode('');
         var bLoc = false;
         switch (serverData.iElementType) {

@@ -56,6 +56,7 @@ return [
     'MVT_EXP_TP_PRO' => '2', // production
 
     // applies only for internal movements
+    'MVT_INTERNAL_NA' => '1', // purchases
     'MVT_INTERNAL_ADJUST' => '2', // purchases
     'MVT_INTERNAL_TRANSFER' => '3', // production
     'MVT_INTERNAL_DIV_PALLET' => '4', // production

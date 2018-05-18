@@ -7,8 +7,8 @@ $(function() {
 });
 
 $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
-  console.log(picker.startDate.format('YYYY-MM-DD'));
-  console.log(picker.endDate.format('YYYY-MM-DD'));
+  // console.log(picker.startDate.format('YYYY-MM-DD'));
+  // console.log(picker.endDate.format('YYYY-MM-DD'));
 });
 
   $('#docTable').DataTable({

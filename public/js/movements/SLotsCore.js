@@ -14,7 +14,6 @@ class SLotsCore {
                   '/search?code=' + sCode,
      function(data) {
         var serverData = JSON.parse(data);
-        console.log(serverData);
         lotsCore.processLot(serverData);
      });
   }

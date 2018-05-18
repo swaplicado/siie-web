@@ -1,16 +1,21 @@
 <?php namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\User;
-use App\SYS\SUserType;
 use Laracasts\Flash\Flash;
+use Carbon\Carbon;
+
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\SPasswordRequest;
+
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
+use App\SUtils\SConnectionUtils;
+
+use App\User;
+use App\SYS\SUserType;
+use App\ERP\SYear;
 
 class SPassController extends Controller
 {
@@ -65,5 +70,30 @@ class SPassController extends Controller
         // dd($user);
 
         return view('admin.users.changepass')->with('user', $user);
+    }
+
+    public function changeDate(Request $request)
+    {
+        $oData = json_decode($request->value);
+
+        $oWorkDate = Carbon::parse($oData);
+        $today = Carbon::today();
+
+        if ($today->gte($oWorkDate)) {
+          session(['work_date' => $oWorkDate]);
+
+          $iYear = $oWorkDate->year;
+
+          SConnectionUtils::reconnectCompany();
+          $oYear = SYear::where('year', $iYear)
+                          ->where('is_deleted', false)
+                          ->first();
+
+          session(['work_year' => $oYear->id_year]);
+
+          return json_encode('Fecha actualizada');
+        }
+
+        return json_encode('ERROR, La fecha de trabajo no puede ser posterior al día de hoy');
     }
 }

@@ -4,10 +4,9 @@ class SRotation {
   }
 
   validateRotation(elementToAdd) {
-    console.log(globalData);
     var mLots = new Map();
 
-    if (globalData.iMvtType == globalData.MVT_TP_OUT_ADJ) {
+    if (globalData.iMvtType != globalData.MVT_TP_OUT_SAL) {
         return true;
     }
 
@@ -41,7 +40,6 @@ class SRotation {
 	     return (new Date(b[1].tExpDate.replace("-", "/")) < new Date(a[1].tExpDate.replace("-", "/")));
     }));
 
-    console.log(mapAsc);
     var lLots = new Array();
 
     var iL;
@@ -54,14 +52,15 @@ class SRotation {
     }
 
     for (var [key, lotRow] of mapAsc) {
-      var sExDate = lotRow.tExpDate.replace(/-/g, "/");
+      var sExDateT = lotRow.tExpDate;
+      var sExDate = sExDateT.replace(/-/g, "/");
       var rowDate = new Date(sExDate);
       var indexLot = -1;
 
       var iL;
       for (iL = 0; iL < lLots.length; iL++) {
-         console.log(lLots[iL]);
-         var lotDate = new Date(lLots[iL].dt_expiry.replace(/-/g, "/"));
+         var sExpLoT = lLots[iL].dt_expiry;
+         var lotDate = new Date(sExpLoT.replace(/-/g, "/"));
 
          if (lotDate < rowDate &&
                 (parseFloat(lLots[iL].available_stock, 10) - lLots[iL].dOcupped) > 0) {
