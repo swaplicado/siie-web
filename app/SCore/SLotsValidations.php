@@ -34,6 +34,7 @@ class SLotsValidations {
       $this->lLotsToCreate = $theLotsToCreate;
       $this->iItem = $theItemId;
       $this->iUnit = $theUnitId;
+      $this->oLastLot = null;
     }
 
     /**
