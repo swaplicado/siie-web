@@ -178,9 +178,10 @@ class SRowsCore {
          }
          else {
             if (elementToAdd.bIsLot) {
+
               if (globalData.isPalletReconfiguration || !globalData.bIsInputMov) {
                  if (serverData.lNewLots.length > 0) {
-                   swal("Error", "No pueden crearse lotes en esta opreación", "error");
+                   swal("Error", "No pueden crearse lotes en esta operación", "error");
                    return false;
                  }
 
@@ -192,6 +193,7 @@ class SRowsCore {
 
               rowsCore.completeRow(serverData.lLotRows);
 
+              globalData.oLastLot = serverData.oLastLot;
               if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
                 return false;
               }

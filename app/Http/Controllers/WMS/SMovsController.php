@@ -1114,6 +1114,7 @@ class SMovsController extends Controller
 
                if ($request->iMvtType == \Config::get('scwms.MVT_TP_OUT_SAL') && sizeof($oData->lErrors == 0)) {
                  $oValidation->validatelotsByExpiration($request->iMovement, $request->iPartner, $request->iAddress);
+                 $oData->oLastLot = $oValidation->getLastLot();
                  $oData->lErrors = $oValidation->getErrors();
                }
            }

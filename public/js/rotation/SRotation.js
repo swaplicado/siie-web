@@ -51,6 +51,13 @@ class SRotation {
               }
     }
 
+    var tLastLotDate = null;
+    if (globalData.oLastLot != null) {
+       var sLastLotDate = globalData.oLastLot.dt_expiry;
+       var sLastLotTemp = sLastLotDate.replace(/-/g, "/");
+       tLastLotDate = new Date(sLastLotTemp);
+    }
+
     for (var [key, lotRow] of mapAsc) {
       var sExDateT = lotRow.tExpDate;
       var sExDate = sExDateT.replace(/-/g, "/");
@@ -62,15 +69,17 @@ class SRotation {
          var sExpLoT = lLots[iL].dt_expiry;
          var lotDate = new Date(sExpLoT.replace(/-/g, "/"));
 
-         if (lotDate < rowDate &&
-                (parseFloat(lLots[iL].available_stock, 10) - lLots[iL].dOcupped) > 0) {
-             swal("Error", "El lote " + lotRow.sLot  +
-             " no es el más próximo a vencerse.", "error");
-             return false;
-         }
+         if (tLastLotDate == null || (tLastLotDate != null && lotDate >= tLastLotDate)) {
+           if (lotDate < rowDate
+                && (parseFloat(lLots[iL].available_stock, 10) - lLots[iL].dOcupped) > 0) {
+               swal("Error", "El lote " + lotRow.sLot  +
+               " no es el más próximo a vencerse.", "error");
+               return false;
+           }
 
-         if (lotRow.iLotId == lLots[iL].id_lot) {
-            indexLot = iL;
+           if (lotRow.iLotId == lLots[iL].id_lot) {
+              indexLot = iL;
+           }
          }
       }
 

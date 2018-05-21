@@ -18,6 +18,7 @@ class SLotsValidations {
     protected $lLots = null;
     protected $iItem = 0;
     protected $iUnit = 0;
+    protected $oLastLot = null;
 
     /**
      * initialize the lots, lots ti create, the current item
@@ -65,6 +66,11 @@ class SLotsValidations {
       return $this->lLots;
     }
 
+    public function getLastLot()
+    {
+       return $this->oLastLot;
+    }
+
     /**
      * create a new SLot object and add it to array of
      * lots to create
@@ -109,6 +115,11 @@ class SLotsValidations {
     {
        $this->lLots[$iKey]->iLotId = $oLot->id_lot;
        $this->lLots[$iKey]->tExpDate = $oLot->dt_expiry;
+    }
+
+    private function assigLastLot($oLot = null)
+    {
+       $this->oLastLot = $oLot;
     }
 
     /**
@@ -252,6 +263,8 @@ class SLotsValidations {
 
         if (sizeof($lLastLot) > 0) {
           $tLastLotDate = Carbon::parse($lLastLot[0]->dt_expiry);
+
+          $this->assigLastLot($lLastLot[0]);
 
           foreach ($this->lLots as $oLot) {
              $lotExpDate = Carbon::parse($oLot->tExpDate);
