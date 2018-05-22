@@ -447,9 +447,17 @@ class SStockManagment
                        })
                      ->mergeBindings($sub)
                      ->leftJoin('wms_indirect_supply_links AS wisl', 'edr.id_document_row', '=', 'wisl.des_doc_row_id')
+                     ->leftJoin('wms_mvts AS wm', 'wmr.mvt_id', '=', 'wm.id_mvt')
                      ->where('ed.doc_category_id', $iDocCategory)
                      ->where('ed.doc_class_id', $iDocClass)
                      ->where('ed.doc_type_id', $iDocType)
+                     ->where(function ($query) {
+                          $query->whereNull('wm.is_deleted')
+                              ->orWhere(function ($query) {
+                                   $query->WhereNotNull('wm.is_deleted')
+                                       ->where('wm.is_deleted', false);
+                               });
+                      })
                      ->where('eic.id_item_class', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'));
 
        return $query;

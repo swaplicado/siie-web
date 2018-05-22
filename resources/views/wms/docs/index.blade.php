@@ -29,7 +29,7 @@
 		{!! Form::close() !!}
   @endsection
 	<div class="row">
-		<table id="docTable" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+		<table id="docTable" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
 								<th data-priority="1">Folio</th>
@@ -45,8 +45,8 @@
 									<th>Ver</th>
 									<th>Cerrar</th>
 								@else
-									<th>Cve m/p</th>
-									<th>Mat/Prod</th>
+									<th>Código</th>
+									<th>Material/Producto</th>
 									<th>Cantidad</th>
 									<th>Surtida</th>
 									<th>Avance %</th>
@@ -58,9 +58,7 @@
 								@else
 									<th data-priority="1">Surtir</th>
 								@endif
-								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
-									<th>Ligar</th>
-								@endif
+								<th>Ligar</th>
 								<th>ID ERP</th>
 								<th>Status</th>
 		        </tr>
