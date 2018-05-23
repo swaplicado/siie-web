@@ -184,7 +184,7 @@ class SStockController extends Controller
 
       $stock = $stock->get();
 
-      $lWhss = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch);
+      $lWhss = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, true);
       $lWhss['0'] = 'TODOS';
 
       return view('wms.stock.stock')

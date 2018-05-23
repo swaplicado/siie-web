@@ -45,6 +45,7 @@ return [
           'RECONFIG_PALLETS' => 'Reconfiguracion tarimas',
           'PALLET_DIVISION' => 'Dividir tarima',
           'PALLET_ADD' => 'Agregar a tarima',
+          'EMPTY_WAREHOUSE' => 'Vaciar almacén',
 
       'DOCS' => 'Documentos',
       'PUR_DOCS' => 'Documentos compra',
@@ -103,6 +104,7 @@ return [
                       'IS_ROTATION' => 'Requiere rotación de lotes',
                       'REORDER' => 'Punto Reorden',
                       'RECEIVED' => 'Recibido',
+                      'SEGREGATED' => 'Segregado',
                       'SUPPLIED' => 'Surtido',
                       'CLOSED' => 'Cerrado',
                       'OPENED' => 'Abierto',
@@ -117,6 +119,7 @@ return [
                           'SELECT_LEVEL' => 'Seleccione nivel...',
                           'SELECT_PALLET' => 'Seleccione tarima...',
                           'SELECT_REFERENCE' => 'Seleccione referencia...',
+                          'SELECT_WAREHOUSE' => 'Seleccione almacén...',
                           'BAR_CODE_LOCATION' => 'Código barras ubicación...',
                           'SEARCH_ELEMENT' => 'Tarima, lote, material/producto...',
                         ],

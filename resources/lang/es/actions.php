@@ -19,6 +19,7 @@
 		'IMPORT' => 'Importar',
 		'LINK' => 'Enlazar',
 		'MODIFY' => 'Modificar',
+		'READ' => 'Leer',
 		'RECEIVE' => 'Recibir',
 		'SAVE' => 'Guardar',
 		'SEARCH' => 'Buscar',

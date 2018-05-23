@@ -412,6 +412,19 @@ Route::group(['prefix' => 'qms'], function () {
       ]);
 
       /*
+      * Warehouses inventory
+      **/
+      Route::get('/inventory/emptywarehouse', [
+      	'uses' => 'WMS\SInventoriesController@emptyWarehouseIndex',
+      	'as' => 'wms.inventory.emptywarehouse'
+      ]);
+      Route::get('/inventory/emptywarehouse/stock', [
+      	'uses' => 'WMS\SInventoriesController@getStock',
+      	'as' => 'wms.inventory.emptywarehouse.stock'
+      ]);
+
+
+      /*
       * Folios
       **/
       Route::resource('folios','WMS\SFoliosController');

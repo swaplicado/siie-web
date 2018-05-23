@@ -222,10 +222,11 @@ class SSessionUtils {
    *
    * @param  integer $iUser user id
    * @param  integer $iBranch branch id
+   * @param  boolean $bWithCode indicates if the method return the name of warehouses with code
    *
    * @return array array of integers and name with the warehouses
    */
-  public static function getUserWarehousesArrayWithName($iUser = 0, $iBranch = 0)
+  public static function getUserWarehousesArrayWithName($iUser = 0, $iBranch = 0, $bWithCode = false)
   {
      $oUser = $iUser == 0 ? \Auth::user() : User::find($iUser);
 
@@ -240,7 +241,7 @@ class SSessionUtils {
         $warehouses = $warehouses->get();
 
         foreach ($warehouses as $whs) {
-          $whss[$whs->id_whs] = $whs->name;
+          $whss[$whs->id_whs] = ($bWithCode ? $whs->code.'-' : '').$whs->name;
         }
 
         return $whss;
@@ -251,7 +252,7 @@ class SSessionUtils {
      foreach ($whsAccess as $access) {
         if (! $access->warehouses->is_deleted) {
           if ($iBranch == 0 || $access->warehouses->branch_id == $iBranch) {
-            $whss[$access->whs_id] = $access->warehouses->name;
+            $whss[$access->whs_id] = ($bWithCode ? $access->warehouses->code.'-' : '').$access->warehouses->name;
           }
 
         }

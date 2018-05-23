@@ -354,9 +354,17 @@ class SStockManagment
                                   \DB::raw(($bInvoice ? $sSubQueryOrders : "'0'")." AS supp_ord"),
                                   \DB::raw(($bCreditNote ? $sSubQueryCreditNotes : "'0'")." AS supp_cn"),
                                   \DB::raw('SUM(edr.quantity) AS qty_doc'),
-                                  \DB::raw('COALESCE(SUM(wmr.quantity), 0) AS qty_sur'),
+                                  \DB::raw('COALESCE(SUM(
+                                              IF (`wm`.`is_deleted` IS NULL
+                                              OR (`wm`.`is_deleted` IS NOT NULL
+                                              AND `wm`.`is_deleted` = FALSE),
+                                              wmr.quantity, 0)), 0) AS qty_sur'),
                                   \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
-                                  \DB::raw('(SUM(edr.quantity) - ( COALESCE(SUM(wmr.quantity), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
+                                  \DB::raw('(SUM(edr.quantity) - ( COALESCE(SUM(
+                                              IF (`wm`.`is_deleted` IS NULL
+                                              OR (`wm`.`is_deleted` IS NOT NULL
+                                              AND `wm`.`is_deleted` = FALSE),
+                                              wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
                           ->groupBy('edr.document_id')
                           ->orderBy('ed.dt_doc', 'DESC');
@@ -393,9 +401,17 @@ class SStockManagment
                                   \DB::raw("'0' AS supp_cn"),
                                   \DB::raw("'0' AS qty_ind_supp_row"),
                                   \DB::raw('edr.quantity AS qty_row'),
-                                  \DB::raw('COALESCE(SUM(wmr.quantity), 0) AS qty_sur'),
+                                  \DB::raw('COALESCE(SUM(
+                                              IF (`wm`.`is_deleted` IS NULL
+                                              OR (`wm`.`is_deleted` IS NOT NULL
+                                              AND `wm`.`is_deleted` = FALSE),
+                                              wmr.quantity, 0)), 0) AS qty_sur'),
                                   \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
-                                  \DB::raw('(edr.quantity - (COALESCE(SUM(wmr.quantity), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
+                                  \DB::raw('(edr.quantity - (COALESCE(SUM(
+                                              IF (`wm`.`is_deleted` IS NULL
+                                              OR (`wm`.`is_deleted` IS NOT NULL
+                                              AND `wm`.`is_deleted` = FALSE),
+                                              wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
                           ->groupBy('edr.id_document_row')
                           ->groupBy('edr.document_id')
@@ -451,13 +467,13 @@ class SStockManagment
                      ->where('ed.doc_category_id', $iDocCategory)
                      ->where('ed.doc_class_id', $iDocClass)
                      ->where('ed.doc_type_id', $iDocType)
-                     ->where(function ($query) {
-                          $query->whereNull('wm.is_deleted')
-                              ->orWhere(function ($query) {
-                                   $query->WhereNotNull('wm.is_deleted')
-                                       ->where('wm.is_deleted', false);
-                               });
-                      })
+                     // ->where(function ($query) {
+                     //      $query->whereNull('wm.is_deleted')
+                     //          ->orWhere(function ($query) {
+                     //               $query->WhereNotNull('wm.is_deleted')
+                     //                   ->where('wm.is_deleted', false);
+                     //           });
+                     //  })
                      ->where('eic.id_item_class', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'));
 
        return $query;

@@ -72,7 +72,7 @@ class SMovsController extends Controller
             $lMovRows = $lMovRows->where('wm.whs_id', $iFilterWhs);
         }
 
-        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch);
+        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
         $lWarehouses['0'] = 'TODOS';
 
         $lMovRows = $lMovRows->orderBy('mvt_id', 'DESC')
@@ -122,7 +122,7 @@ class SMovsController extends Controller
                         ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
                         ->get();
 
-        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch);
+        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
         $lWarehouses['0'] = 'TODOS';
 
         foreach ($lMovs as $mov) {

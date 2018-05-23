@@ -59,6 +59,7 @@ return [
                   'TRANSFERS' => '013',
                   'TRANSFERS_EXTERNAL' => '014',
                   'PALLET_RECONFIG' => '015',
+                  'INVENTORY_OPERATION' => '016',
                   'QUALITY' => '050',
                   'IMPORTATIONS' => '150',
 
