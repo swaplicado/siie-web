@@ -64,6 +64,7 @@ class SRotation {
       var rowDate = new Date(sExDate);
       var indexLot = -1;
 
+      var bContinue = false;
       var iL;
       for (iL = 0; iL < lLots.length; iL++) {
          var sExpLoT = lLots[iL].dt_expiry;
@@ -72,9 +73,14 @@ class SRotation {
          if (tLastLotDate == null || (tLastLotDate != null && lotDate >= tLastLotDate)) {
            if (lotDate < rowDate
                 && (parseFloat(lLots[iL].available_stock, 10) - lLots[iL].dOcupped) > 0) {
-               swal("Error", "El lote " + lotRow.sLot  +
-               " no es el más próximo a vencerse.", "error");
-               return false;
+                if (! bContinue) {
+                  if (confirm("El lote " + lotRow.sLot  +
+                        " no es el más próximo a vencerse. Desea continuar?")) {
+                      bContinue = true;
+                  } else {
+                      return false;
+                  }
+                }
            }
 
            if (lotRow.iLotId == lLots[iL].id_lot) {
