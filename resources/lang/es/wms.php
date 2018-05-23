@@ -108,6 +108,7 @@ return [
                       'SUPPLIED' => 'Surtido',
                       'CLOSED' => 'Cerrado',
                       'OPENED' => 'Abierto',
+                      'WITHOUT_PALLET' => 'Sin tarima',
                     ],
 
       'placeholders'  =>  [

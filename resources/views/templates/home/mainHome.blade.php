@@ -23,7 +23,7 @@
 				            <a href="{{ route('plantilla.admin') }}">{{ trans('userinterface.ADMINISTRATOR') }}</a>
 				        </li>
 							@endif
-							@if (\Auth::user()->user_type_id == \Config::get('scsys.TP_USER.MANAGER'))
+							@if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.ERP')))
 								<li>
 										<a href="{{ route('siie.home') }}">{{ trans('siie.MODULE') }}</a>
 								</li>

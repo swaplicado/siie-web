@@ -8,7 +8,7 @@ class SInventories {
           oStockRow.item_code,
           oStockRow.item,
           oStockRow.location,
-          oStockRow.pallet,
+          oStockRow.pallet == 1 ? 'SIN TARIMA' : oStockRow.pallet,
           oStockRow.lot,
           oStockRow.dt_expiry,
           parseFloat(oStockRow.stock - oStockRow.segregated, 10).toFixed(globalData.DEC_AMT),
@@ -38,7 +38,7 @@ class SInventories {
 
   fillMovement(serverData) {
     oMovement.rows.clear();
-    
+
     oMovement.iMvtType = globalData.scwms.MVT_TP_OUT_ADJ;
     oMovement.iMvtSubType = globalData.scwms.MVT_ADJ_TP_OTH;
     oMovement.tDate = '2018-05-01';

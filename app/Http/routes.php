@@ -556,7 +556,7 @@ Route::group(['prefix' => 'qms'], function () {
   }); //** standard middleware
 
 //****************************************/ Siie /*************************
-    Route::group(['prefix' => 'siie', 'middleware' => ['mdmanager']], function () {
+    Route::group(['prefix' => 'siie'], function () {
 
       Route::get('/home',[
   			'as' => 'siie.home',
