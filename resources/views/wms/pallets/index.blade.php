@@ -61,3 +61,17 @@
 		</tbody>
 	</table>
 @endsection
+@section('js')
+	<script>
+			 var iPallet = <?php echo json_encode($iId); ?>;
+			 var sItem = <?php echo json_encode($sItem); ?>;
+
+			 if (iPallet != 0 && sItem != '') {
+						swal(
+								'Tarima: ' + iPallet,
+								'Se ha creado para: ' + sItem,
+								'success'
+							);
+			 }
+	</script>
+@endsection

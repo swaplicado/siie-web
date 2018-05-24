@@ -31,7 +31,7 @@ class SWmsMenu {
                           Link::toRoute('wms.locs.index', trans('wms.LOCATIONS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_STD')),
-                          Link::toRoute('wms.pallets.index', trans('wms.PALLETS')))
+                          Link::toRoute('wms.pallets.index', trans('wms.PALLETS'), [0, '']))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_STD')),
                           Link::toRoute('wms.lots.index', trans('wms.LOTS')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_STD')),

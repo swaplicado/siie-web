@@ -39,7 +39,7 @@ class SPalletsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $iId = 0, $sItem = '')
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
       $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->get();
@@ -53,6 +53,8 @@ class SPalletsController extends Controller
 
       return view('wms.pallets.index')
           ->with('pallets', $Pallets)
+          ->with('iId', $iId)
+          ->with('sItem', $sItem)
           ->with('actualUserPermission', $this->oCurrentUserPermission)
           ->with('iFilter', $this->iFilter);
     }
@@ -104,7 +106,8 @@ class SPalletsController extends Controller
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 
-        return redirect()->route('wms.pallets.index');
+        return redirect()->route('wms.pallets.index',
+                            [$pallets->id_pallet, $pallets->item->name.'-'.$pallets->unit->code]);
     }
 
     /**

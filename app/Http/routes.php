@@ -519,6 +519,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SPalletsController@Barcode',
         'as'   => 'wms.pallets.barcode'
       ]);
+      Route::get('pallets/index/{id?}/{sitem?}',[
+        'uses' => 'WMS\SPalletsController@index',
+        'as' => 'wms.pallets.index'
+      ]);
 
       /*
       * documents

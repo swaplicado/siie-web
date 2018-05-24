@@ -28,9 +28,9 @@ class SReconfigurationCore {
          return false;
       }
       else {
-          var location = reconfigCore.validatePallet(oElement.id_pallet);
-        if (location > 0) {
-            oElement.location_id = location;
+        var location = reconfigCore.validatePallet(oElement.id_pallet);
+        if (location > 0 || (location == 0 && globalData.isPalletReconfiguration)) {
+            oElement.location_id = location == 0 ? oLocation.id_whs_location : location;
             reconfigCore.setPalletData(oElement);
             return false;
         }
@@ -62,7 +62,7 @@ class SReconfigurationCore {
 
   setPalletData(oElement) {
      guiReconfig.isPalletSet = true;
-     reconfigCore.oPalletRow = reconfigCore.createPalletRow(oElement.id_pallet);
+     reconfigCore.oPalletRow = reconfigCore.createPalletRow(oElement);
      oMovement.iAuxPallet = oElement.id_pallet;
      oMovement.iAuxPalletLocation = oElement.location_id;
 
@@ -86,7 +86,8 @@ class SReconfigurationCore {
      searchCore.initializateItems(iElementType);
   }
 
-  createPalletRow(iPallet) {
+  createPalletRow(oElement) {
+    var iPallet = oElement.id_pallet;
     var objPallet = new SMovementRow();
     var bSet = false;
 
@@ -136,8 +137,27 @@ class SReconfigurationCore {
 
                 objPallet.addLotRow(objPalletLot);
               }
+
+              bSet = true;
            }
         }
+    }
+
+    if (! bSet) {
+      objPallet.iIdMovRow = 0;
+      objPallet.iItemId = oElement.item_id;
+      objPallet.iUnitId = oElement.unit_id;
+      objPallet.bIsLot = oElement.item.is_lot;
+      objPallet.bIsBulk = oElement.item.is_bulk;
+      objPallet.iPalletId = oElement.id_pallet;
+      objPallet.iLocationId = oElement.location_id;
+      objPallet.sLocation = oLocation.name;
+      objPallet.dQuantity = 0;
+      objPallet.dPrice = 0;
+      objPallet.sItemCode = oElement.item.code;
+      objPallet.sItem = oElement.item.name;
+      objPallet.sUnit = oElement.unit.code;
+      objPallet.sPallet = oElement.id_pallet;
     }
 
     return objPallet;
