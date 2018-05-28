@@ -14,7 +14,7 @@
 			@include('templates.list.edit')
 @endif
 @if (in_array(\Config::get('scsys.OPTIONS.DESTROY'), $loptions) &&
-		App\SUtils\SValidation::isRenderedB(\Config::get('scsys.OPERATION.DESTROY'), $actualUserPermission, $v_created_by))
+		App\SUtils\SValidation::isRenderedB(\Config::get('scsys.OPERATION.DEL'), $actualUserPermission, $v_created_by))
 			@include('templates.list.destroy')
 @endif
 
