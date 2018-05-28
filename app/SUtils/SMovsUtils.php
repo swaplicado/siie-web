@@ -282,6 +282,7 @@ class SMovsUtils {
       $lElements =  $lElements->select(\DB::raw($sSelect))
                   ->where('ei.is_deleted', false)
                   ->where('eig.item_class_id', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'))
+                  ->where('ws.is_deleted', false)
                   ->where('ws.whs_id', $iWarehouseSrc);
 
       switch ($iElementType) {
