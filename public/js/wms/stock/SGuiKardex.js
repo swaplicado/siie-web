@@ -116,7 +116,13 @@ class SGuiKardex {
           parseFloat(oMovRow.inputs, 10).toFixed(globalData.DEC_QTY),
           parseFloat(oMovRow.outputs, 10).toFixed(globalData.DEC_QTY),
           parseFloat(oMovRow.stock, 10).toFixed(globalData.DEC_QTY),
-          oMovRow.unit_code
+          oMovRow.unit_code,
+          oMovRow.debit,
+          oMovRow.credit,
+          oMovRow.balance,
+          oMovRow.num_order,
+          (oMovRow.ser_num_invoice == '' ? '' :  (oMovRow.ser_num_invoice + '-')) + oMovRow.num_invoice,
+          oMovRow.num_cn
       ]).draw( false );
   }
 

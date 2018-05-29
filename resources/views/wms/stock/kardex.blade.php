@@ -96,6 +96,12 @@
                         <th>{{ trans('wms.labels.OUTPUTS') }}</th>
                         <th>{{ trans('wms.labels.STOCK') }}</th>
                         <th>{{ trans('wms.labels.UN') }}</th>
+                        <th>{{ '$'.trans('siie.labels.DEBITS') }}</th>
+                        <th>{{ '$'.trans('siie.labels.CREDITS') }}</th>
+                        <th>{{ '$'.trans('siie.labels.BALANCE') }}</th>
+                        <th>{{ trans('siie.labels.ORDER') }}</th>
+                        <th>{{ trans('siie.labels.INVOICE') }}</th>
+                        <th>{{ trans('siie.labels.C_N') }}</th>
                     </tr>
                 </thead>
                 <tbody>

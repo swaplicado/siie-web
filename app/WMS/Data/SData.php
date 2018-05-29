@@ -33,5 +33,6 @@ class SData
 
     public $oItem = null;
     public $oUnit = null;
+    public $dBalance = 0;
     public $lMovements = array();
 }

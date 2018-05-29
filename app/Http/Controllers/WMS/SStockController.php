@@ -225,7 +225,16 @@ class SStockController extends Controller
                    eb.code AS branch_code,
                    ww.code AS whs_code,
                    wwl.code AS loc_code,
-                   eu.code AS unit_code
+                   eu.code AS unit_code,
+                   ed_ord.num AS num_order,
+                   ed_ord.service_num AS ser_num_order,
+                   ed_ord.dt_date AS dt_order,
+                   ed_inv.num AS num_invoice,
+                   ed_inv.service_num AS ser_num_invoice,
+                   ed_inv.dt_date AS dt_invoice,
+                   ed_cn.num AS num_cn,
+                   ed_cn.service_num AS ser_num_cn,
+                   ed_cn.dt_date AS dt_cn
                   ';
 
        $query = \DB::connection(session('db_configuration')->getConnCompany())
@@ -238,6 +247,9 @@ class SStockController extends Controller
                      ->join('wmsu_whs_locations as wwl', 'wmr.location_id', '=', 'wwl.id_whs_location')
                      ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')
                      ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
+                     ->join('erpu_documents as ed_ord', 'wm.doc_order_id', '=', 'ed_ord.id_document')
+                     ->join('erpu_documents as ed_inv', 'wm.doc_invoice_id', '=', 'ed_inv.id_document')
+                     ->join('erpu_documents as ed_cn', 'wm.doc_credit_note_id', '=', 'ed_cn.id_document')
                      ->whereBetween('wm.dt_date', [$sJanuary, $sCutoffDate])
                      ->where('wm.is_deleted', false)
                      ->where('wmr.is_deleted', false);
@@ -249,7 +261,9 @@ class SStockController extends Controller
        switch ($iType) {
          case \Config::get('scwms.ELEMENTS_TYPE.ITEMS'):
            $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
-                                IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs';
+                                IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs,
+                                IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.amount, 0) AS credit,
+                                IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.amount, 0) AS debit';
            $aIds = explode("-", $iId);
            $query->where('wmr.item_id', $aIds[0])
                  ->where('wmr.unit_id', $aIds[1]);
@@ -265,7 +279,9 @@ class SStockController extends Controller
 
            $sSelect = $sSelect.', wl.lot, wl.dt_expiry';
            $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmrl.quantity, 0) AS inputs,
-                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmrl.quantity, 0) AS outputs';
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmrl.quantity, 0) AS outputs,
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmrl.amount, 0) AS credit,
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmrl.amount, 0) AS debit';
 
            $query->where('wmrl.lot_id', $iId);
            $oData->oItem = SWmsLot::find($iId)->item;
@@ -276,7 +292,9 @@ class SStockController extends Controller
 
          case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
            $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
-                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs';
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs,
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.amount, 0) AS credit,
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.amount, 0) AS debit';
            $query->where('wmr.pallet_id', $iId);
            $oData->oItem = SPallet::find($iId)->item;
            $oData->oUnit = SPallet::find($iId)->unit;
@@ -298,11 +316,16 @@ class SStockController extends Controller
        $dInputs = 0;
        $dOutputs = 0;
        $dStock = 0;
+       $dBalance = 0;
        foreach ($query as $row) {
           $dInputs += $row->inputs;
           $dOutputs += $row->outputs;
           $dStock += $row->inputs - $row->outputs;
           $row->stock = $dStock;
+
+          $dBalance += $row->debit - $row->credit;
+          $row->balance = $dBalance;
+
           $row->index = $iIndex++;
        }
 

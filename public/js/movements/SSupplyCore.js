@@ -36,7 +36,8 @@ class SSupplyCore {
 
         elementToAdd = oRow;
 
-        guiFunctions.setPrice(elementToAdd.dPrice);
+        guiFunctions.setPrice(0);
+        // guiFunctions.setPrice(elementToAdd.dPrice);
 
         if (! oRow.bIsLot) {
           guiValidations.showPallet();
