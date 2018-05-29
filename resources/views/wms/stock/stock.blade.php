@@ -10,7 +10,9 @@
 
 @section('title', $sTitle)
 
-<?php $sRoute="wms.stock"?>
+<?php $sRoute="wms.stock" ?>
+<?php $iType = 0 ?>
+<?php $sId = '' ?>
 
 @section('content')
 	@section('thefilters')
@@ -66,12 +68,13 @@
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
 			            <th data-priority="1">Sucursal</th>
 								@endif
-								<th data-priority="1">Disponible</th>
-								<th data-priority="1">Existencia</th>
+								<th data-priority="1" style="color: green;">Disponible</th>
+								<th data-priority="1" style="color: blue;">Existencia</th>
 		            <th data-priority="2">Entradas</th>
 		            <th data-priority="2">Salidas</th>
-		            <th data-priority="1">Segregado</th>
-								<th data-priority="1">Unidad</th>
+		            <th data-priority="1" style="color: red;">Segregado</th>
+								<th data-priority="1">Un.</th>
+								<th data-priority="1">--</th>
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
@@ -86,6 +89,50 @@
 		    </thead>
 		    <tbody>
 					@foreach ($data as $row)
+						<?php
+							switch($iStockType) {
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.PALLETS');
+											$sId = $row->pallet_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.PALLETS');
+											$sId = $row->pallet_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_GENERAL'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+											$sId = $row->item_id.'-'.$row->unit_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.LOTS');
+											$sId = $row->lot_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.LOTS');
+											$sId = $row->lot_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+											$sId = $row->item_id.'-'.$row->unit_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+											$sId = $row->item_id.'-'.$row->unit_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+											$sId = $row->item_id.'-'.$row->unit_id;
+											break;
+								case \Config::get('scwms.STOCK_TYPE.STK_BY_ITEM'):
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+											$sId = $row->item_id.'-'.$row->unit_id;
+											break;
+								default:
+											$iType = \Config::get('scwms.ELEMENTS_TYPE.ITEMS');
+											$sId = $row->item_id.'-'.$row->unit_id;
+							        break;
+							}
+					 	 ?>
 						<tr>
 		            <td>{{ $row->item_code }}</td>
 		            <td>{{ $row->item }}</td>
@@ -120,6 +167,15 @@
 		            <td align="right">{{ session('utils')->formatNumber($row->outputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 		            <td align="right">{{ session('utils')->formatNumber($row->segregated, \Config::get('scsiie.FRMT.QTY')) }}</td>
 								<td align="right">{{ $row->unit }}</td>
+								<td>
+									<a
+									{{-- href="{{ route('siie.docs.view', $doc->id_document) }}" --}}
+									onClick="getKardex({{ $iType }}, '{{ $sId }}')"
+									title="Kardex"
+										class="btn btn-info btn-sm">
+										<span class="glyphicon glyphicon-list-alt" aria-hidden = "true"/>
+									</a>
+								</td>
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
@@ -169,6 +225,19 @@
 @endsection
 
 @section('js')
+	<script type="text/javascript">
+		function GlobalData () {
+			this.scwms = <?php echo json_encode(\Config::get('scwms')) ?>;
+			this.iWhsOption = <?php echo json_encode($iFilterWhs) ?>;
+
+			this.DEC_QTY = <?php echo json_encode(session('decimals_qty')) ?>;
+			this.DEC_AMT = <?php echo json_encode(session('decimals_amt')) ?>;
+		}
+
+		var globalData = new GlobalData();
+	</script>
+
+	@include('wms.stock.kardex')
 	@include('templates.stock.scriptsstock')
 	<script src="{{ asset('datatables/dataTables.buttons.min.js') }}"></script>
 	<script src="{{ asset('datatables/buttons.flash.min.js') }}"></script>
@@ -177,4 +246,6 @@
 	<script src="{{ asset('datatables/vfs_fonts.js') }}"></script>
 	<script src="{{ asset('datatables/buttons.html5.min.js') }}"></script>
 	<script src="{{ asset('datatables/buttons.print.min.js') }}"></script>
+
+
 @endsection

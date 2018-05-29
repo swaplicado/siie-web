@@ -249,9 +249,7 @@ class SLotsValidations {
                       ->where('wm.mvt_whs_type_id', \Config::get('scwms.MVT_TP_OUT_SAL'))
                       ->where('ed.partner_id', $iPartner)
                       ->where('eba.id_branch_address', $iAddress)
-                      ->where('wm.is_deleted', false)
-                      ->where('wmr.is_deleted', false)
-                      ->where('wmrl.is_deleted', false);
+                      ->where('wm.is_deleted', false);
 
         if ($iMovement > 0) {
           $lLastLot = $lLastLot->where('wm.id_mvt', '!=', $iMovement);

@@ -66,7 +66,7 @@ class SMovsController extends Controller
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
 
-        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate);
+        $lMovRows = SMovementRow::Search($this->iFilter, $sFilterDate);
 
         if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
             $lMovRows = $lMovRows->where('wm.whs_id', $iFilterWhs);
@@ -618,7 +618,6 @@ class SMovsController extends Controller
           $oMvtIn = SMovement::where('src_mvt_id', $id)
                                 ->take(1)->get();
           $iWhsDes = $oMvtIn[0]->whs_id;
-          $iMvtSubType = 1;
           break;
 
         case \Config::get('scwms.MVT_TP_IN_CON'):
