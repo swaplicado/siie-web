@@ -223,6 +223,10 @@ Route::group(['prefix' => 'qms'], function () {
   			'as' => 'qms.home',
   			'uses' => 'QMS\SQualityController@Home'
   		]);
+      Route::get('segregations/{title}/{segType}/{viewType}/{typeView}/index',[
+      'uses' => 'QMS\SSegregationsController@index',
+      'as' => 'qms.segregations.index'
+      ]);
   		Route::resource('qms','QMS\SQualityController');
       Route::get('/segregation/findWarehouse','QMS\SSegregationsController@findWarehouse');
       Route::get('/segregation/findLocations','QMS\SSegregationsController@findLocations');
