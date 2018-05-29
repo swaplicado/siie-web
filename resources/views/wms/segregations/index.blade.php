@@ -43,7 +43,6 @@
 									<th>-</th>
 								@endif
 								<th>-</th>
-								<th>-</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -60,9 +59,17 @@
 		            <td>{{ $row->item_code }}</td>
 		            <td>{{ $row->item }}</td>
 		            <td>{{ $row->unit }}</td>
-		            <td>{{ $row->lot_name }}</td>
-		            <td>{{ $row->pallet }}</td>
-		            <td>{{ $row->segregated }}</td>
+								@if ($typeView == 0)
+		            	<td>{{ $row->lot_name }}</td>
+							  @else
+									<td> -- </td>
+								@endif
+								<td>{{ $row->pallet }}</td>
+								@if ($typeView == 0)
+									<td>{{ $row->segregated }}</td>
+								@else
+									<td> -- </td>
+								@endif
 		            <td>{{ $row->warehouse }}</td>
 		            <td>
 									<span class="{{ App\SUtils\SGuiUtils::getClassOfStatus($row->id_segregation_event) }}">
@@ -70,7 +77,7 @@
 									</span>
 								</td>
 								<td>{{ $row->id_reference }}</td>
-								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'))
+								@if ($typeView == 0)
 									<td>
 										<a data-toggle="modal" data-target="#classQlty"
 												title="Evaluar material/producto"
@@ -89,15 +96,39 @@
 									</td>
 									<td>
 										<a data-toggle="modal" data-target="#classRfs"
-												title="Evaluar material/producto"
+												title="Rechazar material/producto"
 												onclick="classificateRfs(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-thumbs-down" aria-hidden = "true"/>
+										</a>
+									</td>
+								@else
+									<td>
+										<a data-toggle="modal" data-target="#classQltyP"
+												title="Evaluar material/producto"
+												onclick="classificateQltyP(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-share" aria-hidden = "true"/>
+										</a>
+									</td>
+									<td>
+										<a data-toggle="modal" data-target="#classRlsP"
+												title="Liberar material/producto"
+												onclick="classificateRlsP(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-thumbs-up" aria-hidden = "true"/>
+										</a>
+									</td>
+									<td>
+										<a data-toggle="modal" data-target="#classRfsP"
+												title="Rechazar material/producto"
+												onclick="classificateRfsP(this)"
 												class="btn btn-default btn-sm">
 											<span class="glyphicon glyphicon-thumbs-down" aria-hidden = "true"/>
 										</a>
 									</td>
 								@endif
 									<td>{{ $row->id_segregation_event}}</td>
-									<td>{{ $row->whs_location_id}}</td>
 		        </tr>
 					@endforeach
 		    </tbody>

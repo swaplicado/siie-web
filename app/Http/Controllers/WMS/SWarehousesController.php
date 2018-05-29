@@ -105,6 +105,9 @@ class SWarehousesController extends Controller
         $location->whs_id = $whs->id_whs;
         $location->created_by_id = 1;
         $location->updated_by_id = 1;
+        $location->is_recondition = 0;
+        $location->is_reprocess = 0;
+        $location->is_destruction = 0;
 
         $location->save();
 

@@ -14,8 +14,10 @@ return [
       'LOTS' => 'Generación de lotes',
       'LOTS_T' => 'Apartado en el que se realiza la generación de lotes para la clasificación por este rubro.',
       'STK_SEG_QLTY' => 'Existencias en calidad',
-      'VIEW_QUARENTINE' => 'Existencias en cuarentena',
-      'VIEW_INSPECTION' => 'Existencias por inspeccionar',
+      'VIEW_QUARENTINE' => 'E. en cuarentena',
+      'VIEW_INSPECTION' => 'E. por inspeccionar',
+      'VIEW_QUA_PALLET' => 'E. en cuarentena tarima',
+      'VIEW_INS_PALLET' => 'E. por inspeccionar tarima',
       'BINNACLE' => 'Bitácora de calidad',
 
       'placeholders'  =>  [
