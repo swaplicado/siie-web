@@ -410,6 +410,10 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SStockController@index',
       	'as' => 'wms.stock.index'
       ]);
+      Route::get('/stock/{title}/{id}/movements', [
+      	'uses' => 'WMS\SStockController@getMovements',
+      	'as' => 'wms.stock.index.movements'
+      ]);
 
       /*
       * Warehouses inventory

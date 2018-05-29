@@ -8,3 +8,5 @@
 <script src="{{ asset('datatables/datatables.min.js') }}"></script>
 <script src="{{ asset('js/wms/stocktable.js')}}"></script>
 <script src="{{ asset('sweet-alert/sweetalert2.min.js') }}"></script>
+<script src="{{ asset('js/wms/stock/SKardex.js') }}"></script>
+<script src="{{ asset('js/wms/stock/SGuiKardex.js') }}"></script>

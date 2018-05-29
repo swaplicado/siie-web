@@ -11,6 +11,8 @@ class SData
 
     public $lStock = array();
     public $dStock = 0;
+    public $dInputs = 0;
+    public $dOutputs = 0;
     public $lPalletStock = array();
 
     public $lSrcLocations = array();
@@ -28,4 +30,8 @@ class SData
     public $oLastLot = null;
 
     public $lRowsSupplied = array();
+
+    public $oItem = null;
+    public $oUnit = null;
+    public $lMovements = array();
 }

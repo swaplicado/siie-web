@@ -189,7 +189,7 @@ class SMovementRow extends Model {
    * @param  date $sDtFilter date to the filter
    * @return string            query
    */
-  public function scopeSearch($query, $name, $iFilter, $sDtFilter)
+  public function scopeSearch($query, $iFilter, $sDtFilter)
   {
       $aDates = SGuiUtils::getDatesOfFilter($sDtFilter);
 
