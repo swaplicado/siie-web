@@ -241,7 +241,8 @@ class SStockController extends Controller
                      ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')
                      ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
                      ->whereBetween('wm.dt_date', [$sJanuary, $sCutoffDate])
-                     ->where('wm.is_deleted', false);
+                     ->where('wm.is_deleted', false)
+                     ->where('wmr.is_deleted', false);
 
        if ($iType == \Config::get('scwms.ELEMENTS_TYPE.LOTS')) {
            $query = $query->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
