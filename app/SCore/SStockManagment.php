@@ -183,7 +183,7 @@ class SStockManagment
     public static function getStock($aParameters = []) {
         if (! array_key_exists(\Config::get('scwms.STOCK_PARAMS.SSELECT'), $aParameters) ||
             (array_key_exists(\Config::get('scwms.STOCK_PARAMS.SSELECT'), $aParameters)
-                && $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] != '')) {
+                && $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] == '')) {
           $sSelect = 'ws.lot_id, wl.lot,
                            sum(ws.input) as inputs,
                            sum(ws.output) as outputs,
