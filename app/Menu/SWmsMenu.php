@@ -22,12 +22,12 @@ class SWmsMenu {
                           Link::toRoute('wms.folios.index', trans('wms.WHS_MOVS_FOLIOS')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.limits.index', trans('userinterface.titles.LIST_LIMITS')))
-                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.itemcontainers.index', trans('userinterface.titles.LIST_ITEM_CONTAINERS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.whs.index', trans('wms.WAREHOUSES')))
-                ->addIf(session('location_enabled') && SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.VIEW'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
+                ->addIf(session('location_enabled') && SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_MNG')),
                           Link::toRoute('wms.locs.index', trans('wms.LOCATIONS')))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.CONFIG_WHS_STD')),
@@ -62,6 +62,9 @@ class SWmsMenu {
                         Link::toRoute('wms.movs.create', trans('wms.PALLET_DIVISION'), [\Config::get('scwms.PALLET_RECONFIG_IN'), trans('wms.PALLET_DIVISION')]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.PALLET_RECONFIG')),
                         Link::toRoute('wms.movs.create', trans('wms.PALLET_ADD'), [\Config::get('scwms.PALLET_RECONFIG_OUT'), trans('wms.PALLET_ADD')]))
+                ->html('', ['role' => 'separator', 'class' => 'divider'])
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.INVENTORY_OPERATION')),
+                        Link::toRoute('wms.inventory.emptywarehouse', trans('wms.EMPTY_WAREHOUSE')))
         )
         ->submenu(
             Link::to('#', trans('wms.PUR_DOCS').'<span class="caret"></span>')

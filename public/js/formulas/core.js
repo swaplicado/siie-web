@@ -237,12 +237,10 @@ function setIngredientData(selectObj) {
 }
 
 function getFormulasOfItem(iItemId) {
-    console.log(iItemId);
     var formulas = $.get((oData.oFormula.id_formula != undefined ?
                       './edit/itemformulas' :
                       './create/itemformulas') + '?id=' + iItemId,
                       function(response){
-        console.log(response);
         $('#sel_formula').empty();
 
         response.forEach(function(oFormula) {

@@ -47,6 +47,7 @@ class SStockController extends Controller
                          eu.code as unit';
 
      $sFilterDate = $request->filterDate == null ? session('work_date')->format('Y-m-d') : $request->filterDate;
+     $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
      $oFilterDate = Carbon::parse($sFilterDate);
      $iYearId = session('utils')->getYearId($oFilterDate->year);
 
@@ -63,7 +64,7 @@ class SStockController extends Controller
           $orderBy2 = 'ws.item_id';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
-          $select = $select.', '.'wp.pallet as pallet, ww.name as warehouse';
+          $select = $select.', '.'wp.id_pallet as pallet, ww.name as warehouse';
           $groupBy = ['ws.pallet_id','ws.item_id','ws.whs_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.item_id';
@@ -127,7 +128,7 @@ class SStockController extends Controller
           $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
-          $select = $select.', '.'wp.pallet as pallet, wl.lot AS lot_, wl.dt_expiry';
+          $select = $select.', '.'wp.id_pallet as pallet, wl.lot AS lot_, wl.dt_expiry';
           $groupBy = ['ws.pallet_id','ws.lot_id','ws.item_id'];
           $orderBy1 = 'ws.pallet_id';
           $orderBy2 = 'ws.lot_id';
@@ -136,7 +137,7 @@ class SStockController extends Controller
           break;
         case \Config::get('scwms.STOCK_TYPE.STK_GENERAL'):
           $select = $select.' , wl.lot AS lot_, wl.dt_expiry ,
-                                wp.pallet as pallet,
+                                wp.id_pallet as pallet,
                                 wwl.name as location,
                                 ww.name as warehouse
                                 ';
@@ -160,7 +161,6 @@ class SStockController extends Controller
       $stock = SStockManagment::getStockBaseQuery($select)
                     // ->select(\DB::raw($select))
                     // ->mergeBindings($sub)
-                    ->where('ws.is_deleted', false)
                     ->where('ws.dt_date', '<=', $sFilterDate)
                     ->where('eb.id_branch', session('branch')->id_branch)
                     ->whereIn('ws.whs_id', session('utils')->getUserWarehousesArray())
@@ -168,6 +168,10 @@ class SStockController extends Controller
                     ->orderBy($orderBy1)
                     ->orderBy($orderBy2)
                     ->having('stock', '>', '0');
+
+      if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
+          $stock = $stock->where('ws.whs_id', $iFilterWhs);
+      }
 
       if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'))
       {
@@ -180,10 +184,15 @@ class SStockController extends Controller
 
       $stock = $stock->get();
 
+      $lWhss = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, true);
+      $lWhss['0'] = 'TODOS';
+
       return view('wms.stock.stock')
                         ->with('iStockType', $iStockType)
                         ->with('sTitle', $sTitle)
                         ->with('tfilterDate', Carbon::parse($sFilterDate))
+                        ->with('lWarehouses', $lWhss)
+                        ->with('iFilterWhs', $iFilterWhs)
                         ->with('data', $stock);
     }
 
@@ -207,24 +216,102 @@ class SStockController extends Controller
                   $this->eraseStock($this->LOT, $lotRow->id_mvt_row_lot);
               }
               else {
+                $lStock = SStock::where('mvt_row_lot_id', $lotRow->id_mvt_row_lot)
+                            ->where('is_deleted', true)
+                            ->get();
+
+                if (sizeof($lStock) > 0) {
+                    SStock::where('mvt_row_lot_id', $lotRow->id_mvt_row_lot)
+                              ->where('is_deleted', true)
+                              ->update(['is_deleted' => false]);
+                }
+                else {
+                  $oStock = new SStock();
+
+                  // $oStock->id_stock = 0;
+                  $oStock->dt_date = $oMovement->dt_date;
+                  $oStock->cost_unit = $lotRow->amount_unit;
+
+                  if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
+                  {
+                    $oStock->input = $lotRow->quantity;
+                    $oStock->output = 0;
+                    $oStock->debit = 0;
+                    $oStock->credit = $oStock->cost_unit * $lotRow->quantity;
+                  }
+                  else
+                  {
+                    $oStock->input = 0;
+                    $oStock->output = $lotRow->quantity;
+                    $oStock->debit = $oStock->cost_unit * $lotRow->quantity;
+                    $oStock->credit = 0;
+                  }
+
+                  $oStock->is_deleted = $oMovement->is_deleted;
+                  $oStock->mvt_whs_class_id = $oMovement->mvt_whs_class_id;
+                  $oStock->mvt_whs_type_id = $oMovement->mvt_whs_type_id;
+                  $oStock->mvt_trn_type_id = $oMovement->mvt_trn_type_id;
+                  $oStock->mvt_adj_type_id = $oMovement->mvt_adj_type_id;
+                  $oStock->mvt_mfg_type_id = $oMovement->mvt_mfg_type_id;
+                  $oStock->mvt_exp_type_id = $oMovement->mvt_exp_type_id;
+                  $oStock->branch_id = $oMovement->branch_id;
+                  $oStock->whs_id = $oMovement->whs_id;
+                  $oStock->location_id = $movRow->location_id;
+                  $oStock->mvt_id = $oMovement->id_mvt;
+                  $oStock->mvt_row_id = $movRow->id_mvt_row;
+                  $oStock->mvt_row_lot_id = $lotRow->id_mvt_row_lot;
+                  $oStock->item_id = $movRow->item_id;
+                  $oStock->unit_id = $movRow->unit_id;
+                  $oStock->lot_id = $lotRow->lot_id;
+                  $oStock->pallet_id = $movRow->pallet_id;
+                  $oStock->doc_order_row_id = $movRow->doc_order_row_id;
+                  $oStock->doc_invoice_row_id = $movRow->doc_invoice_row_id;
+                  $oStock->doc_debit_note_row_id = $movRow->doc_debit_note_row_id;
+                  $oStock->doc_credit_note_row_id = $movRow->doc_credit_note_row_id;
+                  $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
+                  $oStock->mfg_line_id = $oMovement->mfg_line_id;
+                  $oStock->mfg_job_id = $oMovement->mfg_job_id;
+                  $oStock->year_id = $oMovement->year_id;
+
+                  $oStock->save();
+                }
+
+              }
+            }
+          }
+          else {
+            if ($movRow->is_deleted) {
+                $this->eraseStock($this->ROW, $movRow->id_mvt_row);
+            }
+            else {
+              $lStock = SStock::where('mvt_row_id', $movRow->id_mvt_row)
+                          ->where('is_deleted', true)
+                          ->get();
+
+              if (sizeof($lStock) > 0) {
+                  SStock::where('mvt_row_id', $movRow->id_mvt_row)
+                            ->where('is_deleted', true)
+                            ->update(['is_deleted' => false]);
+              }
+              else {
                 $oStock = new SStock();
 
                 // $oStock->id_stock = 0;
                 $oStock->dt_date = $oMovement->dt_date;
-                $oStock->cost_unit = $lotRow->amount_unit;
+                $oStock->cost_unit = $movRow->amount_unit;
 
                 if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
                 {
-                  $oStock->input = $lotRow->quantity;
+                  $oStock->input = $movRow->quantity;
                   $oStock->output = 0;
                   $oStock->debit = 0;
-                  $oStock->credit = $oStock->cost_unit * $lotRow->quantity;
+                  $oStock->credit = $oStock->cost_unit * $movRow->quantity;
                 }
                 else
                 {
                   $oStock->input = 0;
-                  $oStock->output = $lotRow->quantity;
-                  $oStock->debit = $oStock->cost_unit * $lotRow->quantity;
+                  $oStock->output = $movRow->quantity;
+                  $oStock->debit = $oStock->cost_unit * $movRow->quantity;
                   $oStock->credit = 0;
                 }
 
@@ -240,10 +327,10 @@ class SStockController extends Controller
                 $oStock->location_id = $movRow->location_id;
                 $oStock->mvt_id = $oMovement->id_mvt;
                 $oStock->mvt_row_id = $movRow->id_mvt_row;
-                $oStock->mvt_row_lot_id = $lotRow->id_mvt_row_lot;
+                $oStock->mvt_row_lot_id = 1;
                 $oStock->item_id = $movRow->item_id;
                 $oStock->unit_id = $movRow->unit_id;
-                $oStock->lot_id = $lotRow->lot_id;
+                $oStock->lot_id = 1;
                 $oStock->pallet_id = $movRow->pallet_id;
                 $oStock->doc_order_row_id = $movRow->doc_order_row_id;
                 $oStock->doc_invoice_row_id = $movRow->doc_invoice_row_id;
@@ -252,65 +339,10 @@ class SStockController extends Controller
                 $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
                 $oStock->mfg_line_id = $oMovement->mfg_line_id;
                 $oStock->mfg_job_id = $oMovement->mfg_job_id;
-                $oStock->year_id = $oMovement->year_id;
+                $oStock->year_id = session('work_year');
 
                 $oStock->save();
               }
-            }
-          }
-          else {
-            if ($movRow->is_deleted) {
-                $this->eraseStock($this->ROW, $movRow->id_mvt_row);
-            }
-            else {
-              $oStock = new SStock();
-
-              // $oStock->id_stock = 0;
-              $oStock->dt_date = $oMovement->dt_date;
-              $oStock->cost_unit = $movRow->amount_unit;
-
-              if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
-              {
-                $oStock->input = $movRow->quantity;
-                $oStock->output = 0;
-                $oStock->debit = 0;
-                $oStock->credit = $oStock->cost_unit * $movRow->quantity;
-              }
-              else
-              {
-                $oStock->input = 0;
-                $oStock->output = $movRow->quantity;
-                $oStock->debit = $oStock->cost_unit * $movRow->quantity;
-                $oStock->credit = 0;
-              }
-
-              $oStock->is_deleted = $oMovement->is_deleted;
-              $oStock->mvt_whs_class_id = $oMovement->mvt_whs_class_id;
-              $oStock->mvt_whs_type_id = $oMovement->mvt_whs_type_id;
-              $oStock->mvt_trn_type_id = $oMovement->mvt_trn_type_id;
-              $oStock->mvt_adj_type_id = $oMovement->mvt_adj_type_id;
-              $oStock->mvt_mfg_type_id = $oMovement->mvt_mfg_type_id;
-              $oStock->mvt_exp_type_id = $oMovement->mvt_exp_type_id;
-              $oStock->branch_id = $oMovement->branch_id;
-              $oStock->whs_id = $oMovement->whs_id;
-              $oStock->location_id = $movRow->location_id;
-              $oStock->mvt_id = $oMovement->id_mvt;
-              $oStock->mvt_row_id = $movRow->id_mvt_row;
-              $oStock->mvt_row_lot_id = 1;
-              $oStock->item_id = $movRow->item_id;
-              $oStock->unit_id = $movRow->unit_id;
-              $oStock->lot_id = 1;
-              $oStock->pallet_id = $movRow->pallet_id;
-              $oStock->doc_order_row_id = $movRow->doc_order_row_id;
-              $oStock->doc_invoice_row_id = $movRow->doc_invoice_row_id;
-              $oStock->doc_debit_note_row_id = $movRow->doc_debit_note_row_id;
-              $oStock->doc_credit_note_row_id = $movRow->doc_credit_note_row_id;
-              $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
-              $oStock->mfg_line_id = $oMovement->mfg_line_id;
-              $oStock->mfg_job_id = $oMovement->mfg_job_id;
-              $oStock->year_id = session('work_year');
-
-              $oStock->save();
             }
           }
         }

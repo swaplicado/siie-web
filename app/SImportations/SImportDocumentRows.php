@@ -53,7 +53,7 @@ class SImportDocumentRows {
           ts_edit > '".$oImportation->last_importation."' OR
           ts_del > '".$oImportation->last_importation."')
           ";
-          
+
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
@@ -108,8 +108,8 @@ class SImportDocumentRows {
                 $sKey = ''.$lWebDocuments[$row["id_doc"]].$row["id_year"].$row["id_ety"];
 
              if (array_key_exists($sKey, $lRows)) {
-                if ($row["ts_edit"] > $lRows[$sKey]->updated_at ||
-                      $row["ts_del"] > $lRows[$sKey]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
 
                     $lRows[$sKey]->concept_key = $row["concept_key"];
                     $lRows[$sKey]->concept = $row["concept"];

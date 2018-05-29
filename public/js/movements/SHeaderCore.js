@@ -17,7 +17,6 @@ class SHeaderCore {
      * @param {SGlobalData} globalData
      */
     setValuesToMovement(movement, globalData) {
-        console.log(globalData);
         movement.iMvtType = document.getElementById('mvt_whs_type_id').value;
         movement.iMvtSubType = document.getElementById('mvt_com').value;
         movement.tDate = document.getElementById('dt_date').value;
@@ -59,7 +58,6 @@ class SHeaderCore {
      */
     getValuesFromServer(movement, globalData) {
       //ajax
-      console.log(movement);
       var idMov = (globalData.iOperation == globalData.lOperationType.EDITION ? globalData.iMvtId : 0);
 
       showLoading(5000);
@@ -501,7 +499,6 @@ function showLoading(dTime) {
       }
     }).then((result) => {
       if (result.dismiss === 'timer') {
-        console.log('I was closed by the timer');
       }
     });
 }

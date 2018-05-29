@@ -18,8 +18,8 @@
                 'id' => 'search_lot',
                 'placeholder' => trans('wms.labels.LOT').'...',
                 'onkeypress' => 'searchLot(event)',
-                'title' => trans('wms.tooltips.ONLY_BARCODES'),
-                'required']) !!}
+                'title' => trans('wms.tooltips.ONLY_BARCODES')
+                ]) !!}
             </div>
             <div class="col-sm-1 paddingsm">
               {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}
@@ -65,7 +65,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-1 col-md-offset-7">
+            <div class="col-md-1 col-md-offset-6">
             </div>
             {{-- @if ($bCanCreateLotMat || $bCanCreateLotProd)
               <div class="col-md-2 paddingsm" id="div_cancreate">
@@ -73,9 +73,9 @@
                 {!! Form::label(trans('actions.CREATE')) !!}
               </div>
             @endif --}}
-            <div class="col-md-2 paddingsm">
+            <div class="col-md-3 paddingsm">
               <button onclick="addLotRow()" type="button" class="btn btn-info">
-                      {{ trans('actions.ADD') }}
+                      {{ trans('actions.ADD_LOT') }}
               </button>
             </div>
             <div class="col-md-1 paddingsm">
@@ -122,7 +122,7 @@
         </div>
       </div>
       <div id="lot_accep_div" class="modal-footer">
-        <button type="button" id="accLots" class="btn btn-success" data-dismiss="modal">{{ trans('actions.ADD') }}</button>
+        <button type="button" id="accLots" class="btn btn-success" data-dismiss="modal">{{ trans('actions.SET_LOTS') }}</button>
       </div>
     </div>
 

@@ -169,7 +169,7 @@ function addRow(e) {
                 });
               }
               catch (e) {
-                console.log("continue");
+                console.log(e);
               }
             }
         }

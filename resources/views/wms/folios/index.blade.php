@@ -60,5 +60,4 @@
 			@endforeach
 		</tbody>
 	</table>
-{!! $folios->render() !!}
 @endsection

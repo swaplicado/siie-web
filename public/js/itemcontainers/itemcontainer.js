@@ -4,7 +4,6 @@
  * @return {[type]}                [description]
  */
 function whenChangeLink(idSelectLink) {
-    // console.log("here");
     var iLinkId = document.getElementById(idSelectLink).value;
 
     var opt = '<select class="form-control select-one"  name="item_link_id" id="item_link_id">';

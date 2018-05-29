@@ -21,7 +21,6 @@ class SItemSelection {
                     '/search?code=' + sCode,
        function(data) {
           var serverData = JSON.parse(data);
-          console.log(serverData);
           itemSelection.processSearch(serverData);
        });
     }
@@ -224,7 +223,7 @@ class SItemSelection {
         obElement.iPalletId = oPallet.id_pallet;
         obElement.bIsLot = oPallet.item.is_lot;
         obElement.bIsBulk = oPallet.item.is_bulk;
-        obElement.sPallet = oPallet.pallet;
+        obElement.sPallet = oPallet.id_pallet;
 
         obElement.sItem = oPallet.item.name;
         obElement.sItemCode = oPallet.item.code;
@@ -327,14 +326,14 @@ $('#select_button').on('click', function(e) {
 
             guiFunctions.setTextLot(row.lot);
             guiFunctions.setExpDateLot(row.dt_expiry);
-            guiFunctions.setQuantityLot(1);
+            guiFunctions.setQuantityLot(guiFunctions.getQuantity());
 
             break;
 
       case globalData.lElementsType.PALLETS:
-            guiFunctions.setPalletNameLabel(row.pallet);
+            guiFunctions.setPalletNameLabel(row.id_pallet);
             elementToAdd.iPalletId = row.id_pallet;
-            elementToAdd.sPallet = row.pallet;
+            elementToAdd.sPallet = row.id_pallet;
 
             break;
 

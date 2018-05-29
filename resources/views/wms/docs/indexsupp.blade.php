@@ -62,7 +62,7 @@
 		    <tbody>
 					@foreach ($documents as $doc)
 						<tr>
-                <td class="small">{{ $doc->num }}</td>
+                <td class="small">{{ $doc->folio }}</td>
                 <td class="small">{{ $doc->dt_doc }}</td>
                 <td class="small">{{ $doc->external_id }}</td>
 								<td class="small">{{ $doc->num_src }}</td>

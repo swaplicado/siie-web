@@ -19,6 +19,10 @@
 			<div class="form-group">
 				<div class="input-group">
 					@include('templates.list.search')
+					<span class="input-group">
+						{!! Form::select('warehouse', $lWarehouses, $iFilterWhs,
+															['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE')]) !!}
+					</span>
 					<span class="input-group-btn">
 						{!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
 					</span>
@@ -56,7 +60,7 @@
 		    <tbody>
 					@foreach ($lMovs as $mov)
 						<tr>
-								<td>{{ $mov->folio }}</td>
+								<td>{{ $mov->mvtType->code.'-'.$mov->folio }}</td>
 								<td>{{ \Carbon\Carbon::parse($mov->dt_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 								<td align="right">{{ session('utils')->formatNumber($mov->total_amount, \Config::get('scsiie.FRMT.AMT')) }}</td>
@@ -101,7 +105,8 @@
       								$iRegistryId = $mov->id_mvt;
       								$loptions = [
       									\Config::get('scsys.OPTIONS.EDIT'),
-      									\Config::get('scsys.OPTIONS.DESTROY')
+      									\Config::get('scsys.OPTIONS.DESTROY'),
+      									\Config::get('scsys.OPTIONS.ACTIVATE')
       								];
       						?>
 									<div>

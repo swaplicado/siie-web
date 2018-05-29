@@ -1,5 +1,7 @@
 var oLocation = null;
 var oLocationDes = null;
+var oLocationsTable = null;
+var oLocationsDesTable = null;
 
 class SLocations {
 
@@ -67,7 +69,6 @@ class SLocations {
                   '/search?code=' + sCode,
      function(data) {
         var serverData = JSON.parse(data);
-        console.log(serverData);
         guiFunctions.setSearchCode('');
         var bLoc = false;
         switch (serverData.iElementType) {
@@ -269,3 +270,23 @@ $('#select_button_loc_des').on('click', function(e) {
 
     guiValidations.setLocationDesLabel(row['code'] + '-' + row['name']);
 });
+
+$('#locations_table tbody').on( 'click', 'tr', function () {
+    if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+    }
+    else {
+        oLocationsTable.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+    }
+} );
+
+$('#locations_des_table tbody').on( 'click', 'tr', function () {
+    if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+    }
+    else {
+        oLocationsDesTable.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+    }
+} );

@@ -59,6 +59,18 @@ Route::post('/start/whs',[
   'as' => 'start.whs',
   'uses' => 'SYS\SStartController@whs'
 ]);
+Route::get('manage/{id}/changepass',[
+  'uses' => 'SPassController@ChangePass',
+  'as' => 'manage.users.changepass'
+]);
+Route::put('manage/{id}/updatepass',[
+  'uses' => 'SPassController@UpdatePass',
+  'as' => 'manage.users.updatepass'
+]);
+Route::post('manage/changedate',[
+  'uses' => 'SPassController@changeDate',
+  'as' => 'manage.changedate'
+]);
 
 //****************************************/ Admin/*************************
 	Route::group(['middleware' => ['mdadmin']], function() {
@@ -87,11 +99,11 @@ Route::post('/start/whs',[
   			'as' => 'admin.users.destroy'
   		]);
   		Route::get('users/{id}/changepass',[
-  			'uses' => 'SUsersController@ChangePass',
+  			'uses' => 'SPassController@ChangePass',
   			'as' => 'admin.users.changepass'
   		]);
   		Route::put('users/{id}/updatepass',[
-  			'uses' => 'SUsersController@UpdatePass',
+  			'uses' => 'SPassController@UpdatePass',
   			'as' => 'admin.users.updatepass'
   		]);
 
@@ -386,6 +398,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.edit.validaterow'
       ]);
+      Route::get('/movs/receivetransfer/{idMov}/data', [
+      	'uses' => 'WMS\SMovsController@getMovementData',
+      	'as' => 'wms.movs.receivetransfer.data'
+      ]);
 
       /*
       * Stock
@@ -394,6 +410,19 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SStockController@index',
       	'as' => 'wms.stock.index'
       ]);
+
+      /*
+      * Warehouses inventory
+      **/
+      Route::get('/inventory/emptywarehouse', [
+      	'uses' => 'WMS\SInventoriesController@emptyWarehouseIndex',
+      	'as' => 'wms.inventory.emptywarehouse'
+      ]);
+      Route::get('/inventory/emptywarehouse/stock', [
+      	'uses' => 'WMS\SInventoriesController@getStock',
+      	'as' => 'wms.inventory.emptywarehouse.stock'
+      ]);
+
 
       /*
       * Folios
@@ -567,6 +596,10 @@ Route::group(['prefix' => 'qms'], function () {
       **/
 
       Route::resource('branches','ERP\SBranchesController');
+      Route::get('branches/index/{bp?}',[
+        'uses' => 'ERP\SBranchesController@index',
+        'as' => 'siie.branches.index'
+      ]);
       Route::get('branches/{id}/create',[
         'uses' => 'ERP\SBranchesController@Create',
         'as' => 'siie.branches.create'

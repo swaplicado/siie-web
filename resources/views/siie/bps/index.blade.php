@@ -25,14 +25,11 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table
-               data-toggle="table"
-               data-toolbar="#toolbar"
-							 id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
+	<table class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th data-field="id" data-sortable="true">{{ trans('userinterface.labels.BP') }}</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.RFC') }}</th>
-			<th data-sortable="true">{{ trans('userinterface.labels.CURP') }}</th>
+			<th data-sortable="true">Rot. lotes</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.ERP_ID') }}</th>
 			<th>ATT</th>
 			<th data-sortable="true">{{ trans('userinterface.labels.STATUS') }}</th>
@@ -43,7 +40,13 @@
 				<tr>
 					<td>{{ $bpartner->name }}</td>
 					<td>{{ $bpartner->fiscal_id }}</td>
-					<td>{{ $bpartner->person_id }}</td>
+					<td>
+						@if ($bpartner->is_rotation_required)
+								<span class="label label-success">{{ 'REQUERIDA' }}</span>
+						@else
+								<span class="label label-danger">{{ 'NO' }}</span>
+						@endif
+					</td>
 					<td>{{ $bpartner->external_id }}</td>
 					<td>
 						@if ($bpartner->is_company)
@@ -79,6 +82,9 @@
 								];
 						?>
 						@include('templates.list.options')
+						<a href="{{ route('siie.branches.index', $bpartner->id_partner) }}" class="btn btn-success btn-xs">
+							<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+						</a>
 					</td>
 				</tr>
 			@endforeach

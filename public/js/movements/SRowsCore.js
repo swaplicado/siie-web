@@ -150,15 +150,16 @@ class SRowsCore {
     var data = { value : JSON.stringify(elementToAdd) };
     $.ajax({
       type: "POST",
-      url: './' + (globalData.sRoute) + '/validaterow',
+      url: './' + (globalData.sRoute) + '/validaterow?iMvtType=' + globalData.iMvtType
+                                      + '&iMovement=' + oMovement.iIdMovement
+                                      + '&iPartner=' + globalData.oDocument.partner_id
+                                      + '&iAddress=' + globalData.oDocument.address_id,
       data: data,
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(data) {
          var serverData = JSON.parse(data);
-         console.log(serverData);
-
 
          if (serverData.lErrors.length > 0) {
             guiValidations.hideAdd();
@@ -177,12 +178,13 @@ class SRowsCore {
          }
          else {
             if (elementToAdd.bIsLot) {
+
               if (globalData.isPalletReconfiguration || !globalData.bIsInputMov) {
-                 if (lLotsToCreate.length > 0) {
-                   swal("Error", "No pueden crearse lotes en esta opreación", "error");
+                 if (serverData.lNewLots.length > 0) {
+                   swal("Error", "No pueden crearse lotes en esta operación", "error");
                    return false;
                  }
-                 
+
                  lLotsToCreate = new Array();
               }
               else {
@@ -190,6 +192,11 @@ class SRowsCore {
               }
 
               rowsCore.completeRow(serverData.lLotRows);
+
+              globalData.oLastLot = serverData.oLastLot;
+              if (!globalData.bIsInputMov && !oRotation.validateRotation(elementToAdd)) {
+                return false;
+              }
             }
             else {
               elementToAdd.dPrice = guiFunctions.getPrice();
@@ -260,7 +267,7 @@ class SRowsCore {
      oJsRow.sUnit = oRow.unit.code;
 
      oJsRow.sLocation = oRow.location.code;
-     oJsRow.sPallet = oRow.pallet.pallet;
+     oJsRow.sPallet = oRow.pallet_id == '1' ? 'SIN TARIMA' : oRow.pallet_id;
 
      if (oJsRow.bIsLot) {
        oRow.lot_rows.forEach(function(lotRow) {

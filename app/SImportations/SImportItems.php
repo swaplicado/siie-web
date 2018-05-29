@@ -39,7 +39,7 @@ class SImportItems
   {
       $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.ITEMS'));
 
-      $sql = "SELECT id_item, item_key, item,
+      $sql = "SELECT id_item, item_key, item, item_short,
                       len, surf, vol, mass,
                       b_lot, b_bulk, b_del,
                       fid_unit, fid_igen, ts_new, ts_edit, ts_del FROM itmu_item
@@ -67,10 +67,11 @@ class SImportItems
          // output data of each row
          while($row = $result->fetch_assoc()) {
              if (array_key_exists($row["id_item"], $lItems)) {
-                if ($row["ts_edit"] > $lItems[$row["id_item"]]->updated_at ||
-                      $row["ts_del"] > $lItems[$row["id_item"]]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
                     $lItems[$row["id_item"]]->code = $row["item_key"];
                     $lItems[$row["id_item"]]->name = $row["item"];
+                    $lItems[$row["id_item"]]->short_name = $row["item_short"];
                     $lItems[$row["id_item"]]->length = $row["len"];
                     $lItems[$row["id_item"]]->surface = $row["surf"];
                     $lItems[$row["id_item"]]->volume = $row["vol"];
@@ -115,6 +116,7 @@ class SImportItems
      $oItem = new SItem();
      $oItem->code = $oSiieItem["item_key"];
      $oItem->name = $oSiieItem["item"];
+     $oItem->short_name = $oSiieItem["item_short"];
      $oItem->length = $oSiieItem["len"];
      $oItem->surface = $oSiieItem["surf"];
      $oItem->volume = $oSiieItem["vol"];

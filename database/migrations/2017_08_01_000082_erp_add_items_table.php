@@ -40,6 +40,7 @@ class ErpAddItemsTable extends Migration {
           	$table->increments('id_item');
           	$table->char('code', 50);
           	$table->char('name', 255);
+          	$table->char('short_name', 150);
           	$table->decimal('length', 23,8);
           	$table->decimal('surface', 23,8);
           	$table->decimal('volume', 23,8);
@@ -61,9 +62,10 @@ class ErpAddItemsTable extends Migration {
           });
 
           DB::connection($this->sConnection)->table('erpu_items')->insert([
-          	['id_item' => '1','code' => 'N/A','name' => 'N/A','length' => '0','surface' => '0','volume' => '0',
-            'mass' => '0','is_lot' => '0','is_bulk' => '0','item_gender_id' => '1','unit_id' => '1',
-            'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_item' => '1','code' => 'N/A','name' => 'N/A','short_name' => 'N/A',
+            'length' => '0','surface' => '0','volume' => '0','mass' => '0',
+            'is_lot' => '0','is_bulk' => '0','item_gender_id' => '1','unit_id' => '1',
+             'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
         }
     }

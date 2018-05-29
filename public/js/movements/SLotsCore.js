@@ -14,7 +14,6 @@ class SLotsCore {
                   '/search?code=' + sCode,
      function(data) {
         var serverData = JSON.parse(data);
-        console.log(serverData);
         lotsCore.processLot(serverData);
      });
   }
@@ -46,7 +45,7 @@ class SLotsCore {
 
      guiFunctions.setTextLot(serverData.oElement.lot);
      guiFunctions.setExpDateLot(serverData.oElement.dt_expiry);
-     guiFunctions.setQuantityLot(1);
+     guiFunctions.setQuantityLot(guiFunctions.getQuantity());
 
      guiFunctions.setSearchLot('');
   }
@@ -60,7 +59,7 @@ class SLotsCore {
 
        guiFunctions.setTextLot(elementToAdd.sLot);
        guiFunctions.setExpDateLot(elementToAdd.tExpDate);
-       guiFunctions.setQuantityLot(1);
+       // guiFunctions.setQuantityLot(1);
 
        elementToAdd.iLotId = 0;
        elementToAdd.sLot = '';
@@ -113,6 +112,7 @@ class SLotsCore {
   deleteLotRow(oRow) {
     oLotsTable.row('.selected').remove().draw( false );
     lLotsToAdd.delete(oRow[0]);
+    elementToAdd.removeLotRow(oRow[0]);
 
     elementToAdd.dAuxQuantity -= oRow[4];
     guiFunctions.setAccumQuantityLabel(elementToAdd.dAuxQuantity);
@@ -239,6 +239,7 @@ function showLotsModal() {
 
     guiFunctions.setLotsQuantityLabel(dQuantity);
     guiFunctions.setAccumQuantityLabel(elementToAdd.dAuxQuantity);
+    guiFunctions.setQuantityLot(dQuantity);
 
     lotsCore.setFoundLot();
 

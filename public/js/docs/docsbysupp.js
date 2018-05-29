@@ -7,8 +7,8 @@ $(function() {
 });
 
 $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
-  console.log(picker.startDate.format('YYYY-MM-DD'));
-  console.log(picker.endDate.format('YYYY-MM-DD'));
+  // console.log(picker.startDate.format('YYYY-MM-DD'));
+  // console.log(picker.endDate.format('YYYY-MM-DD'));
 });
 
   $('#docTable').DataTable({
@@ -41,28 +41,17 @@ $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
       "columnDefs": [
         {
             "targets": 0,
-            "className": "text-center",
-            "width": "2%"
+            "className": "text-center"
         },
         {
             "targets": 1,
-            "className": "text-center",
-            "width": "7%"
+            "className": "text-center"
         },
         {
             "targets": 2,
-            "className": "text-center",
-            "width": "2%"
-        },
-        {
-            "targets": 3,
-            "width": "2%"
-        },
-        {
-            "targets": 4,
-            "width": "20%"
+            "className": "text-center"
         }
-      ],
+      ]
     });
 
     $(document).ready( function () {

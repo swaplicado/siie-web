@@ -99,7 +99,7 @@ class SPalletCore {
 
     if (elementToAdd != null) {
       elementToAdd.iPalletId = serverData.oElement.id_pallet;
-      elementToAdd.sPallet = serverData.oElement.pallet;
+      elementToAdd.sPallet = serverData.oElement.id_pallet == '1' ? 'SIN TARIMA' : serverData.oElement.id_pallet;
 
       palletCore.setPallet(elementToAdd, serverData.lPalletStock);
     }
@@ -115,7 +115,7 @@ class SPalletCore {
 
     if (elementToAdd != null) {
       elementToAdd.iPalletId = 1;
-      elementToAdd.sPallet = 'N/A';
+      elementToAdd.sPallet = 'SIN TARIMA';
     }
   }
 
@@ -196,7 +196,9 @@ function acceptPallet() {
     guiValidations.showAdd();
   }
 
-  guiFunctions.changeClassToSuccess('btn_pallet');
+  if (elementToAdd.iPalletId > 1) {
+    guiFunctions.changeClassToSuccess('btn_pallet');
+  }
 }
 
 $('#accPallet').on('click', function(e) {
@@ -225,7 +227,7 @@ $('#item_search').on('hidden.bs.modal', function () {
 
 $('#pallet_modal').on('hidden.bs.modal', function () {
    bPallets = bItems;
-   if (elementToAdd.iPalletId != 1) {
+   if (elementToAdd.iPalletId > 1) {
       guiFunctions.changeClassToSuccess('btn_pallet');
    }
 })

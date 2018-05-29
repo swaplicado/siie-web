@@ -51,7 +51,6 @@ $('#item_class_id').on('change', function(e) {
     //ajax
     $.get('create/children?parent=' + parent, function(data) {
         //success data
-        // console.log(data);
         $('#item_type_id').empty();
         $.each(data, function(index, subcatObj) {
           var option = $("<option value=" + subcatObj.id_item_type + "></option>")

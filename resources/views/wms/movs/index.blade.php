@@ -19,6 +19,10 @@
 			<div class="form-group">
 				<div class="input-group">
 					@include('templates.list.search')
+					<span class="input-group">
+						{!! Form::select('warehouse', $lWarehouses, $iFilterWhs,
+															['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE')]) !!}
+					</span>
 					<span class="input-group-btn">
 						{!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
 					</span>
@@ -52,7 +56,7 @@
 		    <tbody>
 					@foreach ($rows as $row)
 						<tr>
-								<td>{{ $row->movement->folio }}</td>
+								<td>{{ $row->movement->mvtType->code.'-'.$row->movement->folio }}</td>
 								<td>{{ \Carbon\Carbon::parse($row->movement->dt_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 		            <td>{{ $row->item->code }}</td>

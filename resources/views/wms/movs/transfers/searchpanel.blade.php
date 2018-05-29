@@ -1,6 +1,13 @@
 <div id="div_search" style="display: none;">
   <div class="row">
     <div class="col-md-3">
+      {!! Form::label('', trans('actions.SEARCH_ELEMENT').'...') !!}
+        {!! Form::text('element', null, ['class'=>'form-control input-sm',
+          'id' => 'element',
+          'placeholder' => trans('wms.placeholders.SEARCH_ELEMENT')
+          ]) !!}
+    </div>
+    <div class="col-md-3">
       {!! Form::label('', trans('actions.SEARCH_LOCATION').'...') !!}
         {!! Form::text('location', null, ['class'=>'form-control input-sm',
           'id' => 'location',
@@ -70,11 +77,17 @@
     <div class="col-md-1" id="div_lots">
       {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}
       {!! Form::button(trans('wms.labels.LOTS'), ['class' => 'btn btn-info',
+                                                    'data-toggle' => 'modal',
+                                                    'data-target' => '#lots_transfers_add',
                                                     'id' => 'btn_lots']) !!}
     </div>
     <div class="col-md-1">
       {!! Form::label('') !!}
-      {!! Form::button(trans('actions.ADD'), ['class' => 'btn btn-primary']) !!}
+      {!! Form::button(trans('actions.ADD'),
+                [
+                  'class' => 'btn btn-primary',
+                  'onClick' => 'onAddButton()'
+                ]) !!}
     </div>
   </div>
   <hr>

@@ -33,18 +33,18 @@
 
 					<div class="form-group row">
 
-						{!! Form::label('pallet', 'Tarima'.'*',['class'=>'col-md-1 control-label']) !!}
+						{{-- {!! Form::label('pallet', 'Tarima'.'*',['class'=>'col-md-1 control-label']) !!}
 
 						<div class="col-md-3">
 
 							{!! Form::text('pallet',
 					    	isset($pallets) ? $pallets->pallet : null , ['required', 'maxlength' => '50', 'class'=>'form-control', 'placeholder' => 'Tarima...']) !!}
 
-						</div>
+						</div> --}}
 
             {!! Form::label('item_id', trans('userinterface.labels.ITEM').'*',['class'=>'col-md-1 control-label']) !!}
 
-						<div class="col-md-4">
+						<div class="col-md-10">
 
 							{!! Form::select('item_id', $items, isset($pallets) ? $pallets->item->id_item : null ,
 																	['class'=>'form-control select-item',

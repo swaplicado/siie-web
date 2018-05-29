@@ -60,7 +60,6 @@ class QmsAddSegregationTables extends Migration {
             $table->integer('segregation_event_id')->unsigned();
             $table->integer('branch_id')->unsigned();
             $table->integer('whs_id')->unsigned();
-            $table->integer('whs_location_id')->unsigned();
             $table->integer('pallet_id')->unsigned();
           	$table->integer('lot_id')->unsigned();
           	$table->integer('year_id')->unsigned();
@@ -75,7 +74,6 @@ class QmsAddSegregationTables extends Migration {
             $table->foreign('segregation_event_id')->references('id_segregation_event')->on('qmss_segregation_events')->onDelete('cascade');
             $table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
             $table->foreign('whs_id')->references('id_whs')->on('wmsu_whs')->onDelete('cascade');
-            $table->foreign('whs_location_id')->references('id_whs_location')->on('wmsu_whs_locations')->onDelete('cascade');
             $table->foreign('pallet_id')->references('id_pallet')->on('wms_pallets')->onDelete('cascade');
             $table->foreign('lot_id')->references('id_lot')->on('wms_lots')->onDelete('cascade');
           	$table->foreign('year_id')->references('id_year')->on('erpu_years')->onDelete('cascade');

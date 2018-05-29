@@ -116,7 +116,7 @@ class SStockUtils
                                    }
                                    else {
                                      array_push($aErrors, "No hay suficientes existencias del lote ".$oLotRow->lot->lot.
-                                                            " en la tarima ".$oRow->pallet->pallet.
+                                                            " en la tarima ".$oRow->pallet_id.
                                                               " en la ubicación: ".$oRow->location->name."\n
                                                               Total:".$oStock->stock."\n
                                                               Segregadas:".$dSegregated."\n
@@ -162,7 +162,7 @@ class SStockUtils
                             }
                             else {
                               array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name.
-                                                      " en la tarima ".$movRow->pallet->pallet."
+                                                      " en la tarima ".$movRow->pallet_id."
                                                         en la ubicación: ".$oRow->location->name."\n
                                                         Total:".$oStock->stock."\n
                                                         Segregadas:".$dSegregated."\n
@@ -285,6 +285,60 @@ class SStockUtils
           }
         }
       }
+    }
+
+    public static function validateInputPallet($oRow = null, $iYear = 0,
+                                            $iMovementType = 0, $iMovement = 0 )
+    {
+        $aErrors = array();
+        if ($oRow->pallet_id == 1) {
+           return $aErrors;
+        }
+
+        $sSelect = 'sum(ws.input) as inputs,
+                     sum(ws.output) as outputs,
+                     (sum(ws.input) - sum(ws.output)) as stock,
+                     AVG(ws.cost_unit) as cost_unit,
+                     ei.code as item_code,
+                     ei.name as item,
+                     eu.code as unit_code,
+                     ei.is_lot,
+                     ei.id_item,
+                     eu.id_unit,
+                     ws.pallet_id,
+                     ws.location_id
+                     ';
+
+        $aParameters = array();
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $iYear;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $oRow->pallet_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oRow->unit_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oRow->item_id;
+
+        if ($iMovement > 0) {
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMovement;
+        }
+
+        $lStockGral = session('stock')->getStockResult($aParameters);
+
+        $lStockGral = $lStockGral->groupBy('id_branch')
+                           ->groupBy('id_whs')
+                           ->groupBy('id_whs_location')
+                           ->groupBy('id_pallet')
+                           ->having('stock', '>', '0')
+                           ->get();
+
+        if (sizeof($lStockGral) > 1) {
+            array_push($aErrors, '¡LA TARIMA '.$oRow->pallet_id.' TIENE EXISTENCIAS EN DIFERENTES UBICACIONES!');
+        }
+        elseif (sizeof($lStockGral) > 0
+                  && !($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
+                        || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_OUT'))) {
+            array_push($aErrors, 'La tarima no está vacía, no puede agregar unidades');
+        }
+
+        return $aErrors;
     }
 
     /**

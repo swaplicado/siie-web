@@ -42,6 +42,7 @@ class SImportAddresses {
       $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.ADDRESS'));
 
       $sql = "SELECT
+                  id_add,
                   bpb_add,
                   street,
                   street_num_ext,
@@ -108,8 +109,8 @@ class SImportAddresses {
          while($row = $result->fetch_assoc()) {
            $rowId = $row["id_bpb"];
              if (array_key_exists($rowId, $lAddresses)) {
-                if ($row["ts_edit"] > $lAddresses[$row["id_bpb"]]->updated_at ||
-                      $row["ts_del"] > $lAddresses[$row["id_bpb"]]->updated_at) {
+                if ($row["ts_edit"] > $oImportation->last_importation ||
+                      $row["ts_del"] > $oImportation->last_importation) {
 
                     $lAddresses[$rowId]->name = $row["bpb_add"];
                     $lAddresses[$rowId]->street = $row["street"];
@@ -122,6 +123,7 @@ class SImportAddresses {
                     $lAddresses[$rowId]->state_name = $row["state"];
                     $lAddresses[$rowId]->zip_code = $row["zip_code"];
                     $lAddresses[$rowId]->external_id = $rowId;
+                    $lAddresses[$rowId]->external_ad_id = $row["id_add"];
                     $lAddresses[$rowId]->is_main = $row["b_def"];
                     $lAddresses[$rowId]->branch_id = $lWebBranches[$rowId];
                     $lAddresses[$rowId]->country_id = $lWebCountries[$row["cty_key"]];
@@ -174,6 +176,7 @@ class SImportAddresses {
      $oAddress->state_name = $oSiieAddress["state"];
      $oAddress->zip_code = $oSiieAddress["zip_code"];
      $oAddress->external_id = $oSiieAddress["id_bpb"];
+     $oAddress->external_ad_id = $oSiieAddress["id_add"];
      $oAddress->is_main = $oSiieAddress["b_def"];
      $oAddress->is_deleted = $oSiieAddress["b_del"];
      $oAddress->branch_id = $lWebBranches[$oSiieAddress["id_bpb"]];

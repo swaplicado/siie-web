@@ -45,6 +45,11 @@ class SMovement {
 
     removeRow(id) {
       var key = parseInt(id);
+
+      if (! this.rows.has(key)) {
+        return false;
+      }
+
       var row = this.rows.get(key);
 
       if (row.iIdMovRow > 0) {
@@ -136,6 +141,10 @@ class SMovementRow {
 
     removeLotRow(id) {
       var key = parseInt(id);
+      if (! this.lotRows.has(key)) {
+        return false;
+      }
+
       var lotRow = this.lotRows.get(key);
 
       if (lotRow.iIdLotRow > 0) {
@@ -249,14 +258,19 @@ function loadMovement(obj) {
 }
 
 function setMovementToForm() {
-  for (var [key, oRow] of oMovement.rows) {
-     oRow.lAuxlotRows = Array.from(oRow.lotRows);
-  }
-  oMovement.lAuxRows = Array.from(oMovement.rows);
-  oMovement.lAuxlotsToCreate = lLotsToCreate;
+    for (var [key, oRow] of oMovement.rows) {
+       oRow.lAuxlotRows = Array.from(oRow.lotRows);
+    }
+    oMovement.lAuxRows = Array.from(oMovement.rows);
+    
+    try {
+      oMovement.lAuxlotsToCreate = lLotsToCreate;
+    } catch (e) {
+      oMovement.lAuxlotsToCreate = new Array();
+    }
 
-  localStorage.setItem('movement', JSON.stringify(oMovement));
-  document.getElementById('movement_object').value = JSON.stringify(oMovement);
+    localStorage.setItem('movement', JSON.stringify(oMovement));
+    document.getElementById('movement_object').value = JSON.stringify(oMovement);
 }
 
 var oMovement = new SMovement(); // Initialization, the counter inits in 0

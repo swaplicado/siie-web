@@ -89,7 +89,8 @@ class SStartController extends Controller
       {
         // $lUserBranch = SUserBranch::where('user_id', '=', (\Auth::user()))
         //                             ->paginate(10);
-        $lUserBranch = \DB::table('erpu_access_branch')
+        $lUserBranch = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('erpu_access_branch')
                             ->join('erpu_branches', 'branch_id', '=', 'erpu_branches.id_branch')
                             ->where('erpu_branches.partner_id', session('partner')->id_partner)
                             ->where('user_id', \Auth::user()->id)
@@ -224,6 +225,7 @@ class SStartController extends Controller
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
+        $oTransitWarehouse->locations;
         session(['transit_whs' => $oTransitWarehouse]);
 
 	      $sWorkDate =  $_COOKIE['tWorkDate'];

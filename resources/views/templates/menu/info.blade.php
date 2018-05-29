@@ -10,7 +10,16 @@
        </div>
        <div class="modal-body">
          <p>{{ trans('userinterface.labels.WORK_DATE') }}</p>
-         <div class="well well-sm"><b>{{ session()->has('work_date') ? session('work_date')->format('d-m-Y') : '' }}</b></div>
+         <div class="well well-sm col-md-8">
+           {!! Form::date('work_date',
+             session()->has('work_date') ? session('work_date') : null,
+                                                   ['class'=>'form-control',
+                                                   'id' => 'work_date',
+                                                   'max' => Carbon\Carbon::today()->toDateString()]) !!}
+         </div>
+         <div class="well well-sm col-md-4">
+           {!! Form::button('Aplicar', ['class' => 'btn btn-primary', 'onClick' => 'changeDate()']) !!}
+         </div>
          <p>{{ trans('userinterface.labels.COMPANY') }}</p>
          <div class="well well-sm"><b>{{ session()->has('company') ? session('company')->name : '' }}</b></div>
          <p>{{ trans('userinterface.labels.BRANCH') }}</p>
@@ -29,6 +38,7 @@
          <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('actions.CLOSE') }}</button>
        </div>
      </div>
-
    </div>
  </div>
+
+ <script type="text/javascript" src="{{ asset('js/SSelectDate.js')}}" charset="utf-8"></script>

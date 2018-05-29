@@ -12,6 +12,7 @@ use App\WMS\SFolio;
 use App\ERP\SDocument;
 use App\ERP\SDocumentRow;
 use App\WMS\SStock;
+use App\WMS\SExternalTransfer;
 
 use App\SUtils\SStockUtils;
 
@@ -52,6 +53,19 @@ class SMovsManagment {
               }
             }
           }
+          else {
+              foreach ($mov->aAuxRows as $row) {
+                $aErrors = SStockUtils::validateInputPallet($row,
+                                                          $mov->year_id,
+                                                          $mov->mvt_whs_type_id,
+                                                          $mov->id_mvt);
+
+                if(sizeof($aErrors) > 0)
+                {
+                  return $aErrors;
+                }
+              }
+          }
         }
 
         if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
@@ -76,6 +90,41 @@ class SMovsManagment {
         return $movements[0]->folio;
     }
 
+    /**
+     * [processMovement description]
+     * @param  [App\WMS\SMovement] $oMovement
+     * @param  [Array of App\WMS\SMovementRow] $aMovementRows
+     *          [ this array contains an array of App\WMS\SMovementRowLot]
+     * @param  [int] $iClass
+     * @param  [int] $iMovType
+     * @param  [int] $iWhsSrc
+     * @param  [int] $iWhsDes
+     * @return [array] [array of App\WMS\SMovement ready to save]
+     */
+    private function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $iPallet, $iPalletLocation, $iOperation)
+    {
+       // The movement is adjust or input by purchases
+       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
+            $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
+              $iMovType == \Config::get('scwms.MVT_TP_IN_PUR') ||
+               $iMovType == \Config::get('scwms.MVT_TP_IN_SAL') ||
+                $iMovType == \Config::get('scwms.MVT_TP_OUT_SAL')) {
+          return $this->createTheMovement($oMovement, $aMovementRows);
+       }
+       // The movement is trasfer
+       else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+          return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
+       }
+       // the movement is pallet reconfiguration (pallet division)
+       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
+         return $this->divisionOfPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
+
+       }
+       // the movement is pallet reconfiguration (add to pallet)
+       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_OUT')) {
+         return $this->addToPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
+       }
+    }
 
     private function saveMovement($movements, $oRequest, $iOperation)
     {
@@ -84,6 +133,8 @@ class SMovsManagment {
           \DB::connection('company')->transaction(function() use ($movements, $iOperation, $oRequest) {
             $i = 0;
             $iSrcId = 0;
+            $lSavedMovements = array();
+
             foreach ($movements as $mov) {
                 $movement = clone $mov;
 
@@ -131,8 +182,12 @@ class SMovsManagment {
                       session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'));
                   }
                 }
+
                 $i++;
+                array_push($lSavedMovements, $movement);
             }
+
+            $this->createExternalTransfer($lSavedMovements, $iOperation, $movements[0]->iAuxBranchDes);
           });
        }
        catch (\Exception $e)
@@ -140,7 +195,6 @@ class SMovsManagment {
            dd($e);
        }
     }
-
 
     public function saveLots($lNewLots = []) {
       try {
@@ -437,42 +491,6 @@ class SMovsManagment {
     }
 
     /**
-     * [processMovement description]
-     * @param  [App\WMS\SMovement] $oMovement
-     * @param  [Array of App\WMS\SMovementRow] $aMovementRows
-     *          [ this array contains an array of App\WMS\SMovementRowLot]
-     * @param  [int] $iClass
-     * @param  [int] $iMovType
-     * @param  [int] $iWhsSrc
-     * @param  [int] $iWhsDes
-     * @return [array] [array of App\WMS\SMovement ready to save]
-     */
-    private function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $iPallet, $iPalletLocation, $iOperation)
-    {
-       // The movement is adjust or input by purchases
-       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
-            $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-              $iMovType == \Config::get('scwms.MVT_TP_IN_PUR') ||
-               $iMovType == \Config::get('scwms.MVT_TP_IN_SAL') ||
-                $iMovType == \Config::get('scwms.MVT_TP_OUT_SAL')) {
-          return $this->createTheMovement($oMovement, $aMovementRows);
-       }
-       // The movement is trasfer
-       else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA')) {
-          return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
-       }
-       // the movement is pallet reconfiguration (pallet division)
-       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
-         return $this->divisionOfPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
-
-       }
-       // the movement is pallet reconfiguration (add to pallet)
-       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_OUT')) {
-         return $this->addToPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
-       }
-    }
-
-    /**
      * [Create a movement type adjust of both classes, input and output]
      * @param  [type] $oMovement     [description]
      * @param  [type] $aMovementRows [description]
@@ -511,13 +529,8 @@ class SMovsManagment {
             $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
             $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
             $oMirrorMovement->whs_id = $iWhsDes;
-
-            if ($iWhsDes == session('transit_whs')->id_whs) {
-              $oMirrorMovement->branch_id = $oMovement->iAuxBranchDes;
-            }
-            else {
-              $oMirrorMovement->branch_id = $oMirrorMovement->warehouse->branch_id;
-            }
+            $oWhs = SWarehouse::find($iWhsDes);
+            $oMirrorMovement->branch_id = $oWhs->branch_id;
         }
 
         $iWhsSrcDefLocation = 0;
@@ -553,6 +566,24 @@ class SMovsManagment {
         array_push($aMovements, $oMirrorMovement);
 
         return $aMovements;
+    }
+
+    private function createExternalTransfer($lMovements = [], $iOperation = 0, $iBranchDes = 0)
+    {
+       if (sizeof($lMovements) > 1) {
+         if ($lMovements[1]->whs_id == session('transit_whs')->id_whs
+              && $iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
+            $extTransfer = new SExternalTransfer();
+            $extTransfer->is_deleted = false;
+            $extTransfer->src_branch_id = $lMovements[0]->branch_id;
+            $extTransfer->des_branch_id = $iBranchDes;
+            $extTransfer->mvt_reference_id = $lMovements[1]->id_mvt;
+            $extTransfer->created_by_id = \Auth::user()->id;
+            $extTransfer->updated_by_id = \Auth::user()->id;
+
+            $extTransfer->save();
+         }
+       }
     }
 
     /**
@@ -631,6 +662,86 @@ class SMovsManagment {
       return $aMovements;
     }
 
+    /**
+     * Determine if the movement can be erased or activated depending of validations of stock
+     * and referenced movements
+     *
+     * @param  SMovement $oMovement
+     * @param  integer $iAction  \Config::get('scwms.MOV_ACTION.ACTIVATE')
+     *                           \Config::get('scwms.MOV_ACTION.ERASE')
+     *
+     * @return array if the size of array is grater than 0 the movement can't be erased
+     */
+    public function canMovBeErasedOrActivated($oMovement = null, $iAction = 0)
+    {
+        $aErrors = array();
+        $lReferencedMovs = SMovement::where('src_mvt_id', $oMovement->id_mvt)
+                                      ->where('is_deleted', $iAction == \Config::get('scwms.MOV_ACTION.ACTIVATE'))
+                                      ->get();
+
+        foreach ($lReferencedMovs as $oMov) {
+           $aInternalErrors = $this->canMovBeErasedOrActivated($oMov, $iAction);
+
+           if (sizeof($aInternalErrors) > 0) {
+              array_push($aInternalErrors, 'Problema con movimiento referenciado.');
+              return $aInternalErrors;
+           }
+        }
+
+        if ($iAction == \Config::get('scwms.MOV_ACTION.ERASE')) {
+          if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+              $oAuxMov = clone $oMovement;
+              $oAuxMov->id_mvt = 0;
+              $aErrors = SStockUtils::validateStock($oAuxMov);
+
+              if(sizeof($aErrors) > 0)
+              {
+                 return $aErrors;
+              }
+          }
+          else {
+              foreach ($oMovement->rows as $row) {
+                $aErrors = SStockUtils::validateInputPallet($row,
+                                                        $oMovement->year_id,
+                                                        $oMovement->mvt_whs_type_id,
+                                                        0);
+
+                if(sizeof($aErrors) > 0)
+                {
+                  return $aErrors;
+                }
+              }
+          }
+        }
+        else {
+          if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
+              $oAuxMov = clone $oMovement;
+              $oAuxMov->id_mvt = 0;
+              $aErrors = SStockUtils::validateStock($oAuxMov);
+
+              if(sizeof($aErrors) > 0)
+              {
+                 return $aErrors;
+              }
+          }
+          else {
+              foreach ($oMovement->rows as $row) {
+                $aErrors = SStockUtils::validateInputPallet($row,
+                                                        $oMovement->year_id,
+                                                        $oMovement->mvt_whs_type_id,
+                                                        0);
+
+                if(sizeof($aErrors) > 0)
+                {
+                  return $aErrors;
+                }
+              }
+          }
+        }
+
+        return $aErrors;
+    }
+
     private function eraseMovement($iMovement)
     {
         try
@@ -650,13 +761,6 @@ class SMovsManagment {
                }
             }
 
-            // $lStock = SStock::where('mvt_id', $iMovement)->get();
-            //
-            // foreach ($lStock as $oStock) {
-            //   $oStock->is_deleted = true;
-            //   $oStock->save();
-            // }
-
           });
 
           return true;
@@ -666,4 +770,5 @@ class SMovsManagment {
            return $e;
        }
     }
+
 }

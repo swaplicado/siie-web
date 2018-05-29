@@ -27,6 +27,7 @@ class SDocument extends SModel {
                           'is_closed',
                           'is_deleted',
                           'year_id',
+                          'billing_branch_id',
                           'doc_category_id',
                           'doc_class_id',
                           'doc_type_id',
@@ -34,6 +35,8 @@ class SDocument extends SModel {
                           'doc_src_id',
                           'currency_id',
                           'partner_id',
+                          'branch_id',
+                          'address_id',
                           'created_by_id',
                           'updated_by_id',
                         ];

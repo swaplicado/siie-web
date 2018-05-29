@@ -79,7 +79,6 @@ function showLoading(dTime) {
       }
     }).then((result) => {
       if (result.dismiss === 'timer') {
-        console.log('I was closed by the timer');
       }
     });
 }

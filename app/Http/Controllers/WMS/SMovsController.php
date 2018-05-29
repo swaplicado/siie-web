@@ -6,21 +6,22 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
 use App\Http\Controllers\QMS\SSegregationsController;
-use App\SBarcode\SBarcode;
+use Laracasts\Flash\Flash;
 use App\Http\Requests\WMS\SMovRequest;
+use App\SBarcode\SBarcode;
 use App\SUtils\SStockUtils;
 use App\SCore\SMovsManagment;
 use App\SCore\SReceptions;
 use App\SCore\SLotsValidations;
-use App\SUtils\SMovsUtils;
-use App\ERP\SErpConfiguration;
+use App\SCore\StransfersCore;
 
-use Laracasts\Flash\Flash;
+use App\SUtils\SMovsUtils;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SProcess;
 use App\SUtils\SValidation;
 use App\SUtils\SGuiUtils;
+use App\ERP\SErpConfiguration;
 use App\ERP\SBranch;
 use App\ERP\SItem;
 use App\ERP\SDocument;
@@ -63,9 +64,19 @@ class SMovsController extends Controller
     public function index(Request $request, $iFolio = 0)
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
-        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate)
-                                    ->orderBy('item_id', 'ASC')
-                                    ->orderBy('item_id', 'ASC')->paginate(20);
+        $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
+
+        $lMovRows = SMovementRow::Search($request->date, $this->iFilter, $sFilterDate);
+
+        if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
+            $lMovRows = $lMovRows->where('wm.whs_id', $iFilterWhs);
+        }
+
+        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
+        $lWarehouses['0'] = 'TODOS';
+
+        $lMovRows = $lMovRows->orderBy('mvt_id', 'DESC')
+                              ->orderBy('item_id', 'ASC')->get();
 
         foreach ($lMovRows as $row) {
             $row->movement->branch;
@@ -81,6 +92,8 @@ class SMovsController extends Controller
 
         return view('wms.movs.index')
                     ->with('iFolio', $iFolio)
+                    ->with('lWarehouses', $lWarehouses)
+                    ->with('iFilterWhs', $iFilterWhs)
                     ->with('iFilter', $this->iFilter)
                     ->with('sFilterDate', $sFilterDate)
                     ->with('rows', $lMovRows);
@@ -97,9 +110,20 @@ class SMovsController extends Controller
     {
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+        $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
+
         $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC');
 
-        $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))->get();
+        if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
+            $lMovs = $lMovs->where('whs_id', $iFilterWhs);
+        }
+
+        $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))
+                        ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
+                        ->get();
+
+        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
+        $lWarehouses['0'] = 'TODOS';
 
         foreach ($lMovs as $mov) {
             $mov->order;
@@ -116,6 +140,8 @@ class SMovsController extends Controller
         return view('wms.movs.inventorydocs')
                     ->with('iFilter', $this->iFilter)
                     ->with('sFilterDate', $sFilterDate)
+                    ->with('lWarehouses', $lWarehouses)
+                    ->with('iFilterWhs', $iFilterWhs)
                     ->with('actualUserPermission', $this->oCurrentUserPermission)
                     ->with('lMovs', $lMovs);
     }
@@ -135,16 +161,30 @@ class SMovsController extends Controller
           return redirect()->route('notauthorized');
         }
 
+        $oCore = new StransfersCore();
+
         $iOperation = \Config::get('scwms.OPERATION_TYPE.CREATION');
         $bIsReceiveTransfer = true;
 
-        $oMovement = new SMovement();
-        $oMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
-        $oMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
-        $oMovement->mvt_whs_type_id = 1;
+        $oMovementSrc = $oCore->getReceivedFromMovement($iMov);
 
-        $oMovementSrc = SMovement::find($iMov);
         $oMovRef = SMovement::find($oMovementSrc->src_mvt_id);
+
+        foreach ($oMovementSrc->rows as $row) {
+           $row->location;
+           $row->quantity_received = $row->dReceived;
+           foreach ($row->lotRows as $lotRow) {
+              $lotRow->lot;
+              $lotRow->quantity_received = $lotRow->dReceived;
+           }
+        }
+
+        $oMovement = new SMovement();
+        $oMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_OUT');
+        $oMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_OUT_TRA');
+        $oMovement->mvt_trn_type_id = \Config::get('scwms.MVT_INTERNAL_TRANSFER');
+        $oMovement->src_mvt_id = $oMovementSrc->id_mvt;
+        $oMovement->branch_id = session('branch')->id_branch;
 
         $iWhsSrc = session('transit_whs')->id_whs;
         $iWhsDes = 0;
@@ -156,12 +196,13 @@ class SMovsController extends Controller
                                 ->lists('warehouse', 'id_whs');
 
         return view('wms.movs.transfers.receivetransfer')
-                                        ->with('oMovement', $oMovement)
                                         ->with('oMovementSrc', $oMovementSrc)
+                                        ->with('oMovement', $oMovement)
                                         ->with('iWhsSrc', $iWhsSrc)
                                         ->with('oMovRef', $oMovRef)
                                         ->with('iWhsDes', $iWhsDes)
                                         ->with('warehouses', $warehouses)
+                                        ->with('iOperation', $iOperation)
                                         ->with('sTitle', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'))
                                         ;
     }
@@ -385,10 +426,13 @@ class SMovsController extends Controller
             $movement->mvt_adj_type_id = $oMovementJs->iMvtSubType;
             break;
 
+          case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_IN_TRA'):
+            $movement->mvt_adj_type_id = 1;
+            break;
+
           case \Config::get('scwms.MVT_TP_IN_CON'):
           case \Config::get('scwms.MVT_TP_IN_PRO'):
-          case \Config::get('scwms.MVT_TP_OUT_TRA'):
           case \Config::get('scwms.MVT_TP_OUT_CON'):
           case \Config::get('scwms.MVT_TP_OUT_PRO'):
             $movement->mvt_mfg_type_id = $oMovementJs->iMvtSubType;
@@ -411,7 +455,7 @@ class SMovsController extends Controller
         $movement->iAuxBranchDes = $oMovementJs->iBranchDes;
         $movement->year_id = session('work_year');
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
-        $movement->src_mvt_id = 1;
+        $movement->src_mvt_id = $movement->src_mvt_id > 0 ? $movement->src_mvt_id : 1;
         $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, $oMovementJs->iDocumentId);
         $movement->auth_status_by_id = 1;
         $movement->closed_shipment_by_id = 1;
@@ -541,6 +585,7 @@ class SMovsController extends Controller
         case \Config::get('scwms.MVT_TP_OUT_SAL'):
         case \Config::get('scwms.MVT_TP_OUT_PUR'):
           $mvtComp = SMvtTrnType::where('is_deleted', false)->lists('name', 'id_mvt_trn_type');
+          $iMvtSubType = $oMovement->mvt_trn_type_id;
           break;
 
         case \Config::get('scwms.MVT_TP_IN_ADJ'):
@@ -685,43 +730,119 @@ class SMovsController extends Controller
         session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $oMov = SMovement::find($id);
+        $oProcess = new SMovsManagment();
+
+        $aErrors = $oProcess->canMovBeErasedOrActivated($oMov, \Config::get('scwms.MOV_ACTION.ERASE'));
+
+        if (is_array($aErrors) && sizeof($aErrors) > 0) {
+           redirect()->back()->withErrors($aErrors);
+        }
+
         $oMov->is_deleted = \Config::get('scsys.STATUS.DEL');
         $oMov->updated_by_id = \Auth::user()->id;
 
-        try
-        {
-          $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
-            $aErrors = $oMov->save();
-            if (is_array($aErrors) && sizeof($aErrors) > 0) {
-               return $aErrors;
-            }
+        $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
+                                    ->where('is_deleted', false)
+                                    ->get();
 
-            foreach ($oMov->rows as $oRow) {
-               if (! $oRow->is_deleted) {
-                 $oRow->is_deleted = true;
-                 $oRow->save();
-               }
-
-               foreach ($oRow->lotRows as $lotRow) {
-                  $lotRow->is_deleted = true;
-                  $lotRow->save();
-               }
-            }
-
-            $stkController = new SStockController();
-            $stkController->store($request, $oMov);
-          });
+        foreach ($lReferencedMovs as $mov) {
+          $mov->is_deleted = \Config::get('scsys.STATUS.DEL');
+          $mov->updated_by_id = \Auth::user()->id;
+          $errors = $this->deleteMov($mov, $request);
 
           if (is_array($errors) && sizeof($errors) > 0) {
              redirect()->back()->withErrors($errors);
           }
         }
-        catch (\Exception $e)
-        {
-           return redirect()->back()->withErrors([$e]);
+
+        $errors = $this->deleteMov($oMov, $request);
+        if (is_array($errors) && sizeof($errors) > 0) {
+           redirect()->back()->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_DELETED'))->important();
+
+        return redirect()->back();
+    }
+
+    private function deleteMov($oMov, $request)
+    {
+      try
+      {
+        $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
+          $aErrors = $oMov->save();
+          if (is_array($aErrors) && sizeof($aErrors) > 0) {
+             return $aErrors;
+          }
+
+          $stkController = new SStockController();
+          $stkController->store($request, $oMov);
+        });
+
+        if (is_array($errors) && sizeof($errors) > 0) {
+           return $errors;
+        }
+      }
+      catch (\Exception $e)
+      {
+         return [$e];
+      }
+    }
+
+    public function activate(Request $request, $id)
+    {
+        $oMov = SMovement::find($id);
+
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $oMov);
+
+        $oProcess = new SMovsManagment();
+
+        $aErrors = $oProcess->canMovBeErasedOrActivated($oMov, \Config::get('scwms.MOV_ACTION.ACTIVATE'));
+
+        if (is_array($aErrors) && sizeof($aErrors) > 0) {
+           redirect()->back()->withErrors($aErrors);
+        }
+
+        $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
+                                    ->where('is_deleted', true)
+                                    ->get();
+
+        foreach ($lReferencedMovs as $mov) {
+          $mov->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+          $mov->updated_by_id = \Auth::user()->id;
+          $errors = $oMov->save();
+
+          if (is_array($errors) && sizeof($errors) > 0) {
+             redirect()->back()->withErrors($errors);
+          }
+        }
+
+        $oMov->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $oMov->updated_by_id = \Auth::user()->id;
+
+        $errors = $oMov->save();
+        if (is_array($errors) && sizeof($errors) > 0)
+        {
+           return redirect()->back()->withErrors($errors);
+        }
+
+        try
+        {
+          $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
+            $stkController = new SStockController();
+            $stkController->store($request, $oMov);
+          });
+
+          if (is_array($errors) && sizeof($errors) > 0) {
+             return $errors;
+          }
+        }
+        catch (\Exception $e)
+        {
+           return [$e];
+        }
+
+        Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
         return redirect()->back();
     }
@@ -983,12 +1104,19 @@ class SMovsController extends Controller
                   $lLots[$key] = $value['1'];
                }
 
-               $oValidation = new SLotsValidations($lLots, $lLotsToCreateJs, $oItem);
+               $oValidation = new SLotsValidations($lLots, $lLotsToCreateJs, $oRow->iItemId, $oRow->iUnitId);
 
                $oValidation->validateLots();
                $oData->lErrors = $oValidation->getErrors();
                $oData->lNewLots = $oValidation->getLotsToCreate();
                $oData->lLotRows = $oValidation->getLots();
+
+
+               if ($request->iMvtType == \Config::get('scwms.MVT_TP_OUT_SAL') && sizeof($oData->lErrors == 0)) {
+                 $oValidation->validatelotsByExpiration($request->iMovement, $request->iPartner, $request->iAddress);
+                 $oData->oLastLot = $oValidation->getLastLot();
+                 $oData->lErrors = $oValidation->getErrors();
+               }
            }
 
         }

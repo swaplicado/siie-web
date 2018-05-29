@@ -18,6 +18,10 @@
 										'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
 			<div class="form-group">
 		    <div class="input-group">
+					<span class="input-group">
+						{!! Form::select('warehouse', $lWarehouses, $iFilterWhs,
+															['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.WAREHOUSE')]) !!}
+					</span>
 					<span class="input-group-btn">
 					  {!! Form::date('filterDate', $tfilterDate, ['class'=>'form-control']) !!}
 					</span>
@@ -88,7 +92,7 @@
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_GENERAL'))
-									<td>{{ $row->pallet == 'N/A' ? 'SIN TARIMA' : $row->pallet }}</td>
+									<td>{{ $row->pallet == '1' ? 'SIN TARIMA' : $row->pallet }}</td>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
@@ -166,4 +170,11 @@
 
 @section('js')
 	@include('templates.stock.scriptsstock')
+	<script src="{{ asset('datatables/dataTables.buttons.min.js') }}"></script>
+	<script src="{{ asset('datatables/buttons.flash.min.js') }}"></script>
+	<script src="{{ asset('datatables/jszip.min.js') }}"></script>
+	<script src="{{ asset('datatables/pdfmake.min.js') }}"></script>
+	<script src="{{ asset('datatables/vfs_fonts.js') }}"></script>
+	<script src="{{ asset('datatables/buttons.html5.min.js') }}"></script>
+	<script src="{{ asset('datatables/buttons.print.min.js') }}"></script>
 @endsection

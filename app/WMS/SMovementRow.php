@@ -14,6 +14,7 @@ class SMovementRow extends Model {
   public $aAuxStock = [];
   public $dIndSupplied = [];
   public $iAuxLocationDesId = 0;
+  public $dReceived = 0;
 
   protected $fillable = [
                           'id_mvt_row',
@@ -167,6 +168,16 @@ class SMovementRow extends Model {
   public function getStockAux()
   {
     return $this->aAuxStock;
+  }
+
+  public function setReceived($value = 0)
+  {
+    $this->dReceived = $value;
+  }
+
+  public function getReceived()
+  {
+    return $this->dReceived;
   }
 
   /**
