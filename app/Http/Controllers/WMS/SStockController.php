@@ -217,9 +217,7 @@ class SStockController extends Controller
        $sJanuary = session('work_date')->year.'-01-01';
        $sCutoffDate = session('work_date')->toDateString();
 
-       $sSelect = 'IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
-                  IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs,
-                   wm.dt_date,
+       $sSelect = 'wm.dt_date,
                    CONCAT(wmt.code, "-", wm.folio) AS folio,
                    wmt.code AS mvt_code,
                    wmt.name AS mvt_name,
@@ -244,21 +242,14 @@ class SStockController extends Controller
                      ->where('wm.is_deleted', false)
                      ->where('wmr.is_deleted', false);
 
-       if ($iType == \Config::get('scwms.ELEMENTS_TYPE.LOTS')) {
-           $query = $query->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
-                          ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot');
-
-           $sSelect = $sSelect.', wl.lot, wl.dt_expiry';
-       }
-
        if ($iWhsOption != \Config::get('scwms.FILTER_ALL_WHS')) {
            $query = $query->where('wm.whs_id', $iWhsOption);
        }
 
-       $query = $query->select(\DB::raw($sSelect));
-
        switch ($iType) {
          case \Config::get('scwms.ELEMENTS_TYPE.ITEMS'):
+           $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
+                                IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs';
            $aIds = explode("-", $iId);
            $query->where('wmr.item_id', $aIds[0])
                  ->where('wmr.unit_id', $aIds[1]);
@@ -269,6 +260,13 @@ class SStockController extends Controller
            break;
 
          case \Config::get('scwms.ELEMENTS_TYPE.LOTS'):
+           $query = $query->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
+                          ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot');
+
+           $sSelect = $sSelect.', wl.lot, wl.dt_expiry';
+           $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmrl.quantity, 0) AS inputs,
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmrl.quantity, 0) AS outputs';
+
            $query->where('wmrl.lot_id', $iId);
            $oData->oItem = SWmsLot::find($iId)->item;
            $oData->oUnit = SWmsLot::find($iId)->unit;
@@ -277,6 +275,8 @@ class SStockController extends Controller
            break;
 
          case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
+           $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
+                              IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs';
            $query->where('wmr.pallet_id', $iId);
            $oData->oItem = SPallet::find($iId)->item;
            $oData->oUnit = SPallet::find($iId)->unit;
@@ -287,6 +287,8 @@ class SStockController extends Controller
          default:
            return json_encode($oData);
        }
+
+       $query = $query->select(\DB::raw($sSelect));
 
        $query = $query->orderBy('dt_date', 'ASC')
                        ->orderBy('id_mvt', 'ASC')
