@@ -41,9 +41,19 @@ class SInventoryCore {
       $aParameters [\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oYear->id_year;
       $aParameters [\Config::get('scwms.STOCK_PARAMS.DATE')] = $tToday->toDateTimeString();
 
-      $lStock = session('stock')->getStockResult($aParameters);
+      $aParametersSeg = array();
 
-      $lStock = $lStock->groupBy(['ws.branch_id',
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouse;
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oYear->id_year;
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.DATE')] = $tToday->toDateTimeString();
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.LOT')] = 'ws.lot_id';
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'ws.pallet_id';
+
+      $lStock = session('stock')->getStockResult($aParameters, $aParametersSeg);
+
+      $lStock = $lStock->having('stock', '>', 0)
+                          ->groupBy(['ws.branch_id',
                                     'ws.whs_id',
                                     'ws.location_id',
                                     'ws.pallet_id',

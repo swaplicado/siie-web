@@ -72,6 +72,10 @@ class SStockUtils
         $bFound = false;
 
         foreach ($oMovement->aAuxRows as $oRow) {
+          if ($oRow->bIsDeleted) {
+              continue;
+          }
+
           foreach ($lStockC as $oStock) {
              if ($oStock->id_item == $oRow->item_id && $oStock->id_unit == $oRow->unit_id) {
                 if ($oStock->location_id == $oRow->location_id) {
@@ -100,27 +104,32 @@ class SStockUtils
                                  // dd($lSegStock->toSql());
                                 $lSegStock = $lSegStock->get();
 
+                                $dStock =
                                 $dSegregated = 0;
                                 if (sizeof($lSegStock) > 0) {
                                   $dSegregated = $lSegStock[0]->segregated;
                                 }
 
                                  if (($oStock->stock - $dSegregated) < $oLotRow->quantity) {
-                                   if ($oRow->pallet_id == 1) {
-                                     array_push($aErrors, "No hay suficientes existencias
-                                                            SIN TARIMA del lote ".$oLotRow->lot->lot."
-                                                              en la ubicación: ".$oRow->location->name."\n
-                                                              Total:".$oStock->stock."\n
-                                                              Segregadas:".$dSegregated."\n
-                                                              Disponibles:".$oStock->stock - $dSegregated);
-                                   }
-                                   else {
-                                     array_push($aErrors, "No hay suficientes existencias del lote ".$oLotRow->lot->lot.
-                                                            " en la tarima ".$oRow->pallet_id.
-                                                              " en la ubicación: ".$oRow->location->name."\n
-                                                              Total:".$oStock->stock."\n
-                                                              Segregadas:".$dSegregated."\n
-                                                              Disponibles:".$oStock->stock - $dSegregated);
+                                   try {
+                                     if ($oRow->pallet_id == 1) {
+                                       array_push($aErrors, "No hay suficientes existencias
+                                                              SIN TARIMA del lote ".$oLotRow->lot->lot."
+                                                                en la ubicación: ".$oRow->location->name."\n
+                                                                Total:".$oStock->stock."\n
+                                                                Segregadas:".$dSegregated."\n
+                                                                Disponibles:".($oStock->stock - $dSegregated));
+                                     }
+                                     else {
+                                       array_push($aErrors, "No hay suficientes existencias del lote ".$oLotRow->lot->lot.
+                                                              " en la tarima ".$oRow->pallet_id.
+                                                                " en la ubicación: ".$oRow->location->name."\n
+                                                                Total:".$oStock->stock."\n
+                                                                Segregadas:".$dSegregated."\n
+                                                                Disponibles:".($oStock->stock - $dSegregated));
+                                     }
+                                   } catch (\Exception $e) {
+                                      \Log::error($e);
                                    }
                                  }
                                  else {
@@ -158,7 +167,7 @@ class SStockUtils
                                                       " en la ubicación: ".$oRow->location->name."\n
                                                       Total:".$oStock->stock."\n
                                                       Segregadas:".$dSegregated."\n
-                                                      Disponibles:".$oStock->stock - $dSegregated);
+                                                      Disponibles:".($oStock->stock - $dSegregated));
                             }
                             else {
                               array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name.
@@ -166,7 +175,7 @@ class SStockUtils
                                                         en la ubicación: ".$oRow->location->name."\n
                                                         Total:".$oStock->stock."\n
                                                         Segregadas:".$dSegregated."\n
-                                                        Disponibles:".$oStock->stock - $dSegregated);
+                                                        Disponibles:".($oStock->stock - $dSegregated));
                             }
                         }
                         else {

@@ -530,6 +530,11 @@ class SMovsController extends Controller
       $oMovement->rows;
 
       foreach ($oMovement->rows as $oRow) {
+        $oRow->item;
+        $oRow->unit;
+        $oRow->location;
+        $oRow->pallet;
+        
         $oRow->lotRows;
         foreach ($oRow->lotRows as $oLotRow) {
           $oLotRow->lot;

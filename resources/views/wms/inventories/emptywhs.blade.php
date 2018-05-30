@@ -47,9 +47,9 @@
 				            <th>{{ trans('wms.labels.PALLET') }}</th>
 				            <th>{{ trans('wms.labels.LOT') }}</th>
 				            <th>{{ trans('wms.labels.EXPIRATION') }}</th>
-				            <th data-priority="1">{{ trans('wms.labels.AVAILABLE') }}</th>
+				            <th style="color: green;" data-priority="1">{{ trans('wms.labels.AVAILABLE') }}</th>
 				            <th>{{ trans('wms.labels.STOCK') }}</th>
-				            <th>{{ trans('wms.labels.SEGREGATED') }}</th>
+				            <th style="color: red;">{{ trans('wms.labels.SEGREGATED') }}</th>
 				            <th data-priority="1">{{ trans('wms.labels.UNIT') }}</th>
 								</tr>
 						</thead>

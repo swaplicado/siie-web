@@ -1,6 +1,6 @@
 class SInventories {
   constructor() {
-
+      this.oServerData = null;
   }
 
   addRow(oStockRow) {
@@ -12,8 +12,8 @@ class SInventories {
           oStockRow.lot,
           oStockRow.dt_expiry,
           parseFloat(oStockRow.stock - oStockRow.segregated, 10).toFixed(globalData.DEC_AMT),
-          parseFloat(oStockRow.segregated, 10).toFixed(globalData.DEC_QTY),
           parseFloat(oStockRow.stock, 10).toFixed(globalData.DEC_QTY),
+          parseFloat(oStockRow.segregated, 10).toFixed(globalData.DEC_QTY),
           oStockRow.unit
       ]).draw( false );
   }
@@ -27,12 +27,18 @@ class SInventories {
         var serverData = JSON.parse(data);
 
         oStockTable.clear().draw();
+
+        if (serverData.length == 0) {
+            swal("Error", "No hay existencias en el almacén seleccionado.", "error");
+            return false;
+        }
+
         for (var i = 0; i < serverData.length; i++) {
            oInventories.addRow(serverData[i]);
         }
 
         oInventories.fillMovement(serverData);
-
+        oInventories.oServerData = serverData
      });
   }
 
@@ -101,6 +107,15 @@ class SInventories {
     if (oMovement.rows.size == 0 ) {
       swal("Error", "Debe leer un almacén con existencias.", "error");
       return false;
+    }
+
+    for (var i = 0; i < oInventories.oServerData.length; i++) {
+      var oDataRow = oInventories.oServerData[i];
+
+      if (oDataRow.segregated > 0) {
+        swal("Error", "No se puede vaciar un almacén con unidades segregadas.", "error");
+        return false;
+      }
     }
 
     return true;

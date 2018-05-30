@@ -136,7 +136,7 @@ class SHeaderCore {
       var bValid = false;
       var BreakException = {};
 
-      if (globalData.bIsInputMov) {
+      if (globalData.bIsInputMov || oMovRow.bIsDeleted) {
         return true;
       }
 
