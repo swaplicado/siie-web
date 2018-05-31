@@ -534,7 +534,7 @@ class SMovsController extends Controller
         $oRow->unit;
         $oRow->location;
         $oRow->pallet;
-        
+
         $oRow->lotRows;
         foreach ($oRow->lotRows as $oLotRow) {
           $oLotRow->lot;
@@ -726,7 +726,7 @@ class SMovsController extends Controller
                                                    $request);
 
        if (is_array($aResult)) {
-         if(sizeof($aErrors) > 0) {
+         if(sizeof($aResult) > 0) {
              return redirect()
                        ->back()
                        ->withErrors($aErrors)
