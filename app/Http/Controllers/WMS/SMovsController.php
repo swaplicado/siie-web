@@ -729,7 +729,7 @@ class SMovsController extends Controller
          if(sizeof($aResult) > 0) {
              return redirect()
                        ->back()
-                       ->withErrors($aErrors)
+                       ->withErrors($aResult)
                        ->withInput();
          }
        }
