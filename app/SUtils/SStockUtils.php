@@ -93,14 +93,14 @@ class SStockUtils
 
                                  $lSegStock = $lSegStock->where('item_id', $oRow->item_id)
                                                      ->where('unit_id', $oRow->unit_id)
-                                                     ->where('whs_location_id', $oRow->location_id)
+                                                     // ->where('whs_location_id', $oRow->location_id)
                                                      ->where('pallet_id', $oRow->pallet_id)
                                                      ->where('lot_id', $oLotRow->lot_id)
                                                      ->groupBy('item_id')
                                                      ->groupBy('unit_id')
                                                      ->groupBy('lot_id')
-                                                     ->groupBy('pallet_id')
-                                                     ->groupBy('whs_location_id');
+                                                     ->groupBy('pallet_id');
+                                                     // ->groupBy('whs_location_id');
                                  // dd($lSegStock->toSql());
                                 $lSegStock = $lSegStock->get();
 
@@ -145,14 +145,14 @@ class SStockUtils
 
                         $lSegStock = $lSegStock->where('item_id', $oRow->item_id)
                                             ->where('unit_id', $oRow->unit_id)
-                                            ->where('whs_location_id', $oRow->location_id)
+                                            // ->where('whs_location_id', $oRow->location_id)
                                             ->where('pallet_id', $oRow->pallet_id)
                                             ->where('lot_id', 1)
                                             ->groupBy('item_id')
                                             ->groupBy('unit_id')
                                             ->groupBy('lot_id')
                                             ->groupBy('pallet_id')
-                                            ->groupBy('whs_location_id')
+                                            // ->groupBy('whs_location_id')
                                             ->get();
 
                          $dSegregated = 0;

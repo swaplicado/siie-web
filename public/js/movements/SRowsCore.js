@@ -44,7 +44,7 @@ class SRowsCore {
             elementToAdd.sItem,
             elementToAdd.sUnit,
             elementToAdd.sLocation,
-            elementToAdd.sPallet,
+            elementToAdd.sPallet == 1 ? 'SIN TARIMA' : elementToAdd.sPallet,
             parseFloat(elementToAdd.dPrice, 10).toFixed(globalData.DEC_AMT),
             parseFloat(elementToAdd.dQuantity, 10).toFixed(globalData.DEC_QTY),
             elementToAdd.bIsLot ? rowsCore.getLotsButton(elementToAdd.iIdRow) : '-',

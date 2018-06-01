@@ -171,6 +171,7 @@ class SStockController extends Controller
         $stock = SStockManagment::getStockBaseQuery($select)
                       // ->select(\DB::raw($select))
                       // ->mergeBindings($sub)
+                      ->where('ws.year_id', $iYearId)
                       ->where('ws.dt_date', '<=', $sFilterDate)
                       ->where('eb.id_branch', session('branch')->id_branch)
                       ->whereIn('ws.whs_id', session('utils')->getUserWarehousesArray())

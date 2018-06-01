@@ -17,7 +17,7 @@ class SStockCore {
         oStock.item_code,
         oStock.item,
         oStock.location,
-        oStock.pallet,
+        oStock.pallet == '1' ? 'SIN TARIMA' : oStock.pallet,
         oStock.lot,
         parseFloat((oStock.available_stock
                   + oStock.dInput
