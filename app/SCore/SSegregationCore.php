@@ -142,7 +142,7 @@ class SSegregationCore
               $oSegRowMirror = clone $oSegRow;
               //Guardado primer renglon
               $oSegRow->save();
-
+              $idOriginLoc = session('segregation')->originLocation($seg->id_whs);
               switch ($iIdQltyNew) {
                 case 3:
                       $oSegregationMirror->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.INSPECTED');
@@ -203,7 +203,8 @@ class SSegregationCore
                       $oMovementRow->quantity = $seg->qty;
                       $oMovementRow->item_id = $seg->id_item;
                       $oMovementRow->unit_id = $seg->id_unit;
-                      $oMovementRow->pallet_id = $seg->id_pallet;
+                      $oMovementRow->pallet_id = $iIdPallet;
+                      $oMovementRow->location_id = $idOriginLoc;
                       $oMovementRow->doc_order_row_id = 1;
                       $oMovementRow->doc_invoice_row_id = 1;
                       $oMovementRow->doc_debit_note_row_id = 1;
@@ -278,7 +279,7 @@ class SSegregationCore
           $oSegRow->is_deleted = false;
           $oSegRow->segregation_id = $oSegregation->id_segregation;
           $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-
+          $idOriginLoc = session('segregation')->originLocation($oSegRow->pallet_id);
           switch ($iIdQltyNew) {
             case 1:
             case 2:
@@ -371,7 +372,7 @@ class SSegregationCore
                   $oMovementRow->item_id = $iIdItem;
                   $oMovementRow->unit_id = $iIdUnit;
                   $oMovementRow->pallet_id = $iIdPallet;
-                  $oMovementRow->location_id = $idLoc;
+                  $oMovementRow->location_id = $idOriginLoc;
                   $oMovementRow->doc_order_row_id = 1;
                   $oMovementRow->doc_invoice_row_id = 1;
                   $oMovementRow->doc_debit_note_row_id = 1;
@@ -839,6 +840,16 @@ if($user != 0){
       return $iStatus == \Config::get('scqms.PARTIAL_RELEASED') ||
               $iStatus == \Config::get('scqms.RELEASED') ||
                 $iStatus == \Config::get('scqms.RELEASED_EARLY');
+  }
+
+  public function originLocation($warehouse){
+      $sSelect = 'id_whs_location';
+      $query = \DB::connection(session('db_configuration')->getConnCompany())
+                  ->table('wms_whs_locations');
+      $query = $query->where('whs_id','=',$warehouse)
+                    ->select(\DB::raw($sSelect))
+                    ->get();
+      return $query;
   }
 
 
