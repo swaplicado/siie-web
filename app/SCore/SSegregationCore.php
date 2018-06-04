@@ -477,7 +477,6 @@ class SSegregationCore
           $oSegRow->segregation_event_id = $iQltyEvent;
           $oSegRow->branch_id = $oMovement->branch_id;
           $oSegRow->whs_id = $oMovement->whs_id;
-          $oSegRow->whs_location_id = $movRow->location_id;
           $oSegRow->pallet_id = $movRow->pallet_id;
           $oSegRow->lot_id = 1;
           $oSegRow->year_id = session('work_year');
