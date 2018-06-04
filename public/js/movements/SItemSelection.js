@@ -184,6 +184,7 @@ class SItemSelection {
         obElement.sUnit = oItem.unit.code;
         obElement.bIsLot = oItem.is_lot;
         obElement.bIsBulk = oItem.is_bulk;
+        obElement.bWithoutRotation = oItem.without_rotation;
 
         obElement.oElement = oItem;
 
@@ -201,6 +202,7 @@ class SItemSelection {
         obElement.iLotId = oLot.id_lot;
         obElement.bIsLot = true;
         obElement.bIsBulk = oLot.item.is_bulk;
+        obElement.bWithoutRotation = oLot.item.without_rotation;
 
         obElement.sItem = oLot.item.name;
         obElement.sItemCode = oLot.item.code;
@@ -223,6 +225,7 @@ class SItemSelection {
         obElement.iPalletId = oPallet.id_pallet;
         obElement.bIsLot = oPallet.item.is_lot;
         obElement.bIsBulk = oPallet.item.is_bulk;
+        obElement.bWithoutRotation = oPallet.item.without_rotation;
         obElement.sPallet = oPallet.id_pallet;
 
         obElement.sItem = oPallet.item.name;
@@ -290,6 +293,7 @@ $('#select_item_button').on('click', function(e) {
     elementToAdd.sUnit = row['unit_code'];
     elementToAdd.bIsLot = row['is_lot'];
     elementToAdd.bIsBulk = row['is_bulk'];
+    elementToAdd.bWithoutRotation = row['without_rotation'];
     elementToAdd.sLocation = oLocation.code;
 
     elementToAdd.oElement = row;

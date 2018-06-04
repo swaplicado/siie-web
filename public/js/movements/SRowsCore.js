@@ -251,6 +251,7 @@ class SRowsCore {
      oJsRow.iUnitId = oRow.unit_id;
      oJsRow.bIsLot = oRow.item.is_lot;
      oJsRow.bIsBulk = oRow.item.is_bulk;
+     oJsRow.bWithoutRotation = oRow.item.without_rotation;
      oJsRow.iPalletId = oRow.pallet_id;
      oJsRow.iLocationId = oRow.location_id;
      oJsRow.dQuantity = oRow.quantity;

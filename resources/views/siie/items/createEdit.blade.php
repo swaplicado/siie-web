@@ -33,30 +33,40 @@
 			<div class="form-group">
 				{!! Form::label('code', trans('userinterface.labels.CODE').'*') !!}
 				{!! Form::text('code',
-					isset($item) ? $item->code : null , ['class'=>'form-control',  'maxlength' => '50', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
-																																				'placeholder' => trans('userinterface.placeholders.CODE'), 'required']) !!}
+					isset($item) ? $item->code : null , ['class'=>'form-control',  'maxlength' => '50',
+																																				'readonly',
+																																				'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																																				'placeholder' => trans('userinterface.placeholders.CODE'),
+																																				'required']) !!}
 			</div>
 
 			<div class="form-group">
 				{!! Form::label('name', trans('userinterface.labels.NAME').'*') !!}
 				{!! Form::text('name',
 					isset($item) ? $item->name : null , ['class'=>'form-control', 'maxlength' => '255', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+																																				'readonly',
 																																				'placeholder' => trans('userinterface.placeholders.NAME'), 'required']) !!}
 			</div>
 
 			<div class="form-group">
 				{!! Form::label('unit_id', trans('userinterface.labels.UNIT').'*') !!}
 				{!! Form::select('unit_id', $units, isset($item) ?  $item->unit_id : null, ['class'=>'form-control select-one',
+											'readonly',
 											'placeholder' => trans('userinterface.placeholders.SELECT_UNIT'), 'required']) !!}
+			</div>
+
+			<div class="form-group">
+				{!! Form::label('item_gender_id', trans('userinterface.labels.GENDER').'*') !!}
+				{!! Form::select('item_gender_id', $genders, isset($item) ?  $item->item_gender_id : null, ['class'=>'form-control select-one',
+											'placeholder' => trans('userinterface.placeholders.SELECT_GENDER'), 'required']) !!}
 			</div>
 
 		</div>
 	  <div class="col-md-6">
 
 			<div class="form-group">
-				{!! Form::label('item_gender_id', trans('userinterface.labels.GENDER').'*') !!}
-				{!! Form::select('item_gender_id', $genders, isset($item) ?  $item->item_gender_id : null, ['class'=>'form-control select-one',
-											'placeholder' => trans('userinterface.placeholders.SELECT_GENDER'), 'required']) !!}
+				{!! Form::label('without_rotation', trans('wms.labels.IGNORE_ROTATION')) !!}
+				{!! Form::checkbox('without_rotation', 1, isset($item) ? $item->without_rotation : false, ['class' => 'form-control']) !!}
 			</div>
 
 			<div class="form-group">

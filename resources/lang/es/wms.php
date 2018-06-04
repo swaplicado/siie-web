@@ -72,6 +72,7 @@ return [
                       'EXPIRATION_DATE' => 'Fecha vencimiento',
                       'FOLIO' => 'Folio',
                       'FOLIO_START' => 'Folio inicial',
+                      'IGNORE_ROTATION' => 'Ignorar rotación de lotes',
                       'ITEM_TYPE' => 'Tipo de ítem',
                       'IN_MOVEMENT' => 'En movimiento',
                       'INDIRECT_SUPPLY' => 'Surtido indirecto',
@@ -115,6 +116,7 @@ return [
                       'UN' => 'Un',
                       'WAREHOUSE' => 'Almacén',
                       'WITHOUT_PALLET' => 'Sin tarima',
+                      'WITHOUT_ROTATION' => 'Sin rotación',
                     ],
 
       'placeholders'  =>  [

@@ -37,6 +37,7 @@
 			<th>{{ trans('userinterface.labels.UNIT') }}</th>
 			<th>{{ trans('userinterface.labels.IS_LOT') }}</th>
 			<th>{{ trans('userinterface.labels.IS_BULK') }}</th>
+			<th>{{ trans('wms.labels.WITHOUT_ROTATION') }}</th>
 			<th>{{ trans('userinterface.labels.GENDER') }}</th>
 			<th>{{ trans('userinterface.labels.CLASS') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
@@ -60,6 +61,13 @@
 								<span class="label label-info">A granel</span>
 						@else
 								<span class="label label-warning">Entero</span>
+						@endif
+					</td>
+					<td class="small">
+						@if ($item->without_rotation)
+								<span class="label label-default">Sin rotación</span>
+						@else
+								<span class="label label-primary">Rotación</span>
 						@endif
 					</td>
 					<td class="small">{{ $item->gender->name }}</td>

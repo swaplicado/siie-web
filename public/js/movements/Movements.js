@@ -79,6 +79,7 @@ class SMovementRow {
       this.iUnitId = 0;
       this.bIsLot = false;
       this.bIsBulk = false;
+      this.bWithoutRotation = false;
       this.iPalletId = 1;
       this.iLocationId = 0;
       this.dQuantity = 0;
@@ -208,6 +209,7 @@ function loadMovement(obj) {
      rowN.dQuantity = rowS.dQuantity;
      rowN.dPrice = rowS.dPrice;
      rowN.bIsBulk = rowS.bIsBulk;
+     rowN.bWithoutRotation = rowS.bWithoutRotation;
      rowN.bIsLot = rowS.bIsLot;
      rowN.bIsDeleted = rowS.bIsDeleted;
      rowN.dAuxQuantity = rowS.dAuxQuantity;
@@ -262,7 +264,7 @@ function setMovementToForm() {
        oRow.lAuxlotRows = Array.from(oRow.lotRows);
     }
     oMovement.lAuxRows = Array.from(oMovement.rows);
-    
+
     try {
       oMovement.lAuxlotsToCreate = lLotsToCreate;
     } catch (e) {

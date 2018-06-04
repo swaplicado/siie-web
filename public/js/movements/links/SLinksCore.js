@@ -29,6 +29,7 @@ class SLinksCore {
               cMovRow.iUnitId = sMovRow.unit_id;
               cMovRow.bIsLot = sMovRow.item.is_lot;
               cMovRow.bIsBulk = sMovRow.item.is_bulk;
+              cMovRow.bWithoutRotation = sMovRow.item.without_rotation;
               cMovRow.dPrice = sMovRow.amount_unit;
               cMovRow.dQuantity = sMovRow.quantity;
               cMovRow.bIsDeleted = sMovRow.is_deleted;
