@@ -529,6 +529,7 @@ class SMovsManagment {
             $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
             $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
             $oMirrorMovement->whs_id = $iWhsDes;
+            $oMirrorMovement->is_system = true;
             $oWhs = SWarehouse::find($iWhsDes);
             $oMirrorMovement->branch_id = $oWhs->branch_id;
         }
@@ -605,6 +606,7 @@ class SMovsManagment {
       $oMirrorMovement->mvt_adj_type_id = 1;
       $oMirrorMovement->mvt_mfg_type_id = 1;
       $oMirrorMovement->mvt_exp_type_id = 1;
+      $oMirrorMovement->is_system = true;
 
        $movementPalletRows = array();
        foreach ($movementRows as $oMovRow) {
@@ -644,6 +646,7 @@ class SMovsManagment {
       $oMirrorMovement->mvt_adj_type_id = 1;
       $oMirrorMovement->mvt_mfg_type_id = 1;
       $oMirrorMovement->mvt_exp_type_id = 1;
+      $oMirrorMovement->is_system = true;
 
       $oMovement->aAuxRows = $movementRows;
       $oMirrorMovement->aAuxRows = [];

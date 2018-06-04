@@ -426,6 +426,14 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SInventoriesController@getStock',
       	'as' => 'wms.inventory.emptywarehouse.stock'
       ]);
+      Route::get('/inventory/initialinventory', [
+      	'uses' => 'WMS\SInventoriesController@initialIndex',
+      	'as' => 'wms.inventory.initialinventory'
+      ]);
+      Route::post('/inventory/initialinventory/store',[
+        'uses' => 'WMS\SInventoriesController@generateInitialInventory',
+        'as' => 'wms.inventory.initialinventory.store'
+      ]);
 
 
       /*

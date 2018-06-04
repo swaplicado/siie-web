@@ -118,21 +118,23 @@ class SMovsController extends Controller
             $lMovs = $lMovs->where('whs_id', $iFilterWhs);
         }
 
-        $lMovs = $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))
-                        ->where(function ($lMovs) {
-                            $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.PALLET_RECONFIG_IN'))
-                                  ->orWhere(function ($lMovs) {
-                                      $lMovs->where('mvt_whs_type_id', \Config::get('scwms.PALLET_RECONFIG_IN'))
-                                            ->where('src_mvt_id', 1);
-                                  });
-                          })
-                        ->where(function ($lMovs) {
-                            $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.PALLET_RECONFIG_OUT'))
-                                  ->orWhere(function ($lMovs) {
-                                      $lMovs->where('mvt_whs_type_id', \Config::get('scwms.PALLET_RECONFIG_OUT'))
-                                            ->where('src_mvt_id', 1);
-                                  });
-                          })
+        $lMovs = $lMovs
+                        // ->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))
+                        // ->where(function ($lMovs) {
+                        //     $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.PALLET_RECONFIG_IN'))
+                        //           ->orWhere(function ($lMovs) {
+                        //               $lMovs->where('mvt_whs_type_id', \Config::get('scwms.PALLET_RECONFIG_IN'))
+                        //                     ->where('src_mvt_id', 1);
+                        //           });
+                        //   })
+                        // ->where(function ($lMovs) {
+                        //     $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.PALLET_RECONFIG_OUT'))
+                        //           ->orWhere(function ($lMovs) {
+                        //               $lMovs->where('mvt_whs_type_id', \Config::get('scwms.PALLET_RECONFIG_OUT'))
+                        //                     ->where('src_mvt_id', 1);
+                        //           });
+                        //   })
+                        ->where('is_system', false)
                         ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
                         ->get();
 

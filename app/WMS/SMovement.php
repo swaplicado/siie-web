@@ -22,6 +22,7 @@ class SMovement extends SModel {
                     'total_mass',
                     'is_closed_shipment',
                     'is_deleted',
+                    'is_system',
                     'mvt_whs_class_id',
                     'mvt_whs_type_id',
                     'mvt_trn_type_id',

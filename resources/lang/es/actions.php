@@ -16,6 +16,7 @@
 		'DEVOLVE' => 'Devolver',
 		'EDIT' => 'Modificar',
 		'FREEZE' => 'Congelar',
+		'GENERATE' => 'Generar',
 		'IMPORT' => 'Importar',
 		'LINK' => 'Enlazar',
 		'MODIFY' => 'Modificar',

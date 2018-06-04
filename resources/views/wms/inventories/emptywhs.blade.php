@@ -60,7 +60,7 @@
 			<div class="col-md-12">
 				{!! Form::open(['route' => 'wms.movs.store', 'method' => 'POST']) !!}
 					<div class="row">
-						<div class="col-md-1">
+						<div class="col-md-6">
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">

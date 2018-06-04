@@ -28,6 +28,7 @@ return [
           'LOT_WHS_STK' => 'Existencias por lote por almacén',
           'PALLET_LOT_STK' => 'Existencias por tarima por lote',
           'GENERAL_STK' => 'Existencias generales',
+          'GENERATE_INITIAL_INVENTORY' => 'Generar inventario inicial',
           'STK_SEGREGATIONS' => 'Existencias segregadas',
           'STK_SEG_QLTY' => 'Existencias en calidad',
           'MOV_STK' => 'Operaciones',

@@ -12,6 +12,7 @@
 		'REG_EDITED' => '¡Se ha editado de forma exitosa!',
 		'REG_ACTIVATED' => '¡Se ha activado de forma exitosa!',
 		'SUCCESS_SUPP' => 'El surtido se ha ligado exitosamente',
+		'GENERATED_INVENTORY' => 'El inventario inicial se ha generado exitosamente',
 
 		'options' =>	['MSG_YES' => 'Sí',
 						 'MSG_NO' => 'No'],
