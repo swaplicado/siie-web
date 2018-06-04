@@ -10,6 +10,10 @@ class SRotation {
         return true;
     }
 
+    if (elementToAdd.bWithoutRotation) {
+        return true;
+    }
+
     for (var [keyRow, oRow] of oMovement.rows) {
       if (oRow.iItemId == elementToAdd.iItemId && oRow.iUnitId == elementToAdd.iUnitId) {
         for (var [keyLot, oLotRow] of oRow.lotRows) {

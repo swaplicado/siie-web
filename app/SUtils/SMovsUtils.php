@@ -38,6 +38,7 @@ class SMovsUtils {
                 eu.code AS unit_code,
                 ei.is_lot,
                 ei.is_bulk,
+                ei.without_rotation,
                 \'0\' as available_stock';
 
     // if is lot or pallet add other fields
@@ -405,6 +406,7 @@ class SMovsUtils {
                                      eu.code as unit,
                                      ei.is_lot,
                                      ei.is_bulk,
+                                     ei.without_rotation,
                                      \'0\' as available_stock,
                                      sum(ws.input) as inputs,
                                      sum(ws.output) as outputs,

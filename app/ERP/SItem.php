@@ -19,6 +19,7 @@ class SItem extends SModel {
                           'external_id',
                           'is_lot',
                           'is_bulk',
+                          'without_rotation',
                           'is_deleted',
                           'item_gender_id',
                           'unit_id',

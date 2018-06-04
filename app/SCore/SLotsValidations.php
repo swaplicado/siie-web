@@ -5,6 +5,7 @@ use App\ERP\SErpConfiguration;
 
 use App\WMS\SWmsLot;
 use App\ERP\SPartner;
+use App\ERP\SItem;
 
 
 /**
@@ -233,6 +234,12 @@ class SLotsValidations {
         $oPartner = SPartner::find($iPartner);
 
         if (! $oPartner->is_rotation_required) {
+            return false;
+        }
+
+        $oItem = SItem::find($this->iItem);
+
+        if ($oItem->without_rotation) {
             return false;
         }
 

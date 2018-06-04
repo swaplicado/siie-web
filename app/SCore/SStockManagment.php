@@ -391,6 +391,7 @@ class SStockManagment
                                   'eu.code as unit',
                                   'ei.is_lot',
                                   'ei.is_bulk',
+                                  'ei.without_rotation',
                                   'edr.concept_key',
                                   'edr.concept',
                                   'edr.price_unit_cur',

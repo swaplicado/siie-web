@@ -68,6 +68,7 @@ class SExternalTransfers {
           oElem.sItem = oRow.item.name;
           oElem.bIsLot = oRow.item.is_lot;
           oElem.bIsBulk = oRow.item.is_bulk;
+          oElem.bWithoutRotation = oRow.item.without_rotation;
           oElem.sUnit = oRow.unit.code;
           oElem.iPalletId = oRow.pallet_id;
           oElem.sPallet = oRow.pallet_id == '1' ? 'SIN TARIMA' : oRow.pallet_id;

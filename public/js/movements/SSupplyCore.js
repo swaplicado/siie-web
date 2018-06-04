@@ -17,6 +17,7 @@ class SSupplyCore {
       oJsRow.iUnitId = oRow.unit_id;
       oJsRow.bIsLot = oRow.is_lot;
       oJsRow.bIsBulk = oRow.is_bulk;
+      oJsRow.bWithoutRotation = oRow.without_rotation;
       oJsRow.dPrice = parseFloat(oRow.price_unit_cur, 10);
 
       oJsRow.sItem = oRow.concept;
