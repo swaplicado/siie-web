@@ -145,7 +145,6 @@
 	$(document).ready(function(){
 	var status = 0;
 	$(document).on('change', '.statusRF',function(){
-		console.log('entre');
 	  var eti_id=$(this).val();
 		console.log(eti_id);
 		 var opt=" ";
@@ -157,7 +156,6 @@
 			data:{'id':eti_id},
 
 				success:function(data){
-					console.log('success');
 					opt+='<select class="form-control almacen" id="almacen"  name="almacen" required>';
 					opt+='<option value=0>Seleccione un almacen</option>';
 						for(var i=0;i<data.length;i++){
@@ -176,7 +174,38 @@
 						console.log('falle');
 				}
 		});
+		});
 
+		$(document).on('change', '.statusRFP',function(){
+			var eti_id=$(this).val();
+			console.log(eti_id);
+			 var opt=" ";
+			 var opt2=" ";
+			 status = eti_id;
+			$.ajax({
+				type:'get',
+				url:'{!!URL::to('qms/segregation/findWarehouse')!!}',
+				data:{'id':eti_id},
+
+					success:function(data){
+						opt+='<select class="form-control almacenP" id="almacenP"  name="almacenP" required>';
+						opt+='<option value=0>Seleccione un almacen</option>';
+							for(var i=0;i<data.length;i++){
+								opt+='<option value="'+data[i].id_whs+'">'+data[i].name+'</option>';
+						 }
+						 opt+='</select>';
+						 $('.warehouseP').empty(" ");
+						 $('.warehouseP').append(opt);
+						 opt2+='<select class="form-control ubicacion" id="ubicacionP"  name="ubicacionP" required>';
+						 opt2+='<option value=0>Seleccione una ubicacion</option>';
+							$('.locationP').empty(" ");
+						 $('.locationP').append(opt2);
+
+					},
+					error:function(){
+							console.log('falle');
+					}
+			});
 		});
 
 		$(document).on('change', '.almacen',function(){
@@ -188,7 +217,6 @@
 				data:{'id':eti_id,'status':status},
 
 					success:function(data){
-						console.log('success');
 						opt+='<select class="form-control" id="ubicacion"  name="ubicacion" required>';
 							for(var i=0;i<data.length;i++){
 								opt+='<option value="'+data[i].id_whs_location+'">'+data[i].name+'</option>';
@@ -203,7 +231,35 @@
 					}
 			});
 
+
 			});
+			$(document).on('change', '.almacenP',function(){
+				var eti_id=$(this).val();
+				 var opt=" ";
+				 console.log('entre');
+				$.ajax({
+					type:'get',
+					url:'{!!URL::to('qms/segregation/findLocations')!!}',
+					data:{'id':eti_id,'status':status},
+
+						success:function(data){
+							console.log('success');
+							opt+='<select class="form-control" id="ubicacionP"  name="ubicacionP" required>';
+								for(var i=0;i<data.length;i++){
+									opt+='<option value="'+data[i].id_whs_location+'">'+data[i].name+'</option>';
+							 }
+							 opt+='</select>';
+							 $('.locationP').empty(" ");
+							 $('.locationP').append(opt);
+
+						},
+						error:function(){
+								console.log('falle');
+						}
+				});
+
+
+				});
 	});
 	</script>
 

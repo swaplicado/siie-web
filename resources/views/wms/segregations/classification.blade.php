@@ -370,8 +370,8 @@
         <div class="row">
           <div class="col-md-6">
 
-            {!! Form::select('statusQl', $lStatusSeg, null,
-                            ['class'=>'form-control', 'id' => 'statusQl',
+            {!! Form::select('statusQlP', $lStatusSeg, null,
+                            ['class'=>'form-control', 'id' => 'statusQlP',
 														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
                             'required', ]) !!}
           </div>
@@ -443,8 +443,8 @@
         </div>
         <div class="row">
           <div class="col-md-6">
-            {!! Form::select('statusRl', $lStatusRec, null,
-                            ['class'=>'form-control', 'id' => 'statusRl',
+            {!! Form::select('statusRlP', $lStatusRec, null,
+                            ['class'=>'form-control', 'id' => 'statusRlP',
 														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
                             'required', ]) !!}
           </div>
@@ -516,8 +516,8 @@
         </div>
         <div class="row">
           <div class="col-md-6">
-            {!! Form::select('statusRf', $lStatusLib, null,
-                            ['class'=>'form-control statusRF', 'id' => 'statusRf',
+            {!! Form::select('statusRfP', $lStatusLib, null,
+                            ['class'=>'form-control statusRFP', 'id' => 'statusRfP',
 														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
                             'required', ]) !!}
           </div>
@@ -531,10 +531,10 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-6 warehouse">
+          <div class="col-md-6 warehouseP">
 
           </div>
-          <div class="col-md-6 location">
+          <div class="col-md-6 locationP">
 
           </div>
         </div>

@@ -492,7 +492,7 @@ function setDataQlP() {
     var row = table.row(oRow);
     var dataRow = row.data();
     var dQuantity = 0;
-    var iStatusNew = parseInt(document.getElementById('statusQl').value, 10);
+    var iStatusNew = parseInt(document.getElementById('statusQlP').value, 10);
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
@@ -538,7 +538,7 @@ function setDataRlP() {
     var row = table.row(oRow);
     var dataRow = row.data();
     var dQuantity = 0;
-    var iStatusNew = parseInt(document.getElementById('statusRl').value, 10);
+    var iStatusNew = parseInt(document.getElementById('statusRlP').value, 10);
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
@@ -580,9 +580,9 @@ function setDataRfP() {
     var row = table.row(oRow);
     var dataRow = row.data();
     var dQuantity = 0;
-    var iStatusNew = parseInt(document.getElementById('statusRf').value, 10);
-    var warehouse = parseInt(document.getElementById('almacen').value,10);
-    var ubicacion = parseInt(document.getElementById('ubicacion').value,10);
+    var iStatusNew = parseInt(document.getElementById('statusRfP').value, 10);
+    var warehouse = parseInt(document.getElementById('almacenP').value,10);
+    var ubicacion = parseInt(document.getElementById('ubicacionP').value,10);
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
@@ -715,7 +715,8 @@ $('#closeClassRf').on('click', function(e) {
 });
 
 $('#closeClassQlP').on('click', function(e) {
-    var iStatusNew = parseInt(document.getElementById('statusQl').value, 10);
+    var iStatusNew = parseInt(document.getElementById('statusQlP').value, 10);
+    console.log(iStatusNew);
     if (! iStatusNew >= 1) {
       swal("Error", "Debe seleccionar un nuevo estatus.", "error");
       return false;
@@ -725,7 +726,7 @@ $('#closeClassQlP').on('click', function(e) {
 });
 $('#closeClassRlP').on('click', function(e) {
 
-    var iStatusNew = parseInt(document.getElementById('statusRl').value, 10);
+    var iStatusNew = parseInt(document.getElementById('statusRlP').value, 10);
     if (! iStatusNew >= 1) {
       swal("Error", "Debe seleccionar un nuevo estatus.", "error");
       return false;
@@ -733,10 +734,10 @@ $('#closeClassRlP').on('click', function(e) {
 
     setDataRlP();
 });
-$('#closeClassRf').on('click', function(e) {
-    var iStatusNew = parseInt(document.getElementById('statusRf').value, 10);
-    var iLocation = parseInt(document.getElementById('ubicacion').value,10);
-    var iWarehouse = parseInt(document.getElementById('almacen').value,10);
+$('#closeClassRfP').on('click', function(e) {
+    var iStatusNew = parseInt(document.getElementById('statusRfP').value, 10);
+    var iLocation = parseInt(document.getElementById('ubicacionP').value,10);
+    var iWarehouse = parseInt(document.getElementById('almacenP').value,10);
 
     if (! iStatusNew >= 1) {
       swal("Error", "Debe seleccionar un nuevo estatus.", "error");

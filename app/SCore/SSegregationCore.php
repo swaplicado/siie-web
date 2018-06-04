@@ -68,7 +68,7 @@ class SSegregationCore
           $idLocNew = $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')];
         }
 
-        if($iIdLot == '--'){
+        if($dQuantity ==0){
               $LSegregation = session('segregation')->segregatePallet($iIdPallet,$iIdWhs,$idEvent);
               foreach ($LSegregation as $seg) {
                 $oSegregation = new SSegregation();
@@ -125,6 +125,8 @@ class SSegregationCore
                 case 10:
                       $oSegRow->segregation_event_id = $iIdQltyNew;
                       break;
+                default:
+                      $oSegRow->segregation_event_id = 0;
               }
 
               $oSegRow->branch_id = $seg->branch_id;
@@ -236,7 +238,7 @@ class SSegregationCore
         }
 
         else{
-          if($dQuantity >= session('segregation')->SegregateComprobation($iIdLot,$iIdPallet,$iIdItem,$iIdWhs)){
+          if($dQuantity <= session('segregation')->SegregateComprobation($iIdLot,$iIdPallet,$iIdItem,$iIdWhs,$iIdQltyPrev)){
           $oSegregation = new SSegregation();
           $oSegRow = new SSegregationRow();
 
@@ -296,7 +298,6 @@ class SSegregationCore
 
           $oSegRow->branch_id = $iIdBranch;
           $oSegRow->whs_id = $iIdWhs;
-          $oSegRow->whs_location_id = $idLoc;
           $oSegRow->pallet_id = $iIdPallet;
           $oSegRow->lot_id = $iIdLot;
           $oSegRow->year_id = session('work_year');
@@ -607,8 +608,7 @@ class SSegregationCore
                                      'id_lot',
                                      'id_pallet',
                                      'ww.id_whs'
-                                     )
-                    ->having('segregated', '>', 0);
+                                     );
       switch ($iQualityType) {
                     case \Config::get('scqms.QMS_VIEW.BY_STATUS'):
                     case \Config::get('scqms.QMS_VIEW.CLASSIFY'):

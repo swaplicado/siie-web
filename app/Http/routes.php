@@ -242,7 +242,7 @@ Route::group(['prefix' => 'qms'], function () {
       ]);
 
 
-      Route::post('segregations/{title}/{segType}/{viewType}/index/process',[
+      Route::post('segregations/{title}/{segType}/{viewType}/{typeView}/index/process',[
         'uses' => 'QMS\SSegregationsController@Process',
         'as' => 'qms.segregations.index.process'
       ]);

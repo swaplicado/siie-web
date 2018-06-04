@@ -207,15 +207,14 @@
 			<div class="form-group row">
 
 
-
-
-				{!! Form::label('quantity', 'Cantidad',['class'=>'col-md-2 control-label']) !!}
+				{!! Form::label('unit_id', '	Unidad',['class'=>'col-md-2 control-label']) !!}
 
 				<div class="col-md-3">
 
-					{!! Form::text('quantity', $info->quantity, ['class'=>'form-control' , 'disabled']) !!}
+					{!! Form::text('unit_id', $info->unit->code.' - '.$info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
 
 				</div>
+
 
 				{!! Form::label('item_id', 'Item',['class'=>'col-md-2 control-label']) !!}
 
@@ -241,11 +240,11 @@
 
 			<div class="form-group row">
 
-				{!! Form::label('unit_id', '	Unidad',['class'=>'col-md-2 control-label']) !!}
+				{!! Form::label('unit_id', 'Existencias Segregadas',['class'=>'col-md-2 control-label']) !!}
 
 				<div class="col-md-3">
 
-					{!! Form::text('unit_id', $info->unit->code.' - '.$info->unit->name, ['class'=>'form-control' , 'disabled']) !!}
+					{!! Form::text('unit_id', $stock[\Config::get('scwms.STOCK.SEGREGATED')], ['class'=>'form-control' , 'disabled']) !!}
 
 				</div>
 
@@ -271,13 +270,7 @@
 
 			<div class="form-group row">
 
-				{!! Form::label('unit_id', 'Existencias Segregadas',['class'=>'col-md-2 control-label']) !!}
 
-				<div class="col-md-3">
-
-					{!! Form::text('unit_id', $stock[\Config::get('scwms.STOCK.SEGREGATED')], ['class'=>'form-control' , 'disabled']) !!}
-
-				</div>
 
 				{!! Form::label('existencia', 'Existencias disponibles',['class'=>'col-md-2 control-label']) !!}
 
