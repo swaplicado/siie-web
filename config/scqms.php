@@ -34,4 +34,9 @@ return [
                       'QUARANTINECLASSIFY' => '5',
                   ],
 
+    'TYPE_VIEW' => [
+                      'BY_LOT'=>'0',
+                      'BY_PALLET'=>'1',
+                  ],
+
 ];

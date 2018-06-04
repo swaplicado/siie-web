@@ -154,6 +154,152 @@ function classificateRfs(obj) {
     Vue.set(vmsRf.dataItem, 'status', sStatus);
     Vue.set(vmsRf.dataItem, 'quantity', dQuantity);
 }
+/**
+ * [Vue object to show stock in whs movements view]
+ * @type {Vue}
+ */
+vmsQlP = new Vue({
+  el: '#appQlP',
+  data: {
+    dataItem : {
+      item_code: 'NA',
+      item: 'NA',
+      unit: 'NA',
+      lot: 'NA',
+      pallet: 'NA',
+      status: 'NA',
+      staevent: 0,
+    }
+  }
+})
+
+/**
+ *
+ */
+
+function classificateQltyP(obj) {
+    oRow = $(obj).closest('tr')[0];
+
+    var sItemCode = '';
+    var sItem = '';
+    var sUnit = '';
+    var sLot = '';
+    var sPallet = '';
+    var sStatus = '';
+
+    if (oRow != null) {
+      sItemCode = oRow.children[0].textContent;
+      sItem = oRow.children[1].textContent;
+      sUnit = oRow.children[2].textContent;
+      sLot = oRow.children[3].textContent;
+      sPallet = oRow.children[4].textContent;
+      sStatus = oRow.children[7].textContent;
+    }
+
+    Vue.set(vmsQlP.dataItem, 'item_code', sItemCode);
+    Vue.set(vmsQlP.dataItem, 'item', sItem);
+    Vue.set(vmsQlP.dataItem, 'unit', sUnit);
+    Vue.set(vmsQlP.dataItem, 'lot', sLot);
+    Vue.set(vmsQlP.dataItem, 'pallet', sPallet);
+    Vue.set(vmsQlP.dataItem, 'status', sStatus);
+}
+
+/**
+ * [Vue object to show stock in whs movements view]
+ * @type {Vue}
+ */
+vmsRlP = new Vue({
+  el: '#appRlP',
+  data: {
+    dataItem : {
+      item_code: 'NA',
+      item: 'NA',
+      unit: 'NA',
+      lot: 'NA',
+      pallet: 'NA',
+      status: 'NA',
+      staevent: 0,
+    }
+  }
+})
+
+/**
+ *
+ */
+function classificateRlsP(obj) {
+    oRow = $(obj).closest('tr')[0];
+
+    var sItemCode = '';
+    var sItem = '';
+    var sUnit = '';
+    var sLot = '';
+    var sPallet = '';
+    var sStatus = '';
+
+    if (oRow != null) {
+      sItemCode = oRow.children[0].textContent;
+      sItem = oRow.children[1].textContent;
+      sUnit = oRow.children[2].textContent;
+      sLot = oRow.children[3].textContent;
+      sPallet = oRow.children[4].textContent;
+      sStatus = oRow.children[7].textContent;
+    }
+
+    Vue.set(vmsRlP.dataItem, 'item_code', sItemCode);
+    Vue.set(vmsRlP.dataItem, 'item', sItem);
+    Vue.set(vmsRlP.dataItem, 'unit', sUnit);
+    Vue.set(vmsRlP.dataItem, 'lot', sLot);
+    Vue.set(vmsRlP.dataItem, 'pallet', sPallet);
+    Vue.set(vmsRlP.dataItem, 'status', sStatus);
+}
+
+/**
+ * [Vue object to show stock in whs movements view]
+ * @type {Vue}
+ */
+vmsRfP = new Vue({
+  el: '#appRfP',
+  data: {
+    dataItem : {
+      item_code: 'NA',
+      item: 'NA',
+      unit: 'NA',
+      lot: 'NA',
+      pallet: 'NA',
+      status: 'NA',
+      staevent: 0,
+    }
+  }
+})
+
+/**
+ *
+ */
+function classificateRfsP(obj) {
+    oRow = $(obj).closest('tr')[0];
+
+    var sItemCode = '';
+    var sItem = '';
+    var sUnit = '';
+    var sLot = '';
+    var sPallet = '';
+    var sStatus = '';
+
+    if (oRow != null) {
+      sItemCode = oRow.children[0].textContent;
+      sItem = oRow.children[1].textContent;
+      sUnit = oRow.children[2].textContent;
+      sLot = oRow.children[3].textContent;
+      sPallet = oRow.children[4].textContent;
+      sStatus = oRow.children[7].textContent;
+    }
+    Vue.set(vmsRfP.dataItem, 'item_code', sItemCode);
+    Vue.set(vmsRfP.dataItem, 'item', sItem);
+    Vue.set(vmsRfP.dataItem, 'unit', sUnit);
+    Vue.set(vmsRfP.dataItem, 'lot', sLot);
+    Vue.set(vmsRfP.dataItem, 'pallet', sPallet);
+    Vue.set(vmsRfP.dataItem, 'status', sStatus);
+}
 function setAllQl(obj) {
     var dQuantity = 0;
 
@@ -193,6 +339,7 @@ function setAllRf(obj) {
 
     document.getElementById('quantityRf').value = dQuantity;
 }
+
 
 /*
 * This method sends the data of table to the server when
@@ -336,6 +483,145 @@ function setDataRf() {
     });
 }
 
+/*
+* This method sends the data of table to the server when
+* the button of freeze is pressed
+*/
+function setDataQlP() {
+    var table = $('#table_seg').DataTable();
+    var row = table.row(oRow);
+    var dataRow = row.data();
+    var dQuantity = 0;
+    var iStatusNew = parseInt(document.getElementById('statusQlP').value, 10);
+
+    dataRow.push(dQuantity);
+    dataRow.push(iStatusNew);
+
+    var oData = { value : dataRow };
+      console.log(oData);
+
+
+    $.ajax({
+      type: "POST",
+      url: './index/process',
+      data: oData,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function() {
+        console.log("Value added ");
+      },
+      error: function () {
+        console.log("error");
+      }
+    });
+
+    swal({
+        title: 'Espere...',
+        text: 'Clasificando unidades.',
+        timer: 300000,
+        onOpen: () => {
+          swal.showLoading()
+        }
+      }).then((result) => {
+        if (result.dismiss === 'timer') {
+          console.log('I was closed by the timer');
+        }
+      });
+
+    $(document).ajaxStop(function(){
+        window.location.reload();
+    });
+}
+function setDataRlP() {
+    var table = $('#table_seg').DataTable();
+    var row = table.row(oRow);
+    var dataRow = row.data();
+    var dQuantity = 0;
+    var iStatusNew = parseInt(document.getElementById('statusRlP').value, 10);
+
+    dataRow.push(dQuantity);
+    dataRow.push(iStatusNew);
+
+    var oData = { value : dataRow };
+    console.log(oData);
+
+    $.ajax({
+      type: "POST",
+      url: './index/process',
+      data: oData,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function() {
+        console.log("Value added ");
+      }
+    });
+
+    swal({
+        title: 'Espere...',
+        text: 'Clasificando unidades.',
+        timer: 300000,
+        onOpen: () => {
+          swal.showLoading()
+        }
+      }).then((result) => {
+        if (result.dismiss === 'timer') {
+          console.log('I was closed by the timer');
+        }
+      });
+
+    $(document).ajaxStop(function(){
+        window.location.reload();
+    });
+}
+function setDataRfP() {
+    var table = $('#table_seg').DataTable();
+    var row = table.row(oRow);
+    var dataRow = row.data();
+    var dQuantity = 0;
+    var iStatusNew = parseInt(document.getElementById('statusRfP').value, 10);
+    var warehouse = parseInt(document.getElementById('almacenP').value,10);
+    var ubicacion = parseInt(document.getElementById('ubicacionP').value,10);
+
+    dataRow.push(dQuantity);
+    dataRow.push(iStatusNew);
+    dataRow.push(warehouse);
+    dataRow.push(ubicacion);
+
+    var oData = { value : dataRow };
+    console.log(oData);
+
+    $.ajax({
+      type: "POST",
+      url: './index/process',
+      data: oData,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function() {
+        console.log("Value added ");
+      }
+    });
+
+    swal({
+        title: 'Espere...',
+        text: 'Clasificando unidades.',
+        timer: 300000,
+        onOpen: () => {
+          swal.showLoading()
+        }
+      }).then((result) => {
+        if (result.dismiss === 'timer') {
+          console.log('I was closed by the timer');
+        }
+      });
+
+    $(document).ajaxStop(function(){
+        window.location.reload();
+    });
+}
+
 $('#closeClassQl').on('click', function(e) {
     var dQuantity = parseFloat(document.getElementById('quantityQl').value, 10);
     var iStatusNew = parseInt(document.getElementById('statusQl').value, 10);
@@ -426,4 +712,47 @@ $('#closeClassRf').on('click', function(e) {
 
 
     setDataRf();
+});
+
+$('#closeClassQlP').on('click', function(e) {
+    var iStatusNew = parseInt(document.getElementById('statusQlP').value, 10);
+    console.log(iStatusNew);
+    if (! iStatusNew >= 1) {
+      swal("Error", "Debe seleccionar un nuevo estatus.", "error");
+      return false;
+    }
+
+    setDataQlP();
+});
+$('#closeClassRlP').on('click', function(e) {
+
+    var iStatusNew = parseInt(document.getElementById('statusRlP').value, 10);
+    if (! iStatusNew >= 1) {
+      swal("Error", "Debe seleccionar un nuevo estatus.", "error");
+      return false;
+    }
+
+    setDataRlP();
+});
+$('#closeClassRfP').on('click', function(e) {
+    var iStatusNew = parseInt(document.getElementById('statusRfP').value, 10);
+    var iLocation = parseInt(document.getElementById('ubicacionP').value,10);
+    var iWarehouse = parseInt(document.getElementById('almacenP').value,10);
+
+    if (! iStatusNew >= 1) {
+      swal("Error", "Debe seleccionar un nuevo estatus.", "error");
+      return false;
+    }
+
+    if(iWarehouse == 0) {
+      swal("Error", "Debe seleccionar un almacen.", "error");
+      return false;
+    }
+
+    if(iLocation == 0) {
+      swal("Error", "Debe seleccionar una ubicacion.", "error");
+      return false;
+    }
+
+    setDataRfP();
 });

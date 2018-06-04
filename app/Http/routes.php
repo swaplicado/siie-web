@@ -223,7 +223,7 @@ Route::group(['prefix' => 'qms'], function () {
   			'as' => 'qms.home',
   			'uses' => 'QMS\SQualityController@Home'
   		]);
-  		Route::resource('qms','QMS\SQualityController');
+
       Route::get('/segregation/findWarehouse','QMS\SSegregationsController@findWarehouse');
       Route::get('/segregation/findLocations','QMS\SSegregationsController@findLocations');
       Route::get('/segregation/binnacle',[
@@ -235,13 +235,14 @@ Route::group(['prefix' => 'qms'], function () {
       * segregations
       **/
       // Route::resource('segregations','WMS\SSegregationsController');
-      Route::get('segregations/{title}/{segType}/{viewType}/index',[
-        'uses' => 'QMS\SSegregationsController@index',
-        'as' => 'qms.segregations.index'
+      Route::resource('qms','QMS\SQualityController');
+      Route::get('segregations/{title}/{segType}/{viewType}/{typeView}/index',[
+      'uses' => 'QMS\SSegregationsController@index',
+      'as' => 'qms.segregations.index'
       ]);
 
 
-      Route::post('segregations/{title}/{segType}/{viewType}/index/process',[
+      Route::post('segregations/{title}/{segType}/{viewType}/{typeView}/index/process',[
         'uses' => 'QMS\SSegregationsController@Process',
         'as' => 'qms.segregations.index.process'
       ]);

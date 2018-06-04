@@ -136,18 +136,22 @@ return [
                   'BY_SUPP' => '2',
                 ],
 
-    'SEG_PARAM' => [
-                  'ID_ITEM' => '0',
-                  'ID_UNIT' => '1',
-                  'ID_LOT' => '2',
-                  'ID_PALLET' => '3',
-                  'ID_WHS' => '4',
-                  'ID_BRANCH' => '5',
-                  'ID_REFERENCE' => '6',
-                  'ID_STATUS_QLTY_PREV' => '7',
-                  'ID_STATUS_QLTY_NEW' => '8',
-                  'QUANTITY' => '9',
-                ],
+                'SEG_PARAM' => [
+                              'ID_ITEM' => '0',
+                              'ID_UNIT' => '1',
+                              'ID_LOT' => '2',
+                              'ID_PALLET' => '3',
+                              'ID_WHS' => '4',
+                              'ID_BRANCH' => '5',
+                              'ID_REFERENCE' => '6',
+                              'ID_STATUS_QLTY_PREV' => '7',
+                              'ID_STATUS_QLTY_NEW' => '22',
+                              'QUANTITY' => '9',
+                              'EVENT' => '10',
+                              'WAREHOUSE' => '11',
+                              'LOCATION' => '12',
+
+                            ],
 
     'ELEMENTS_TYPE' => [
                   'ITEMS' => '0',
@@ -156,4 +160,6 @@ return [
                   'LOCATIONS' => '3',
                   'NOT_FOUND' => '404',
                 ],
+
+    
 ];

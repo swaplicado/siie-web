@@ -17,7 +17,6 @@ class SSegregationRow extends SModel {
                             'segregation_event_id',
                             'branch_id',
                             'whs_id',
-                            'whs_location_id',
                             'pallet_id',
                             'lot_id',
                             'year_id',

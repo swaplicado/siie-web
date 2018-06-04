@@ -35,12 +35,12 @@ class SSegregationsController extends Controller
      * @param  int  $iSegregationType can be quality, production or shipment
      *
      */
-    public function index(Request $request, $sTitle, $iSegregationType, $iQualityType)
+    public function index(Request $request, $sTitle, $iSegregationType, $iQualityType,$typeView)
     {
         $sFilterDate = $request->filterDate == null ? session('work_date')->format('Y-m-d') : $request->filterDate;
         $oFilterDate = Carbon::parse($sFilterDate);
         $iYearId = session('utils')->getYearId($oFilterDate->year);
-        $segregated = session('segregation')->getSegregated($iSegregationType, $iQualityType);
+        $segregated = session('segregation')->getSegregated($iSegregationType, $iQualityType,$typeView);
         $lStatusSeg = SStatus::where('is_deleted', false)
                                 ->where('id_segregation_event',3)
                                 ->orwhere('id_segregation_event',4)
@@ -72,6 +72,7 @@ class SSegregationsController extends Controller
                     ->with('tFilterDate', session('work_date'))
                     ->with('sTitle', $sTitle)
                     ->with('iQualityType', $iQualityType)
+                    ->with('typeView', $typeView)
                     ->with('data', $segregated);
     }
 
@@ -123,13 +124,12 @@ class SSegregationsController extends Controller
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')] = $val[\Config::get('scwms.SEG_PARAM.ID_BRANCH')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')] = $val[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')] = $val[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')];
-        $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[23];
-        $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[22];
-        $aParameters[10] = $val[20];
-        $aParameters[11] = $val[21];
-        if(count($val)>=26){
-        $aParameters[12] = $val[24];
-        $aParameters[13] = $val[25];
+        $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')];
+        $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[21];
+        $aParameters[\Config::get('scwms.SEG_PARAM.EVENT')] = $val[20];
+        if(count($val)>=25){
+        $aParameters[\Config::get('scwms.SEG_PARAM.WAREHOUSE')] = $val[23];
+        $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')] = $val[24];
         }
         session('segregation')->classify($aParameters);
 
