@@ -198,12 +198,13 @@ class SSegregationCore
                       $oMovement->closed_shipment_by_id = 1;
                       $oMovement->created_by_id = \Auth::user()->id;
                       $oMovement->updated_by_id = \Auth::user()->id;
-
+                      $idOriginLoc = session('segregation')->originLocation($seg->id_whs);
                       $oMovementRow = new SMovementRow();
                       $oMovementRow->quantity = $seg->qty;
                       $oMovementRow->item_id = $seg->id_item;
                       $oMovementRow->unit_id = $seg->id_unit;
-                      $oMovementRow->pallet_id = $seg->id_pallet;
+                      $oMovementRow->pallet_id = $iIdPallet;
+                      $oMovementRow->location_id = $idOriginLoc;
                       $oMovementRow->doc_order_row_id = 1;
                       $oMovementRow->doc_invoice_row_id = 1;
                       $oMovementRow->doc_debit_note_row_id = 1;
@@ -230,7 +231,9 @@ class SSegregationCore
                                                       $oMovement->mvt_whs_type_id,
                                                       $iWhsSrc,
                                                       $iWhsDes,
-                                                      null, $request);
+                                                      0,
+                                                      0,
+                                                      $request);
                       break;
               }
 
@@ -365,13 +368,13 @@ class SSegregationCore
                   $oMovement->closed_shipment_by_id = 1;
                   $oMovement->created_by_id = \Auth::user()->id;
                   $oMovement->updated_by_id = \Auth::user()->id;
-
+                  $idOriginLoc = session('segregation')->originLocation($iIdWhs);
                   $oMovementRow = new SMovementRow();
                   $oMovementRow->quantity = $dQuantity;
                   $oMovementRow->item_id = $iIdItem;
                   $oMovementRow->unit_id = $iIdUnit;
                   $oMovementRow->pallet_id = $iIdPallet;
-                  $oMovementRow->location_id = $idLoc;
+                  $oMovementRow->location_id = $idOriginLoc;
                   $oMovementRow->doc_order_row_id = 1;
                   $oMovementRow->doc_invoice_row_id = 1;
                   $oMovementRow->doc_debit_note_row_id = 1;
@@ -398,7 +401,9 @@ class SSegregationCore
                                                   $oMovement->mvt_whs_type_id,
                                                   $iWhsSrc,
                                                   $iWhsDes,
-                                                  null, $request);
+                                                  0,
+                                                  0,
+                                                  $request);
                   break;
           }
         }
@@ -839,6 +844,16 @@ if($user != 0){
       return $iStatus == \Config::get('scqms.PARTIAL_RELEASED') ||
               $iStatus == \Config::get('scqms.RELEASED') ||
                 $iStatus == \Config::get('scqms.RELEASED_EARLY');
+  }
+
+  public function originLocation($warehouse){
+      $sSelect = 'id_whs_location';
+      $query = \DB::connection(session('db_configuration')->getConnCompany())
+                  ->table('wmsu_whs_locations');
+      $query = $query->where('whs_id','=',$warehouse)
+                    ->select(\DB::raw($sSelect))
+                    ->get();
+      return $query;
   }
 
 
