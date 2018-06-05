@@ -9,6 +9,7 @@ use App\SUtils\SGuiUtils;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
+use App\WMS\SLocation;
 use App\Database\Config;
 
 use App\SCore\SMovsManagment;
@@ -346,6 +347,9 @@ class SSegregationCore
             case 9:
             case 10:
                   $oMovement = new SMovement();
+                  $oMovement->dt_date = session('work_date')->toDateString();
+                  $oMovement->is_system = true;
+                  $oMovement->is_deleted = false;
                   $oMovement->mvt_whs_class_id = 2;
                   $oMovement->mvt_whs_type_id = 11;
                   $oMovement->mvt_trn_type_id = 1;
@@ -847,13 +851,11 @@ if($user != 0){
   }
 
   public function originLocation($warehouse){
-      $sSelect = 'id_whs_location';
-      $query = \DB::connection(session('db_configuration')->getConnCompany())
-                  ->table('wmsu_whs_locations');
-      $query = $query->where('whs_id','=',$warehouse)
-                    ->select(\DB::raw($sSelect))
-                    ->get();
-      return $query;
+      $oLocation = SLocation::where('whs_id', $warehouse)
+                              ->where('is_default', true)
+                              ->first();
+
+      return $oLocation->id_whs_location;
   }
 
 
