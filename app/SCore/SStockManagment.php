@@ -311,27 +311,23 @@ class SStockManagment
 
         $sSubQueryInvoices = "(SELECT COUNT(*) supp_inv
                                 FROM
-                                erpu_documents eds
-                                INNER JOIN wms_mvts wmw ON (eds.id_document = wmw.doc_invoice_id)
-                                WHERE eds.doc_src_id = ed.id_document
-                                AND NOT eds.is_deleted
-                                AND NOT wmw.is_deleted)";
+                                wms_mvts WHERE doc_invoice_id IN
+                                (SELECT id_document
+                                FROM erpu_documents
+                                WHERE doc_src_id = ed.id_document) 
+                                AND NOT is_deleted)";
 
         $sSubQueryOrders = "(SELECT COUNT(*) supp_ord
                                 FROM
-                                erpu_documents eds
-                                INNER JOIN wms_mvts wmw ON (eds.id_document = wmw.doc_order_id)
-                                WHERE eds.id_document = ed.doc_src_id
-                                AND NOT eds.is_deleted
-                                AND NOT wmw.is_deleted)";
+                                 wms_mvts
+                                 WHERE doc_order_id = ed.doc_src_id
+                                AND NOT is_deleted)";
 
         $sSubQueryCreditNotes = "(SELECT COUNT(*) supp_cn
                                 FROM
-                                erpu_documents eds
-                                INNER JOIN wms_mvts wmw ON (eds.doc_src_id = wmw.doc_invoice_id)
-                                WHERE wmw.doc_invoice_id = ed.doc_src_id
-                                AND NOT eds.is_deleted
-                                AND NOT wmw.is_deleted)";
+                                wms_mvts
+                                WHERE doc_invoice_id = ed.doc_src_id
+                                AND NOT is_deleted)";
 
         $bOrder = $iDocClass == \Config::get('scsiie.DOC_CLS.ORDER') && $iDocType == \Config::get('scsiie.DOC_TYPE.ORDER');
         $bInvoice = $iDocClass == \Config::get('scsiie.DOC_CLS.DOCUMENT') && $iDocType == \Config::get('scsiie.DOC_TYPE.INVOICE');

@@ -151,7 +151,7 @@ class SLinksCore {
           sBranch,
           sWarehouse,
           oMovementRow.sLocation,
-          oMovementRow.sPallet == '1' ? 'SIN TARIMA' ? oMovementRow.sPallet,
+          oMovementRow.sPallet == '1' ? 'SIN TARIMA' : oMovementRow.sPallet,
           parseFloat(oMovementRow.dPrice, 10).toFixed(globalData.DEC_AMT),
           parseFloat(oMovementRow.dQuantity, 10).toFixed(globalData.DEC_QTY),
           parseFloat(oMovementRow.dQtyIndSupplied, 10).toFixed(globalData.DEC_QTY),
