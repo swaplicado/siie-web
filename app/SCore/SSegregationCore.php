@@ -142,7 +142,7 @@ class SSegregationCore
               $oSegRowMirror = clone $oSegRow;
               //Guardado primer renglon
               $oSegRow->save();
-              $idOriginLoc = session('segregation')->originLocation($seg->id_whs);
+
               switch ($iIdQltyNew) {
                 case 3:
                       $oSegregationMirror->segregation_type_id = \Config::get('scqms.SEGREGATION_TYPE.INSPECTED');
@@ -198,7 +198,7 @@ class SSegregationCore
                       $oMovement->closed_shipment_by_id = 1;
                       $oMovement->created_by_id = \Auth::user()->id;
                       $oMovement->updated_by_id = \Auth::user()->id;
-
+                      $idOriginLoc = session('segregation')->originLocation($seg->id_whs);
                       $oMovementRow = new SMovementRow();
                       $oMovementRow->quantity = $seg->qty;
                       $oMovementRow->item_id = $seg->id_item;
@@ -231,7 +231,9 @@ class SSegregationCore
                                                       $oMovement->mvt_whs_type_id,
                                                       $iWhsSrc,
                                                       $iWhsDes,
-                                                      null, $request);
+                                                      0,
+                                                      0,
+                                                      $request);
                       break;
               }
 
@@ -279,7 +281,7 @@ class SSegregationCore
           $oSegRow->is_deleted = false;
           $oSegRow->segregation_id = $oSegregation->id_segregation;
           $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.DECREMENT');
-          $idOriginLoc = session('segregation')->originLocation($oSegRow->pallet_id);
+
           switch ($iIdQltyNew) {
             case 1:
             case 2:
@@ -366,7 +368,7 @@ class SSegregationCore
                   $oMovement->closed_shipment_by_id = 1;
                   $oMovement->created_by_id = \Auth::user()->id;
                   $oMovement->updated_by_id = \Auth::user()->id;
-
+                  $idOriginLoc = session('segregation')->originLocation($iIdWhs);
                   $oMovementRow = new SMovementRow();
                   $oMovementRow->quantity = $dQuantity;
                   $oMovementRow->item_id = $iIdItem;
@@ -399,7 +401,9 @@ class SSegregationCore
                                                   $oMovement->mvt_whs_type_id,
                                                   $iWhsSrc,
                                                   $iWhsDes,
-                                                  null, $request);
+                                                  0,
+                                                  0,
+                                                  $request);
                   break;
           }
         }
@@ -845,7 +849,7 @@ if($user != 0){
   public function originLocation($warehouse){
       $sSelect = 'id_whs_location';
       $query = \DB::connection(session('db_configuration')->getConnCompany())
-                  ->table('wms_whs_locations');
+                  ->table('wmsu_whs_locations');
       $query = $query->where('whs_id','=',$warehouse)
                     ->select(\DB::raw($sSelect))
                     ->get();
