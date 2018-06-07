@@ -314,7 +314,7 @@ class SStockManagment
                                 wms_mvts WHERE doc_invoice_id IN
                                 (SELECT id_document
                                 FROM erpu_documents
-                                WHERE doc_src_id = ed.id_document) 
+                                WHERE doc_src_id = ed.id_document)
                                 AND NOT is_deleted)";
 
         $sSubQueryOrders = "(SELECT COUNT(*) supp_ord
@@ -567,5 +567,63 @@ class SStockManagment
 
         return $lDocuments;
     }
+
+    public static function getMovementsLots($lot){
+      $sJanuary = session('work_date')->year.'-01-01';
+      $sCutoffDate = session('work_date')->toDateString();
+      $sSelect = 'wm.dt_date,
+                  CONCAT(wmt.code, "-", wm.folio) AS folio,
+                  wmt.code AS mvt_code,
+                  wmt.name AS mvt_name,
+                  wmr.pallet_id AS pallet,
+                  eb.code AS branch_code,
+                  ww.code AS whs_code,
+                  wwl.code AS loc_code,
+                  eu.code AS unit_code,
+                  ed_ord.num AS num_order,
+                  ed_ord.service_num AS ser_num_order,
+                  ed_ord.dt_date AS dt_order,
+                  ed_inv.num AS num_invoice,
+                  ed_inv.service_num AS ser_num_invoice,
+                  ed_inv.dt_date AS dt_invoice,
+                  ed_cn.num AS num_cn,
+                  ed_cn.service_num AS ser_num_cn,
+                  ed_cn.dt_date AS dt_cn
+                 ';
+
+      $query = \DB::connection(session('db_configuration')->getConnCompany())
+                    ->table('wms_mvts as wm')
+                    ->join('wms_mvt_rows as wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
+                    ->join('wmss_mvt_types as wmt', 'wm.mvt_whs_type_id', '=', 'wmt.id_mvt_type')
+                    ->join('erpu_items as ei', 'wmr.item_id', '=', 'ei.id_item')
+                    ->join('erpu_units as eu', 'wmr.unit_id', '=', 'eu.id_unit')
+                    ->join('wms_pallets as wp', 'wmr.pallet_id', '=', 'wp.id_pallet')
+                    ->join('wmsu_whs_locations as wwl', 'wmr.location_id', '=', 'wwl.id_whs_location')
+                    ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')
+                    ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
+                    ->join('erpu_documents as ed_ord', 'wm.doc_order_id', '=', 'ed_ord.id_document')
+                    ->join('erpu_documents as ed_inv', 'wm.doc_invoice_id', '=', 'ed_inv.id_document')
+                    ->join('erpu_documents as ed_cn', 'wm.doc_credit_note_id', '=', 'ed_cn.id_document')
+                    ->whereBetween('wm.dt_date', [$sJanuary, $sCutoffDate])
+                    ->where('wm.is_deleted', false)
+                    ->where('wmr.is_deleted', false);
+      $query = $query->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
+                     ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot');
+
+      $sSelect = $sSelect.', wl.lot, wl.dt_expiry';
+      $sSelect = $sSelect.', IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmrl.quantity, 0) AS inputs,
+                             IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmrl.quantity, 0) AS outputs,
+                             IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmrl.amount, 0) AS credit,
+                             IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmrl.amount, 0) AS debit';
+
+      $query->where('wmrl.lot_id', $lot->id_lot);
+      $query = $query->select(\DB::raw($sSelect));
+
+      $query = $query->orderBy('dt_date', 'ASC')
+                      ->orderBy('id_mvt', 'ASC')
+                      ->get();
+
+      return $query;
+      }
 
 }

@@ -520,4 +520,6 @@ class SStockController extends Controller
           $rStock->save();
        }
     }
+
+    
 }
