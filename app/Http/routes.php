@@ -461,7 +461,14 @@ Route::group(['prefix' => 'qms'], function () {
       /*
       * Barcodes
       **/
-
+      Route::get('traceability/consult',[
+        'uses' => 'WMS\STraceabilityController@consult',
+        'as' => 'wms.traceability.consult'
+      ]);
+      Route::post('traceability/getTraceability',[
+        'uses' => 'WMS\STraceabilityController@getTraceability',
+        'as'   => 'wms.traceability.gettraceability'
+      ]);
       // Route::get('/codes/start', 'WMS\SCodesController@start');
       Route::get('/codes/start',[
         'uses' => 'WMS\SCodesController@start',
