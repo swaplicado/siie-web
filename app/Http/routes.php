@@ -324,7 +324,7 @@ Route::group(['prefix' => 'qms'], function () {
       	'as' => 'wms.movs.index'
       ]);
       Route::get('/movs/viewdetail', [
-      	'uses' => 'WMS\SInventoriesController@movementsIndex',
+      	'uses' => 'WMS\SMovsController@movementsIndex',
       	'as' => 'wms.movs.indexdetail'
       ]);
       Route::get('/movs/docs', [
