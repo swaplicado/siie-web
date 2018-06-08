@@ -115,7 +115,7 @@ class SMovsController extends Controller
                     eu.code AS unit,
                     eb.code AS branch_code,
                     ww.code AS whs_code,
-                    wm.dt_date AS mvt_whs_class_id,
+                    wm.mvt_whs_class_id,
                     wm.dt_date AS mov_date,
                     wm.folio AS mov_folio,
                     wmt.code AS mov_code,
