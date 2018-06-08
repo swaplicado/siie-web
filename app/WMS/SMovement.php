@@ -1,6 +1,7 @@
 <?php namespace App\WMS;
 
 use App\ERP\SModel;
+use App\ERP\SDocument;
 use App\SUtils\SGuiUtils;
 
 class SMovement extends SModel {
@@ -165,6 +166,25 @@ class SMovement extends SModel {
   public function userUpdate()
   {
     return $this->belongsTo('App\User', 'updated_by_id');
+  }
+
+  public function getDocumentSupplied()
+  {
+      $iDocument = 0;
+
+      if ($this->doc_invoice_id > 1) {
+        $iDocument = $this->doc_invoice_id;
+      } elseif ($this->doc_order_id > 1) {
+        $iDocument = $this->doc_order_id;
+      } elseif ($this->doc_credit_note_id > 1) {
+        $iDocument = $this->doc_credit_note_id;
+      } else {
+        $iDocument = $this->doc_invoice_id;
+      }
+
+      $oDocument = SDocument::find($iDocument);
+
+      return $oDocument;
   }
 
 

@@ -20,6 +20,7 @@
 		'IMPORT' => 'Importar',
 		'LINK' => 'Enlazar',
 		'MODIFY' => 'Modificar',
+		'PRINT' => 'Imprimir',
 		'READ' => 'Leer',
 		'RECEIVE' => 'Recibir',
 		'SAVE' => 'Guardar',

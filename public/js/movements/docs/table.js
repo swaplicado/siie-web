@@ -54,4 +54,8 @@ oDocsTable = $('#docs_table').DataTable({
             "width": "20%"
         }
       ],
+      "dom": 'Bfrtip',
+      "buttons": [
+            'copy', 'csv', 'excel', 'print'
+        ]
   });

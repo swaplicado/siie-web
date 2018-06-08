@@ -328,9 +328,17 @@ $('#select_button').on('click', function(e) {
             lotToAdd.sLot = row.lot;
             lotToAdd.tExpDate = row.dt_expiry;
 
+            var dQty = 0;
+            if (guiFunctions.getQuantity() > row.available_stock) {
+              dQty = row.available_stock;
+            }
+            else {
+              dQty = guiFunctions.getQuantity();
+            }
+
             guiFunctions.setTextLot(row.lot);
             guiFunctions.setExpDateLot(row.dt_expiry);
-            guiFunctions.setQuantityLot(guiFunctions.getQuantity());
+            guiFunctions.setQuantityLot(dQty);
 
             break;
 

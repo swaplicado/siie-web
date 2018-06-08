@@ -87,7 +87,7 @@ return array(
         /**
          * Whether to enable font subsetting or not.
          */
-        "DOMPDF_ENABLE_FONT_SUBSETTING" => false,
+        "DOMPDF_ENABLE_FONT_SUBSETTING" => true,
 
         /**
          * The PDF rendering backend to use
@@ -152,7 +152,7 @@ return array(
          *
          * @see CPDF_Adapter::PAPER_SIZES for valid sizes ('letter', 'legal', 'A4', etc.)
          */
-        "DOMPDF_DEFAULT_PAPER_SIZE" => "a4",
+        "DOMPDF_DEFAULT_PAPER_SIZE" => "letter",
 
         /**
          * The default font family
@@ -209,7 +209,7 @@ return array(
          *
          * @var bool
          */
-        "DOMPDF_ENABLE_PHP" => false,
+        "DOMPDF_ENABLE_PHP" => true,
 
         /**
          * Enable inline Javascript
@@ -251,13 +251,13 @@ return array(
          * Allows people to disabled CSS float support
          * @var bool
          */
-        "DOMPDF_ENABLE_CSS_FLOAT" => false,
+        "DOMPDF_ENABLE_CSS_FLOAT" => true,
 
 
         /**
          * Use the more-than-experimental HTML5 Lib parser
          */
-        "DOMPDF_ENABLE_HTML5PARSER" => false,
+        "DOMPDF_ENABLE_HTML5PARSER" => true,
 
 
     ),

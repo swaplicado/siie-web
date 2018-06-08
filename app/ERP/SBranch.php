@@ -71,6 +71,16 @@ class SBranch extends Model {
     return $this->hasMany('App\ERP\SUserBranch');
   }
 
+
+  public function getMainAddress()
+  {
+     $oAddress = SAddress::where('is_main', true)
+                 ->where('branch_id', $this->id_branch)
+                 ->first();
+
+     return $oAddress;
+  }
+
   /**
    * [scopeSearch description]
    * To search in a query

@@ -867,6 +867,18 @@ class SMovsController extends Controller
         return redirect()->back();
     }
 
+    public function print($id = 0)
+    {
+       $oMovement = SMovement::find($id);
+       $oMovement->rows;
+
+       $view = view('wms.movs.print', ['oMovement' => $oMovement])->render();
+        // set ukuran kertas dan orientasi
+        $pdf = \PDF::loadHTML($view)->setPaper('legal', 'potrait')->setWarnings(false)->save('myfile.pdf');
+        // cetak
+        return $pdf->stream();
+    }
+
     /**
      * create the rows of movement to be saved or updated
      *

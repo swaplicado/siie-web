@@ -118,4 +118,11 @@
 				 console.log(picker.endDate.format('YYYY-MM-DD'));
 			 });
 	</script>
+	<script src="{{ asset('datatables/dataTables.buttons.min.js') }}"></script>
+	<script src="{{ asset('datatables/buttons.flash.min.js') }}"></script>
+	<script src="{{ asset('datatables/jszip.min.js') }}"></script>
+	<script src="{{ asset('datatables/pdfmake.min.js') }}"></script>
+	<script src="{{ asset('datatables/vfs_fonts.js') }}"></script>
+	<script src="{{ asset('datatables/buttons.html5.min.js') }}"></script>
+	<script src="{{ asset('datatables/buttons.print.min.js') }}"></script>
 @endsection

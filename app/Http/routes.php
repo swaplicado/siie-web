@@ -323,6 +323,10 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@index',
       	'as' => 'wms.movs.index'
       ]);
+      Route::get('/movs/viewdetail', [
+      	'uses' => 'WMS\SInventoriesController@movementsIndex',
+      	'as' => 'wms.movs.indexdetail'
+      ]);
       Route::get('/movs/docs', [
       	'uses' => 'WMS\SMovsController@inventoryDocs',
       	'as' => 'wms.movs.docs'
@@ -402,6 +406,10 @@ Route::group(['prefix' => 'qms'], function () {
       Route::get('/movs/receivetransfer/{idMov}/data', [
       	'uses' => 'WMS\SMovsController@getMovementData',
       	'as' => 'wms.movs.receivetransfer.data'
+      ]);
+      Route::get('/movs/print/{idMov}', [
+      	'uses' => 'WMS\SMovsController@print',
+      	'as' => 'wms.movs.print'
       ]);
 
       /*

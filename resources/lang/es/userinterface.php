@@ -234,6 +234,7 @@
 											'ADDRESS' => 'Dirección',
 											'ALL' => 'Todos',
 											'ALL_SIN' => 'Todo',
+											'AMOUNT' => 'Monto',
 											'NOTHING' => 'Nada',
 											'ASSIGNAMENT' => 'Tipo',
 											'BP' => 'Asociado Negocios',

@@ -44,6 +44,7 @@ class SWmsMenu {
             \Menu::new()
                 ->addClass('dropdown-menu')
                 ->route('wms.movs.index', trans('wms.WHS_MOVS'))
+                ->route('wms.movs.indexdetail', trans('wms.WHS_MOVS_DETAIL'))
                 ->route('wms.movs.docs', trans('wms.WHS_DOCS'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
