@@ -16,7 +16,11 @@
 						<font size="2%">(443) 2-04-10-32.     soporte@swaplicado.com.mx</font>
 					</div>
 					<div style="text-align: right;" class="col-md-4">
-						<font size="2%">Software Aplicado SA de CV.-<a href="http://www.swaplicado.com.mx/">www.swaplicado.com.mx</a></font>
+						<font size="2%">Software Aplicado SA de CV.-
+									<a href="http://www.swaplicado.com.mx/"  target="_blank">
+										www.swaplicado.com.mx
+									</a>
+						</font>
 					</div>
 				</div>
 			</h2>
