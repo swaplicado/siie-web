@@ -39,12 +39,12 @@
                           'id' => 'label_sel']) !!}
     </div>
     <div class="col-md-2">
-        {!! Form::label(trans('userinterface.labels.QUANTITY').'*') !!}
-        {!! Form::number('quantity', 0, ['class'=>'form-control input-sm', 'id' => 'quantity',
-                                              'placeholder' => trans('userinterface.placeholders.QUANTITY'),
-                                              'style' => 'text-align: right;',
-                                              'max' => '999999999999',
-                                              'step' => '0.01']) !!}
+      {!! Form::label('price', trans('userinterface.labels.PRICE').'*') !!}
+      {!! Form::number('price', 1, ['class'=>'form-control input-sm', 'id' => 'price',
+                                            'placeholder' => trans('userinterface.placeholders.PRICE'),
+                                            'style' => 'text-align: right;',
+                                            'max' => '999999999999',
+                                            'step' => '0.01']) !!}
     </div>
     <div class="col-md-1">
       {!! Form::label('Unidad') !!}
@@ -55,12 +55,12 @@
   </div>
   <div class="row">
     <div class="col-md-2">
-        {!! Form::label('price', trans('userinterface.labels.PRICE').'*') !!}
-        {!! Form::number('price', 1, ['class'=>'form-control input-sm', 'id' => 'price',
-                                              'placeholder' => trans('userinterface.placeholders.PRICE'),
-                                              'style' => 'text-align: right;',
-                                              'max' => '999999999999',
-                                              'step' => '0.01']) !!}
+      {!! Form::label(trans('userinterface.labels.QUANTITY').'*') !!}
+      {!! Form::number('quantity', 0, ['class'=>'form-control input-sm', 'id' => 'quantity',
+                                            'placeholder' => trans('userinterface.placeholders.QUANTITY'),
+                                            'style' => 'text-align: right;',
+                                            'max' => '999999999999',
+                                            'step' => '0.01']) !!}                
     </div>
     <div class="col-md-1">
       {!! Form::label('Moneda') !!}
