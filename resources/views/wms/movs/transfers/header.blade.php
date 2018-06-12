@@ -8,7 +8,7 @@
     {!! Form::label('lab_branch_src', $oMovRef->dt_date, ['class'=>'form-control input-sm']) !!}
   </div>
   <div class="col-md-4">
-    {!! Form::label('', trans('wms.labels.SOURCE_BRANCH')) !!}
+    {!! Form::label('', 'Enviado por') !!}
     {!! Form::label('lab_branch_src', $oMovRef->userCreation->username, ['class'=>'form-control input-sm']) !!}
   </div>
 </div>

@@ -51,36 +51,60 @@
 		            <th>Almacén</th>
 		            <th>Tipo movimiento</th>
 		            <th>Tipo</th>
+								<th data-priority="1">Doc</th>
+								<th>Clase</th>
+								<th>Cat</th>
 		        </tr>
 		    </thead>
 		    <tbody>
 					@foreach ($rows as $row)
 						<tr>
-								<td>{{ $row->movement->mvtType->code.'-'.$row->movement->folio }}</td>
-								<td>{{ \Carbon\Carbon::parse($row->movement->dt_date)->format('Y-m-d') }}</td>
+								<td>{{ $row->mov_code.'-'.$row->mov_folio }}</td>
+								<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
-		            <td>{{ $row->item->code }}</td>
-		            <td>{{ $row->item->name }}</td>
-								@if ($row->movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
+		            <td>{{ $row->item_code }}</td>
+		            <td>{{ $row->item }}</td>
+								@if ($row->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
 									<td align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
 								@else
 									<td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
 								@endif
-								<td align="right">{{ $row->item->unit->code }}</td>
-								<td>{{ $row->movement->branch->name }}</td>
-								<td>{{ $row->movement->warehouse->name }}</td>
-								<td>{{ $row->movement->mvtType->name }}</td>
-								@if ($row->movement->mvt_trn_type_id != 1)
-									<td>{{ $row->movement->trnType->name }}</td>
-								@elseif($row->movement->mvt_adj_type_id != 1)
-									<td>{{ $row->movement->adjType->name }}</td>
-								@elseif($row->movement->mvt_mfg_type_id != 1)
-									<td>{{ $row->movement->mfgType->name }}</td>
-								@elseif($row->movement->mvt_exp_type_id != 1)
-									<td>{{ $row->movement->expType->name }}</td>
+								<td align="right">{{ $row->unit_code }}</td>
+								<td>{{ $row->branch }}</td>
+								<td>{{ $row->warehouse }}</td>
+								<td>{{ $row->movement }}</td>
+								@if ($row->mvt_trn_type_id > 1)
+									<td>{{ $row->trn_name }}</td>
+								@elseif($row->mvt_adj_type_id > 1)
+									<td>{{ $row->adj_name }}</td>
+								@elseif($row->mvt_mfg_type_id > 1)
+									<td>{{ $row->mfg_name }}</td>
+								@elseif($row->mvt_exp_type_id > 1)
+									<td>{{ $row->exp_name }}</td>
 								@else
+									<td>N/A</td>
+								@endif
+								@if ($row->doc_order_id != 1)
+									<td>{{ $row->num_order }}</td>
+									<td>{{ trans('siie.labels.ORDER') }}</td>
+									<td>{{ $row->order_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+								@elseif($row->doc_invoice_id != 1)
+									<td>{{ $row->ser_num_invoice == '' ? $row->num_invoice : ($row->ser_num_invoice.'-'.$row->num_invoice) }}</td>
+									<td>{{ trans('siie.labels.INVOICE') }}</td>
+									<td>{{ $row->invoice_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+								@elseif($row->doc_debit_note_id > 1)
+									<td>{{ 'NA' }}</td>
+									<td>{{ 'NA' }}</td>
+									<td>{{ 'NA' }}</td>
+								@elseif($row->doc_credit_note_id > 1)
+									<td>{{ $row->ser_num_cn == '' ? $row->num_cn : ($row->ser_num_cn.'-'.$row->num_cn) }}</td>
+									<td>{{ trans('siie.labels.CREDIT_NOTE') }}</td>
+									<td>{{ $row->cn_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+								@else
+									<td>N/A</td>
+									<td>N/A</td>
 									<td>N/A</td>
 								@endif
 		        </tr>

@@ -87,6 +87,10 @@ class SMovsManagment {
 
         $this->saveMovement($movements, $oRequest, $iOperation);
 
+        if ($movements[0]->whs_id == session('transit_whs')->id_whs) {
+            return $movements[1]->folio;
+        }
+
         return $movements[0]->folio;
     }
 

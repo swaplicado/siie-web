@@ -30,8 +30,8 @@
 				<tr>
 					<td>{{ $lot->lot }}</td>
 					<td>{{ $lot->dt_expiry }}</td>
-					<td>{{ $lot->item->code.' - '.$lot->item->name }}</td>
-					<td>{{ $lot->unit->code.' - '.$lot->unit->name }}</td>
+					<td>{{ $lot->item_code.' - '.$lot->item }}</td>
+					<td>{{ $lot->unit_code.' - '.$lot->unit }}</td>
 					<td>
 						@if (! $lot->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>

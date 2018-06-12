@@ -60,40 +60,40 @@
 		    <tbody>
 					@foreach ($lMovs as $mov)
 						<tr>
-								<td>{{ $mov->mvtType->code.'-'.$mov->folio }}</td>
-								<td>{{ \Carbon\Carbon::parse($mov->dt_date)->format('Y-m-d') }}</td>
+								<td>{{ $mov->mov_code.'-'.$mov->mov_folio }}</td>
+								<td>{{ \Carbon\Carbon::parse($mov->mov_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 								<td align="right">{{ session('utils')->formatNumber($mov->total_amount, \Config::get('scsiie.FRMT.AMT')) }}</td>
-								<td>{{ $mov->mvtType->name }}</td>
-								@if ($mov->mvt_trn_type_id != 1)
-									<td>{{ $mov->trnType->name }}</td>
-								@elseif($mov->mvt_adj_type_id != 1)
-									<td>{{ $mov->adjType->name }}</td>
-								@elseif($mov->mvt_mfg_type_id != 1)
-									<td>{{ $mov->mfgType->name }}</td>
-								@elseif($mov->mvt_exp_type_id != 1)
-									<td>{{ $mov->expType->name }}</td>
+								<td>{{ $mov->movement }}</td>
+								@if ($mov->mvt_trn_type_id > 1)
+									<td>{{ $mov->trn_code.'-'.$mov->trn_name }}</td>
+								@elseif($mov->mvt_adj_type_id > 1)
+									<td>{{ $mov->adj_code.'-'.$mov->adj_name }}</td>
+								@elseif($mov->mvt_mfg_type_id > 1)
+									<td>{{ $mov->mfg_code.'-'.$mov->mfg_name }}</td>
+								@elseif($mov->mvt_exp_type_id > 1)
+									<td>{{ $mov->exp_code.'-'.$mov->exp_name }}</td>
 								@else
 									<td>N/A</td>
 								@endif
-								<td>{{ $mov->branch->name }}</td>
-								<td>{{ $mov->warehouse->name }}</td>
+								<td>{{ $mov->branch }}</td>
+								<td>{{ $mov->warehouse }}</td>
 								@if ($mov->doc_order_id != 1)
-									<td>{{ $mov->order->num }}</td>
-									<td>{{ $mov->order->docClass->name }}</td>
-									<td>{{ $mov->order->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+									<td>{{ $mov->num_order }}</td>
+									<td>{{ trans('siie.labels.ORDER') }}</td>
+									<td>{{ $mov->order_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
 								@elseif($mov->doc_invoice_id != 1)
-									<td>{{ $mov->invoice->num }}</td>
-									<td>{{ $mov->invoice->docClass->name }}</td>
-									<td>{{ $mov->invoice->doc_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
-								@elseif($mov->doc_debit_note_id != 1)
+									<td>{{ $mov->ser_num_invoice == '' ? $mov->num_invoice : ($mov->ser_num_invoice.'-'.$mov->num_invoice) }}</td>
+									<td>{{ trans('siie.labels.INVOICE') }}</td>
+									<td>{{ $mov->invoice_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
+								@elseif($mov->doc_debit_note_id > 1)
 									<td>{{ 'NA' }}</td>
 									<td>{{ 'NA' }}</td>
 									<td>{{ 'NA' }}</td>
-								@elseif($mov->doc_credit_note_id != 1)
-									<td>{{ 'NA' }}</td>
-									<td>{{ 'NA' }}</td>
-									<td>{{ 'NA' }}</td>
+								@elseif($mov->doc_credit_note_id > 1)
+									<td>{{ $mov->ser_num_cn == '' ? $mov->num_cn : ($mov->ser_num_cn.'-'.$mov->num_cn) }}</td>
+									<td>{{ trans('siie.labels.CREDIT_NOTE') }}</td>
+									<td>{{ $mov->cn_category_id == \Config::get('scsiie.DOC_CAT.PURCHASES') ? 'COMPRA' : 'VENTA' }}</td>
 								@else
 									<td>N/A</td>
 									<td>N/A</td>
@@ -120,9 +120,9 @@
 									</div>
       					</td>
 								<td>{{ $mov->created_at }}</td>
-								<td>{{ $mov->userCreation->username }}</td>
+								<td>{{ $mov->username_creation }}</td>
 								<td>{{ $mov->updated_at }}</td>
-								<td>{{ $mov->userUpdate->username }}</td>
+								<td>{{ $mov->username_update }}</td>
 		        </tr>
 					@endforeach
 		    </tbody>

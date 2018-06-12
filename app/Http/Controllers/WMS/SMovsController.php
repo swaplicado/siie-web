@@ -14,6 +14,7 @@ use App\SCore\SMovsManagment;
 use App\SCore\SReceptions;
 use App\SCore\SLotsValidations;
 use App\SCore\StransfersCore;
+use App\SCore\SMovsCore;
 
 use App\SUtils\SMovsUtils;
 use App\SUtils\SUtil;
@@ -66,29 +67,11 @@ class SMovsController extends Controller
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
 
-        $lMovRows = SMovementRow::Search($this->iFilter, $sFilterDate);
-
-        if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
-            $lMovRows = $lMovRows->where('wm.whs_id', $iFilterWhs);
-        }
+        // $lMovRows = SMovementRow::Search($this->iFilter, $sFilterDate);
+        $lMovRows = SMovsCore::getMovementsIndex($sFilterDate, $iFilterWhs);
 
         $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
         $lWarehouses['0'] = 'TODOS';
-
-        $lMovRows = $lMovRows->orderBy('mvt_id', 'DESC')
-                              ->orderBy('item_id', 'ASC')->get();
-
-        foreach ($lMovRows as $row) {
-            $row->movement->branch;
-            $row->movement->warehouse;
-            $row->movement->mvtType;
-            $row->movement->trnType;
-            $row->movement->adjType;
-            $row->movement->mfgType;
-            $row->movement->expType;
-            $row->lotRows;
-            $row->item->unit;
-        }
 
         return view('wms.movs.index')
                     ->with('iFolio', $iFolio)
@@ -99,78 +82,30 @@ class SMovsController extends Controller
                     ->with('rows', $lMovRows);
     }
 
+    /**
+     * Movements Index detail
+     *
+     * @param  Request $request [description]
+     *
+     * @return view('wms.movs.indexdetail')
+     */
     public function movementsIndex(Request $request)
     {
-        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
-        $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
+       $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+       $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
 
-        $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+       $movs = SMovsCore::getMovsDetailIndex($sFilterDate, $iFilterWhs);
 
-        $sSelect = 'ei.code AS item_code,
-                    ei.name AS item,
-                    ei.is_lot,
-                    wl.id_lot,
-                    wl.lot,
-                    wl.dt_expiry,
-                    eu.code AS unit,
-                    eb.code AS branch_code,
-                    ww.code AS whs_code,
-                    wm.mvt_whs_class_id,
-                    wm.dt_date AS mov_date,
-                    wm.folio AS mov_folio,
-                    wmt.code AS mov_code,
-                    wmt.name AS movement,
-                    wmr.quantity AS row_quantity,
-                    wmrl.quantity AS lot_quantity,
-                    ed_ord.num AS num_order,
-                    ed_ord.service_num AS ser_num_order,
-                    ed_ord.dt_date AS dt_order,
-                    ed_inv.num AS num_invoice,
-                    ed_inv.service_num AS ser_num_invoice,
-                    ed_inv.dt_date AS dt_invoice,
-                    ed_cn.num AS num_cn,
-                    ed_cn.service_num AS ser_num_cn,
-                    ed_cn.dt_date AS dt_cn,
-                    wm.doc_order_id,
-                    wm.doc_invoice_id,
-                    wm.doc_credit_note_id
-                    ';
+       $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, true);
+       $lWarehouses['0'] = 'TODOS';
 
-        $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, true);
-        $lWarehouses['0'] = 'TODOS';
-
-        $movs = \DB::connection(session('db_configuration')->getConnCompany())
-                     ->table('wms_mvts as wm')
-                     ->join('wms_mvt_rows as wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
-                     ->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
-                     ->join('wmss_mvt_types as wmt', 'wm.mvt_whs_type_id', '=', 'wmt.id_mvt_type')
-                     ->join('erpu_items as ei', 'wmr.item_id', '=', 'ei.id_item')
-                     ->join('erpu_units as eu', 'wmr.unit_id', '=', 'eu.id_unit')
-                     ->join('wms_pallets as wp', 'wmr.pallet_id', '=', 'wp.id_pallet')
-                     ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot')
-                     ->join('wmsu_whs_locations as wwl', 'wmr.location_id', '=', 'wwl.id_whs_location')
-                     ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
-                     ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')
-                     ->join('erpu_documents as ed_ord', 'wm.doc_order_id', '=', 'ed_ord.id_document')
-                     ->join('erpu_documents as ed_inv', 'wm.doc_invoice_id', '=', 'ed_inv.id_document')
-                     ->join('erpu_documents as ed_cn', 'wm.doc_credit_note_id', '=', 'ed_cn.id_document');
-
-         if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
-             $movs = $movs->where('wm.whs_id', $iFilterWhs);
-         }
-
-         $movs = $movs->whereBetween('wm.dt_date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()])
-                       ->select(\DB::raw($sSelect))
-                       ->groupBy('id_mvt', 'id_mvt_row', 'id_mvt_row_lot')
-                       ->get();
-
-         return view('wms.movs.indexdetail')
-                     ->with('lWarehouses', $lWarehouses)
-                     ->with('iFilterWhs', $iFilterWhs)
-                     ->with('iFilter', $this->iFilter)
-                     ->with('sFilterDate', $sFilterDate)
-                     ->with('lRows', $movs)
-                     ->with('title', trans('wms.WHS_MOVS_DETAIL'));
+       return view('wms.movs.indexdetail')
+                   ->with('lWarehouses', $lWarehouses)
+                   ->with('iFilterWhs', $iFilterWhs)
+                   ->with('iFilter', $this->iFilter)
+                   ->with('sFilterDate', $sFilterDate)
+                   ->with('lRows', $movs)
+                   ->with('title', trans('wms.WHS_MOVS_DETAIL'));
     }
 
     /**
@@ -186,46 +121,10 @@ class SMovsController extends Controller
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
 
-        $lMovs = SMovement::Search($this->iFilter, $sFilterDate)->orderBy('dt_date', 'ASC')->orderBy('folio', 'ASC');
-
-        if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
-            $lMovs = $lMovs->where('whs_id', $iFilterWhs);
-        }
-
-        $lMovs = $lMovs
-                        // ->where('mvt_whs_type_id', '!=', \Config::get('scwms.MVT_TP_IN_TRA'))
-                        // ->where(function ($lMovs) {
-                        //     $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.PALLET_RECONFIG_IN'))
-                        //           ->orWhere(function ($lMovs) {
-                        //               $lMovs->where('mvt_whs_type_id', \Config::get('scwms.PALLET_RECONFIG_IN'))
-                        //                     ->where('src_mvt_id', 1);
-                        //           });
-                        //   })
-                        // ->where(function ($lMovs) {
-                        //     $lMovs->where('mvt_whs_type_id', '!=', \Config::get('scwms.PALLET_RECONFIG_OUT'))
-                        //           ->orWhere(function ($lMovs) {
-                        //               $lMovs->where('mvt_whs_type_id', \Config::get('scwms.PALLET_RECONFIG_OUT'))
-                        //                     ->where('src_mvt_id', 1);
-                        //           });
-                        //   })
-                        ->where('is_system', false)
-                        ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
-                        ->get();
+        $lMovs = SMovsCore::getInventoryDocs($sFilterDate, $iFilterWhs);
 
         $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
         $lWarehouses['0'] = 'TODOS';
-
-        foreach ($lMovs as $mov) {
-            $mov->order;
-            $mov->invoice;
-            $mov->branch;
-            $mov->warehouse;
-            $mov->mvtType;
-            $mov->trnType;
-            $mov->adjType;
-            $mov->mfgType;
-            $mov->expType;
-        }
 
         return view('wms.movs.inventorydocs')
                     ->with('iFilter', $this->iFilter)

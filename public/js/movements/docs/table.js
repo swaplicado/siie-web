@@ -55,7 +55,11 @@ oDocsTable = $('#docs_table').DataTable({
         }
       ],
       "dom": 'Bfrtip',
+      "lengthMenu": [
+        [ 10, 25, 50, 100, -1 ],
+        [ 'Mostrar 10', 'Mostrar 25', 'Mostrar 50', 'Mostrar 100', 'Mostrar todo' ]
+      ],
       "buttons": [
-            'copy', 'csv', 'excel', 'print'
+            'pageLength', 'copy', 'csv', 'excel', 'print'
         ]
   });

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\WMS;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Laracasts\Flash\Flash;
+use Illuminate\Http\Request;
+use App\Http\Requests;
+use App\Database\Config;
+
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
@@ -41,19 +42,48 @@ class SWmsLotsController extends Controller
     public function index(Request $request)
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $lLots = SWmsLot::Search($request->name, $this->iFilter)->orderBy('id_lot', 'ASC')->get();
+      // $lLots = SWmsLot::Search($request->name, $this->iFilter)->orderBy('id_lot', 'ASC')->get();
 
-      $lLots->each(function($lLots) {
-        $lLots->item;
-        $lLots->unit;
-        $lLots->userCreation;
-        $lLots->userUpdate;
-      });
+      $sSelect = '
+                    id_lot,
+                    lot,
+                    dt_expiry,
+                    wl.is_deleted,
+                    ei.code AS item_code,
+                    ei.name AS item,
+                    eu.code AS unit_code,
+                    eu.code AS unit,
+                    wl.created_by_id,
+                    wl.updated_by_id
+                  ';
+
+      $lLots = \DB::connection(session('db_configuration')->getConnCompany())
+                   ->table('wms_lots as wl')
+                   ->join('erpu_items as ei', 'wl.item_id', '=', 'ei.id_item')
+                   ->join('erpu_units as eu', 'wl.unit_id', '=', 'eu.id_unit')
+                   ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uc', 'wl.created_by_id', '=', 'uc.id')
+                   ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'wl.updated_by_id', '=', 'uu.id');
+
+     switch ($this->iFilter) {
+       case \Config::get('scsys.FILTER.ACTIVES'):
+           $lLots = $lLots->where('wl.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+         break;
+
+       case \Config::get('scsys.FILTER.DELETED'):
+           $lLots = $lLots->where('wl.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+         break;
+
+       default:
+     }
+
+     $lLots = $lLots->select(\DB::raw($sSelect))
+                   ->where('lot', 'LIKE', "%".$request->name."%")
+                   ->get();
 
       return view('wms.lots.index')
-          ->with('lots', $lLots)
-          ->with('actualUserPermission', $this->oCurrentUserPermission)
-          ->with('iFilter', $this->iFilter);
+              ->with('lots', $lLots)
+              ->with('actualUserPermission', $this->oCurrentUserPermission)
+              ->with('iFilter', $this->iFilter);
     }
 
     /**

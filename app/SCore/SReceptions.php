@@ -26,8 +26,8 @@ class SReceptions
 
         $query = \DB::connection(session('db_configuration')->getConnCompany())
                   ->table('wms_external_transfers AS wet')
-                  ->join('erpu_branches AS eb_des', 'wet.src_branch_id', '=', 'eb_des.id_branch')
-                  ->join('erpu_branches AS eb_src', 'wet.des_branch_id', '=', 'eb_src.id_branch')
+                  ->join('erpu_branches AS eb_src', 'wet.src_branch_id', '=', 'eb_src.id_branch')
+                  ->join('erpu_branches AS eb_des', 'wet.des_branch_id', '=', 'eb_des.id_branch')
                   ->join('wms_mvts AS wm', 'wet.mvt_reference_id', '=', 'wm.id_mvt')
                   ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users AS u', 'wm.created_by_id', '=', 'u.id')
                   ->leftJoin('wms_mvts AS wm1', 'wm.id_mvt', '=', 'wm1.src_mvt_id')
