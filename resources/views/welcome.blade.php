@@ -25,22 +25,23 @@
 		<div class="panel-body">
 			<section>
 				<div class="row">
-					<div class="col-md-4">
+					<div style="text-align: center;" class="col-md-4">
 						<img src="{{ asset('images/siie.png') }}" alt="siie web">
 					</div>
 					<div style="text-align: center;" class="col-md-4">
 						<img src="{{ asset('images/web.png') }}" alt="siie web">
 					</div>
-					<div style="text-align: right;" class="col-md-4">
+					<div style="text-align: center;" class="col-md-4">
 						<img src="{{ asset('images/imageh.png') }}" alt="siie web">
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-3 col-md-offset-2">
-						<a class="btn btn-success btn-lg" href="http://saporis.mx/">Saporis Comercial</a>
+					<div style="text-align: center;" class="col-md-3 col-md-offset-2">
+						<a class="btn btn-success btn-lg" target="_blank"
+								href="http://saporis.mx/">Saporis Comercial</a>
 					</div>
 					<div style="text-align: center;" class="col-md-3">
-						<a class="btn btn-primary btn-lg" href="{{ route('auth.login') }}">Entrar</a>
+						<a class="btn btn-primary btn-lg" href="{{ route('auth.login') }}">Entrar al sistema</a>
 					</div>
 					<div style="text-align: center;" class="col-md-3">
 						<a class="btn btn-info btn-lg" target="_blank"
