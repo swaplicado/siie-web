@@ -121,7 +121,7 @@ class SMovsController extends Controller
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $iFilterWhs = $request->warehouse == null ? session('whs')->id_whs : $request->warehouse;
 
-        $lMovs = SMovsCore::getInventoryDocs($sFilterDate, $iFilterWhs);
+        $lMovs = SMovsCore::getInventoryDocs($sFilterDate, $iFilterWhs, $this->iFilter);
 
         $lWarehouses = session('utils')->getUserWarehousesArrayWithName(0, session('branch')->id_branch, false);
         $lWarehouses['0'] = 'TODOS';

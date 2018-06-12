@@ -15,7 +15,7 @@ use App\WMS\SMovementRowLot;
  */
 class SMovsCore {
 
-    public static function getInventoryDocs($sDtFilter = '', $iFilterWhs = 0)
+    public static function getInventoryDocs($sDtFilter = '', $iFilterWhs = 0, $iFilter = 0)
     {
         $sSelect = '
                 wm.id_mvt,
@@ -83,6 +83,18 @@ class SMovsCore {
 
            if ($iFilterWhs != \Config::get('scwms.FILTER_ALL_WHS')) {
                $movs = $movs->where('wm.whs_id', $iFilterWhs);
+           }
+
+           switch ($iFilter) {
+             case \Config::get('scsys.FILTER.ACTIVES'):
+                 $movs = $movs->where('wm.is_deleted', \Config::get('scsys.STATUS.ACTIVE'));
+               break;
+
+             case \Config::get('scsys.FILTER.DELETED'):
+                 $movs = $movs->where('wm.is_deleted', \Config::get('scsys.STATUS.DEL'));
+               break;
+
+             default:
            }
 
            $aDates = SGuiUtils::getDatesOfFilter($sDtFilter);
