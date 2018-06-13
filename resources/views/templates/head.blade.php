@@ -2,7 +2,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
-	<title>@yield('title', 'Default')</title>
+	<title>@yield('title', 'SIIE Web')</title>
 	<link rel="stylesheet" type="text/css" href="{{ asset('chosen/chosen.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/general.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/navbars.css') }}">
