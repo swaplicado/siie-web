@@ -100,10 +100,12 @@
 		            <th data-priority="1">Unidad</th>
 		            <th>Lote</th>
 		            <th>Tarima</th>
+								<th>E/S</th>
 		            <th>Evento Segregación</th>
 								<th>Fecha</th>
                 <th>Cantidad</th>
                 <th>Usuario</th>
+								<th>Notas</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -113,10 +115,14 @@
 		            <td>{{ $row->unit }}</td>
 		            <td>{{ $row->lot_name }}</td>
 		            <td>{{ $row->pallet }}</td>
+								<td><?php  if($row->mov == 1){ echo "Entrada"; }
+											else{ echo "Salida";}
+										?>
 		            <td>{{ $row->event }}</td>
                 <td>{{ $row->date }}
                 <td>{{ $row->qty }}</td>
                 <td>{{ $row->username }}</td>
+								<td>{{ $row->notes}}</td>
 		        </tr>
 					@endforeach
 		    </tbody>

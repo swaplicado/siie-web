@@ -187,6 +187,17 @@
                                                   'onClick' => 'setAllRl(this)']) !!}
     			</div>
         </div>
+        <div class="row">
+          <div class="col-md-6">
+            Notas
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::text('notes',null,['class' => 'form-control',
+                                                  'id' => 'notesRl']) !!}
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button id="closeClassRl" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
@@ -299,6 +310,17 @@
           </div>
           <div class="col-md-6 location">
 
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Notas
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::text('notes',null,['class' => 'form-control',
+                                                  'id' => 'notesRF']) !!}
           </div>
         </div>
       </div>
@@ -449,6 +471,17 @@
                             'required', ]) !!}
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-6">
+            Notas
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::text('notes',null,['class' => 'form-control',
+                                                  'id' => 'notesRlP']) !!}
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button id="closeClassRlP" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
@@ -536,6 +569,17 @@
           </div>
           <div class="col-md-6 locationP">
 
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Notas
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::text('notes',null,['class' => 'form-control',
+                                                  'id' => 'notesRFP']) !!}
           </div>
         </div>
       </div>

@@ -22,6 +22,7 @@ class SSegregationRow extends SModel {
                             'year_id',
                             'item_id',
                             'unit_id',
+                            'notes',
                             'created_by_id',
                             'updated_by_id',
                           ];

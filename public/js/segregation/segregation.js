@@ -399,9 +399,11 @@ function setDataRl() {
 
     var dQuantity = parseFloat(document.getElementById('quantityRl').value, 10);
     var iStatusNew = parseInt(document.getElementById('statusRl').value, 10);
+    var sNote = document.getElementById('notesRl').value;
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
+    dataRow.push(sNote);
 
     var oData = { value : dataRow };
     console.log(oData);
@@ -444,11 +446,14 @@ function setDataRf() {
     var iStatusNew = parseInt(document.getElementById('statusRf').value, 10);
     var warehouse = parseInt(document.getElementById('almacen').value,10);
     var ubicacion = parseInt(document.getElementById('ubicacion').value,10);
+    var sNote = document.getElementById('notesRF').value;
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
     dataRow.push(warehouse);
     dataRow.push(ubicacion);
+    dataRow.push(sNote);
+
 
     var oData = { value : dataRow };
     console.log(oData);
@@ -539,9 +544,11 @@ function setDataRlP() {
     var dataRow = row.data();
     var dQuantity = 0;
     var iStatusNew = parseInt(document.getElementById('statusRlP').value, 10);
+    var sNote = document.getElementById('notesRlP').value;
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
+    dataRow.push(sNote);
 
     var oData = { value : dataRow };
     console.log(oData);
@@ -583,11 +590,13 @@ function setDataRfP() {
     var iStatusNew = parseInt(document.getElementById('statusRfP').value, 10);
     var warehouse = parseInt(document.getElementById('almacenP').value,10);
     var ubicacion = parseInt(document.getElementById('ubicacionP').value,10);
+    var sNote = document.getElementById('notesRFP').value;
 
     dataRow.push(dQuantity);
     dataRow.push(iStatusNew);
     dataRow.push(warehouse);
     dataRow.push(ubicacion);
+    dataRow.push(sNote);
 
     var oData = { value : dataRow };
     console.log(oData);

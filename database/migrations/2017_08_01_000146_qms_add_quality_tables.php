@@ -51,7 +51,7 @@ class QmsAddQualityTables extends Migration {
           	['id_segregation_event' => '1','code' => 'EMBQS','name' => 'EMBARQUES', 'is_deleted' => '0','origin_type'=>'E'],
             ['id_segregation_event' => '2','code' => 'PROCN','name' => 'PRODUCCION', 'is_deleted' => '0','origin_type'=>'P'],
             ['id_segregation_event' => '3','code' => 'INSPE','name' => 'POR INSPECCIONAR', 'is_deleted' => '0','origin_type'=>'Q'],
-            ['id_segregation_event' => '4','code' => 'CUARE','name' => 'EN CUARENTENA', 'is_deleted' => '0','origin_type'=>'Q'],
+            ['id_segregation_event' => '4','code' => 'CUARE','name' => 'EN CUARENTENA MICROBOLOGIA', 'is_deleted' => '0','origin_type'=>'Q'],
             ['id_segregation_event' => '5','code' => 'LIBAN','name' => 'LIBERACION ANTICIPADA', 'is_deleted' => '0','origin_type'=>'Q'],
             ['id_segregation_event' => '6','code' => 'LIBPA','name' => 'LIBERACION PARCIAL', 'is_deleted' => '0','origin_type'=>'Q'],
             ['id_segregation_event' => '7','code' => 'LIBTO','name' => 'LIBERACION TOTAL', 'is_deleted' => '0','origin_type'=>'Q'],

@@ -145,11 +145,12 @@ return [
                               'ID_BRANCH' => '5',
                               'ID_REFERENCE' => '6',
                               'ID_STATUS_QLTY_PREV' => '7',
-                              'ID_STATUS_QLTY_NEW' => '22',
+                              'ID_STATUS_QLTY_NEW' => '13',
                               'QUANTITY' => '9',
                               'EVENT' => '10',
                               'WAREHOUSE' => '11',
                               'LOCATION' => '12',
+                              'NOTE' => '14',
 
                             ],
 
@@ -161,5 +162,5 @@ return [
                   'NOT_FOUND' => '404',
                 ],
 
-    
+
 ];

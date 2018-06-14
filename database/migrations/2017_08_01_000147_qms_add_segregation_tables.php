@@ -65,6 +65,7 @@ class QmsAddSegregationTables extends Migration {
           	$table->integer('year_id')->unsigned();
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
+            $table->text('notes')->unsigned();
             $table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();

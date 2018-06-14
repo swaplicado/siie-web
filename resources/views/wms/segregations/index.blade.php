@@ -37,6 +37,7 @@
 		            <th>Almacén</th>
 		            <th data-priority="1">{{ trans('userinterface.labels.STATUS') }}</th>
 		            <th>Ref</th>
+								<th>Fecha ingreso</th>
 								@if ($iQualityType == \Config::get('scqms.QMS_VIEW.CLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY') || $iQualityType == \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'))
 									<th>-</th>
 									<th>-</th>
@@ -77,6 +78,7 @@
 									</span>
 								</td>
 								<td>{{ $row->id_reference }}</td>
+								<td>{{ $row->entry }}</td>
 								@if ($typeView == 0)
 									<td>
 										<a data-toggle="modal" data-target="#classQlty"
@@ -157,7 +159,6 @@
 
 				success:function(data){
 					opt+='<select class="form-control almacen" id="almacen"  name="almacen" required>';
-					opt+='<option value=0>Seleccione un almacen</option>';
 						for(var i=0;i<data.length;i++){
 				 			opt+='<option value="'+data[i].id_whs+'">'+data[i].name+'</option>';
 					 }

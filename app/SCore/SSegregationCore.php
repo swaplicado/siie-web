@@ -12,6 +12,7 @@ use App\WMS\SMovementRowLot;
 use App\WMS\SLocation;
 use App\Database\Config;
 
+
 use App\SCore\SMovsManagment;
 
 /**
@@ -61,12 +62,18 @@ class SSegregationCore
         $iIdQltyNew = $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')];
         $dQuantity = $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')];
         $idEvent = $aParameters[\Config::get('scwms.SEG_PARAM.EVENT')];
-
+        $Notes = 'N/A';
+        if($iIdQltyNew == \Config::get('scqms.ADVANCERELEASE')||
+              $iIdQltyNew == \Config::get('scqms.PARTIALRELEASE') ||
+                $iIdQltyNew == \Config::get('scqms.TOTALRELEASE')) {
+                  $Notes = $aParameters[\Config::get('scwms.SEG_PARAM.NOTE')];
+        }
         if ($iIdQltyNew == \Config::get('scqms.RECONDITION') ||
               $iIdQltyNew == \Config::get('scqms.REPROCESS') ||
                 $iIdQltyNew == \Config::get('scqms.DESTROY')) {
-          $idWarehouse = $aParameters[\Config::get('scwms.SEG_PARAM.WAREHOUSE')];
-          $idLocNew = $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')];
+                  $Notes = $aParameters[\Config::get('scwms.SEG_PARAM.NOTE')];
+                  $idWarehouse = $aParameters[\Config::get('scwms.SEG_PARAM.WAREHOUSE')];
+                  $idLocNew = $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')];
         }
 
         if($dQuantity ==0){
@@ -137,6 +144,7 @@ class SSegregationCore
               $oSegRow->year_id = session('work_year');
               $oSegRow->item_id = $seg->id_item;
               $oSegRow->unit_id = $seg->id_unit;
+              $oSegRow->notes = $Notes;
               $oSegRow->created_by_id = \Auth::user()->id;
               $oSegRow->updated_by_id = \Auth::user()->id;
               //Clonar el renglon para hacer el espejo
@@ -151,6 +159,7 @@ class SSegregationCore
                       $oSegregationMirror->save();
 
                       //Insertar segundo registro contrario al Anterior
+                      $oSegRowMirror->notes = $Notes;
                       $oSegRowMirror->segregation_id = $oSegregationMirror->id_segregation;
                       $oSegRowMirror->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
                       $oSegRowMirror->segregation_event_id = $iIdQltyNew;
@@ -162,6 +171,7 @@ class SSegregationCore
                       $oSegregationMirror->save();
 
                       //Insertar segundo registro contrario al Anterior
+                      $oSegRowMirror->notes = $Notes;
                       $oSegRowMirror->segregation_id = $oSegregationMirror->id_segregation;
                       $oSegRowMirror->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
                       $oSegRowMirror->segregation_event_id = $iIdQltyNew;
@@ -307,6 +317,7 @@ class SSegregationCore
           $oSegRow->year_id = session('work_year');
           $oSegRow->item_id = $iIdItem;
           $oSegRow->unit_id = $iIdUnit;
+          $oSegRow->notes = $Notes;
           $oSegRow->created_by_id = \Auth::user()->id;
           $oSegRow->updated_by_id = \Auth::user()->id;
           //Clonar el renglon para hacer el espejo
@@ -321,6 +332,7 @@ class SSegregationCore
                   $oSegregationMirror->save();
 
                   //Insertar segundo registro contrario al Anterior
+                  $oSegRowMirror->notes = $Notes;
                   $oSegRowMirror->segregation_id = $oSegregationMirror->id_segregation;
                   $oSegRowMirror->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
                   $oSegRowMirror->segregation_event_id = $iIdQltyNew;
@@ -332,6 +344,7 @@ class SSegregationCore
                   $oSegregationMirror->save();
 
                   //Insertar segundo registro contrario al Anterior
+                  $oSegRowMirror->notes = $Notes;
                   $oSegRowMirror->segregation_id = $oSegregationMirror->id_segregation;
                   $oSegRowMirror->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
                   $oSegRowMirror->segregation_event_id = $iIdQltyNew;
@@ -529,7 +542,8 @@ class SSegregationCore
                   wp.pallet,
                   ww.name AS warehouse,
                   qse.name AS status_qlty,
-                  ws.reference_id AS id_reference';
+                  ws.reference_id AS id_reference,
+                  ws.updated_at AS entry';
 
       $query = \DB::connection(session('db_configuration')->getConnCompany())
                   ->table('wms_segregations AS ws')
@@ -552,7 +566,8 @@ class SSegregationCore
                             'id_pallet',
                             'ww.id_whs'
                             )
-                  ->having('segregated', '>', 0);
+                  ->having('segregated', '>', 0)
+                  ->where('wp.pallet', '=', 'SIN TARIMA');
                   break;
       case 1:
         $query = $query->groupBy('id_pallet',
@@ -707,7 +722,9 @@ class SSegregationCore
                 qse.name as event,
                 wsr.updated_at as date,
                 wsr.quantity AS qty,
-                us.username AS username' ;
+                us.username AS username,
+                wsr.segregation_mvt_type_id AS mov,
+                wsr.notes AS notes' ;
 
 
     $query = \DB::connection(session('db_configuration')->getConnCompany())
@@ -816,10 +833,9 @@ if($user != 0){
 
 
       $query = \DB::connection(session('db_configuration')->getConnCompany())
-                  ->table('wms_segregations AS ws')
-                  ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
-                  ->join('ssystem.users AS us', 'wsr.updated_by_id', '=', 'us.id');
-    $query = $query->where('ws.is_deleted', false)
+                  ->table('wms_segregation_rows AS wsr')
+                  ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users AS us', 'wsr.updated_by_id', '=', 'us.id');
+    $query = $query->where('wsr.is_deleted', false)
                   ->select(\DB::raw($sSelect))
                   ->groupBy('id_user')
                   ->get();

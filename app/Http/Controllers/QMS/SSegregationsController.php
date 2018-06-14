@@ -124,12 +124,15 @@ class SSegregationsController extends Controller
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')] = $val[\Config::get('scwms.SEG_PARAM.ID_BRANCH')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')] = $val[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')];
         $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')] = $val[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')];
-        $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')];
-        $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[21];
-        $aParameters[\Config::get('scwms.SEG_PARAM.EVENT')] = $val[20];
+        $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $val[23];
+        $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = $val[22];
+        $aParameters[\Config::get('scwms.SEG_PARAM.EVENT')] = $val[21];
         if(count($val)>=25){
-        $aParameters[\Config::get('scwms.SEG_PARAM.WAREHOUSE')] = $val[23];
-        $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')] = $val[24];
+          $aParameters[\Config::get('scwms.SEG_PARAM.NOTE')] = $val[24];
+          if(count($val)>=27){
+            $aParameters[\Config::get('scwms.SEG_PARAM.WAREHOUSE')] = $val[25];
+            $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')] = $val[26];
+          }
         }
         session('segregation')->classify($aParameters);
 
