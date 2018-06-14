@@ -10,7 +10,7 @@ class SRowsCore {
     guiValidations.setItemLabel('--');
     guiValidations.setUnitLabel('-');
 
-    guiFunctions.setQuantity(0);
+    guiFunctions.setQuantity(1);
     guiValidations.enableQuantity();
     guiFunctions.setPrice(0);
 

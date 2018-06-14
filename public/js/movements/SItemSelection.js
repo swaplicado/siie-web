@@ -28,6 +28,7 @@ class SItemSelection {
     processSearch(serverData) {
         guiFunctions.setSearchCode('');
         var bLoc = false;
+        var bAddDirectly = false;
 
         if (globalData.isPalletReconfiguration) {
            if (! reconfigCore.isValidSearch(serverData.iElementType, serverData.oElement)) {
@@ -67,9 +68,15 @@ class SItemSelection {
               }
 
               elementToAdd = itemSelection.lotToElement(serverData.oElement);
+
+              lotsCore.setFoundLot();
+              guiFunctions.setQuantityLot(guiFunctions.getQuantity());
+              lotsCore.addLot();
+
               guiValidations.showLots();
               guiValidations.showPallet();
 
+              bAddDirectly = true;
               break;
 
           case globalData.lElementsType.PALLETS:
@@ -103,6 +110,8 @@ class SItemSelection {
               else {
                 guiValidations.showLots();
               }
+
+              bAddDirectly = true;
               break;
 
           case globalData.lElementsType.LOCATIONS:
@@ -148,6 +157,10 @@ class SItemSelection {
 
         guiValidations.setItemLabel(elementToAdd.sItemCode + '-' + elementToAdd.sItem);
         guiValidations.setUnitLabel(elementToAdd.sUnit);
+
+        if (bAddDirectly) {
+            addElement();
+        }
     }
 
     validateElement(iidItem, iIdUnit) {
