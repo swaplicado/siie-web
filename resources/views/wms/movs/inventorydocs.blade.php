@@ -114,6 +114,7 @@
 											<a
 											href="{{ route('wms.movs.print', $mov->id_mvt) }}"
 											title="{{ trans('actions.PRINT') }}"
+											target="_blank"
 												class="btn btn-primary btn-xs">
 												<span class="glyphicon glyphicon-print" aria-hidden = "true"/>
 											</a>
