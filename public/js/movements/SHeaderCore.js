@@ -268,7 +268,7 @@ function initializePanel(serverData) {
     }
 
     guiValidations.validatePrice();
-    guiFunctions.setQuantity(0);
+    guiFunctions.setQuantity(1);
     if (globalData.isPalletReconfiguration) {
       iElementType = globalData.lElementsType.PALLETS;
       searchCore.initializateItems(iElementType);

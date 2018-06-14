@@ -847,7 +847,7 @@ class SMovsController extends Controller
 
        $view = view('wms.movs.print', ['oMovement' => $oMovement])->render();
         // set ukuran kertas dan orientasi
-        $pdf = \PDF::loadHTML($view)->setPaper('legal', 'potrait')->setWarnings(false)->save('myfile.pdf');
+        $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false)->save('myfile.pdf');
         // cetak
         return $pdf->stream();
     }

@@ -341,7 +341,7 @@ class SStockUtils
         if (sizeof($lStockGral) > 1) {
             array_push($aErrors, '¡LA TARIMA '.$oRow->pallet_id.' TIENE EXISTENCIAS EN DIFERENTES UBICACIONES!');
         }
-        elseif (sizeof($lStockGral) > 0
+        elseif (sizeof($lStockGral) == 1 && $oRow->quantity != $lStockGral[0]->stock
                   && !($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
                         || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_OUT'))) {
             array_push($aErrors, 'La tarima no está vacía, no puede agregar unidades');
