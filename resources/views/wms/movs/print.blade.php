@@ -120,6 +120,7 @@
       		        </tr>
       		    </thead>
       		    <tbody>
+                <?php $dTotal=0 ?>
       					@foreach ($oMovement->rows as $row)
       						<tr>
 						        <td>{{ $row->item->code }}</td>
@@ -139,6 +140,7 @@
                       <td>{{ $lotRow->lot->dt_expiry }}</td>
                     </tr>
                   @endforeach
+                  {!! $dTotal+= ($row->quantity * $row->amount_unit) !!}
                 @endforeach
               </tbody>
               <tfoot>
@@ -149,7 +151,9 @@
                      <td></td>
                      <td class="tb trr">TOTAL:</td>
                      <td></td>
-                     <td class="trr" colspan="2">{{ session('utils')->formatNumber((0), \Config::get('scsiie.FRMT.AMT')).' '.session('currency')->code }}</td>
+                     <td class="trr" colspan="2">
+                          {{ session('utils')->formatNumber(($dTotal), \Config::get('scsiie.FRMT.AMT')).' '.session('currency')->code }}
+                     </td>
                    </tr>
               </tfoot>
             </table>

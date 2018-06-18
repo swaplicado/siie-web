@@ -8,6 +8,13 @@ use App\Database\Config;
  */
 class SReceptions
 {
+    /**
+     * obtains the transfers to be received at the branch
+     *
+     * @param  integer $iBranch id of branch
+     *
+     * @return array result of query
+     */
     public static function getPendingReceptions($iBranch)
     {
         $sSelect = "
@@ -52,6 +59,13 @@ class SReceptions
         return $lResult;
     }
 
+    /**
+     * get the transfers that have been sent to other branches
+     *
+     * @param  integer $iBranch if of branch
+     *
+     * @return array result of query
+     */
     public static function getTransferredTransfers($iBranch = 0)
     {
         $sSelect = 'mvt_reference_id,
@@ -91,10 +105,17 @@ class SReceptions
         return $query;
     }
 
+    /**
+     * obtains the transfers that have already been received totally or partially
+     *
+     * @param  integer $iBranch if of branch
+     *
+     * @return array result of query
+     */
     public static function getReceivedTransfers($iBranch = 0)
     {
         $sSelect = '
-                    wm.id_mvt,
+                    wmdes.id_mvt,
                     wmdes.dt_date,
                     wmt.code AS mov_code,
                     wmt.name AS mov_name,
@@ -118,7 +139,8 @@ class SReceptions
                   ->join('wms_mvts AS wmdes', 'wm.id_mvt', '=', 'wmdes.src_mvt_id')
                   ->join('erpu_branches AS eb_src', 'wmsrc.branch_id', '=', 'eb_src.id_branch')
                   ->join('wmss_mvt_types AS wmt', 'wmdes.mvt_whs_type_id', '=', 'wmt.id_mvt_type')
-                  ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users AS u', 'wmsrc.created_by_id', '=', 'u.id')
+                  ->join(\DB::connection(Config::getConnSys())->getDatabaseName().
+                                  '.users AS u', 'wmsrc.created_by_id', '=', 'u.id')
                   ->whereIn('wm.src_mvt_id', function($query) use ($iBranch)
                       {
                          $query->from('wms_external_transfers')
