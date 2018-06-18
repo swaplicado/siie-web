@@ -40,6 +40,7 @@ class SReceptions
                   ->where('wet.des_branch_id', $iBranch)
                   ->select(\DB::raw($sSelect))
                   ->groupBy('wm.id_mvt')
+                  ->orderBy('wm.folio');
                   ;
 
         $lResult = $query->get();

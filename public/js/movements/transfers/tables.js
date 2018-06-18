@@ -35,7 +35,7 @@ oReceptionsTable = $('#receptions_table').DataTable({
 
 oReceptionsTable.column( 0 ).visible( false );
 
-oTransfersTable = $('#transfers_list_table').DataTable({
+oTransfersListTable = $('#transfers_list_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -64,7 +64,7 @@ oTransfersTable = $('#transfers_list_table').DataTable({
       "scrollX": true
   });
 
-oTransfersTable.column( 0 ).visible( false );
+oTransfersListTable.column( 0 ).visible( false );
 
 oRowsTable = $('#rows_table').DataTable({
       "language": {
