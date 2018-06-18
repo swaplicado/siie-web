@@ -143,6 +143,26 @@ class SMovsController extends Controller
                                                   ->with('sTitle', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'));
     }
 
+    public function getTransferred(Request $request)
+    {
+        $lList = SReceptions::getTransferredTransfers(session('branch')->id_branch);
+
+        return view('wms.movs.transfers.transfers')->with('lList', $lList)
+                                                  ->with('iClass', \Config::get('scwms.MVT_CLS_OUT'))
+                                                  ->with('actualUserPermission', $this->oCurrentUserPermission)
+                                                  ->with('sTitle', 'Traspasos externos enviados');
+    }
+
+    public function getReceived(Request $request)
+    {
+        $lList = SReceptions::getReceivedTransfers(session('branch')->id_branch);
+
+        return view('wms.movs.transfers.transfers')->with('lList', $lList)
+                                  ->with('iClass', \Config::get('scwms.MVT_CLS_IN'))
+                                  ->with('actualUserPermission', $this->oCurrentUserPermission)
+                                  ->with('sTitle', 'Traspasos externos recibidos');
+    }
+
     public function receiveTransfer($iMov = 0)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
@@ -493,6 +513,14 @@ class SMovsController extends Controller
 
       session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $oMovement);
 
+      $oProcess = new SMovsManagment();
+
+      $lErr = $oProcess->canMovBeModified($oMovement);
+      if (sizeof($lErr) > 0)
+      {
+        return redirect()->back()->withErrors($lErr);
+      }
+
       /*
       This method tries to get the lock, if not is obtained returns an array of errors
       */
@@ -731,26 +759,10 @@ class SMovsController extends Controller
            redirect()->back()->withErrors($aErrors);
         }
 
-        $oMov->is_deleted = \Config::get('scsys.STATUS.DEL');
-        $oMov->updated_by_id = \Auth::user()->id;
+        $aErr = $oProcess->eraseMov($oMov, $request);
 
-        $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
-                                    ->where('is_deleted', false)
-                                    ->get();
-
-        foreach ($lReferencedMovs as $mov) {
-          $mov->is_deleted = \Config::get('scsys.STATUS.DEL');
-          $mov->updated_by_id = \Auth::user()->id;
-          $errors = $this->deleteMov($mov, $request);
-
-          if (is_array($errors) && sizeof($errors) > 0) {
-             redirect()->back()->withErrors($errors);
-          }
-        }
-
-        $errors = $this->deleteMov($oMov, $request);
-        if (is_array($errors) && sizeof($errors) > 0) {
-           redirect()->back()->withErrors($errors);
+        if (is_array($aErr) && sizeof($aErr) > 0) {
+           redirect()->back()->withErrors($aErr);
         }
 
         Flash::success(trans('messages.REG_DELETED'))->important();
@@ -758,29 +770,7 @@ class SMovsController extends Controller
         return redirect()->back();
     }
 
-    private function deleteMov($oMov, $request)
-    {
-      try
-      {
-        $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
-          $aErrors = $oMov->save();
-          if (is_array($aErrors) && sizeof($aErrors) > 0) {
-             return $aErrors;
-          }
 
-          $stkController = new SStockController();
-          $stkController->store($request, $oMov);
-        });
-
-        if (is_array($errors) && sizeof($errors) > 0) {
-           return $errors;
-        }
-      }
-      catch (\Exception $e)
-      {
-         return [$e];
-      }
-    }
 
     public function activate(Request $request, $id)
     {
@@ -798,6 +788,7 @@ class SMovsController extends Controller
 
         $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
                                     ->where('is_deleted', true)
+                                    ->where('is_system', true)
                                     ->get();
 
         foreach ($lReferencedMovs as $mov) {

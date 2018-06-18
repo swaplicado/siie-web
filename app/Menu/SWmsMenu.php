@@ -58,6 +58,10 @@ class SWmsMenu {
                         Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'), trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT')]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
                         Link::toRoute('wms.movs.receptions', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT')))
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
+                        Link::toRoute('wms.movs.transferred', 'Traspasos externos enviados'))
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
+                        Link::toRoute('wms.movs.received', 'Traspasos externos recibidos'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.PALLET_RECONFIG')),
                         Link::toRoute('wms.movs.create', trans('wms.PALLET_DIVISION'), [\Config::get('scwms.PALLET_RECONFIG_IN'), trans('wms.PALLET_DIVISION')]))

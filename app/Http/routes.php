@@ -335,6 +335,14 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@receiveMovsIndex',
       	'as' => 'wms.movs.receptions'
       ]);
+      Route::get('/movs/transferred', [
+      	'uses' => 'WMS\SMovsController@getTransferred',
+      	'as' => 'wms.movs.transferred'
+      ]);
+      Route::get('/movs/received', [
+      	'uses' => 'WMS\SMovsController@getReceived',
+      	'as' => 'wms.movs.received'
+      ]);
       Route::get('/movs/receivetransfer/{idMov}', [
       	'uses' => 'WMS\SMovsController@receiveTransfer',
       	'as' => 'wms.movs.receivetransfer'

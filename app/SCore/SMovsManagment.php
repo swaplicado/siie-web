@@ -749,6 +749,63 @@ class SMovsManagment {
         return $aErrors;
     }
 
+    public function canMovBeModified($oMovement = null)
+    {
+      $aErrors = array();
+      $lReferencedMovs = SMovement::where('src_mvt_id', $oMovement->id_mvt)
+                                    ->where('is_system', false)
+                                    ->where('is_deleted', false)
+                                    ->get();
+
+      if (sizeof($lReferencedMovs) > 0) {
+         array_push($aErrors, 'No se puede modificar el movimiento, ya hay otros movimientos asociados');
+      }
+
+      return $aErrors;
+    }
+
+    public function eraseMov($oMov, $request)
+    {
+      try
+      {
+        $errors = \DB::connection('company')->transaction(function() use ($oMov, $request) {
+
+          $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
+                                      ->where('is_deleted', false)
+                                      ->get();
+
+          foreach ($lReferencedMovs as $refMov) {
+             $aRes = $this->eraseMov($refMov, $request);
+
+             if (is_array($aRes) && sizeof($aRes) > 0) {
+                return $aRes;
+             }
+          }
+
+          $oMov->is_deleted = true;
+          $oMov->updated_by_id = \Auth::user()->id;
+          $aErrors = $oMov->save();
+
+          if (is_array($aErrors) && sizeof($aErrors) > 0) {
+             return $aErrors;
+          }
+
+          $stkController = new SStockController();
+          $stkController->store($request, $oMov);
+        });
+
+        if (is_array($errors) && sizeof($errors) > 0) {
+           return $errors;
+        }
+      }
+      catch (\Exception $e)
+      {
+         return [$e];
+      }
+
+      return true;
+    }
+
     private function eraseMovement($iMovement)
     {
         try
