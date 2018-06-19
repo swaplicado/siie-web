@@ -106,7 +106,7 @@ class SGuiValidations {
      * disable the header of movement
      */
     disableHeader() {
-        document.getElementById('dt_date').readOnly = true;
+        document.getElementById('dt_date').readOnly = false;
         $('#mvt_com').attr("disabled", true).trigger("chosen:updated");
         $('#whs_src').attr("disabled", true).trigger("chosen:updated");
         $('#whs_des').attr("disabled", true).trigger("chosen:updated");

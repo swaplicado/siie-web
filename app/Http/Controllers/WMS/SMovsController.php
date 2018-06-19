@@ -698,6 +698,7 @@ class SMovsController extends Controller
     {
        $oMovement = SMovement::find($id);
        $oMovementJs = json_decode($request->input('movement_object'));
+       $oMovement->dt_date = $request->input('dt_date');
 
        $oMovement->updated_by_id = \Auth::user()->id;
 
