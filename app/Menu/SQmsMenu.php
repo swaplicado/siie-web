@@ -11,7 +11,13 @@ class SQmsMenu {
         ->addClass('nav navbar-nav')
         ->link('', '')
         ->route('qms.home', trans('qms.MODULE'))
-        ->route('qms.segregations.index', trans('qms.VIEW_INSPECTION'),
+        ->submenu(
+            Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+            ->addClass('dropdown-menu')
+          ->route('qms.segregations.index', trans('qms.VIEW_INSPECTION'),
                                           [
                                             trans('qms.VIEW_INSPECTION'),
                                             \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'),
@@ -40,6 +46,28 @@ class SQmsMenu {
                                             \Config::get('scqms.TYPE_VIEW.BY_PALLET')
                                           ])
 
+      )
+
+      ->submenu(
+          Link::to('#', trans('qms.STOCK_QUALITY_CB').'<span class="caret"></span>')
+              ->addClass('dropdown-toggle')
+              ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+          \Menu::new()
+          ->addClass('dropdown-menu')
+
+          ->route('qms.segregations.consult', trans('qms.VIEW_INS_QUA'),[
+                                  trans('qms.VIEW_INS_QUA'),
+                                  '1'
+                                ])
+          ->route('qms.segregations.consult', trans('qms.VIEW_REL'),[
+                                  trans('qms.VIEW_REL'),
+                                  '2'
+                                ])
+          ->route('qms.segregations.consult', trans('qms.VIEW_REF'),[
+                                  trans('qms.VIEW_REF'),
+                                  '3'
+                                ])
+      )
         ->route('qms.segregations.binnacle', trans('qms.BINNACLE'))
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();

@@ -14,6 +14,8 @@ use App\WMS\Segregation\SSegregationRow;
 use App\WMS\Segregation\SSegregationLotRow;
 use App\WMS\SLocation;
 use App\QMS\SStatus;
+use Laracasts\Flash\Flash;
+use App\SBarcode\SBarcode;
 
 class SSegregationsController extends Controller
 {
@@ -192,5 +194,123 @@ class SSegregationsController extends Controller
         return response()->json($data);
       }
     }
+
+    public function consult($title,$type){
+        return view('wms.segregations.consult')
+                  ->with('title',$title)
+                  ->with('type',$type);
+
+    }
+
+    public static function toQuarentine(Request $request){
+
+      $type = substr($request->codigo, 0 , 1 );
+      if($type != 2)
+      {
+        Flash::error('No es una tarima');
+            return redirect()->route('qms.segregations.consult',[
+                                      trans('qms.VIEW_INS_QUA'),
+                                      $request->type
+                                    ]);
+      }
+
+      $data = SBarcode::decodeBarcode($request->codigo);
+      $segregated = session('segregation')->segregatePalletRow($data->id_pallet,1);
+      if($segregated == NULL)
+      {
+        Flash::error('La tarima no esta en almacen de calidad');
+            return redirect()->route('qms.segregations.consult',[
+                                      trans('qms.VIEW_INS_QUA'),
+                                      $request->type
+                                    ]);
+      }
+      return view('wms.segregations.info')
+                ->with('data',$segregated)
+                ->with('title','Movimiento de Por inspeccionar a Cuarentena')
+                ->with('newQ',4)
+                ->with('type',$request->type);
+
+    }
+
+
+    public static function toRelease(Request $request){
+
+      $type = substr($request->codigo, 0 , 1 );
+      if($type != 2)
+      {
+        Flash::error('No es una tarima');
+            return redirect()->route('qms.segregations.consult',[
+                                      trans('qms.VIEW_REL'),
+                                      $request->type
+                                    ]);
+      }
+      $data = SBarcode::decodeBarcode($request->codigo);
+      $segregated = session('segregation')->segregatePalletRow($data->id_pallet,0);
+      if($segregated == NULL)
+      {
+        Flash::error('No es una tarima');
+            return redirect()->route('qms.segregations.consult',[
+                                      trans('qms.VIEW_REL'),
+                                      $request->type
+                                    ]);
+      }
+      return view('wms.segregations.info')
+                ->with('data',$segregated)
+                ->with('title','Movimiento de Liberación');
+    }
+
+    public static function toRefuse(Request $request){
+
+      $type = substr($request->codigo, 0 , 1 );
+      if($type != 2)
+      {
+        Flash::error('No es una tarima');
+            return redirect()->route('qms.segregations.consult',[
+                                      trans('qms.VIEW_REF'),
+                                      $request->type
+                                    ]);
+      }
+      $data = SBarcode::decodeBarcode($request->codigo);
+      $segregated = session('segregation')->segregatePalletRow($data->id_pallet,0);
+      if($segregated == NULL)
+      {
+        Flash::error('No es una tarima');
+            return redirect()->route('qms.segregations.consult',[
+                                      trans('qms.VIEW_REF'),
+                                      $request->type
+                                    ]);
+      }
+      return view('wms.segregations.info')
+                ->with('data',$segregated)
+                ->with('title','Movimiento de Rechazo');
+    }
+
+    public static function prepareData(Request $request){
+
+      $aParameters = array();
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_ITEM')] = $request->id_item;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_UNIT')] = $request->id_unit;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_LOT')] = $request->id_lot;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_PALLET')] = $request->id_pallet;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_WHS')] = $request->id_whs;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')] = $request->branch_id;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')] =$request->id_reference;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')] = $request->segregation_type_id;
+      $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $request->newQ;
+      $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = 0;
+      $aParameters[\Config::get('scwms.SEG_PARAM.EVENT')] = $request->id_segregation_event;
+
+
+      session('segregation')->classify($aParameters);
+
+      Flash::success('Se inserto correctamente');
+          return redirect()->route('qms.segregations.consult',[
+                                    trans('qms.VIEW_INS_QUA'),
+                                    $request->type
+                                  ]);
+
+    }
+
+
 
 }

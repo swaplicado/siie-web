@@ -874,6 +874,60 @@ if($user != 0){
       return $oLocation->id_whs_location;
   }
 
+  public function segregatePalletRow($pallet,$movType){
+    $sSelect = '
+                ei.id_item,
+                eu.id_unit,
+                wl.id_lot,
+                wp.id_pallet,
+                ww.id_whs,
+                ww.branch_id,
+                qse.id_segregation_event,
+                ws.segregation_type_id,
+                ei.code as item_code,
+                ei.name as item,
+                eu.code as unit,
+                wsr.quantity AS qty,
+                COALESCE(wl.lot, \'N/A\') AS lot_name,
+                SUM(IF(wsr.segregation_mvt_type_id = 1, wsr.quantity, 0)) AS increment,
+                SUM(IF(wsr.segregation_mvt_type_id = 2, wsr.quantity, 0)) AS decrement,
+                SUM(IF(wsr.segregation_mvt_type_id = 1, wsr.quantity, 0)) - SUM(IF(wsr.segregation_mvt_type_id = 2, wsr.quantity, 0)) AS segregated,
+                wp.pallet,
+                ww.name AS warehouse,
+                qse.name AS status_qlty,
+                ws.reference_id AS id_reference';
+
+    $query = \DB::connection(session('db_configuration')->getConnCompany())
+                ->table('wms_segregations AS ws')
+                ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                ->join('erpu_items AS ei', 'wsr.item_id', '=', 'ei.id_item')
+                ->join('erpu_units AS eu', 'wsr.unit_id', '=', 'eu.id_unit')
+                ->leftJoin('wms_lots AS wl', 'wsr.lot_id', '=', 'wl.id_lot')
+                ->join('wms_pallets AS wp', 'wsr.pallet_id', '=', 'wp.id_pallet')
+                ->join('wmsu_whs AS ww', 'wsr.whs_id', '=', 'ww.id_whs')
+                ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event');
+
+  $query = $query->where('ei.is_deleted', false)
+                ->where('ws.is_deleted', false)
+                ->where('wp.id_pallet','=',$pallet)
+                ->select(\DB::raw($sSelect));
+  $query = $query->groupBy('id_pallet',
+                          'ww.id_whs'
+                          )
+                ->having('segregated', '>', 0)
+                ->where('wp.pallet', '!=', 'SIN TARIMA');
+  if($movType == 1){
+      $query = $query->where('ws.segregation_type_id', 3)
+                    ->get();
+
+  }
+  else{
+   $query = $query->get();
+  }
+
+    return $query;
+  }
+
 
 
 }
