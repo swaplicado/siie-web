@@ -231,20 +231,45 @@ Route::group(['prefix' => 'qms'], function () {
        'as' => 'qms.segregations.binnacle'
      ]);
 
-      /*
+     /*
       * segregations
       **/
       // Route::resource('segregations','WMS\SSegregationsController');
       Route::resource('qms','QMS\SQualityController');
       Route::get('segregations/{title}/{segType}/{viewType}/{typeView}/index',[
-      'uses' => 'QMS\SSegregationsController@index',
-      'as' => 'qms.segregations.index'
+        'uses' => 'QMS\SSegregationsController@index',
+        'as' => 'qms.segregations.index'
+      ]);
+
+      Route::get('segregations/{title}/{type}/consult',[
+        'uses' => 'QMS\SSegregationsController@consult',
+        'as' => 'qms.segregations.consult'
       ]);
 
 
       Route::post('segregations/{title}/{segType}/{viewType}/{typeView}/index/process',[
         'uses' => 'QMS\SSegregationsController@Process',
         'as' => 'qms.segregations.index.process'
+      ]);
+
+      Route::post('segregations/toQuarentine',[
+        'uses' => 'QMS\SSegregationsController@toQuarentine',
+        'as'   => 'qms.segregations.toQuarentine'
+      ]);
+
+      Route::post('segregations/toRelease',[
+        'uses' => 'QMS\SSegregationsController@toRelease',
+        'as'   => 'qms.segregations.toRelease'
+      ]);
+
+      Route::post('segregations/toRefuse',[
+        'uses' => 'QMS\SSegregationsController@toRefuse',
+        'as'   => 'qms.segregations.toRefuse'
+      ]);
+
+      Route::post('segregations/prepareData',[
+        'uses' => 'QMS\SSegregationsController@prepareData',
+        'as'   => 'qms.segregations.prepareData'
       ]);
   });
 
