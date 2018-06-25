@@ -51,7 +51,15 @@ $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
             "targets": 2,
             "className": "text-center"
         }
-      ]
+      ],
+      "dom": 'Bfrtip',
+      "lengthMenu": [
+        [ 10, 25, 50, 100, -1 ],
+        [ 'Mostrar 10', 'Mostrar 25', 'Mostrar 50', 'Mostrar 100', 'Mostrar todo' ]
+      ],
+      "buttons": [
+            'pageLength', 'copy', 'csv', 'excel', 'print'
+        ]
     });
 
     $(document).ready( function () {

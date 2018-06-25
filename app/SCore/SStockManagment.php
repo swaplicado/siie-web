@@ -351,7 +351,7 @@ class SStockManagment
                                   \DB::raw(($bOrder ? $sSubQueryInvoices : "'0'")." AS supp_inv"),
                                   \DB::raw(($bInvoice ? $sSubQueryOrders : "'0'")." AS supp_ord"),
                                   \DB::raw(($bCreditNote ? $sSubQueryCreditNotes : "'0'")." AS supp_cn"),
-                                  \DB::raw('SUM(edr.quantity) AS qty_doc'),
+                                  \DB::raw('(SELECT SUM(quantity) FROM erpu_document_rows where document_id = ed.id_document) AS qty_doc'),
                                   \DB::raw('COALESCE(SUM(
                                               IF (`wm`.`is_deleted` IS NULL
                                               OR (`wm`.`is_deleted` IS NOT NULL
