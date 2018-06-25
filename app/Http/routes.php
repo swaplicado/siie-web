@@ -213,6 +213,11 @@ Route::post('manage/changedate',[
       * Formulas
       **/
       Route::resource('formulas','MMS\SFormulasController');
+      Route::get('/formulas/create/itemformulas', [
+      	'uses' => 'MMS\SFormulasController@getItemFormulas',
+      	'as' => 'mms.formulas.create.itemformulas'
+      ]);
+
     });
 
 
@@ -475,6 +480,26 @@ Route::group(['prefix' => 'qms'], function () {
       Route::post('/inventory/initialinventory/store',[
         'uses' => 'WMS\SInventoriesController@generateInitialInventory',
         'as' => 'wms.inventory.initialinventory.store'
+      ]);
+      Route::get('/inventory/physicalinventory', [
+        'uses' => 'WMS\SInventoriesController@physicalInventory',
+        'as' => 'wms.inventory.physicalinventory'
+      ]);
+      Route::get('/inventory/physicalinventory/data', [
+        'uses' => 'WMS\SMovsController@getMovementData',
+        'as' => 'wms.inventory.physicalinventory.data'
+      ]);
+      Route::post('/inventory/physicalinventory/validaterow', [
+        'uses' => 'WMS\SMovsController@validateRow',
+        'as' => 'wms.inventory.physicalinventory.validaterow'
+      ]);
+      Route::get('/inventory/physicalinventory/search', [
+        'uses' => 'WMS\SMovsController@searchElement',
+        'as' => 'wms.inventory.physicalinventory.search'
+      ]);
+      Route::get('/inventory/physicalinventory/create', [
+        'uses' => 'WMS\SInventoriesController@createPhysicalInventory',
+        'as' => 'wms.inventory.physicalinventory.create'
       ]);
 
 
