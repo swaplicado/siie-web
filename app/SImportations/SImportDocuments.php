@@ -83,6 +83,7 @@ class SImportDocuments
             fid_ct_dps,
             fid_cl_dps,
             fid_tp_dps,
+            fid_st_dps,
             fid_src_year_n,
             fid_src_doc_n,
             fid_cob,
@@ -173,6 +174,7 @@ class SImportDocuments
                     }
                     $lDocuments[$row["id_doc"]]->doc_src_id = is_numeric($src_id) ? $src_id : 1;
                     $lDocuments[$row["id_doc"]]->doc_status_id = 1;
+                    $lDocuments[$row["id_doc"]]->doc_sys_status_id = $row["fid_st_dps"];
                     $lDocuments[$row["id_doc"]]->currency_id = $lCurrencies[$row["fid_cur"]];
                     $lDocuments[$row["id_doc"]]->partner_id = $lWebPartners[$row["fid_bp_r"]];
                     $lDocuments[$row["id_doc"]]->branch_id = $lWebBranches[$row["fid_bpb"]];
@@ -250,6 +252,7 @@ class SImportDocuments
 
        $oDocument->doc_src_id = $src_id;
        $oDocument->doc_status_id = 1;
+       $oDocument->doc_sys_status_id = $oSiieDocument["fid_st_dps"];
        $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
        $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];
        $oDocument->branch_id = $lWebBranches[$oSiieDocument["fid_bpb"]];

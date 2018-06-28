@@ -373,4 +373,45 @@ class SInventoryCore {
 
         return $lMovements;
      }
+
+    public function generatePhysicalInventory($oMovement = null, $lRows = [])
+    {
+        $sSelect = 'sum(ws.input) as inputs,
+                     sum(ws.output) as outputs,
+                     (sum(ws.input) - sum(ws.output)) as stock,
+                     AVG(ws.cost_unit) as cost_unit,
+                     ei.code as item_code,
+                     ei.name as item,
+                     eu.code as unit_code,
+                     ei.is_lot,
+                     ei.id_item,
+                     eu.id_unit,
+                     ws.lot_id,
+                     wl.lot,
+                     ws.pallet_id,
+                     ws.location_id
+                     ';
+
+        $aParameters = array();
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oMovement->branch_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.WITHOUT_SEGREGATED')] = true;
+
+        $lStock = session('stock')->getStockResult($aParameters);
+
+        $lStock = $lStock->groupBy('id_item')
+                            ->groupBy('id_unit')
+                            ->groupBy('lot_id')
+                            ->groupBy('pallet_id')
+                            ->groupBy('location_id')
+                            ->get();
+
+        foreach ($lStock as $oStock) {
+          $oStock->dAdded = 0;
+        }
+
+        return true;
+    }
 }

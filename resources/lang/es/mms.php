@@ -20,15 +20,16 @@ return [
 
 
       'labels'  => [
-                      'FORMULA' => 'Fórmula',
-                      'NAME_FORMULA' => 'Nombre de la fórmula',
                       'DURATION' => 'Duración',
+                      'EXP' => 'Exp.',
+                      'EXPLODED' => 'Explosionada',
+                      'FORMULA' => 'Fórmula',
+                      'MAX_MIX' => 'Mezcla máxima',
+                      'NAME_FORMULA' => 'Nombre de la fórmula',
+                      'NO_EXPLODED' => 'No explosionada',
                       'SUBSTITUTE' => 'Sustituto',
                       'SUGGESTED_MIX' => 'Mezcla sugerida',
-                      'MAX_MIX' => 'Mezcla máxima',
-                      'EXPLODED' => 'Explosionada',
-                      'EXP' => 'Exp.',
-                      'NO_EXPLODED' => 'No explosionada',
+                      'VERSION' => 'Versión',
                   ],
 
       'placeholders'  => [

@@ -253,7 +253,7 @@ function initializePanel(serverData) {
     headerCore.initializeStock();
 
     if (globalData.bIsInputMov) {
-        if (serverData.iFolioDes == 0) {
+        if (serverData.iFolioDes == 0 && globalData.iMvtType != globalData.PHYSICAL_INVENTORY) {
           alert("No hay folio asignado para el movimiento.");
           // swal("Error", "No hay folio asignado para el movimiento.", "error");
           goToBack();

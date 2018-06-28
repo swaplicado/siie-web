@@ -32,22 +32,22 @@ class SFormulaRequest extends Request
       {
           case 'POST':
               return [
-                  'branch_id' => 'required|exists:siie.'.$branch->getTable().',id_branch',
-                  'dt_start' => 'required',
-                  'dt_end' => 'required',
-                  'product' => 'required|exists:siie.'.$item->getTable().',id_item',
-                  'name' => 'required',
-                  'quantity' => 'required|min:0',
-                  'cost' => 'required|min:0',
+                  // 'branch_id' => 'required|exists:siie.'.$branch->getTable().',id_branch',
+                  // 'dt_start' => 'required',
+                  // 'dt_end' => 'required',
+                  // 'product' => 'required|exists:siie.'.$item->getTable().',id_item',
+                  'identifier' => 'required',
+                  // 'quantity' => 'required|min:0',
+                  // 'cost' => 'required|min:0',
               ];
 
           case 'PUT':
               return [
-                  'dt_start' => 'required',
-                  'dt_end' => 'required',
-                  'name' => 'required',
-                  'quantity' => 'required|min:0',
-                  'cost' => 'required|min:0',
+                  // 'dt_start' => 'required',
+                  // 'dt_end' => 'required',
+                  'identifier' => 'required',
+                  // 'quantity' => 'required|min:0',
+                  // 'cost' => 'required|min:0',
               ];
 
           default:

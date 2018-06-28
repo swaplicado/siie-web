@@ -40,7 +40,7 @@
                        'onChange' => '', 'id' => 'sel_formula']) !!}
           </div>
         </div>
-        <br />
+        {{-- <br />
         <div class="row">
           <div class="col-md-3">
             {!! Form::label(trans('userinterface.labels.DATE_START').'*') !!}
@@ -57,7 +57,7 @@
           <div class="col-md-4">
             {!! Form::date('dt_end_ing', session('work_date'), ['class'=>'form-control', 'id' => 'dt_end_ing']) !!}
           </div>
-        </div>
+        </div> --}}
         <br />
         <div class="row">
           <div class="col-md-3">
@@ -72,8 +72,12 @@
             {!! Form::label('lUnitIngredient', '-',  ['class' => 'form-control',
                                                         'id' => 'lUnitIngredient']) !!}
           </div>
+          <div class="col-md-3">
+            {!! Form::label('lBulk', '-',  ['class' => 'form-control',
+                                                        'id' => 'lBulk']) !!}
+          </div>
         </div>
-        <br />
+        {{-- <br />
         <div class="row">
           <div class="col-md-3">
             {!! Form::label(trans('userinterface.labels.COST').'*') !!}
@@ -111,8 +115,8 @@
                       ['class'=>'form-control select-one ing-chos cls-subs', 'placeholder' => trans('wms.placeholders.SELECT_MAT_PROD'),
                        'onChange' => '', 'id' => 'substitute']) !!}
           </div>
-        </div>
-        <br />
+        </div> --}}
+        {{-- <br />
         <div class="row" id="div_formula_subs" style="display: none;">
           <div class="col-md-3">
             {!! Form::label(trans('mms.labels.FORMULA').'*') !!}
@@ -152,11 +156,12 @@
           </div>
         </div>
 
-      </div>
+      </div> --}}
       <div class="modal-footer">
         <button  id="closeIngredient" type="button" class="btn btn-success" data-dismiss="modal">{{ trans('actions.ADD') }}</button>
       </div>
     </div>
 
+    </div>
   </div>
 </div>

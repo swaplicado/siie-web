@@ -10,17 +10,15 @@ class SFormula extends SModel {
 
     protected $fillable = [
                             'id_formula',
-                            'dt_start',
-                            'dt_end',
-                            'name',
+                            'version',
+                            'recipe',
+                            'dt_date',
+                            'identifier',
+                            'notes',
                             'quantity',
-                            'duration',
-                            'cost',
-                            'is_exploded',
                             'is_deleted',
                             'item_id',
                             'unit_id',
-                            'branch_id',
                             'created_by_id',
                             'updated_by_id',
                           ];
@@ -36,14 +34,24 @@ class SFormula extends SModel {
     }
 
     /**
-     * [rows description]
-     * Return object SSegregartionRow
-     * @return SFormulaNote
+     * [unit description]
+     * Return object SUnit
+     * @return SUnit
      */
-    public function notes()
+    public function unit()
     {
-      return $this->hasmany('App\MMS\Formulas\SFormulaNote', 'formula_id', 'id_formula');
+      return $this->belongsTo('App\ERP\SUnit');
     }
+
+    // /**
+    //  * [rows description]
+    //  * Return object SSegregartionRow
+    //  * @return SFormulaNote
+    //  */
+    // public function notes()
+    // {
+    //   return $this->hasmany('App\MMS\Formulas\SFormulaNote', 'formula_id', 'id_formula');
+    // }
 
     /**
      * [scopeSearch description]
@@ -55,7 +63,7 @@ class SFormula extends SModel {
      */
     public function scopeSearch($query, $name, $iFilter)
     {
-        $query = $query->where('name', 'LIKE', "%".$name."%");
+        $query = $query->where('identifier', 'LIKE', "%".$name."%");
 
         switch ($iFilter) {
           case \Config::get('scsys.FILTER.ACTIVES'):

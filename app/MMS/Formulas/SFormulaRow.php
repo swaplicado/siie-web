@@ -10,16 +10,12 @@ class SFormulaRow extends Model {
 
     protected $fillable = [
                             'id_formula_row',
-                            'dt_start',
-                            'dt_end',
                             'quantity',
-                            'cost',
-                            'duration',
                             'is_deleted',
                             'formula_id',
                             'item_id',
                             'unit_id',
-                            'item_formula_id',
+                            'item_recipe_id',
                             'created_by_id',
                             'updated_by_id',
                           ];
@@ -70,7 +66,7 @@ class SFormulaRow extends Model {
      */
     public function itemFormula()
     {
-      return $this->belongsTo('App\MMS\Formulas\SFormula', 'item_formula_id');
+      return $this->belongsTo('App\MMS\Formulas\SFormula', 'item_recipe_id');
     }
 
 }

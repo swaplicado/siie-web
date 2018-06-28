@@ -40,6 +40,8 @@
     this.PALLET_RECONFIG_IN  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_IN')) ?>;
     this.PALLET_RECONFIG_OUT  =  <?php echo json_encode(\Config::get('scwms.PALLET_RECONFIG_OUT')) ?>;
 
+    this.PHYSICAL_INVENTORY  =  <?php echo json_encode(\Config::get('scwms.PHYSICAL_INVENTORY')) ?>;
+
     this.lItemLinks = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK')); ?>;
 
     this.lContainers = <?php echo json_encode(\Config::get('scwms.CONTAINERS')); ?>;
@@ -62,7 +64,12 @@
         this.sRoute = 'supply';
     }
     else {
-        this.sRoute = 'create';
+        if (this.iMvtType == this.PHYSICAL_INVENTORY ) {
+          this.sRoute = 'physicalinventory'
+        }
+        else {
+          this.sRoute = 'create';
+        }
     }
   }
 

@@ -13,6 +13,10 @@
 		'REG_ACTIVATED' => '¡Se ha activado de forma exitosa!',
 		'SUCCESS_SUPP' => 'El surtido se ha ligado exitosamente',
 		'GENERATED_INVENTORY' => 'El inventario inicial se ha generado exitosamente',
+		'GENERATED_PHYSICAL_INVENTORY' => 'El inventario físico se ha generado exitosamente',
+
+		'FORMULA_RECURSION_ERROR' => 'Error, uno de los ingredientes o
+																	sub ingredientes es el mismo que una fórmula padre: ',
 
 		'options' =>	['MSG_YES' => 'Sí',
 						 'MSG_NO' => 'No'],

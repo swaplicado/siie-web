@@ -89,6 +89,11 @@ return [
                     'CREDIT_NOTE' => '1',
                   ],
 
+  'DOC_SYS_STATUS' => [
+                    'NEW' => '1',
+                    'ISSUED' => '2',
+                    'ANNULLED' => '3',
+                  ],
 
   'FRMT' =>       [
                     'AMT' => '1',

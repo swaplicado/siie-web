@@ -107,27 +107,38 @@ class SMovsManagment {
      */
     private function processMovement($oMovement, $aMovementRows, $iClass, $iMovType, $iWhsSrc, $iWhsDes, $iPallet, $iPalletLocation, $iOperation)
     {
-       // The movement is adjust or input by purchases
-       if ($iMovType == \Config::get('scwms.MVT_TP_IN_ADJ') ||
-            $iMovType == \Config::get('scwms.MVT_TP_OUT_ADJ') ||
-              $iMovType == \Config::get('scwms.MVT_TP_IN_PUR') ||
-               $iMovType == \Config::get('scwms.MVT_TP_IN_SAL') ||
-                $iMovType == \Config::get('scwms.MVT_TP_OUT_SAL')) {
+      switch ($iMovType) {
+          // The movement is adjust or input by purchases
+        case \Config::get('scwms.MVT_TP_IN_ADJ'):
+        case \Config::get('scwms.MVT_TP_OUT_ADJ'):
+        case \Config::get('scwms.MVT_TP_IN_PUR'):
+        case \Config::get('scwms.MVT_TP_IN_SAL'):
+        case \Config::get('scwms.MVT_TP_OUT_SAL'):
           return $this->createTheMovement($oMovement, $aMovementRows);
-       }
-       // The movement is trasfer
-       else if($iMovType == \Config::get('scwms.MVT_TP_OUT_TRA')) {
-          return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
-       }
-       // the movement is pallet reconfiguration (pallet division)
-       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_IN')) {
-         return $this->divisionOfPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
 
-       }
-       // the movement is pallet reconfiguration (add to pallet)
-       else if ($iMovType == \Config::get('scwms.PALLET_RECONFIG_OUT')) {
-         return $this->addToPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
-       }
+          // The movement is trasfer
+        case \Config::get('scwms.MVT_TP_OUT_TRA'):
+          return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
+
+          // the movement is pallet reconfiguration (pallet division)
+        case \Config::get('scwms.PALLET_RECONFIG_IN'):
+          return $this->divisionOfPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
+
+          // the movement is pallet reconfiguration (add to pallet)
+        case \Config::get('scwms.PALLET_RECONFIG_OUT'):
+          return $this->addToPallet($oMovement, $iPallet, $iPalletLocation, $aMovementRows);
+
+          // process of physical inventory
+        case \Config::get('scwms.PHYSICAL_INVENTORY'):
+          $inventoryCore = new SInventoryCore();
+          $oResult = $inventoryCore->generatePhysicalInventory($oMovement, $aMovementRows);
+          return [];
+          break;
+
+        default:
+          // code...
+          break;
+      }
     }
 
     private function saveMovement($movements, $oRequest, $iOperation)

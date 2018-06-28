@@ -342,6 +342,7 @@ class SStockManagment
                                   \DB::raw('CONCAT(edsrc.service_num, IF(edsrc.service_num = "", "", "-"), edsrc.num) as num_src'),
                                   'ed.is_closed',
                                   'ed.doc_src_id',
+                                  'ed.doc_sys_status_id',
                                   'ed.external_id',
                                   'ed.partner_id',
                                   'ed.is_deleted',
@@ -353,15 +354,17 @@ class SStockManagment
                                   \DB::raw(($bCreditNote ? $sSubQueryCreditNotes : "'0'")." AS supp_cn"),
                                   \DB::raw('(SELECT SUM(quantity) FROM erpu_document_rows where document_id = ed.id_document) AS qty_doc'),
                                   \DB::raw('COALESCE(SUM(
-                                              IF (`wm`.`is_deleted` IS NULL
-                                              OR (`wm`.`is_deleted` IS NOT NULL
-                                              AND `wm`.`is_deleted` = FALSE),
+                                              IF (wm.is_deleted IS NULL
+                                              OR (wm.is_deleted IS NOT NULL
+                                              AND wm.is_deleted = FALSE
+                                              AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) AS qty_sur'),
                                   \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
                                   \DB::raw('(SUM(edr.quantity) - ( COALESCE(SUM(
-                                              IF (`wm`.`is_deleted` IS NULL
-                                              OR (`wm`.`is_deleted` IS NOT NULL
-                                              AND `wm`.`is_deleted` = FALSE),
+                                              IF (wm.is_deleted IS NULL
+                                              OR (wm.is_deleted IS NOT NULL
+                                              AND wm.is_deleted = FALSE
+                                              AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
                           ->groupBy('edr.document_id')
@@ -375,6 +378,7 @@ class SStockManagment
                                   \DB::raw('CONCAT(ed.service_num, IF(ed.service_num = "", "", "-"), ed.num) as folio'),
                                   \DB::raw('CONCAT(edsrc.service_num, IF(edsrc.service_num = "", "", "-"), edsrc.num) as num_src'),
                                   'ed.doc_src_id',
+                                  'ed.doc_sys_status_id',
                                   'ed.is_closed',
                                   'ed.external_id',
                                   'ed.partner_id',
@@ -401,15 +405,17 @@ class SStockManagment
                                   \DB::raw("'0' AS qty_ind_supp_row"),
                                   \DB::raw('edr.quantity AS qty_row'),
                                   \DB::raw('COALESCE(SUM(
-                                              IF (`wm`.`is_deleted` IS NULL
-                                              OR (`wm`.`is_deleted` IS NOT NULL
-                                              AND `wm`.`is_deleted` = FALSE),
+                                              IF (wm.is_deleted IS NULL
+                                              OR (wm.is_deleted IS NOT NULL
+                                              AND wm.is_deleted = FALSE
+                                              AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) AS qty_sur'),
                                   \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
                                   \DB::raw('(edr.quantity - (COALESCE(SUM(
-                                              IF (`wm`.`is_deleted` IS NULL
-                                              OR (`wm`.`is_deleted` IS NOT NULL
-                                              AND `wm`.`is_deleted` = FALSE),
+                                              IF (wm.is_deleted IS NULL
+                                              OR (wm.is_deleted IS NOT NULL
+                                              AND wm.is_deleted = FALSE
+                                              AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
                           ->groupBy('edr.id_document_row')

@@ -72,6 +72,8 @@ class SWmsMenu {
                         Link::toRoute('wms.inventory.emptywarehouse', trans('wms.EMPTY_WAREHOUSE')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.INVENTORY_OPERATION')),
                         Link::toRoute('wms.inventory.initialinventory', trans('wms.GENERATE_INITIAL_INVENTORY')))
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.INVENTORY_OPERATION')),
+                        Link::toRoute('wms.inventory.physicalinventory', trans('wms.PHYSICAL_INVENTORY')))
         )
         ->submenu(
             Link::to('#', trans('wms.PUR_DOCS').'<span class="caret"></span>')

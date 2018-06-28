@@ -32,6 +32,7 @@ class SDocument extends SModel {
                           'doc_class_id',
                           'doc_type_id',
                           'doc_status_id',
+                          'doc_sys_status_id',
                           'doc_src_id',
                           'currency_id',
                           'partner_id',

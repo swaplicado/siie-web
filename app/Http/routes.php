@@ -200,14 +200,13 @@ Route::post('manage/changedate',[
 			'uses' => 'SYS\SStartController@SelectModule'
 		]);
 
-//****************************************/ Manufacturing /*************************
+//****************************************/ Manufacturing Module /*************************
 
     Route::group(['prefix' => 'mms'], function () {
       Route::get('/home',[
         'as' => 'mms.home',
         'uses' => 'MMS\SProductionController@Home'
       ]);
-      // Route::resource('mms','MMS\SProductionController');
 
       /*
       * Formulas
@@ -217,7 +216,26 @@ Route::post('manage/changedate',[
       	'uses' => 'MMS\SFormulasController@getItemFormulas',
       	'as' => 'mms.formulas.create.itemformulas'
       ]);
-
+      Route::get('/formulas/{id}/edit/itemformulas', [
+      	'uses' => 'MMS\SFormulasController@getItemFormulas',
+      	'as' => 'mms.formulas.edit.itemformulas'
+      ]);
+      Route::get('/formulas/create/{id?}', [
+      	'uses' => 'MMS\SFormulasController@create',
+      	'as' => 'mms.formulas.create'
+      ]);
+      Route::get('formulas/{id}/copy', [
+        'uses' => 'MMS\SFormulasController@Copy',
+        'as' => 'mms.formulas.copy'
+      ]);
+      Route::get('formulas/{id}/destroy',[
+        'uses' => 'MMS\SFormulasController@Destroy',
+        'as' => 'mms.formulas.destroy'
+      ]);
+      Route::get('formulas/{id}/activate', [
+  			'uses' => 'MMS\SFormulasController@Activate',
+  			'as' => 'mms.formulas.activate'
+  		]);
     });
 
 

@@ -61,6 +61,7 @@ return [
                   'PALLET_RECONFIG' => '015',
                   'INVENTORY_OPERATION' => '016',
                   'QUALITY' => '050',
+                  'MMS_FORMULAS' => '120',
                   'IMPORTATIONS' => '150',
 
                   'ERP' =>  '101',

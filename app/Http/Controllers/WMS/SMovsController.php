@@ -15,6 +15,7 @@ use App\SCore\SReceptions;
 use App\SCore\SLotsValidations;
 use App\SCore\StransfersCore;
 use App\SCore\SMovsCore;
+use App\SCore\SInventoryCore;
 
 use App\SUtils\SMovsUtils;
 use App\SUtils\SUtil;
@@ -394,6 +395,19 @@ class SMovsController extends Controller
         $iWhsId = 0;
         $iWhsSrc = 0;
         $iWhsDes = 0;
+
+        // if ($oMovementJs->iMvtType == \Config::get('scwms.PHYSICAL_INVENTORY')) {
+        //     $inventoryCore = new SInventoryCore();
+        //     $oResult = $inventoryCore->generatePhysicalInventory($request);
+        //
+        //     if (is_array($oResult) && sizeof($oResult) > 0) {
+        //       return redirect()->back()->withErrors($oResult)->withInput();
+        //     }
+        //
+        //     Flash::success(trans('messages.GENERATED_PHYSICAL_INVENTORY'))->important();
+        //
+        //     return redirect()->route('wms.movs.index', 0);
+        // }
 
         // the transfer implies two warehouses
         if ($oMovementJs->iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA'))
@@ -839,7 +853,7 @@ class SMovsController extends Controller
 
        $view = view('wms.movs.print', ['oMovement' => $oMovement])->render();
         // set ukuran kertas dan orientasi
-        $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false)->save('myfile.pdf');
+        $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
         // cetak
         return $pdf->stream();
     }

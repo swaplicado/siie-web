@@ -5,6 +5,7 @@ class FormulaJs {
     constructor() {
       this.idRow = 0;
       this.numNote = 0;
+      this.iRecipe = 0;
       this.lFormulaRows = [];
       this.lNotes = [];
     }
@@ -145,7 +146,7 @@ class Ingredient {
       this.iIdFormulaRow = 0;
       this.iIdItem = 0;
       this.iIdUnit = 0;
-      this.iIdItemFormula = 1;
+      this.iIdItemRecipe = 1;
       this.tStart = '';
       this.tEnd = '';
       this.dQuantity = 0;
@@ -153,11 +154,11 @@ class Ingredient {
       this.dDuration = 0;
       this.iIdItemSubstitute = 0;
       this.iIdUnitSubstitute = 0;
-      this.iIdItemFormulaSubs = 1;
+      this.iIdItemRecipeSubs = 1;
       this.dSuggested = 0;
       this.dMax = 0;
       this.bIsDeleted = false;
-      this.iFormulaId = false;
+      this.iFormulaId = 0;
     }
 }
 
@@ -168,13 +169,13 @@ class Ingredient {
  * @param selectObj select object
  */
 function setFormulaData(selectObj) {
-    var sName = selectObj.selectedOptions[0].text;
+    var sIdentifier = selectObj.selectedOptions[0].text;
     var sItemValue = selectObj.value;
     var aValues = sItemValue.split('-', 2);
     var iItemId = aValues[0];
     var iUnitId = aValues[1];
 
-    setData(iItemId, iUnitId, sName);
+    setData(iItemId, iUnitId, sIdentifier);
 
     if (iItemId != "") {
       document.getElementById('btnAdd').disabled = false;
@@ -189,9 +190,9 @@ function setFormulaData(selectObj) {
  *
  * @param {integer} iItemId item id  of item related to formula
  * @param {integer} iUnitId unit if of item related to formula
- * @param {string} sName   name of formula
+ * @param {string} sIdentifier   name of formula
  */
-function setData(iItemId, iUnitId, sName) {
+function setData(iItemId, iUnitId, sIdentifier) {
     var sUnitCode = '';
     oData.lUnits.forEach(function(oUnit) {
         if (oUnit.id_unit == iUnitId) {
@@ -202,8 +203,8 @@ function setData(iItemId, iUnitId, sName) {
 
     document.getElementById('item_id').value = iItemId;
     document.getElementById('unit_id').value = iUnitId;
-    // document.getElementById('item_formula_id').value = iIdItemFormula;
-    document.getElementById('name').value = sName;
+    // document.getElementById('item_recipe_id').value = iIdItemRecipe;
+    document.getElementById('identifier').value = sIdentifier;
     document.getElementById('unit').innerHTML = sUnitCode;
 }
 
@@ -216,24 +217,32 @@ function setData(iItemId, iUnitId, sName) {
 function setIngredientData(selectObj) {
     var iItemId = selectObj.value;
     var sUnitCode = '';
+    var bIsBulk = '';
     var sItemType = '';
     var iIdItemType = 0;
+    var iIdItemClass = 0;
 
     oData.lMaterials.forEach(function(oMaterial) {
         if (oMaterial.id_item == iItemId) {
             sUnitCode = oMaterial.unit_code;
             sItemType = oMaterial.item_type;
+            bIsBulk = oMaterial.is_bulk;
             iIdItemType = oMaterial.id_item_type;
+            iIdItemClass = oMaterial.item_class;
             return false;
         }
     });
 
-    if (iIdItemType == oData.lItemTypes.BASE_PRODUCT) {
+    if (iIdItemClass == oData.scsiie.ITEM_CLS.PRODUCT) {
       getFormulasOfItem(iItemId);
+    }
+    else {
+      document.getElementById('div_formula').style.display = 'none';
     }
 
     document.getElementById('lUnitIngredient').innerHTML = sUnitCode;
     document.getElementById('item_type').value = sItemType;
+    document.getElementById('lBulk').innerHTML = bIsBulk ? 'A GRANEL' : 'EN UNIDAD';
 }
 
 function getFormulasOfItem(iItemId) {
@@ -246,7 +255,7 @@ function getFormulasOfItem(iItemId) {
         response.forEach(function(oFormula) {
           var option = $("<option value=" + oFormula.id_formula + "></option>")
   	                  .attr(oFormula, oFormula.id_formula)
-  	                  .text(oFormula.name);
+  	                  .text(oFormula.identifier);
 
   				$('#sel_formula').append(option);
         });
@@ -262,7 +271,7 @@ function getFormulasOfItem(iItemId) {
  * @param {integer} iIngredientId [description]
  */
 function setIngredient(iIngredientId) {
-    var row = oTable.row('.selected').data();
+    var row = oIngredientsTable.row('.selected').data();
 
     if (row != undefined) {
       oRow = oData.jsFormula.getRow(row[0]);
@@ -290,13 +299,13 @@ function setIngredient(iIngredientId) {
     $('.cls-ing').prop('disabled', true).trigger("chosen:updated");
     $('.cls-subs').val(oRow.iIdItemSubstitute).trigger("chosen:updated");
 
-    if (oRow.iIdItemFormula != 1) {
-      $('sel_formula').val(oRow.iIdItemFormula).trigger("chosen:updated");
+    if (oRow.iIdItemRecipe != 1) {
+      $('sel_formula').val(oRow.iIdItemRecipe).trigger("chosen:updated");
       document.getElementById('div_formula').style.display = '';
       getFormulasOfItem(oItem.id_item);
     }
-    if (oRow.iIdItemFormulaSubs != 1) {
-      $('sel_formula_subs').val(oRow.iIdItemFormulaSubs).trigger("chosen:updated");
+    if (oRow.iIdItemRecipeSubs != 1) {
+      $('sel_formula_subs').val(oRow.iIdItemRecipeSubs).trigger("chosen:updated");
       document.getElementById('div_formula_subs').style.display = '';
     }
 
@@ -305,6 +314,7 @@ function setIngredient(iIngredientId) {
     document.getElementById('dt_end_ing').value = oRow.tEnd;
     document.getElementById('quantityIngredient').value = oRow.dQuantity;
     document.getElementById('lUnitIngredient').innerHTML = sUnit;
+    document.getElementById('lBulk').innerHTML = oItem.is_bulk ? 'A GRANEL' : 'POR UNIDAD';
     document.getElementById('costIngredient').value = oRow.dCost;
     document.getElementById('duration').value = oRow.dDuration;
     document.getElementById('suggested').value = oRow.dSuggested;
@@ -333,12 +343,12 @@ function addIngredient(oRow) {
         }
     });
 
-    if (oRow.iIdItemFormula == '') {
-        oRow.iIdItemFormula = 1;
+    if (oRow.iIdItemRecipe == '') {
+        oRow.iIdItemRecipe = 1;
     }
 
     if (oItem.item_type_id == oData.lItemTypes.BASE_PRODUCT &&
-          oRow.iIdItemFormula == 1) {
+          oRow.iIdItemRecipe == 1) {
         swal("Error", "Debe elegir una fórmula.", "error");
         return false;
     }
@@ -354,30 +364,41 @@ function addIngredient(oRow) {
     oRow.iIdUnit = oItem.unit_id;
     oData.jsFormula.addRow(oRow);
 
-    oTable.row.add([
+    oIngredientsTable.row.add([
         oRow.idRow,
         oRow.iIdFormulaRow,
         oItem.code,
         oItem.name,
-        oRow.dQuantity,
+        parseFloat(oRow.dQuantity, 10).toFixed(oData.DEC_QTY),
         oItem.unit_code,
-        dPercentage,
-        oRow.dCost,
-        oRow.tStart,
-        oRow.tEnd
+        parseFloat(oItem.mass, 10).toFixed(oData.DEC_QTY),
+        parseFloat(dPercentage, 10).toFixed(oData.DEC_QTY),
+        oItem.item_type
+        // oRow.dCost,
+        // oRow.tStart,
+        // oRow.tEnd
     ]).draw( false );
 
     setFormulaToForm();
+
+    var column = oIngredientsTable.column( 6 );
+    var dMass = parseFloat(column.footer().innerHTML, 10) + parseFloat(oItem.mass, 10);
+
+    column.footer().innerHTML =  parseFloat(dMass).toFixed(oData.DEC_QTY);
+
+    $('mat_prod').val(null).trigger("chosen:updated");
+    document.getElementById('lUnitIngredient').innerHTML = '-';
+    document.getElementById('lBulk').innerHTML = '-';
 }
 
 /**
  * remove the row of formula from view table
  */
 $('#btnDel').click( function () {
-    var row = oTable.row('.selected').data();
+    var row = oIngredientsTable.row('.selected').data();
     oData.jsFormula.removeRow(row[0]);
 
-    oTable.row('.selected').remove().draw( false );
+    oIngredientsTable.row('.selected').remove().draw( false );
 
     setFormulaToForm();
 });

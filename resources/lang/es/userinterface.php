@@ -275,6 +275,7 @@
 											'LOCATION' => 'Ubicación',
 											'NAME' => 'Nombre',
 											'NEIGHBORHOOD' => 'Colonia',
+											'NOTES' => 'Notas',
 											'NUM_EXT' => '#',
 											'NUM_INT' => '# Int.',
 											'MVT_TYPE' => 'Tipo de movimiento',

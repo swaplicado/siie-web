@@ -236,7 +236,7 @@ class SPalletsController extends Controller
         session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
         $pallet = SPallet::find($id);
-        $pallet->fill($request->all());
+        // $pallet->fill($request->all());
         $pallet->is_deleted = \Config::get('scsys.STATUS.DEL');
         $pallet->updated_by_id = \Auth::user()->id;
 

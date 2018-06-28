@@ -262,9 +262,9 @@ class SItemsController extends Controller
         $item = SItem::find($id);
 
         $itemCopy = clone $item;
-        $itemCopy->id_item_item = 0;
+        $itemCopy->id_item = 0;
 
-        return view('siie.items.createEdit')->with('group', $itemCopy)
+        return view('siie.items.createEdit')->with('item', $itemCopy)
                                               ->with('bIsCopy', true);
     }
 

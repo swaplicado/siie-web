@@ -24,6 +24,9 @@ return [
     'PALLET_RECONFIG_IN'  =>  '15',
     'PALLET_RECONFIG_OUT'  =>  '16',
 
+
+    'PHYSICAL_INVENTORY'  =>  '404',
+
     // applies only for sales and purchases
     'N_A' => '1', // supply (surtido) and return
     'MVT_SPT_TP_STK_RET' => '2', // supply (surtido) and return
