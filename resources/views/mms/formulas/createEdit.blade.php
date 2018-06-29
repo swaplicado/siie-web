@@ -164,7 +164,7 @@
                   <td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
                   <td>{{ $ingredient->item->gender->type->name }}</td>
   						</tr>
-              {!! $dSum += $ingredient->item->mass !!}
+              <?php $dSum += $ingredient->item->mass ?>
             @endif
 					@endforeach
 				</tbody>

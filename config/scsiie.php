@@ -64,6 +64,12 @@ return [
                     'EXPENSES_INDIRECT' => '12',
                   ],
 
+  'ITEM_STATUS' => [
+                    'ACTIVE' => '1',
+                    'RESTRICTED' => '2',
+                    'LOCKED' => '3',
+                  ],
+
   'DOC_CAT' => [
                     'PURCHASES' => '1',
                     'SALES' => '2',

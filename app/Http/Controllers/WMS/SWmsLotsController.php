@@ -54,7 +54,9 @@ class SWmsLotsController extends Controller
                     eu.code AS unit_code,
                     eu.code AS unit,
                     wl.created_by_id,
-                    wl.updated_by_id
+                    wl.updated_by_id,
+                    wl.created_at,
+                    wl.updated_at
                   ';
 
       $lLots = \DB::connection(session('db_configuration')->getConnCompany())

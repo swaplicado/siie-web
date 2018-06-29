@@ -6,6 +6,9 @@ use App\Database\Config;
 use App\SUtils\SGuiUtils;
 
 use App\ERP\SYear;
+use App\ERP\SItem;
+
+use App\WMS\SMvtType;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
@@ -263,6 +266,36 @@ class SMovsCore {
                      ->get();
 
        return $movs;
+    }
+
+    public static function canTheItemBeMoved($iItem = 0, $iMovType = 0)
+    {
+        $lErrors = array();
+        $oItem = SItem::find($iItem);
+        $oMovementType = SMvtType::find($iMovType);
+
+        switch ($oItem->item_status_id) {
+          case \Config::get('scsiie.ITEM_STATUS.ACTIVE'):
+            return true;
+
+          case \Config::get('scsiie.ITEM_STATUS.LOCKED'):
+            return ['Error, el material/producto '.$oItem->name.' está bloqueado'];
+
+          case \Config::get('scsiie.ITEM_STATUS.RESTRICTED'):
+            if ($oMovementType->mvt_class_id == \Config::get('scwms.MVT_CLS_IN')
+                  && $oMovementType->id_mvt_type != \Config::get('scwms.MVT_TP_IN_ADJ')
+                    && $oMovementType->id_mvt_type != \Config::get('scwms.MVT_TP_IN_TRA')
+                      && $oMovementType->id_mvt_type != \Config::get('scwms.MVT_TP_IN_SAL')) {
+              return ['Error, el material/producto '.$oItem->name.' está restringido'];
+            }
+
+            return true;
+
+          default:
+            break;
+        }
+
+        return ['Error en el estatus del material/producto'];
     }
 
 }

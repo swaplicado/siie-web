@@ -1,6 +1,7 @@
 <?php namespace App\Menu;
 
 use Spatie\Menu\Laravel\Link;
+use App\SUtils\SValidation;
 
 class SMmsMenu {
 
@@ -11,7 +12,17 @@ class SMmsMenu {
         ->addClass('nav navbar-nav')
         ->link('', '')
         ->route('mms.home', trans('mms.MODULE'))
-        ->route('mms.formulas.index', trans('mms.FORMULAS'))
+        ->submenu(
+            Link::to('#', trans('mms.FORMULAS').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+                ->addClass('dropdown-menu')
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.MMS_FORMULAS')),
+                          Link::toRoute('mms.formulas.index', trans('mms.labels.FORMULAS')))
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.MMS_FORMULAS')),
+                          Link::toRoute('mms.formulas.indexdetail', trans('mms.labels.FORMULAS_DETAIL')))
+        )
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
     });

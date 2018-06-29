@@ -23,7 +23,9 @@
 			<th>{{ trans('userinterface.labels.UNIT') }}</th>
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
-			<th>{{'Etiqueta'}}</th>
+			<th>{{ 'Etiqueta' }}</th>
+			<th>{{ 'Creación' }}</th>
+			<th>{{ 'Modificación' }}</th>
 		</thead>
 		<tbody>
 			@foreach($lots as $lot)
@@ -56,6 +58,8 @@
 								<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
 							</a>
 					</td>
+					<td>{{ $lot->created_at }}</td>
+					<td>{{ $lot->updated_at }}</td>
 				</tr>
 			@endforeach
 		</tbody>

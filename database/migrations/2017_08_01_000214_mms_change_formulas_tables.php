@@ -36,10 +36,10 @@ class MmsChangeFormulasTables extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          Schema::connection($this->sConnection)->drop('mms_formula_notes');
-          Schema::connection($this->sConnection)->drop('mms_form_substitutes');
-          Schema::connection($this->sConnection)->drop('mms_formula_rows');
-          Schema::connection($this->sConnection)->drop('mms_formulas');
+          // Schema::connection($this->sConnection)->drop('mms_formula_notes');
+          // Schema::connection($this->sConnection)->drop('mms_form_substitutes');
+          // Schema::connection($this->sConnection)->drop('mms_formulas');
+          // Schema::connection($this->sConnection)->drop('mms_formula_rows');
 
           Schema::connection($this->sConnection)->create('mms_formulas', function (blueprint $table) {
           	$table->increments('id_formula');
@@ -84,7 +84,7 @@ class MmsChangeFormulasTables extends Migration {
             $table->foreign('formula_id')->references('id_formula')->on('mms_formulas')->onDelete('cascade');
             $table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
             $table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
-            $table->foreign('item_recipe_id')->references('recipe')->on('mms_formulas')->onDelete('cascade');
+            // $table->foreign('item_recipe_id')->references('recipe')->on('mms_formulas')->onDelete('cascade');
             $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
             $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
@@ -95,10 +95,11 @@ class MmsChangeFormulasTables extends Migration {
             'item_recipe_id' => '1','created_by_id' => '1','updated_by_id' => '1'],
           ]);
 
-          DB::table('syss_permissions')->insert([
-          	['code' => '120','name' => 'MMS_FORMULAS', 'is_deleted' => '0','module_id' => '2'],
-          ]);
         }
+        
+        DB::table('syss_permissions')->insert([
+          ['code' => '120','name' => 'MMS_FORMULAS', 'is_deleted' => '0','module_id' => '2'],
+        ]);
     }
 
     /**

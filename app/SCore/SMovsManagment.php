@@ -15,6 +15,7 @@ use App\WMS\SStock;
 use App\WMS\SExternalTransfer;
 
 use App\SUtils\SStockUtils;
+use App\SCore\SMovsCore;
 
 /**
  * this class manages the movement process
@@ -35,6 +36,15 @@ class SMovsManagment {
                                                     $iOperation);
 
         foreach ($movements as $mov) {
+          foreach ($mov->aAuxRows as $row) {
+            $aErrors = SMovsCore::canTheItemBeMoved($row->item_id, $mov->mvt_whs_type_id);
+
+            if(is_array($aErrors) && sizeof($aErrors) > 0)
+            {
+              return $aErrors;
+            }
+          }
+
           if ($mov->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
             $aErrors = SStockUtils::validateStock($mov);
 

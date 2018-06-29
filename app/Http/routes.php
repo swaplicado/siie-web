@@ -211,6 +211,10 @@ Route::post('manage/changedate',[
       /*
       * Formulas
       **/
+      Route::get('/formulas/viewdetail', [
+        'uses' => 'MMS\SFormulasController@getDetail',
+        'as' => 'mms.formulas.indexdetail'
+      ]);
       Route::resource('formulas','MMS\SFormulasController');
       Route::get('/formulas/create/itemformulas', [
       	'uses' => 'MMS\SFormulasController@getItemFormulas',

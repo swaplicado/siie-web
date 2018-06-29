@@ -41,7 +41,6 @@ class SFormulasController extends Controller {
     public function index(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $Formulas = SFormula::Search($request->name, $this->iFilter)->orderBy('id_formula', 'ASC')->paginate(10);
 
         $sSelect = '
                       id_formula,
@@ -52,7 +51,7 @@ class SFormulasController extends Controller {
                       ei.code AS item_code,
                       ei.name AS item,
                       eu.code AS unit_code,
-                      eu.code AS unit,
+                      eu.name AS unit,
                       mf.created_by_id,
                       mf.updated_by_id
                     ';
@@ -84,6 +83,69 @@ class SFormulasController extends Controller {
             ->with('formulas', $Formulas)
             ->with('actualUserPermission', $this->oCurrentUserPermission)
             ->with('iFilter', $this->iFilter);
+    }
+
+    /**
+     * return the view of detail of formulas
+     *
+     * @param  Request $request
+     *
+     * @return view   mms.formulas.detail
+     */
+    public function getDetail(Request $request)
+    {
+        $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+
+        $sSelect = '
+                      id_formula,
+                      identifier,
+                      version,
+                      dt_date,
+                      ei.code AS item_code,
+                      ei.name AS item,
+                      eu.code AS unit_code,
+                      ei_row.code AS item_code_row,
+                      ei_row.name AS item_row,
+                      mfr.quantity,
+                      eu_row.code AS unit_code_row,
+                      mf.is_deleted,
+                      eu.name AS unit,
+                      mf.created_by_id,
+                      mf.updated_by_id
+                    ';
+
+        $Formulas = \DB::connection(session('db_configuration')->getConnCompany())
+                     ->table('mms_formulas as mf')
+                     ->join('mms_formula_rows as mfr', 'mfr.formula_id', '=', 'mf.id_formula')
+                     ->join('erpu_items as ei', 'mf.item_id', '=', 'ei.id_item')
+                     ->join('erpu_units as eu', 'mf.unit_id', '=', 'eu.id_unit')
+                     ->join('erpu_items as ei_row', 'mfr.item_id', '=', 'ei_row.id_item')
+                     ->join('erpu_units as eu_row', 'mfr.unit_id', '=', 'eu_row.id_unit')
+                     ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uc', 'mf.created_by_id', '=', 'uc.id')
+                     ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'mf.updated_by_id', '=', 'uu.id');
+
+         switch ($this->iFilter) {
+           case \Config::get('scsys.FILTER.ACTIVES'):
+               $Formulas = $Formulas->where('mf.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+             break;
+
+           case \Config::get('scsys.FILTER.DELETED'):
+               $Formulas = $Formulas->where('mf.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+             break;
+
+           default:
+         }
+
+         $Formulas = $Formulas->select(\DB::raw($sSelect))
+                                ->where('mfr.is_deleted', false)
+                                ->groupBy('mfr.id_formula_row');
+
+         $Formulas = $Formulas->get();
+
+         return view('mms.formulas.detail')
+                 ->with('formulas', $Formulas)
+                 ->with('actualUserPermission', $this->oCurrentUserPermission)
+                 ->with('iFilter', $this->iFilter);
     }
 
     private function getProducts($value='')

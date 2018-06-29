@@ -24,6 +24,8 @@ return [
                       'EXP' => 'Exp.',
                       'EXPLODED' => 'Explosionada',
                       'FORMULA' => 'Fórmula',
+                      'FORMULAS' => 'Fórmulas',
+                      'FORMULAS_DETAIL' => 'Fórmulas a detalle',
                       'MAX_MIX' => 'Mezcla máxima',
                       'NAME_FORMULA' => 'Nombre de la fórmula',
                       'NO_EXPLODED' => 'No explosionada',
