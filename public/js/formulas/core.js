@@ -362,6 +362,8 @@ function addIngredient(oRow) {
     }
 
     oRow.iIdUnit = oItem.unit_id;
+    oRow.dMass = oItem.mass * oRow.dQuantity;
+
     oData.jsFormula.addRow(oRow);
 
     oIngredientsTable.row.add([
@@ -371,9 +373,10 @@ function addIngredient(oRow) {
         oItem.name,
         parseFloat(oRow.dQuantity, 10).toFixed(oData.DEC_QTY),
         oItem.unit_code,
-        parseFloat(oItem.mass, 10).toFixed(oData.DEC_QTY),
+        parseFloat(oRow.dMass, 10).toFixed(oData.DEC_QTY),
         parseFloat(dPercentage, 10).toFixed(oData.DEC_QTY),
-        oItem.item_type
+        oItem.item_type,
+        oRow.sItemRecipe
         // oRow.dCost,
         // oRow.tStart,
         // oRow.tEnd

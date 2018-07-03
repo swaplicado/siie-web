@@ -257,6 +257,7 @@ class SFormulasController extends Controller {
         return view('mms.formulas.createEdit')
                       ->with('oFormula', $oFormula)
                       ->with('lRows', $lRows)
+                      ->with('dTotalMass', 0)
                       ->with('lUnits', $lUnits)
                       ->with('lMaterials', $lMaterials)
                       ->with('lMaterialsList', $lMaterialsList)
@@ -298,6 +299,14 @@ class SFormulasController extends Controller {
                         ->get();
           $oFormula->recipe = $iRecipe[0]->max_recipe + 1;
         }
+
+        // $iFolio = \DB::connection(session('db_configuration')->getConnCompany())
+        //               ->table('mms_formulas as mf')
+        //               ->select(\DB::raw("MAX(folio) as max_folio"))
+        //               ->take(1)
+        //               ->get();
+        
+        // $oFormula->folio = str_pad(($iFolio[0]->max_folio + 1), 5, "0", STR_PAD_LEFT);
 
         $oFormula->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $oFormula->created_by_id = \Auth::user()->id;
@@ -427,13 +436,18 @@ class SFormulasController extends Controller {
         $oFormula->rows;
         // $oFormula->notes;
 
+        $dTotalMass = 0;
         foreach ($oFormula->rows as $row) {
             $row->item->itemType;
+            if (!$row->is_deleted) {
+              $dTotalMass += $row->item->mass * $row->quantity;
+            }
         }
 
         return view('mms.formulas.createEdit')
                     ->with('oFormula', $oFormula)
                     ->with('lRows', [])
+                    ->with('dTotalMass', $dTotalMass)
                     ->with('lUnits', $lUnits)
                     ->with('lMaterials', $lMaterials)
                     ->with('lMaterialsList', $lMaterialsList)

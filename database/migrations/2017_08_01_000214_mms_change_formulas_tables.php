@@ -43,15 +43,16 @@ class MmsChangeFormulasTables extends Migration {
 
           Schema::connection($this->sConnection)->create('mms_formulas', function (blueprint $table) {
           	$table->increments('id_formula');
-            $table->integer('version');
-            $table->integer('recipe')->unsigned();
-            $table->date('dt_date');
-            $table->char('identifier', 250);
-            $table->char('notes', 250);
+          	$table->char('folio', 50);
+          	$table->integer('version');
+          	$table->integer('recipe')->unsigned();
+          	$table->char('identifier', 250);
+          	$table->date('dt_date');
+          	$table->char('notes', 250);
           	$table->decimal('quantity', 23,8);
           	$table->boolean('is_deleted');
-          	$table->integer('unit_id')->unsigned();
           	$table->integer('item_id')->unsigned();
+          	$table->integer('unit_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
@@ -63,10 +64,10 @@ class MmsChangeFormulasTables extends Migration {
           });
 
           DB::connection($this->sConnection)->table('mms_formulas')->insert([
-          	 ['id_formula' => '1', 'version' => '0', 'recipe' => '1',
-             'identifier' => 'NA', 'dt_date' => '2017-01-01', 'notes' => 'NA',
-             'quantity' => '0', 'is_deleted' => '0', 'item_id' => '1',
-             'unit_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          	['id_formula' => '1','folio' => '00000','version' => '0','recipe' => '0',
+            'identifier' => 'NA','dt_date' => '2017-01-01','notes' => 'NA',
+            'quantity' => '0','is_deleted' => '0','item_id' => '1','unit_id' => '1',
+            'created_by_id' => '1','updated_by_id' => '1'],
           ]);
 
           Schema::connection($this->sConnection)->create('mms_formula_rows', function (blueprint $table) {
@@ -96,7 +97,7 @@ class MmsChangeFormulasTables extends Migration {
           ]);
 
         }
-        
+
         DB::table('syss_permissions')->insert([
           ['code' => '120','name' => 'MMS_FORMULAS', 'is_deleted' => '0','module_id' => '2'],
         ]);

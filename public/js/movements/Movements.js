@@ -86,6 +86,11 @@ class SMovementRow {
       this.dPrice = 0;
       this.dAuxQuantity = 0;
 
+      this.dLength = 0;
+      this.dSurface = 0;
+      this.dVolume = 0;
+      this.dMass = 0;
+
       this.iDocOrderRowId = 1;
       this.iDocInvoiceRowId = 1;
       this.iDocDebitNoteRowId = 1;
@@ -107,6 +112,8 @@ class SMovementRow {
       this.sLot = 'NA';
       this.tExpDate = 'NA';
       this.iKeyLot = null; // key to map the new Lot
+
+      this.sItemRecipe = '--';
 
       this.lotRows = new Map();
       this.lAuxlotRows = null;

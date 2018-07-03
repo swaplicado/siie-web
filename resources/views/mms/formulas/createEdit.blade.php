@@ -144,27 +144,35 @@
                 <th data-priority="1" style="text-align: center;">Masa</th>
 								<th data-priority="1" style="text-align: center;">%</th>
                 <th data-priority="1">Tipo</th>
+                <th data-priority="1">Fórmula</th>
 						</tr>
 				</thead>
 				<tbody>
           <?php
             $i = 0;
-            $dSum = 0;
           ?>
 					@foreach ($oFormula->rows as $ingredient)
             @if (! $ingredient->is_deleted)
+              <?php
+                $dMassRow = $ingredient->item->mass * $ingredient->quantity;
+                $dRowPercent = $dTotalMass == 0 ? 0 : ($dMassRow * 100 / $dTotalMass)
+              ?>
   						<tr>
   								<td>{{ $i++ }}</td>
   								<td>{{ $ingredient->id_formula_row }}</td>
   								<td>{{ $ingredient->item->code }}</td>
   								<td>{{ $ingredient->item->name }}</td>
-                  <td align="right">{{ session('utils')->formatNumber($ingredient->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
+                  <td align="right">{{ session('utils')->
+                        formatNumber($ingredient->quantity, \Config::get('scsiie.FRMT.QTY')) }}
+                  </td>
                   <td>{{ $ingredient->unit->code }}</td>
-                  <td align="right">{{ session('utils')->formatNumber($ingredient->item->mass, \Config::get('scsiie.FRMT.QTY')) }}</td>
-                  <td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
+                  <td align="right">{{ session('utils')->
+                        formatNumber(($dMassRow), \Config::get('scsiie.FRMT.QTY')) }}
+                  </td>
+                  <td align="right">{{ session('utils')->formatNumber($dRowPercent, \Config::get('scsiie.FRMT.QTY')) }}</td>
                   <td>{{ $ingredient->item->gender->type->name }}</td>
+                  <td>{{ ($ingredient->item_recipe_id > 1 ? $ingredient->getLastVersion()->identifier : '--') }}</td>
   						</tr>
-              <?php $dSum += $ingredient->item->mass ?>
             @endif
 					@endforeach
 				</tbody>
@@ -176,7 +184,8 @@
             <th></th>
             <th></th>
             <th></th>
-            <th align="right">{{ session('utils')->formatNumber($dSum, \Config::get('scsiie.FRMT.QTY')) }}</th>
+            <th align="right">{{ session('utils')->formatNumber($dTotalMass, \Config::get('scsiie.FRMT.QTY')) }}</th>
+            <th align="right">{{ '% '.session('utils')->formatNumber(100, \Config::get('scsiie.FRMT.QTY')) }}</th>
             <th></th>
             <th></th>
           </tr>

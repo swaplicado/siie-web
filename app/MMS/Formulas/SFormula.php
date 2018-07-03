@@ -10,6 +10,7 @@ class SFormula extends SModel {
 
     protected $fillable = [
                             'id_formula',
+                            'folio',
                             'version',
                             'recipe',
                             'dt_date',

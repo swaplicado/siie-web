@@ -33,6 +33,22 @@ class SFormulaRow extends Model {
     /**
      * [segregation description]
      *
+     * @return SFormula
+     */
+    public function getLastVersion()
+    {
+      $oNewFormula = \DB::connection(session('db_configuration')->getConnCompany())
+                    ->table('mms_formulas as mf')
+                    ->where('recipe', $this->item_recipe_id)
+                    ->whereRaw('version = (select max(version) from mms_formulas where recipe = '.$this->item_recipe_id.')')
+                    ->first();
+
+      return $oNewFormula;
+    }
+
+    /**
+     * [segregation description]
+     *
      * @return SSubstitute
      */
     public function substitute()

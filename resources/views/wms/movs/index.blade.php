@@ -59,7 +59,7 @@
 		    <tbody>
 					@foreach ($rows as $row)
 						<tr>
-								<td>{{ $row->mov_code.'-'.$row->mov_folio }}</td>
+								<td>{{ $row->mov_code.'-'.str_pad($row->mov_folio, 5, "0", STR_PAD_LEFT) }}</td>
 								<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
 		            <td>{{ $row->item_code }}</td>
