@@ -142,7 +142,7 @@
 								<th data-priority="1" style="text-align: center;">Cantidad</th>
 								<th data-priority="1" style="text-align: center;">Un.</th>
                 <th data-priority="1" style="text-align: center;">Masa</th>
-								<th data-priority="1" style="text-align: center;">%</th>
+								<th data-priority="1" style="text-align: right;">%</th>
                 <th data-priority="1">Tipo</th>
                 <th data-priority="1">Fórmula</th>
 						</tr>
@@ -171,7 +171,7 @@
                   </td>
                   <td align="right">{{ session('utils')->formatNumber($dRowPercent, \Config::get('scsiie.FRMT.QTY')) }}</td>
                   <td>{{ $ingredient->item->gender->type->name }}</td>
-                  <td>{{ ($ingredient->item_recipe_id > 1 ? $ingredient->getLastVersion()->identifier : '--') }}</td>
+                  <td>{{ ($ingredient->item_recipe_id > 1 ? $ingredient->getLastVersion()->identifier : 'NA') }}</td>
   						</tr>
             @endif
 					@endforeach

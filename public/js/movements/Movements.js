@@ -113,8 +113,6 @@ class SMovementRow {
       this.tExpDate = 'NA';
       this.iKeyLot = null; // key to map the new Lot
 
-      this.sItemRecipe = '--';
-
       this.lotRows = new Map();
       this.lAuxlotRows = null;
       this.lAuxlotsToCreate = null;

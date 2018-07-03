@@ -15,6 +15,7 @@ class SIngredientCore {
          oIngredient.dQuantity = oFormulaRow.quantity;
          oIngredient.bIsDeleted = oFormulaRow.is_deleted;
          oIngredient.iFormulaId = 0;
+         oIngredient.sItemRecipe = oFormulaRow.sItemRecipe;
 
          addIngredient(oIngredient);
       });

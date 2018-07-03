@@ -233,6 +233,9 @@ class SFormulasController extends Controller {
         if ($iFormula != 0) {
            $oBaseFormula = SFormula::find($iFormula);
            $lRows = $oBaseFormula->rows;
+           foreach ($lRows as $row) {
+              $row->sItemRecipe = $row->getLastVersion()->identifier;
+           }
 
            $oFormula->identifier = $oBaseFormula->identifier;
            $oFormula->item_id = $oBaseFormula->item_id;
@@ -305,7 +308,7 @@ class SFormulasController extends Controller {
         //               ->select(\DB::raw("MAX(folio) as max_folio"))
         //               ->take(1)
         //               ->get();
-        
+
         // $oFormula->folio = str_pad(($iFolio[0]->max_folio + 1), 5, "0", STR_PAD_LEFT);
 
         $oFormula->is_deleted = \Config::get('scsys.STATUS.ACTIVE');

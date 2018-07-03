@@ -159,6 +159,8 @@ class Ingredient {
       this.dMax = 0;
       this.bIsDeleted = false;
       this.iFormulaId = 0;
+
+      this.sItemRecipe = 'NA';
     }
 }
 
@@ -366,6 +368,13 @@ function addIngredient(oRow) {
 
     oData.jsFormula.addRow(oRow);
 
+    var dTotalMass = 0;
+    for (var i = 0; i < oData.jsFormula.lFormulaRows.length; i++) {
+        dTotalMass += oData.jsFormula.lFormulaRows[i].dMass;
+    }
+
+    dPercentage = oRow.dMass == 0 ? 0 : oRow.dMass * 100 / dTotalMass;
+
     oIngredientsTable.row.add([
         oRow.idRow,
         oRow.iIdFormulaRow,
@@ -385,9 +394,8 @@ function addIngredient(oRow) {
     setFormulaToForm();
 
     var column = oIngredientsTable.column( 6 );
-    var dMass = parseFloat(column.footer().innerHTML, 10) + parseFloat(oItem.mass, 10);
 
-    column.footer().innerHTML =  parseFloat(dMass).toFixed(oData.DEC_QTY);
+    column.footer().innerHTML =  parseFloat(dTotalMass).toFixed(oData.DEC_QTY);
 
     $('mat_prod').val(null).trigger("chosen:updated");
     document.getElementById('lUnitIngredient').innerHTML = '-';

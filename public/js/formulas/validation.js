@@ -26,7 +26,7 @@ $('#closeIngredient').on('click', function(e) {
 
     row.iIdItem = document.getElementById('mat_prod').value;
     row.iIdItemRecipe = document.getElementById('sel_formula').value;
-    row.sItemRecipe = document.getElementById('sel_formula').textContent;
+    row.sItemRecipe = row.iIdItemRecipe > 1 ? document.getElementById('sel_formula').textContent : 'NA';
     // row.tStart = document.getElementById('dt_start_ing').value;
     // row.tEnd = document.getElementById('dt_end_ing').value;
     row.dQuantity = document.getElementById('quantityIngredient').value;
