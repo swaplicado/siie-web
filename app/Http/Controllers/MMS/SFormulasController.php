@@ -229,12 +229,14 @@ class SFormulasController extends Controller {
 
         $oFormula = new SFormula();
         $lRows = [];
+        $dTotalMass = 0;
 
         if ($iFormula != 0) {
            $oBaseFormula = SFormula::find($iFormula);
            $lRows = $oBaseFormula->rows;
            foreach ($lRows as $row) {
               $row->sItemRecipe = $row->getLastVersion()->identifier;
+              $dTotalMass += $row->mass;
            }
 
            $oFormula->identifier = $oBaseFormula->identifier;
@@ -260,7 +262,7 @@ class SFormulasController extends Controller {
         return view('mms.formulas.createEdit')
                       ->with('oFormula', $oFormula)
                       ->with('lRows', $lRows)
-                      ->with('dTotalMass', 0)
+                      ->with('dTotalMass', $dTotalMass)
                       ->with('lUnits', $lUnits)
                       ->with('lMaterials', $lMaterials)
                       ->with('lMaterialsList', $lMaterialsList)
@@ -327,6 +329,7 @@ class SFormulasController extends Controller {
                 // $oIngredient->dt_start = $row->{'tStart'};
                 // $oIngredient->dt_end = $row->{'tEnd'};
                 $oIngredient->quantity = $row->{'dQuantity'};
+                $oIngredient->mass = $row->{'dMass'};
                 // $oIngredient->cost = $row->{'dCost'};
                 // $oIngredient->duration = $row->{'dDuration'};
                 $oIngredient->is_deleted = $row->{'bIsDeleted'};
@@ -443,7 +446,7 @@ class SFormulasController extends Controller {
         foreach ($oFormula->rows as $row) {
             $row->item->itemType;
             if (!$row->is_deleted) {
-              $dTotalMass += $row->item->mass * $row->quantity;
+              $dTotalMass += $row->mass;
             }
         }
 
@@ -492,6 +495,7 @@ class SFormulasController extends Controller {
           // $oIngredient->dt_start = $row->{'tStart'};
           // $oIngredient->dt_end = $row->{'tEnd'};
           $oIngredient->quantity = $row->dQuantity;
+          $oIngredient->mass = $row->dMass;
           // $oIngredient->cost = $row->{'dCost'};
           // $oIngredient->duration = $row->{'dDuration'};
           $oIngredient->is_deleted = $row->bIsDeleted;
@@ -628,6 +632,8 @@ class SFormulasController extends Controller {
 
         $lMaterials = $lMaterials->select('ei.id_item', 'ei.code', 'ei.name',
                                           'ei.unit_id', 'eu.code as unit_code',
+                                          'ei.is_bulk',
+                                          'ei.mass',
                                           'eu.name as unit_name',
                                           'eit.name as item_type',
                                           'eit.item_class_id as item_class',
@@ -647,11 +653,17 @@ class SFormulasController extends Controller {
         $oFormulaCopy->recipe = -1;
         $oFormulaCopy->version = 1;
 
+        $dTotalMass = '0';
         $lRows = $oFormula->rows;
+        foreach ($lRows as $row) {
+           $row->sItemRecipe = $row->getLastVersion()->identifier;
+           $dTotalMass += $row->mass;
+        }
 
         return view('mms.formulas.createEdit')->with('oFormula', $oFormulaCopy)
                                     ->with('lRows', $lRows)
                                     ->with('lUnits', $lUnits)
+                                    ->with('dTotalMass', $dTotalMass)
                                     ->with('lMaterials', $lMaterials)
                                     ->with('lMaterialsList', $lMaterialsList)
                                     ->with('title', trans('userinterface.titles.CREATE_FORMULA'))

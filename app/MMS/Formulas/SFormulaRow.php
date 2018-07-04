@@ -11,6 +11,7 @@ class SFormulaRow extends Model {
     protected $fillable = [
                             'id_formula_row',
                             'quantity',
+                            'mass',
                             'is_deleted',
                             'formula_id',
                             'item_id',

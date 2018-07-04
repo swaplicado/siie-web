@@ -150,6 +150,7 @@ class Ingredient {
       this.tStart = '';
       this.tEnd = '';
       this.dQuantity = 0;
+      this.dMass = 0;
       this.dCost = 0;
       this.dDuration = 0;
       this.iIdItemSubstitute = 0;
@@ -373,7 +374,7 @@ function addIngredient(oRow) {
         dTotalMass += oData.jsFormula.lFormulaRows[i].dMass;
     }
 
-    dPercentage = oRow.dMass == 0 ? 0 : oRow.dMass * 100 / dTotalMass;
+    dPercentage = parseFloat(oRow.dMass, 10) == 0 ? 0 : parseFloat(oRow.dMass, 10) * 100 / dTotalMass;
 
     oIngredientsTable.row.add([
         oRow.idRow,

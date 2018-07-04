@@ -154,8 +154,7 @@
 					@foreach ($oFormula->rows as $ingredient)
             @if (! $ingredient->is_deleted)
               <?php
-                $dMassRow = $ingredient->item->mass * $ingredient->quantity;
-                $dRowPercent = $dTotalMass == 0 ? 0 : ($dMassRow * 100 / $dTotalMass)
+                $dRowPercent = $dTotalMass == 0 ? 0 : ($ingredient->mass * 100 / $dTotalMass)
               ?>
   						<tr>
   								<td>{{ $i++ }}</td>
@@ -167,7 +166,7 @@
                   </td>
                   <td>{{ $ingredient->unit->code }}</td>
                   <td align="right">{{ session('utils')->
-                        formatNumber(($dMassRow), \Config::get('scsiie.FRMT.QTY')) }}
+                        formatNumber(($ingredient->mass), \Config::get('scsiie.FRMT.QTY')) }}
                   </td>
                   <td align="right">{{ session('utils')->formatNumber($dRowPercent, \Config::get('scsiie.FRMT.QTY')) }}</td>
                   <td>{{ $ingredient->item->gender->type->name }}</td>
@@ -242,6 +241,7 @@
               // oRow.tStart = oFormulaRow.dt_start;
               // oRow.tEnd = oFormulaRow.dt_end;
               oRow.dQuantity = oFormulaRow.quantity;
+              oRow.dMass = oFormulaRow.mass;
               // oRow.dCost = oFormulaRow.cost;
               // oRow.dDuration = oFormulaRow.duration;
 

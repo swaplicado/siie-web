@@ -13,6 +13,7 @@ class SIngredientCore {
          oIngredient.iIdUnit = oFormulaRow.unit_id;
          oIngredient.iIdItemRecipe = oFormulaRow.item_recipe_id;
          oIngredient.dQuantity = oFormulaRow.quantity;
+         oIngredient.dMass = oFormulaRow.mass;
          oIngredient.bIsDeleted = oFormulaRow.is_deleted;
          oIngredient.iFormulaId = 0;
          oIngredient.sItemRecipe = oFormulaRow.sItemRecipe;

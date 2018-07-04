@@ -27,8 +27,7 @@ var oTable = $('#formulas_table').DataTable({
         },
         buttons: {
                 copy: 'Copiar',
-                print: 'Imprimir',
-                pageLength: 'Mostrar 10'
+                print: 'Imprimir'
             }
       },
       "dom": 'Bfrtip',
@@ -67,8 +66,7 @@ var oTable = $('#formulas_detail_table').DataTable({
         },
         buttons: {
                 copy: 'Copiar',
-                print: 'Imprimir',
-                pageLength: 'Mostrar 10'
+                print: 'Imprimir'
             }
       },
       "dom": 'Bfrtip',
