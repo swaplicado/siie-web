@@ -56,18 +56,61 @@
 									</span>
 								</td>
 								<td>{{ $row->id_reference }}</td>
-
 								<input type="hidden" value="<?php echo $row->id_segregation_event ?>" id="id_segregation_event" name="id_segregation_event">
-                <input type="hidden" value="<?php echo $newQ ?>" id="newQ" name="newQ">
-                <input type="hidden" value="<?php echo $type ?>" id="type" name="type">
+
             </tr>
 					@endforeach
 		    </tbody>
 		</table>
 	</div>
+
+	<input type="hidden" value="<?php echo $newQ ?>" id="newQ" name="newQ">
+	<input type="hidden" value="<?php echo $type ?>" id="type" name="type">
+	@if($newQ == 0)
+		<div class="col-md-3">
+
+			{!! Form::select('statusRlP', $lStatusRec, null,
+											['class'=>'form-control', 'id' => 'statusRlP',
+											'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
+											'required', ]) !!}
+		</div>
+		<div class="col-md-6">
+			{!! Form::text('notes',null,['class' => 'form-control',
+																						'id' => 'notesRFP']) !!}
+		</div>
+	@endif
+	@if($newQ == 1)
+		<div class="col-md-3">
+
+			{!! Form::select('statusRFP', $lStatusLib, null,
+											['class'=>'form-control statusRFP', 'id' => 'statusRFP',
+											'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
+											'required', ]) !!}
+		</div>
+		<div class="row">
+		<div class="col-md-3 warehouseP">
+
+		</div>
+		<div class="col-md-3 locationP">
+
+		</div>
+	</div>
+	<br>
+		<div class="row">
+		<div class="col-md-6">
+			
+			{!! Form::text('notes',null,['class' => 'form-control',
+																						'id' => 'notesRFP']) !!}
+		</div>
+		</div>
+		<br>
+	@endif
+
   <div class="col-md-3">
+
     {!! Form::submit('Aceptar', ['class' => 'btn btn-primary']) !!}
   </div>
+
 @endsection
 
 @section('js')
@@ -140,32 +183,6 @@
 					}
 			});
 		});
-
-		$(document).on('change', '.almacen',function(){
-			var eti_id=$(this).val();
-			 var opt=" ";
-			$.ajax({
-				type:'get',
-				url:'{!!URL::to('qms/segregation/findLocations')!!}',
-				data:{'id':eti_id,'status':status},
-
-					success:function(data){
-						opt+='<select class="form-control" id="ubicacion"  name="ubicacion" required>';
-							for(var i=0;i<data.length;i++){
-								opt+='<option value="'+data[i].id_whs_location+'">'+data[i].name+'</option>';
-						 }
-						 opt+='</select>';
-						 $('.location').empty(" ");
-						 $('.location').append(opt);
-
-					},
-					error:function(){
-							console.log('falle');
-					}
-			});
-
-
-			});
 			$(document).on('change', '.almacenP',function(){
 				var eti_id=$(this).val();
 				 var opt=" ";

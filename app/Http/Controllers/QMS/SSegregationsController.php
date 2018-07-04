@@ -254,9 +254,17 @@ class SSegregationsController extends Controller
                                       $request->type
                                     ]);
       }
+      $lStatusRec = SStatus::where('is_deleted', false)
+                              ->where('id_segregation_event',5)
+                              ->orwhere('id_segregation_event',6)
+                              ->orwhere('id_segregation_event',7)
+                              ->lists('name', 'id_segregation_event');
       return view('wms.segregations.info')
                 ->with('data',$segregated)
-                ->with('title','Movimiento de Liberación');
+                ->with('title','Movimiento de Liberación')
+                ->with('newQ',0)
+                ->with('type',$request->type)
+                ->with('lStatusRec',$lStatusRec);
     }
 
     public static function toRefuse(Request $request){
@@ -280,9 +288,18 @@ class SSegregationsController extends Controller
                                       $request->type
                                     ]);
       }
+
+      $lStatusLib = SStatus::where('is_deleted', false)
+                              ->where('id_segregation_event',8)
+                              ->orwhere('id_segregation_event',9)
+                              ->orwhere('id_segregation_event',10)
+                              ->lists('name', 'id_segregation_event');
       return view('wms.segregations.info')
                 ->with('data',$segregated)
-                ->with('title','Movimiento de Rechazo');
+                ->with('title','Movimiento de Rechazo')
+                ->with('newQ',1)
+                ->with('type',$request->type)
+                ->with('lStatusLib',$lStatusLib);
     }
 
     public static function prepareData(Request $request){
@@ -296,7 +313,15 @@ class SSegregationsController extends Controller
       $aParameters[\Config::get('scwms.SEG_PARAM.ID_BRANCH')] = $request->branch_id;
       $aParameters[\Config::get('scwms.SEG_PARAM.ID_REFERENCE')] =$request->id_reference;
       $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_PREV')] = $request->segregation_type_id;
+      if($request->newQ == 0){
+        $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $request->statusRlP;
+      }else if($request->newQ == 1){
+        $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $request->statusRFP;
+        $aParameters[\Config::get('scwms.SEG_PARAM.WAREHOUSE')] = $request->almacen;
+        $aParameters[\Config::get('scwms.SEG_PARAM.LOCATION')] = $request->ubicacion;
+      } else{
       $aParameters[\Config::get('scwms.SEG_PARAM.ID_STATUS_QLTY_NEW')] = $request->newQ;
+      }
       $aParameters[\Config::get('scwms.SEG_PARAM.QUANTITY')] = 0;
       $aParameters[\Config::get('scwms.SEG_PARAM.EVENT')] = $request->id_segregation_event;
 

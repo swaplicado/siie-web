@@ -77,7 +77,7 @@ class SSegregationCore
         }
 
         if($dQuantity ==0){
-              $LSegregation = session('segregation')->segregatePallet($iIdPallet,$iIdWhs,$idEvent);
+              $LSegregation = session('segregation')->segregatePallet($iIdPallet,$iIdWhs,$iIdQltyPrev);
               foreach ($LSegregation as $seg) {
                 $oSegregation = new SSegregation();
                 $oSegRow = new SSegregationRow();
@@ -694,15 +694,15 @@ class SSegregationCore
                 ->where('wp.pallet', '!=', 'SIN TARIMA');
 
     switch ($iQualityType) {
-      case \Config::get('scqms.QMS_VIEW.BY_STATUS'):
-      case \Config::get('scqms.QMS_VIEW.CLASSIFY'):
+      case \Config::get('scqms.SEGREGATION_TYPE.SHIPMENT_ORDER'):
+      case \Config::get('scqms.SEGREGATION_TYPE.PRODUCTION_ORDER'):
         $query = $query->get();
         break;
-      case \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY'):
+      case \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'):
         $query = $query->where('ws.segregation_type_id', \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'))
                         ->get();
         break;
-      case \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'):
+      case \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE'):
         $query = $query->where('ws.segregation_type_id', \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE'))
                       ->get();
       break;
