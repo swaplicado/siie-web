@@ -18,10 +18,10 @@
                         echo $userCompanyRow->warehouses->id_whs;
                       } ?> class="list-group-item {{ $i == 0 ? 'active' : '' }}">
               <?php if($flag==1){
-                                  echo $userCompanyRow->name;
+                                  echo $userCompanyRow->code.' - '.$userCompanyRow->name;
                                 }
                     else{
-                          echo $userCompanyRow->warehouses->name;
+                          echo $userCompanyRow->warehouses->code.' - '.$userCompanyRow->warehouses->name;
                         } ?>
             </a>
           <?php $i++; ?>
@@ -29,9 +29,6 @@
       </div>
   </div>
 @endsection
-<div class="form-group">
-  <div class="list-group"
-</div>
 
 <script>
 

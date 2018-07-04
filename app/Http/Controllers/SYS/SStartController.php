@@ -67,6 +67,7 @@ class SStartController extends Controller
       {
         $lBranch = SBranch::where('is_deleted', 0)
                           ->where('partner_id', '=', session('partner')->id_partner )
+                          ->orderBy('erpu_branches.name')
                           ->paginate(10);
 
         $i = 0;
@@ -94,6 +95,7 @@ class SStartController extends Controller
                             ->join('erpu_branches', 'branch_id', '=', 'erpu_branches.id_branch')
                             ->where('erpu_branches.partner_id', session('partner')->id_partner)
                             ->where('user_id', \Auth::user()->id)
+                            ->orderBy('erpu_branches.name')
                             ->get();
 
         return view('start.branchwhs')
@@ -136,6 +138,7 @@ class SStartController extends Controller
                 {
                   $lWhs = SWarehouse::where('is_deleted', 0)
                                       ->where('branch_id', '=', session('branch')->id_branch)
+                                      ->orderBy('code', 'ASC')
                                       ->paginate(10);
 
                   $i = 0;
@@ -161,6 +164,7 @@ class SStartController extends Controller
                                       ->where('wmsu_whs.branch_id', session('branch')->id_branch)
                                       ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
                                       ->where('user_id', \Auth::user()->id)
+                                      ->orderBy('wmsu_whs.code', 'ASC')
                                       ->get();
 
                   return view('start.whs')

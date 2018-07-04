@@ -39,15 +39,15 @@
     <table id="formulas_detail_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
-                <th data-priority="1">Identificador</th>
-                <th data-priority="1" style="text-align: center;">V.</th>
-                <th style="text-align: center;">Fecha</th>
-                <th data-priority="1" style="text-align: center;">Código</th>
-                <th>Material/producto</th>
-                <th data-priority="1" style="text-align: center;">Un</th>
                 <th data-priority="1" style="text-align: center;">Cód. Ing</th>
                 <th>Ingrediente</th>
                 <th data-priority="1" style="text-align: center;">Cantidad</th>
+                <th data-priority="1" style="text-align: center;">Un</th>
+                <th data-priority="1">Ident. Formula</th>
+                <th data-priority="1" style="text-align: center;">V.</th>
+                <th style="text-align: center;">Fecha</th>
+                <th data-priority="1" style="text-align: center;">Código</th>
+                <th>Item fórmula</th>
                 <th data-priority="1" style="text-align: center;">Un</th>
                 <th style="text-align: center;">Est.</th>
                 <th style="text-align: center;">Opciones</th>
@@ -56,16 +56,16 @@
         <tbody>
           @foreach ($formulas as $formula)
             <tr>
+                <td style="text-align: center;">{{ $formula->item_code_row }}</td>
+                <td>{{ $formula->item_row }}</td>
+                <td align="right">{{ session('utils')->formatNumber($formula->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
+                <td style="text-align: center;">{{ $formula->unit_code_row }}</td>
                 <td>{{ $formula->identifier }}</td>
                 <td style="text-align: center;">{{ $formula->version }}</td>
                 <td style="text-align: center;">{{ $formula->dt_date }}</td>
                 <td style="text-align: center;">{{ $formula->item_code }}</td>
                 <td>{{ $formula->item }}</td>
                 <td style="text-align: center;">{{ $formula->unit_code }}</td>
-                <td style="text-align: center;">{{ $formula->item_code_row }}</td>
-                <td>{{ $formula->item_row }}</td>
-                <td align="right">{{ session('utils')->formatNumber($formula->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
-                <td style="text-align: center;">{{ $formula->unit_code_row }}</td>
                 <td style="text-align: center;">
       						@if (! $formula->is_deleted)
       								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
