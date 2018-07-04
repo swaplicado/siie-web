@@ -79,6 +79,7 @@ class SStockController extends Controller
             $orderBy1 = 'ws.pallet_id';
             $orderBy2 = 'ws.item_id';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
             break;
           case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT'):
             $select = $select.', wl.lot as lot_, wl.dt_expiry';
@@ -521,5 +522,5 @@ class SStockController extends Controller
        }
     }
 
-    
+
 }
