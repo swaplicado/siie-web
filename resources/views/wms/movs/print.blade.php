@@ -118,7 +118,7 @@
       		        </tr>
       		    </thead>
       		    <tbody>
-                <?php $dTotal=0 ?>
+                <?php $dTotal = 0; ?>
       					@foreach ($oMovement->rows as $row)
       						<tr>
 						        <td>{{ $row->item->code }}</td>
@@ -138,7 +138,7 @@
                       <td>{{ $lotRow->lot->dt_expiry }}</td>
                     </tr>
                   @endforeach
-                  {!! $dTotal+= ($row->quantity * $row->amount_unit) !!}
+                  <?php $dTotal += ($row->quantity * $row->amount_unit) ?>
                 @endforeach
               </tbody>
               <tfoot>
