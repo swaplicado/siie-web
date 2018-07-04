@@ -36,14 +36,13 @@ class MmsChangeFormulasTables extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-          // Schema::connection($this->sConnection)->drop('mms_formula_notes');
-          // Schema::connection($this->sConnection)->drop('mms_form_substitutes');
-          // Schema::connection($this->sConnection)->drop('mms_formulas');
-          // Schema::connection($this->sConnection)->drop('mms_formula_rows');
+          Schema::connection($this->sConnection)->drop('mms_formula_notes');
+          Schema::connection($this->sConnection)->drop('mms_form_substitutes');
+          Schema::connection($this->sConnection)->drop('mms_formula_rows');
+          Schema::connection($this->sConnection)->drop('mms_formulas');
 
           Schema::connection($this->sConnection)->create('mms_formulas', function (blueprint $table) {
           	$table->increments('id_formula');
-          	$table->char('folio', 50);
           	$table->integer('version');
           	$table->integer('recipe')->unsigned();
           	$table->char('identifier', 250);
@@ -64,7 +63,7 @@ class MmsChangeFormulasTables extends Migration {
           });
 
           DB::connection($this->sConnection)->table('mms_formulas')->insert([
-          	['id_formula' => '1','folio' => '00000','version' => '0','recipe' => '0',
+          	['id_formula' => '1','version' => '0','recipe' => '0',
             'identifier' => 'NA','dt_date' => '2017-01-01','notes' => 'NA',
             'quantity' => '0','is_deleted' => '0','item_id' => '1','unit_id' => '1',
             'created_by_id' => '1','updated_by_id' => '1'],
@@ -118,5 +117,7 @@ class MmsChangeFormulasTables extends Migration {
           Schema::connection($this->sConnection)->drop('mms_formula_rows');
           Schema::connection($this->sConnection)->drop('mms_formulas');
         }
+
+        DB::table('syss_permissions')->where('code', '120')->delete();
     }
 }

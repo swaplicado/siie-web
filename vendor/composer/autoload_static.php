@@ -442,6 +442,7 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'ErpAddFamiliesGroupsGendersTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000081_erp_add_families_groups_genders_table.php',
         'ErpAddImportationsTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000093_erp_add_importations_table.php',
         'ErpAddItemRotflagChanges' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000213_erp_add_item_rotflag_changes.php',
+        'ErpAddItemStatusTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000215_erp_add_item_status_table.php',
         'ErpAddItemUnitsTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000083_erp_add_item_units_table.php',
         'ErpAddItemsTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000082_erp_add_items_table.php',
         'ErpAddMonthsTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000046_erp_add_months_table.php',

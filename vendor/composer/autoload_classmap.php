@@ -36,6 +36,7 @@ return array(
     'ErpAddFamiliesGroupsGendersTable' => $baseDir . '/database/migrations/2017_08_01_000081_erp_add_families_groups_genders_table.php',
     'ErpAddImportationsTable' => $baseDir . '/database/migrations/2017_08_01_000093_erp_add_importations_table.php',
     'ErpAddItemRotflagChanges' => $baseDir . '/database/migrations/2017_08_01_000213_erp_add_item_rotflag_changes.php',
+    'ErpAddItemStatusTable' => $baseDir . '/database/migrations/2017_08_01_000215_erp_add_item_status_table.php',
     'ErpAddItemUnitsTable' => $baseDir . '/database/migrations/2017_08_01_000083_erp_add_item_units_table.php',
     'ErpAddItemsTable' => $baseDir . '/database/migrations/2017_08_01_000082_erp_add_items_table.php',
     'ErpAddMonthsTable' => $baseDir . '/database/migrations/2017_08_01_000046_erp_add_months_table.php',
