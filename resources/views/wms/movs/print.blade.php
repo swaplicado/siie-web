@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
-  <head>
+<html lang="es"><head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Saporis Comercial SA de CV</title>
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
@@ -26,8 +25,7 @@
           footer { position: fixed; bottom: -20px; left: 0px; right: 0px; height: 50px; }
       </style>
     {{-- {!! Html::style('bootstrap/css/bootstrap.min.css') !!} --}}
-  </head>
-  <body>
+  </head><body>
       <table width="100%">
         <tr style='height:18px'>
             <td class='r1'>
@@ -195,5 +193,4 @@
           </tr>
         </table>
       </footer>
-  </body>
-</html>
+  </body></html>
