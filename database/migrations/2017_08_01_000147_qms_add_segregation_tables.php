@@ -54,6 +54,7 @@ class QmsAddSegregationTables extends Migration {
           Schema::connection($this->sConnection)->create('wms_segregation_rows', function (blueprint $table) {
           	$table->increments('id_segregation_row');
           	$table->decimal('quantity', 23,8);
+            $table->char('notes', 250);
             $table->boolean('is_deleted');
           	$table->integer('segregation_id')->unsigned();
           	$table->integer('segregation_mvt_type_id')->unsigned();
@@ -65,7 +66,6 @@ class QmsAddSegregationTables extends Migration {
           	$table->integer('year_id')->unsigned();
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
-            $table->text('notes')->unsigned();
             $table->integer('created_by_id')->unsigned();
           	$table->integer('updated_by_id')->unsigned();
           	$table->timestamps();
