@@ -11,20 +11,20 @@
   </div>
   <div class="row">
     <?php echo createBlock(asset('images/wms/monta.gif'), route('wms.docs.index',
-                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
                                                     \Config::get('scsiie.DOC_CLS.ORDER'),
                                                     \Config::get('scsiie.DOC_TYPE.ORDER'),
                                                     \Config::get('scwms.DOC_VIEW.NORMAL'),
                                                     \Config::get('scwms.DOC_VIEW_S.BY_SUPP'),
-                                                    trans('userinterface.titles.LIST_OR_PUR_BY_SUPP')]),
+                                                    trans('userinterface.titles.LIST_INVS_SAL_BY_SUPP')]),
                                                     trans('wms.DOC_ASSORTMENT'), "success3", trans('wms.DOC_ASSORTMENT_T'));?>
     <?php echo createBlock(asset('images/wms/movss.gif'), route('wms.docs.index',
-                                                    [\Config::get('scsiie.DOC_CAT.PURCHASES'),
+                                                    [\Config::get('scsiie.DOC_CAT.SALES'),
                                                     \Config::get('scsiie.DOC_CLS.ADJUST'),
                                                     \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE'),
                                                     \Config::get('scwms.DOC_VIEW.NORMAL'),
                                                     \Config::get('scwms.DOC_VIEW_S.BY_SUPP'),
-                                                    trans('userinterface.titles.LIST_CN_PUR_BY_SUPP')]),
+                                                    trans('userinterface.titles.LIST_CN_SAL_BY_SUPP')]),
                                                     trans('wms.DOC_RETURNS'), "success3", trans('wms.DOC_RETURNS_T'));?>
   </div>
   <div class="row">

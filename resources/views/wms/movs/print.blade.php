@@ -156,6 +156,9 @@
               </tfoot>
             </table>
             <hr>
+            <br>
+            <br>
+            <br>
             <table width="100%">
               <tr style='height:18px'>
                   <td class="c21_1">
@@ -178,6 +181,14 @@
           <tr>
               <td class="c21_1">
                   SIIE Web 1.0 Software Aplicado SA de CV
+              </td>
+              <td>
+                <script type="text/php">
+                  if (isset($pdf)) {
+                    $font = $fontMetrics->getFont("Calibri", "bold");
+                    $pdf->page_text(530, 765, "Página {PAGE_NUM}/{PAGE_COUNT}", $font, 10, array(0, 0, 0));
+                  }
+                </script>
               </td>
               <td class='trr'>
                   {{ 'Impresión: '.Carbon\Carbon::now()->toDateTimeString() }}
