@@ -213,6 +213,7 @@ class SMovsCore {
                   wl.id_lot,
                   wl.lot,
                   wl.dt_expiry,
+                  wmr.pallet_id AS pallet,
                   eu.code AS unit,
                   eb.code AS branch_code,
                   ww.code AS whs_code,

@@ -44,14 +44,15 @@
 								<th>{{ trans('wms.labels.MAT_PROD') }}</th>
 								<th>{{ trans('wms.labels.LOT') }}</th>
 								<th>{{ trans('wms.labels.EXPIRATION') }}</th>
+								<th>{{ trans('wms.labels.PALLET') }}</th>
+								<th>{{ trans('wms.labels.INPUTS') }}</th>
+								<th>{{ trans('wms.labels.OUTPUTS') }}</th>
 								<th>{{ trans('wms.labels.UN') }}</th>
-								<th>{{ trans('wms.labels.BCH') }}</th>
-								<th>{{ trans('wms.labels.WHS') }}</th>
 								<th>{{ trans('userinterface.labels.FOLIO') }}</th>
 								<th>{{ trans('userinterface.labels.MVT_DATE') }}</th>
 								<th>{{ trans('wms.labels.MVT_TYPE') }}</th>
-								<th>{{ trans('wms.labels.INPUTS') }}</th>
-								<th>{{ trans('wms.labels.OUTPUTS') }}</th>
+								<th>{{ trans('wms.labels.BCH') }}</th>
+								<th>{{ trans('wms.labels.WHS') }}</th>
 								<th>{{ trans('siie.labels.ORDER') }}</th>
 								<th>{{ trans('userinterface.labels.DATE') }}</th>
 								<th>{{ trans('siie.labels.INVOICE') }}</th>
@@ -67,25 +68,26 @@
 								<td>{{ $row->item }}</td>
 								<td>{{ $row->lot }}</td>
 								<td>{{ \Carbon\Carbon::parse($row->dt_expiry)->format('Y-m-d') }}</td>
+								<td>{{ $row->pallet == 1 ? 'SIN TARIMA' : $row->pallet }}</td>
 								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
-		            <td>{{ $row->unit }}</td>
-		            <td>{{ $row->branch_code }}</td>
-		            <td>{{ $row->whs_code }}</td>
-		            <td>{{ $row->mov_code.'-'.str_pad($row->mov_folio, 5, "0", STR_PAD_LEFT) }}</td>
-								<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
-		            <td>{{ $row->movement }}</td>
 								<?php
-											$dInputs = 0;
-											$dOutputs = 0;
-											if ($row->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
-												 $dInputs = $row->is_lot ? $row->lot_quantity : $row->row_quantity;
-											}
-											else {
-												 $dOutputs = $row->is_lot ? $row->lot_quantity : $row->row_quantity;
-											}
-								 ?>
+								$dInputs = 0;
+								$dOutputs = 0;
+								if ($row->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+									$dInputs = $row->is_lot ? $row->lot_quantity : $row->row_quantity;
+								}
+								else {
+									$dOutputs = $row->is_lot ? $row->lot_quantity : $row->row_quantity;
+								}
+								?>
 								<td align="right">{{ session('utils')->formatNumber($dInputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 								<td align="right">{{ session('utils')->formatNumber($dOutputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
+		            <td>{{ $row->unit }}</td>
+								<td>{{ $row->mov_code.'-'.str_pad($row->mov_folio, 5, "0", STR_PAD_LEFT) }}</td>
+								<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
+								<td>{{ $row->movement }}</td>
+		            <td>{{ $row->branch_code }}</td>
+		            <td>{{ $row->whs_code }}</td>
 								@if ($row->doc_order_id > 1)
 									<td>{{ $row->ser_num_order == '' ? $row->num_order : $row->ser_num_order.'-'.$row->num_order }}</td>
 									<td>{{ \Carbon\Carbon::parse($row->dt_order)->format('Y-m-d') }}</td>
