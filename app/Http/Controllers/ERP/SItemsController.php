@@ -11,6 +11,7 @@ use Laracasts\Flash\Flash;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
+use App\ERP\SItemStatus;
 use App\ERP\SItemGender;
 use App\ERP\SItemGroup;
 use App\ERP\SItemClass;
@@ -106,6 +107,10 @@ class SItemsController extends Controller
                         ->where('is_deleted', false)
                         ->select('id_unit', \DB::raw("CONCAT(code, '-', name) as name"))
                         ->lists('name', 'id_unit');
+        $lStatus = SItemStatus::orderBy('name', 'ASC')
+                        ->select('id_item_status', \DB::raw("CONCAT(code, '-', name) as name"))
+                        ->where('is_deleted', false)
+                        ->lists('name', 'id_item_status');
 
         $sTitle = '';
 
@@ -127,6 +132,7 @@ class SItemsController extends Controller
 
         return view('siie.items.createEdit')
                                 ->with('title', $sTitle)
+                                ->with('lStatus', $lStatus)
                                 ->with('genders', $lGenders)
                                 ->with('units', $lUnits);
     }
@@ -194,6 +200,10 @@ class SItemsController extends Controller
                         ->select('id_unit', \DB::raw("CONCAT(code, '-', name) as name"))
                         ->where('is_deleted', false)
                         ->lists('name', 'id_unit');
+        $lStatus = SItemStatus::orderBy('name', 'ASC')
+                        ->select('id_item_status', \DB::raw("CONCAT(code, '-', name) as name"))
+                        ->where('is_deleted', false)
+                        ->lists('name', 'id_item_status');
 
         $sTitle = '';
 
@@ -215,6 +225,7 @@ class SItemsController extends Controller
 
         return view('siie.items.createEdit')
                                 ->with('title', $sTitle)
+                                ->with('lStatus', $lStatus)
                                 ->with('genders', $lGenders)
                                 ->with('units', $lUnits)
                                 ->with('item', $item);
@@ -261,11 +272,48 @@ class SItemsController extends Controller
 
         $item = SItem::find($id);
 
+        $itemClass = $item->gender->item_class_id;
+
+        $lGenders = SItemGender::where('item_class_id', $itemClass)
+                                ->where('is_deleted', false)
+                                ->orderBy('name', 'ASC')
+                                ->lists('name', 'id_item_gender');
+        $lUnits = SUnit::orderBy('name', 'ASC')
+                        ->select('id_unit', \DB::raw("CONCAT(code, '-', name) as name"))
+                        ->where('is_deleted', false)
+                        ->lists('name', 'id_unit');
+        $lStatus = SItemStatus::orderBy('name', 'ASC')
+                        ->select('id_item_status', \DB::raw("CONCAT(code, '-', name) as name"))
+                        ->where('is_deleted', false)
+                        ->lists('name', 'id_item_status');
+
+        $sTitle = '';
+
+        switch ($itemClass) {
+          case \Config::get('scsiie.ITEM_CLS.MATERIAL'):
+            $sTitle = trans('userinterface.titles.EDIT_MATERIAL');
+            break;
+          case \Config::get('scsiie.ITEM_CLS.PRODUCTS'):
+            $sTitle = trans('userinterface.titles.EDIT_PRODUCT');
+            break;
+          case \Config::get('scsiie.ITEM_CLS.SPENDING'):
+            $sTitle = trans('userinterface.titles.EDIT_SPENDING');
+            break;
+
+          default:
+            # code...
+            break;
+        }
+
         $itemCopy = clone $item;
         $itemCopy->id_item = 0;
 
         return view('siie.items.createEdit')->with('item', $itemCopy)
-                                              ->with('bIsCopy', true);
+                                            ->with('title', $sTitle)
+                                            ->with('lStatus', $lStatus)
+                                            ->with('genders', $lGenders)
+                                            ->with('units', $lUnits)
+                                            ->with('bIsCopy', true);
     }
 
     public function activate(Request $request, $id)

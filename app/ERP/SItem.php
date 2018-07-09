@@ -23,6 +23,7 @@ class SItem extends SModel {
                           'is_deleted',
                           'item_gender_id',
                           'unit_id',
+                          'item_status_id',
                         ];
 
   /**
@@ -63,6 +64,16 @@ class SItem extends SModel {
   public function pallet()
   {
     return $this->hasmany('App\WMS\SPallet');
+  }
+
+  /**
+   * [unit description]
+   * Return object SItemStatus
+   * @return SItemStatus
+   */
+  public function status()
+  {
+    return $this->belongsTo('App\ERP\SItemStatus', 'item_status_id');
   }
 
   /**

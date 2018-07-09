@@ -65,6 +65,12 @@
 	  <div class="col-md-6">
 
 			<div class="form-group">
+				{!! Form::label('item_status_id', trans('userinterface.labels.STATUS').'*') !!}
+				{!! Form::select('item_status_id', $lStatus, isset($item) ?  $item->item_status_id : null, ['class'=>'form-control select-one',
+											'placeholder' => trans('userinterface.placeholders.SELECT_UNIT'), 'required']) !!}
+			</div>
+
+			<div class="form-group">
 				{!! Form::label('without_rotation', trans('wms.labels.IGNORE_ROTATION')) !!}
 				{!! Form::checkbox('without_rotation', 1, isset($item) ? $item->without_rotation : false, ['class' => 'form-control']) !!}
 			</div>
