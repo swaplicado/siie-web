@@ -21,7 +21,11 @@ oPlanesTable = $('#planes_table').DataTable({
         "oAria": {
             "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
             "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-        }
+        },
+        "buttons": {
+                "copy": 'Copiar',
+                "print": 'Imprimir'
+            }
       },
       "colReorder": true,
       "dom": 'Bfrtip',
@@ -31,5 +35,11 @@ oPlanesTable = $('#planes_table').DataTable({
       ],
       "buttons": [
             'pageLength', 'copy', 'csv', 'excel', 'print'
+        ],
+        "columnDefs": [
+          {
+              "targets": [0, 1, 2, 6],
+              "className": "text-center"
+          }
         ]
   });
