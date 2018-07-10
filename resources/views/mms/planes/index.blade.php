@@ -86,6 +86,17 @@
 
 @section('js')
   <script src="{{ asset('js/mms/planes/tables.js')}}"></script>
+	<script>
+			 var iFolio = <?php echo json_encode($iFolio); ?>;
+
+			 if (iFolio != 0) {
+						swal(
+								'Folio: ' + iFolio,
+								'',
+								'success'
+							);
+			 }
+	</script>
 @endsection
 
 @section('footer')

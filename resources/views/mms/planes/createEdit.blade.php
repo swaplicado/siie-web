@@ -53,7 +53,10 @@
             {!! Form::label('production_plan', trans('userinterface.labels.NAME').'*'	) !!}
             {!! Form::text('production_plan', isset($oPlan->production_plan) ?
                                 $oPlan->production_plan : null,
-                            ['id' => 'production_plan', 'class' => 'form-control input-sm', 'required']) !!}
+                            ['id' => 'production_plan',
+                              'class' => 'form-control input-sm',
+                              'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+                              'required']) !!}
           </div>
         </div>
         <div class="col-md-6">

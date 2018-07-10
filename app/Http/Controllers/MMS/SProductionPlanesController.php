@@ -36,7 +36,7 @@ class SProductionPlanesController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $iFolio = 0)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
@@ -82,6 +82,7 @@ class SProductionPlanesController extends Controller {
         return view('mms.planes.index')
             ->with('planes', $oPlanes)
             ->with('sTitle', $sTitle)
+            ->with('iFolio', $iFolio)
             ->with('actualUserPermission', $this->oCurrentUserPermission)
             ->with('iFilter', $this->iFilter);
     }
@@ -136,7 +137,7 @@ class SProductionPlanesController extends Controller {
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 
-        return redirect()->route('mms.planes.index');
+        return redirect()->route('mms.planes.index', str_pad($oProductionPlan->folio, 5, "0", STR_PAD_LEFT));
     }
 
     /**
@@ -199,7 +200,7 @@ class SProductionPlanesController extends Controller {
 
         Flash::success(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('mms.planes.index');
+        return redirect()->route('mms.planes.index', 0);
     }
 
     /**

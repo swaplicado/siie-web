@@ -74,8 +74,9 @@
           <div class="form-group">
             {!! Form::label('identifier', trans('mms.labels.NAME_FORMULA').'*') !!}
             {!! Form::text('identifier',
-              isset($oFormula->identifier) ?  $oFormula->identifier : '', ['class'=>'form-control', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
-                                                          'placeholder' => trans('mms.placeholders.NAME_FORMULA'), 'required']) !!}
+              isset($oFormula->identifier) ?  $oFormula->identifier : '', ['class'=>'form-control',
+                  'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+                  'placeholder' => trans('mms.placeholders.NAME_FORMULA'), 'required']) !!}
           </div>
         </div>
         <div class="col-md-1">
