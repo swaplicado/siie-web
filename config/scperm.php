@@ -62,6 +62,7 @@ return [
                   'INVENTORY_OPERATION' => '016',
                   'QUALITY' => '050',
                   'MMS_FORMULAS' => '120',
+                  'MMS_PRODUCTION_PLANES' => '121',
                   'IMPORTATIONS' => '150',
 
                   'ERP' =>  '101',

@@ -240,6 +240,20 @@ Route::post('manage/changedate',[
   			'uses' => 'MMS\SFormulasController@Activate',
   			'as' => 'mms.formulas.activate'
   		]);
+
+      /*
+      * Production planes
+      **/
+      Route::resource('planes','MMS\SProductionPlanesController');
+      Route::get('planes/{id}/destroy',[
+  			'uses' => 'MMS\SProductionPlanesController@Destroy',
+  			'as' => 'mms.planes.destroy'
+  		]);
+      Route::get('planes/{id}/activate', [
+  			'uses' => 'MMS\SProductionPlanesController@Activate',
+  			'as' => 'mms.planes.activate'
+  		]);
+
     });
 
 

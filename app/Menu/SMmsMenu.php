@@ -22,6 +22,9 @@ class SMmsMenu {
                           Link::toRoute('mms.formulas.index', trans('mms.labels.FORMULAS')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.MMS_FORMULAS')),
                           Link::toRoute('mms.formulas.indexdetail', trans('mms.labels.FORMULAS_DETAIL')))
+                ->html('', ['role' => 'separator', 'class' => 'divider'])
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.MMS_PRODUCTION_PLANES')),
+                          Link::toRoute('mms.planes.index', trans('mms.PRODUCTION_PLANES')))
         )
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
