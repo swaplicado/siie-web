@@ -96,6 +96,8 @@
 											'CREATE_WAREHOUSE' => 'Crear almacén',
 											'CREATE_LOCATION' => 'Crear ubicación',
 											'CREATE_LOTS' => 'Crear lote',
+											'CREATE_FLOORS' => 'Crear planta',
+											'CREATE_ORDERS' => 'Crear orden de producción',
 											'CREATE_MATERIAL' => 'Crear material',
 											'CREATE_PRODUCT' => 'Crear producto',
 											'CREATE_SPENDING' => 'Crear gasto',
@@ -119,6 +121,8 @@
 											'EDIT_WAREHOUSE' => 'Modificar almacén',
 											'EDIT_LOCATION' => 'Modificar ubicación',
 											'EDIT_LOTS' => 'Modificar lote',
+											'EDIT_FLOORS' => 'Modificar planta',
+											'EDIT_ORDERS' => 'Modificar orden de produccion',
 											'EDIT_FAMILY' => 'Modificar familia de ítems',
 											'EDIT_FOLIO' => 'Modificar folio',
 											'EDIT_LIMIT' => 'Modificar limit',
@@ -136,6 +140,7 @@
 											'WHS_DOCUMENTS' => 'Documentos de almacén',
 											'GENERATION_BARCODE' => 'Generación de códigos de barras',
 											'LIST_ITEM_CONTAINERS' => 'Configuración de almacenamiento',
+											'LIST_FLOORS' => 'Plantas',
 											],
 
 		'buttons'      	=>  [
@@ -160,6 +165,7 @@
 											'LAST_NAME' => 'Apellidos...',
 							 				'NAME' => 'Nombre...',
 							 				'NOTE' => 'Ingrese aquí la nota...',
+											'CHARGES' => 'Cargas...',
 							 				'COMPANY' => 'Empresa...',
 							 				'COST' => 'Costo...',
 							 				'COUNTY' => 'Condado...',
@@ -179,6 +185,9 @@
 							 				'GENDER' => 'Género...',
 							 				'GROUP' => 'Nombre de grupo...',
 							 				'LOCALITY' => 'Localidad...',
+											'SELECT_FATHER' => 'Seleccione orden padre...',
+											'SELECT_FORMULA' => 'Seleccionar formula...',
+											'SELECT_FLOOR' => 'Seleccione planta...',
 											'SELECT_TYPE' => 'Seleccione tipo...',
 											'SELECT_USER' => 'Seleccione usuario...',
 											'SELECT_PERMISSION' => 'Seleccione permiso...',
@@ -215,6 +224,7 @@
 											'WHS_TYPE' => 'Tipo almacén...',
 											'LOCATION' => 'Ubicación...',
 											'ZIP_CODE' => 'Código postal...',
+											'DATE_ORDER' => 'Fecha de orden...',
 
 											],
 
@@ -239,6 +249,7 @@
 											'ASSIGNAMENT' => 'Tipo',
 											'BP' => 'Asociado Negocios',
 											'BRANCH' => 'Sucursal',
+											'CHARGE' => 'Cargas',
 											'CLASS' => 'Clase',
 											'CLOSED' => 'Cerrado',
 											'CODE' => 'Código',
@@ -251,6 +262,7 @@
 											'CREATED' => 'Creado',
 											'CREATED_BY' => 'Cr. por',
 											'DATE' => 'Fecha',
+											'DATE_ORDER' => 'Fecha orden',
 											'DATE_DOC' => 'Fecha documento',
 											'DB_HOST' => 'Host',
 											'DB_NAME' => 'Nombre de base de datos',
@@ -263,6 +275,8 @@
 											'EQUIVALENCE' =>   'Equivalencia',
 											'EXPIRY' => 'Fecha de Caducidad',
 											'FAMILY' =>	'Familia',
+											'FATHER_ORDER' => 'Orden padre',
+											'FORMULA' => 'Formula',
 											'FOLIO' =>	'Folio',
 											'GENDER' =>	'Género',
 											'GROUP' =>	'Nombre Grupo',
@@ -336,6 +350,10 @@
 											'WORK_DATE' => 'Fecha de trabajo',
 											'DATE_START' => 'Fecha de inicio',
 											'DATE_END' => 'Fecha de fin',
+											'FLOOR' => 'Planta',
+											'PLAN' => 'Plan producción',
+											'CHARGES' => 'Cargas',
+											'FATHER_ORDER' => 'Orden Padre',
 										]
 
 	];

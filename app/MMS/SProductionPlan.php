@@ -20,4 +20,13 @@ class SProductionPlan extends SModel {
                             'updated_by_id',
                           ];
 
+    public function order()
+    {
+      return $this->hasmany('App\MMS\SProductionOrder');
+    }
+
+    public function floor()
+    {
+      return $this->belongsTo('App\MMS\SFloor');
+    }
 }

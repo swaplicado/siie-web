@@ -1,58 +1,26 @@
-<?php namespace App\MMS\Formulas;
+<?php namespace App\MMS;
 
 use App\ERP\SModel;
 
-class SFormula extends SModel {
+class SStatusOrder extends SModel {
 
     protected $connection = 'siie';
-    protected $primaryKey = 'id_formula';
-    protected $table = 'mms_formulas';
-
-    public function getTable()
-    {
-      return $this->table;
-    }
+    protected $primaryKey = 'id_status';
+    protected $table = 'mms_status_order';
 
     protected $fillable = [
-                            'id_formula',
-                            'folio',
-                            'version',
-                            'recipe',
-                            'dt_date',
-                            'identifier',
-                            'notes',
-                            'quantity',
+                            'id_status',
+                            'name',
                             'is_deleted',
-                            'item_id',
-                            'unit_id',
                             'created_by_id',
                             'updated_by_id',
                           ];
 
-    /**
-     * [rows description]
-     * Return object SSegregartionRow
-     * @return SFormulaRow
-     */
     public function order()
     {
       return $this->hasmany('App\MMS\SProductionOrder');
     }
 
-    public function rows()
-    {
-      return $this->hasmany('App\MMS\Formulas\SFormulaRow', 'formula_id', 'id_formula');
-    }
-
-    /**
-     * [unit description]
-     * Return object SUnit
-     * @return SUnit
-     */
-    public function unit()
-    {
-      return $this->belongsTo('App\ERP\SUnit');
-    }
 
     // /**
     //  * [rows description]
