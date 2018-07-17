@@ -258,6 +258,44 @@ Route::post('manage/changedate',[
         'as' => 'mms.planes.index'
       ]);
 
+      /*
+      * floor
+      **/
+      Route::resource('floors','MMS\SFloorsController');
+      Route::get('floors/{id}/destroy',[
+        'uses' => 'MMS\SFloorsController@Destroy',
+        'as'   => 'mms.floors.destroy'
+      ]);
+      Route::get('floors/{id}/active',[
+        'uses' => 'MMS\SFloorsController@Activate',
+        'as'   => 'mms.floors.activate'
+      ]);
+      Route::get('floors/{id}/copy', [
+        'uses' => 'MMS\SFloorsController@Copy',
+        'as'   => 'mms.floors.copy'
+      ]);
+
+      /*
+      * production order
+      **/
+      Route::get('orders/findFormulas','MMS\SProductionOrdersController@findFormulas');
+      Route::resource('orders','MMS\SProductionOrdersController');
+      Route::get('orders/{id}/destroy',[
+        'uses' => 'MMS\SProductionOrdersController@Destroy',
+        'as'   => 'mms.orders.destroy'
+      ]);
+      Route::get('orders/{id}/active',[
+        'uses' => 'MMS\SProductionOrdersController@Activate',
+        'as'   => 'mms.orders.activate'
+      ]);
+      Route::get('orders/{id}/copy', [
+        'uses' => 'MMS\SProductionOrdersController@Copy',
+        'as'   => 'mms.orders.copy'
+      ]);
+
+
+
+
     });
 
 

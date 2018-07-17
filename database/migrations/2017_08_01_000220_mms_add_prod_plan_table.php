@@ -36,6 +36,21 @@ class MmsAddProdPlanTable extends Migration {
           $this->sDataBase = $base;
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
+          Schema::connection($this->sConnection)->create('mms_floor', function (blueprint $table) {
+            $table->increments('id_floor');
+            $table->char('code', 50);
+            $table->char('name', 100);
+            $table->integer('branch_id')->unsigned();
+            $table->boolean('is_deleted');
+            $table->integer('created_by_id')->unsigned();
+            $table->integer('updated_by_id')->unsigned();
+            $table->timestamps();
+
+            $table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
+            $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+            $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+          });
+
           Schema::connection($this->sConnection)->create('mms_production_planes', function (blueprint $table) {
           	$table->increments('id_production_plan');
           	$table->char('folio', 50);
@@ -53,11 +68,6 @@ class MmsAddProdPlanTable extends Migration {
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
-          DB::connection($this->sConnection)->table('mms_production_planes')->insert([
-          	['folio' => 'NA','production_plan' => 'NA','dt_start' => '2017-01-01',
-            'dt_end' => '2017-01-01', 'is_deleted' => '1', 'floor_id' => '1',
-            'created_by_id' => '1','updated_by_id' => '1'],
-          ]);
         }
 
         DB::table('syss_permissions')->insert([
