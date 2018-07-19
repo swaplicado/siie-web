@@ -7,6 +7,5 @@
   </center>
   <center>
     {{$barcode}} - {{session('company')->name}}
-    <br> Etiqueta: Lote
   </center>
 </div>

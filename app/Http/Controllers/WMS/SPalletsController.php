@@ -262,17 +262,17 @@ class SPalletsController extends Controller
 
       $barcode = SBarcode::generatePalletBarcode($dataBarcode,$data);
 
-      // view()->share('barcode',$barcode);
-        // view()->share('data',$data);
-        // $pdf = PDF::loadView('vista_pdf_1');
-        // $paper_size = array(0,0,431,287);
-        // $pdf->setPaper($paper_size);
-        // return $pdf->stream();
-        view()->share('barcode',$barcode);
-        view()->share('data',$data);
-        $pdf = PDF::loadView('vista_pdf_aux');
-        $paper_size = array(0,0,215,130);
-        $pdf->setPaper($paper_size);
-        return $pdf->stream();
+      view()->share('barcode',$barcode);
+      view()->share('data',$data);
+      $pdf = PDF::loadView('vista_pdf_1');
+      $paper_size = array(0,0,287,431);
+      $pdf->setPaper($paper_size,'portrait');
+      return $pdf->stream();
+      //   view()->share('barcode',$barcode);
+      //   view()->share('data',$data);
+      //   $pdf = PDF::loadView('vista_pdf_aux');
+      //   $paper_size = array(0,0,215,130);
+      //   $pdf->setPaper($paper_size);
+      //   return $pdf->stream();
     }
 }
