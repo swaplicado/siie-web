@@ -253,6 +253,10 @@ Route::post('manage/changedate',[
   			'uses' => 'MMS\SProductionPlanesController@Activate',
   			'as' => 'mms.planes.activate'
   		]);
+      Route::get('planes/index/{folio?}',[
+        'uses' => 'MMS\SProductionPlanesController@index',
+        'as' => 'mms.planes.index'
+      ]);
 
       /*
       * floor

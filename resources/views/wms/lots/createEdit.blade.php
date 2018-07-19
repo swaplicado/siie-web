@@ -33,13 +33,16 @@
 
 					<div class="form-group row">
 
-						{!! Form::label('name', trans('userinterface.labels.NAME').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('name', trans('userinterface.labels.NAME').'*',
+										['class'=>'col-md-1 control-label']) !!}
 
 						<div class="col-md-4">
 
 							{!! Form::text('lot',
 					    	isset($lots) ? $lots->lot : null , ['required','class'=>'form-control',
-									'maxlength' => '50', 'placeholder' => trans('userinterface.placeholders.NAME'), 'required']) !!}
+									'maxlength' => '50', 'placeholder' => trans('userinterface.placeholders.NAME'),
+									'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+									'required']) !!}
 
 						</div>
 
@@ -49,7 +52,9 @@
 						<div class="col-md-4">
 
 						 {!! Form::text('dt_expiry',
-						     isset($lots) ? $lots->dt_expiry : null , ['class'=>'form-control datepicker', 'placeholder' => trans('userinterface.placeholders.EXPERY'), 'required']) !!}
+						     isset($lots) ? $lots->dt_expiry : null , ['class'=>'form-control datepicker',
+								 'placeholder' => trans('userinterface.placeholders.EXPERY'),
+								 'required']) !!}
 
 					 </div>
 
@@ -65,7 +70,8 @@
 
 					<div class="form-group row">
 
-						{!! Form::label('item_id', trans('userinterface.labels.ITEM').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('item_id', trans('userinterface.labels.ITEM').'*',
+									['class'=>'col-md-1 control-label']) !!}
 
 						<div class="col-md-8">
 

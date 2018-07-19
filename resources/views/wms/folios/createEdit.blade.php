@@ -30,14 +30,16 @@
 		<div class="form-group">
 			{!! Form::label('folio_start', trans('wms.labels.FOLIO_START').'*') !!}
 			{!! Form::number('folio_start',
-				isset($folio) ? $folio->folio_start : null , ['class'=>'form-control', 'max' => '1000000000', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
-				 																						'placeholder' => trans('wms.placeholders.FOLIO_START'), 'required']) !!}
+				isset($folio) ? $folio->folio_start : null , ['class'=>'form-control',
+				'max' => '1000000000', 'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+					'placeholder' => trans('wms.placeholders.FOLIO_START'), 'required']) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('mvt_class_id', trans('wms.labels.MVT_CLASS').'*') !!}
 			{!! Form::select('mvt_class_id', $mvtClasses, isset($folio) ?  $folio->mvt_class_id : null,
-								['class'=>'form-control', 'onChange' => 'whenChangeClass(\'mvt_class_id\')', 'placeholder' => trans('wms.placeholders.SELECT_MVT_CLASS')]) !!}
+								['class'=>'form-control', 'onChange' => 'whenChangeClass(\'mvt_class_id\')',
+								'placeholder' => trans('wms.placeholders.SELECT_MVT_CLASS')]) !!}
 		</div>
 
 		<div class="form-group">
@@ -56,14 +58,16 @@
 		<div class="form-group">
 			{!! Form::label('aux_branch_id', trans('userinterface.labels.BRANCH')) !!}
 			{!! Form::select('aux_branch_id', $branches, isset($folio) ?  $folio->aux_branch_id : null,
-								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')', 'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH')]) !!}
+								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')',
+								'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH')]) !!}
 		</div>
 
 		<div class="form-group">
 			{!! Form::label('aux_whs_id', trans('userinterface.labels.WAREHOUSE')) !!}
 			<div class="whss">
 				{!! Form::select('aux_whs_id', array(), isset($folio) ?  $folio->aux_whs_id : null ,
-									['class'=>'form-control', 'onChange' => 'whenChangeWarehouse(\'aux_whs_id\')', 'placeholder' => trans('userinterface.placeholders.SELECT_WHS')]) !!}
+								['class'=>'form-control', 'onChange' => 'whenChangeWarehouse(\'aux_whs_id\')',
+								'placeholder' => trans('userinterface.placeholders.SELECT_WHS')]) !!}
 			</div>
 		</div>
 
