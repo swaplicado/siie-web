@@ -113,7 +113,12 @@ class SStockManagment
        }
        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters) &&
              $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] != 0) {
-           $stock->where('ws.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+           if (is_array($aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')])) {
+             $stock->whereIn('ws.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+           }
+           else {
+             $stock->where('ws.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+           }
        }
        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.BRANCH'), $aParameters) &&
              $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] != 0) {
@@ -253,8 +258,8 @@ class SStockManagment
         }
 
         $sub = \DB::connection(session('db_configuration')->getConnCompany())
-                      ->table('wms_segregations AS ws')
-                      ->join('wms_segregation_rows AS wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
+                      ->table('wms_segregations AS wss')
+                      ->join('wms_segregation_rows AS wsr', 'wss.id_segregation', '=', 'wsr.segregation_id')
                       ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event')
                       ->select(\DB::raw($sSelect))
                       ->whereRaw('wsr.year_id = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')]);
@@ -273,7 +278,12 @@ class SStockManagment
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.WHS'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] <> '0') {
-            $sub = $sub->whereRaw('wsr.whs_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+            if (is_array($aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')])) {
+              $sub = $sub->whereIn('wsr.whs_id', $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+            }
+            else {
+              $sub = $sub->whereRaw('wsr.whs_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')]);
+            }
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.PALLET'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] <> '0') {
@@ -285,7 +295,7 @@ class SStockManagment
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0') {
-            $sub = $sub->whereRaw('ws.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');
+            $sub = $sub->whereRaw('wss.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');
         }
 
         return $sub;
@@ -329,12 +339,17 @@ class SStockManagment
                                 WHERE doc_invoice_id = ed.doc_src_id
                                 AND NOT is_deleted)";
 
-        $bOrder = $iDocClass == \Config::get('scsiie.DOC_CLS.ORDER') && $iDocType == \Config::get('scsiie.DOC_TYPE.ORDER');
-        $bInvoice = $iDocClass == \Config::get('scsiie.DOC_CLS.DOCUMENT') && $iDocType == \Config::get('scsiie.DOC_TYPE.INVOICE');
-        $bCreditNote = $iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') && $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE');
-
         if ($iViewType == \Config::get('scwms.DOC_VIEW.NORMAL'))
         {
+            $bOrder = $iDocClass == \Config::get('scsiie.DOC_CLS.ORDER') &&
+                          $iDocType == \Config::get('scsiie.DOC_TYPE.ORDER');
+
+            $bInvoice = $iDocClass == \Config::get('scsiie.DOC_CLS.DOCUMENT') &&
+                            $iDocType == \Config::get('scsiie.DOC_TYPE.INVOICE');
+
+            $bCreditNote = $iDocClass == \Config::get('scsiie.DOC_CLS.ADJUST') &&
+                            $iDocType == \Config::get('scsiie.DOC_TYPE.CREDIT_NOTE');
+
             $lDocuments =  $lDocuments->select('ed.id_document',
                                   'ed.dt_date',
                                   'ed.dt_doc',

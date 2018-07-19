@@ -128,7 +128,7 @@ class SProductionPlanesController extends Controller {
 
         $oPlan = SProductionPlan::max('folio');
 
-        $oProductionPlan->folio = ($oPlan + 1);
+        $oProductionPlan->folio = is_numeric($oPlan) ? ($oPlan + 1) : 1;
         $oProductionPlan->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $oProductionPlan->created_by_id = \Auth::user()->id;
         $oProductionPlan->updated_by_id = \Auth::user()->id;
@@ -137,7 +137,7 @@ class SProductionPlanesController extends Controller {
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 
-        return redirect()->route('mms.planes.index', str_pad($oProductionPlan->folio, 5, "0", STR_PAD_LEFT));
+        return redirect()->route('mms.planes.index', session('utils')->formatFolio($oProductionPlan->folio));
     }
 
     /**

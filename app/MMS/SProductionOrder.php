@@ -6,7 +6,7 @@ class SProductionOrder extends SModel {
 
     protected $connection = 'siie';
     protected $primaryKey = 'id_order';
-    protected $table = 'production_order';
+    protected $table = 'mms_production_orders';
 
     protected $fillable = [
                             'id_order',
@@ -43,7 +43,7 @@ class SProductionOrder extends SModel {
 
   public function formula()
   {
-    return $this->belongsTo('App\MMS\SFormula');
+    return $this->belongsTo('App\MMS\Formulas\SFormula');
   }
 
   public function type()
@@ -54,6 +54,16 @@ class SProductionOrder extends SModel {
   public function status()
   {
     return $this->belongsTo('App\MMS\SStatusOrder');
+  }
+
+  public function item()
+  {
+    return $this->belongsTo('App\ERP\SItem');
+  }
+
+  public function unit()
+  {
+    return $this->belongsTo('App\ERP\SUnit');
   }
 
   public function scopeSearch($query, $name, $iFilter)

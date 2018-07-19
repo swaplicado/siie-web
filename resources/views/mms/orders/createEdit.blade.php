@@ -70,7 +70,7 @@
             </div>
             {!! Form::label('charges', trans('userinterface.labels.CHARGE').'*',['class'=>'col-md-1 control-label']) !!}
             <div class="col-md-4">
-							{!! Form::text('lot',
+							{!! Form::text('charges',
 					    	isset($orders) ? $orders->charges : null , ['required','class'=>'form-control',
 									'maxlength' => '50', 'placeholder' => trans('userinterface.placeholders.CHARGES'), 'required']) !!}
             </div>

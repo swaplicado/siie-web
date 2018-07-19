@@ -37,7 +37,6 @@ class AddProductionTable extends Migration
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-
         Schema::connection($this->sConnection)->create('mms_status_order', function (blueprint $table) {
           $table->increments('id_status');
           $table->char('name', 100);
@@ -79,11 +78,13 @@ class AddProductionTable extends Migration
           ['id_type' => '5','name' => 'REACONDICIONAMIENTO','is_deleted' => '0','created_by_id' => '1', 'updated_by_id' => '1'],
         ]);
 
-
-
-        Schema::connection($this->sConnection)->create('production_order', function (blueprint $table) {
+        Schema::connection($this->sConnection)->create('mms_production_orders', function (blueprint $table) {
           $table->increments('id_order');
           $table->char('folio', 50);
+          $table->date('date');
+          $table->integer('charges');
+          $table->integer('father_order');
+          $table->boolean('is_deleted');
           $table->integer('plan_id')->unsigned();
           $table->integer('branch_id')->unsigned();
           $table->integer('floor_id')->unsigned();
@@ -92,10 +93,6 @@ class AddProductionTable extends Migration
           $table->integer('item_id')->unsigned();
           $table->integer('unit_id')->unsigned();
           $table->integer('formula_id')->unsigned();
-          $table->date('date');
-          $table->integer('charges');
-          $table->integer('father_order');
-          $table->boolean('is_deleted');
           $table->integer('created_by_id')->unsigned();
           $table->integer('updated_by_id')->unsigned();
           $table->timestamps();
@@ -122,6 +119,13 @@ class AddProductionTable extends Migration
      */
     public function down()
     {
-        //
+      foreach ($this->lDatabases as $base) {
+        $this->sDataBase = $base;
+        SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+
+        Schema::connection($this->sConnection)->drop('mms_production_orders');
+        Schema::connection($this->sConnection)->drop('mms_type_order');
+        Schema::connection($this->sConnection)->drop('mms_status_order');
+      }
     }
 }

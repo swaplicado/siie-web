@@ -26,7 +26,9 @@ class SFloorsController extends Controller {
 
   public function __construct()
   {
-       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.MANUFACTURING'), \Config::get('scsys.MODULES.MMS'));
+       $this->oCurrentUserPermission = SProcess::constructor($this,
+                                    \Config::get('scperm.PERMISSION.MMS_FLOORS'),
+                                    \Config::get('scsys.MODULES.MMS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
   }

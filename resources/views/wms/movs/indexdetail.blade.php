@@ -83,7 +83,7 @@
 								<td align="right">{{ session('utils')->formatNumber($dInputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 								<td align="right">{{ session('utils')->formatNumber($dOutputs, \Config::get('scsiie.FRMT.QTY')) }}</td>
 		            <td>{{ $row->unit }}</td>
-								<td>{{ $row->mov_code.'-'.str_pad($row->mov_folio, 5, "0", STR_PAD_LEFT) }}</td>
+								<td>{{ $row->mov_code.'-'.session('utils')->formatFolio($row->mov_folio) }}</td>
 								<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
 								<td>{{ $row->movement }}</td>
 		            <td>{{ $row->branch_code }}</td>

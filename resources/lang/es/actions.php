@@ -15,6 +15,7 @@
 		'CREATE' => 'Crear',
 		'DEVOLVE' => 'Devolver',
 		'EDIT' => 'Modificar',
+		'EXPLODE' => 'Explosionar',
 		'FREEZE' => 'Congelar',
 		'GENERATE' => 'Generar',
 		'IMPORT' => 'Importar',

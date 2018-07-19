@@ -293,8 +293,10 @@ Route::post('manage/changedate',[
         'as'   => 'mms.orders.copy'
       ]);
 
-
-
+      /*
+      * Explosion of materials
+      **/
+      Route::resource('explosion','MMS\SExplosionMaterialsController');
 
     });
 

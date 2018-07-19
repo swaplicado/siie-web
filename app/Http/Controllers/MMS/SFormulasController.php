@@ -311,7 +311,7 @@ class SFormulasController extends Controller {
         //               ->take(1)
         //               ->get();
 
-        // $oFormula->folio = str_pad(($iFolio[0]->max_folio + 1), 5, "0", STR_PAD_LEFT);
+        // $oFormula->folio = session('utils')->formatFolio(($iFolio[0]->max_folio + 1));
 
         $oFormula->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $oFormula->created_by_id = \Auth::user()->id;

@@ -64,15 +64,10 @@ class MmsAddProdPlanTable extends Migration {
           	$table->timestamps();
 
           	$table->foreign('floor_id')->references('id_floor')->on('mms_floor')->onDelete('cascade');
-          	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
-          	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+          	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.users')->onDelete('cascade');
+          	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.users')->onDelete('cascade');
           });
-
         }
-
-        DB::table('syss_permissions')->insert([
-          ['code' => '121','name' => 'PLANES DE PRODUCCIÓN', 'is_deleted' => '0','module_id' => '2'],
-        ]);
     }
 
     /**
@@ -87,8 +82,7 @@ class MmsAddProdPlanTable extends Migration {
           SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
           Schema::connection($this->sConnection)->drop('mms_production_planes');
+          Schema::connection($this->sConnection)->drop('mms_floor');
         }
-
-        DB::table('syss_permissions')->where('code', '121')->delete();
     }
 }

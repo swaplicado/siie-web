@@ -1,9 +1,10 @@
 <?php namespace App\Http\Controllers\MMS;
 
 use Illuminate\Http\Request;
-
+use Laracasts\Flash\Flash;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+
 use App\SUtils\SProcess;
 use App\MMS\SProductionOrder;
 use App\SUtils\SUtil;
@@ -28,8 +29,8 @@ class SProductionOrdersController extends Controller
   public function __construct()
   {
        $this->oCurrentUserPermission = SProcess::constructor($this,
-       \Config::get('scperm.PERMISSION.MMS_PRODUCTION_PLANES'),
-       \Config::get('scsys.MODULES.MMS'));
+                         \Config::get('scperm.PERMISSION.MMS_PRODUCTION_ORDERS'),
+                         \Config::get('scsys.MODULES.MMS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
   }
@@ -41,7 +42,7 @@ class SProductionOrdersController extends Controller
      public function index(Request $request)
      {
          $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-         $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC')->paginate(10);
+         $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC')->get();
 
          $order->each(function($order){
            $order->branch;
@@ -50,6 +51,8 @@ class SProductionOrdersController extends Controller
            $order->formula;
            $order->type;
            $order->status;
+           $order->item;
+           $order->unit;
          });
 
 

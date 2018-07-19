@@ -211,6 +211,8 @@ class SStartController extends Controller
         $oErpConfLocCur = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCAL_CURRENCY'));
         $oDecAmount = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_AMT'));
         $oDecQuantity = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_QTY'));
+        $oDecPercent = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DECIMALS_PERC'));
+        $oLongFolios = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.FOLIOS_LONG'));
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOC_ENABLED'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
         $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
@@ -225,6 +227,8 @@ class SStartController extends Controller
         session(['currency' => $oCurrency]);
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
+        session(['decimals_percent' => $oDecPercent->val_int]);
+        session(['long_folios' => $oLongFolios->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);

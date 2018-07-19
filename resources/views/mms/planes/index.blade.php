@@ -14,7 +14,7 @@
 
 @section('content')
 
-  <?php $sRoute="mms.planes"?>
+  <?php $sRoute="mms.planes" ?>
 
   @section('filters')
     {!! Form::open(['route' => $sRoute.'.index',
@@ -52,7 +52,7 @@
         <tbody>
           @foreach ($planes as $plan)
             <tr>
-                <td>{{ str_pad($plan->folio, 5, "0", STR_PAD_LEFT) }}</td>
+                <td>{{ session('utils')->formatFolio($plan->folio) }}</td>
                 <td>{{ $plan->dt_start }}</td>
                 <td>{{ $plan->dt_end }}</td>
                 <td>{{ $plan->production_plan }}</td>

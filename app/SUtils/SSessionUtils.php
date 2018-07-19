@@ -261,4 +261,21 @@ class SSessionUtils {
      return $whss;
   }
 
+  /**
+   * format the folio number or text to longitude configured
+   * and fill with zeros to left
+   *
+   * @param  string $oFolio
+   *
+   * @return string
+   */
+  public function formatFolio($oFolio = '')
+  {
+      if ($oFolio == null) {
+        $oFolio = '';
+      }
+
+      return str_pad($oFolio, session('long_folios'), "0", STR_PAD_LEFT);
+  }
+
 }

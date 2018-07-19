@@ -44,7 +44,7 @@
           <div class="form-group">
             {!! Form::label('folio', trans('wms.labels.FOLIO')	) !!}
             {!! Form::text('folio', isset($oPlan->folio) ?
-                               str_pad($oPlan->folio, 5, "0", STR_PAD_LEFT) : null,
+                               session('utils')->formatFolio($oPlan->folio) : null,
                             ['id' => 'folio', 'class' => 'form-control input-sm',
                               'readonly']) !!}
           </div>

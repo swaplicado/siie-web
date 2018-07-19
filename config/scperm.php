@@ -63,6 +63,9 @@ return [
                   'QUALITY' => '050',
                   'MMS_FORMULAS' => '120',
                   'MMS_PRODUCTION_PLANES' => '121',
+                  'MMS_FLOORS' => '122',
+                  'MMS_EXPLOSION_MATERIALS' => '123',
+                  'MMS_PRODUCTION_ORDERS' => '124',
                   'IMPORTATIONS' => '150',
 
                   'ERP' =>  '101',

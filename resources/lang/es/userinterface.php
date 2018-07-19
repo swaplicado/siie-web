@@ -253,6 +253,7 @@
 											'CLASS' => 'Clase',
 											'CLOSED' => 'Cerrado',
 											'CODE' => 'Código',
+											'COMMENTS' => 'Comentarios',
 											'COMPANY' => 'Empresa',
 											'CONFIGURATION' => 'Configuración',
 											'COUNTY' => 'Condado',

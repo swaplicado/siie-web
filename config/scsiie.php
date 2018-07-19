@@ -16,6 +16,8 @@ return [
                   'CAN_CREATE_LOT_PAL_MAT' => '10',
                   'CAN_CREATE_LOT_PAL_PROD' => '11',
                   'LOCAL_CURRENCY' => '12',
+                  'DECIMALS_PERC' => '13',
+                  'FOLIOS_LONG' => '14',
                 ],
 
   'ATT' => [

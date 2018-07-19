@@ -6,7 +6,13 @@ return [
       'MODULE'  => 'Módulo Producción',
 
 
+      'EXPLOSION_MATERIALS'  => 'Explosión de materiales',
+      'FLOORS'  => 'Plantas',
+      'PRODUCTION'  => 'Producción',
+      'PRODUCTION_ORDERS'  => 'Órdenes de producción',
       'PRODUCTION_PLANES'  => 'Planes de producción',
+
+      'SEE_PRODUCTION_ORDERS' => 'Ver órdenes',
 
       'FORMULAS'  => 'Fórmulas',
       'FORMULAS_T'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
@@ -26,11 +32,13 @@ return [
                     ],
 
       'labels'  => [
+                      'CHARGES' => 'Cargas',
                       'DATE_START' => 'Fecha inicial',
                       'DATE_END' => 'Fecha final',
                       'DURATION' => 'Duración',
                       'EXP' => 'Exp.',
                       'EXPLODED' => 'Explosionada',
+                      'EXPLODE_SUB' => 'Explosionar sub-fórmulas',
                       'FLOOR' => 'Planta',
                       'FORMULA' => 'Fórmula',
                       'FORMULAS' => 'Fórmulas',
@@ -38,6 +46,7 @@ return [
                       'MAX_MIX' => 'Mezcla máxima',
                       'NAME_FORMULA' => 'Nombre de la fórmula',
                       'NO_EXPLODED' => 'No explosionada',
+                      'PRODUCTION_PLAN' => 'Plan de producción',
                       'SUBSTITUTE' => 'Sustituto',
                       'SUGGESTED_MIX' => 'Mezcla sugerida',
                       'VERSION' => 'Versión',
@@ -47,5 +56,6 @@ return [
                       'DURATION' => 'Duración...',
                       'NAME_FORMULA' => 'Nombre de la fórmula...',
                       'SELECT_FLOOR' => 'Seleccione planta...',
+                      'SELECT_PROD_PLAN' => 'Seleccione plan de producción...',
                   ],
 ];
