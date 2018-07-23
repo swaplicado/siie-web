@@ -340,7 +340,7 @@ class SFormulasController extends Controller {
 
                 $oIngredient->item_id = $row->{'iIdItem'};
                 $oIngredient->unit_id = $row->{'iIdUnit'};
-                $oIngredient->item_recipe_id = $row->{'iIdItemRecipe'};
+                $oIngredient->item_recipe_id = SFormula::find($row->{'iIdItemFormula'})->recipe;
                 $oIngredient->created_by_id = \Auth::user()->id;
                 $oIngredient->updated_by_id = \Auth::user()->id;
                 // $oIngredient->formula_id = $oFormula->id_formula;
