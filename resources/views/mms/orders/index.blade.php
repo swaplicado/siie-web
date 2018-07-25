@@ -23,6 +23,13 @@
         <div class="input-group">
           @include('templates.list.search')
           <span class="input-group-btn">
+						{!! Form::select('po_status', $lOrderStatus, $iOrderStatus,
+															['class'=>'form-control']) !!}
+					</span>
+          <span class="input-group-btn">
+            {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
+          </span>
+          <span class="input-group-btn">
             <button id="searchbtn" type="submit" class="form-control">
               <span class="glyphicon glyphicon-search"></span>
             </button>
@@ -36,39 +43,53 @@
     @include('templates.form.create')
   @endsection
   <div class="row">
-    <table id="planes_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+    <table id="orders_table" class="table table-striped table-bordered display" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
                 <th data-priority="1" style="text-align: center;">Folio</th>
-                <th data-priority="1" style="text-align: center;">Plan de producción</th>
-                <th data-priority="1" style="text-align: center;">Sucursal</th>
-                <th data-priority="1">Planta</th>
-                <th data-priority="1">Tipo de orden</th>
+                <th data-priority="1" style="text-align: center;">Fecha</th>
+                <th data-priority="1">Plan de producción</th>
+                <th>Planta</th>
+                <th>Tipo de orden</th>
                 <th data-priority="1">Estatus de orden</th>
                 <th data-priority="1" style="text-align: center;">Item</th>
-                <th data-priority="1" style="text-align: center;">Unidad</th>
+                <th data-priority="1" style="text-align: center;">Un.</th>
                 <th data-priority="1" style="text-align: center;">Formula</th>
-                <th data-priority="1" style="text-align: center;">Fecha</th>
                 <th data-priority="1" style="text-align: center;">Cargas</th>
-                <th data-priority="1" style="text-align: center;">Orden Padre</th>
-                <th style="text-align: center;">Estatus</th>
                 <th style="text-align: center;">Opciones</th>
+                <th style="text-align: center;">Sucursal</th>
+                <th style="text-align: center;">Orden Padre</th>
+                <th style="text-align: center;">Estatus</th>
             </tr>
         </thead>
         <tbody>
           @foreach ($orders as $orden)
             <tr>
                 <td>{{ session('utils')->formatFolio($orden->folio) }}</td>
-                <td>{{ session('utils')->formatFolio($orden->plan->folio) }}</td>
-                <td>{{ $orden->branch->name }}</td>
+                <td>{{ $orden->date }}</td>
+                <td>{{ session('utils')->formatFolio($orden->plan->folio).'-'.$orden->plan->production_plan }}</td>
                 <td>{{ $orden->floor->name }}</td>
                 <td>{{ $orden->type->name }}</td>
                 <td>{{ $orden->status->name }}</td>
                 <td>{{ $orden->item->name }}</td>
                 <td>{{ $orden->unit->code }}</td>
-                <td>{{ $orden->formula->identifier }}</td>
-                <td>{{ $orden->date }}</td>
+                <td>{{ $orden->formula->identifier.'-V'.$orden->formula->version }}</td>
                 <td>{{ $orden->charges }}</td>
+                <td style="text-align: center;">
+                  @include('mms.orders.previous')
+                  @include('mms.orders.next')
+                  <?php
+                    $oRegistry = $orden;
+                    $iRegistryId = $orden->id_order;
+                    $loptions = [
+                      \Config::get('scsys.OPTIONS.EDIT'),
+                      \Config::get('scsys.OPTIONS.DESTROY'),
+                      \Config::get('scsys.OPTIONS.ACTIVATE'),
+                    ];
+                  ?>
+                  @include('templates.list.options')
+              </td>
+              <td>{{ $orden->branch->name }}</td>
                 <td>{{ $orden->father_order }}</td>
                 <td>
       						@if (! $orden->is_deleted)
@@ -76,16 +97,6 @@
       						@else
       								<span class="label label-danger">{{ trans('userinterface.labels.INACTIVE') }}</span>
       						@endif
-      					</td>
-                <td style="text-align: center;">
-      						<?php
-      								$oRegistry = $orden;
-      								$iRegistryId = $orden->id_order;
-      								$loptions = [
-      									\Config::get('scsys.OPTIONS.EDIT'),
-      								];
-      						?>
-      						@include('templates.list.options')
       					</td>
             </tr>
           @endforeach
@@ -95,7 +106,24 @@
 @endsection
 
 @section('js')
-  <script src="{{ asset('js/mms/planes/tables.js')}}"></script>
+  <script src="{{ asset('js/mms/orders/tables.js')}}"></script>
+  <script src="{{ asset('moment/moment.js') }}"></script>
+	<script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
+
+  <script>
+      $(function() {
+        $('input[id="filterDate"]').daterangepicker({
+          locale: {
+                 format: 'DD/MM/YYYY'
+             }
+        });
+      });
+
+      $('#filterDate').on('apply.daterangepicker', function(ev, picker) {
+        console.log(picker.startDate.format('YYYY-MM-DD'));
+        console.log(picker.endDate.format('YYYY-MM-DD'));
+      });
+  </script>
 @endsection
 
 @section('footer')

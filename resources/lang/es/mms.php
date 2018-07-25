@@ -58,4 +58,9 @@ return [
                       'SELECT_FLOOR' => 'Seleccione planta...',
                       'SELECT_PROD_PLAN' => 'Seleccione plan de producción...',
                   ],
+
+      'tooltips'  => [
+                      'NEXT_STATUS' => 'Siguiente estatus',
+                      'PREVIOUS_STATUS' => 'Estatus previo',
+                  ],
 ];

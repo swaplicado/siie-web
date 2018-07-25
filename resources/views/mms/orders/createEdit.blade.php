@@ -30,15 +30,23 @@
 			<div class="form-group">
 				<div class="col-md-12">
 					<div class="form-group row">
-						{!! Form::label('branch', trans('userinterface.labels.BRANCH').'*',['class'=>'col-md-1 control-label']) !!}
+						{{-- {!! Form::label('branch', trans('userinterface.labels.BRANCH').'*',['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
               {!! Form::select('branch_id', $branches, isset($orders) ?  $orders->branch_id : null ,
         												['class'=>'form-control select-one', 'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH')]) !!}
+						</div> --}}
+						{!! Form::label('item_id', trans('userinterface.labels.ITEM').'*',['class'=>'col-md-1 control-label']) !!}
+						<div class="col-md-4">
+							{!! Form::select('item_id', $items, isset($orders) ? $orders->item_id : null,
+																['class'=>'form-control select-item item_id',
+																'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'),
+																'required']) !!}
 						</div>
 						{!! Form::label('plan_id', trans('userinterface.labels.PLAN').'*',['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-              {!! Form::select('plan_id', $plans, isset($orders) ?  $orders->plan_id : null ,
-        												['class'=>'form-control select-plan']) !!}
+							{!! Form::select('plan_id', $plans, isset($orders) ?  $orders->plan_id : null ,
+																['class'=>'form-control select-plan',
+																'required']) !!}
 						</div>
 					</div>
 				</div>
@@ -46,15 +54,20 @@
 			<div class="form-group">
 				<div class="col-md-12">
 					<div class="form-group row">
-						{!! Form::label('type_id', trans('userinterface.labels.TYPE').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('formula', trans('userinterface.labels.FORMULA').'*',['class'=>'col-md-1 control-label']) !!}
+            <div class="col-md-4 vaciar">
+              {!! Form::select('formula_id', isset($orders) ? $formulas : [], isset($orders) ? $orders->formula_id : null,
+                                ['class'=>'form-control select-formula',
+																'required']) !!}
+            </div>
+						{!! Form::label('date', trans('userinterface.labels.DATE_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-							{!! Form::select('type_id', $types, 	isset($orders) ? $orders->type->id_type : null,
-																['class'=>'form-control select-type', 'placeholder' => trans('userinterface.placeholders.SELECT_TYPE')]) !!}
-						</div>
-            {!! Form::label('item_id', trans('userinterface.labels.ITEM').'*',['class'=>'col-md-1 control-label']) !!}
-						<div class="col-md-4">
-							{!! Form::select('item_id', $items, 	isset($orders) ? $orders->item->id_item : null,
-																['class'=>'form-control select-item item_id', 'placeholder' => trans('userinterface.placeholders.SELECT_ITEM')]) !!}
+							{!! Form::date('date',
+									isset($orders) ? $orders->date : session('work_date'),
+																		['class'=>'form-control',
+																		'placeholder' => trans('userinterface.placeholders.DATE_ORDER'),
+																		'style' => 'text-align: right;',
+																		'required']) !!}
 						</div>
 					</div>
 				</div>
@@ -63,32 +76,31 @@
       <div class="form-group">
         <div class="col-md-12">
           <div class="form-group row">
-            {!! Form::label('formula', trans('userinterface.labels.FORMULA').'*',['class'=>'col-md-1 control-label']) !!}
-            <div class="col-md-4 vaciar">
-              {!! Form::select('formula_id', [], null ,
-                                ['class'=>'form-control select-formula']) !!}
-            </div>
-            {!! Form::label('charges', trans('userinterface.labels.CHARGE').'*',['class'=>'col-md-1 control-label']) !!}
-            <div class="col-md-4">
-							{!! Form::text('charges',
-					    	isset($orders) ? $orders->charges : null , ['required','class'=>'form-control',
-									'maxlength' => '50', 'placeholder' => trans('userinterface.placeholders.CHARGES'), 'required']) !!}
-            </div>
+						{!! Form::label('type_id', trans('userinterface.labels.TYPE').'*',['class'=>'col-md-1 control-label']) !!}
+						<div class="col-md-4">
+							{!! Form::select('type_id', $types, 	isset($orders) ? $orders->type->id_type : null,
+																['class'=>'form-control select-type',
+																'placeholder' => trans('userinterface.placeholders.SELECT_TYPE'),
+																'required']) !!}
+						</div>
+						{!! Form::label('father_order', trans('userinterface.labels.FATHER_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
+						<div class="col-md-4">
+							{!! Form::select('father_order', $father, isset($orders) ?  $orders->father_order : null ,
+																['class'=>'form-control select-father','placeholder' => 'N/A']) !!}
+						</div>
           </div>
         </div>
       </div>
       <div class="form-group">
         <div class="col-md-12">
           <div class="form-group row">
-            {!! Form::label('date', trans('userinterface.labels.DATE_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('charges', trans('userinterface.labels.CHARGE').'*',['class'=>'col-md-1 control-label']) !!}
             <div class="col-md-4">
-              {!! Form::text('date',
-                  isset($orders) ? $orders->date : null , ['class'=>'form-control datepicker', 'placeholder' => trans('userinterface.placeholders.DATE_ORDER'), 'required']) !!}
-            </div>
-            {!! Form::label('father_order', trans('userinterface.labels.FATHER_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
-            <div class="col-md-4">
-							{!! Form::select('father_order', $father, isset($orders) ?  $orders->father_order : null ,
-																['class'=>'form-control select-father','placeholder' => 'N/A']) !!}
+							{!! Form::number('charges',
+					    	isset($orders) ? $orders->charges : 0, ['required','class'=>'form-control',
+									'min' => '0', 'placeholder' => trans('userinterface.placeholders.CHARGES'),
+									'style' => 'text-align: right;',
+									'required']) !!}
             </div>
           </div>
         </div>

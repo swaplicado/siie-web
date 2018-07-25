@@ -217,6 +217,40 @@ class SSessionUtils {
   }
 
   /**
+   * get the branches that the user has access, if a user is not received
+   * take the user of session
+   *
+   * @param  integer $iUser user id
+   *
+   * @return array array of integers with the id of the branches
+   */
+  public static function getUserBranchesArray($iUser = 0)
+  {
+     $oUser = $iUser == 0 ? \Auth::user() : User::find($iUser);
+
+     $bchs = array();
+     if (session('utils')->isSuperUser($oUser)) {
+        $branches = SBranch::where('is_deleted', false)->get();
+
+        foreach ($branches as $bch) {
+          array_push($bchs, $bch->id_branch);
+        }
+
+        return $bchs;
+     }
+
+     $bchAccess = $oUser->userBranches;
+
+     foreach ($bchAccess as $access) {
+        if (! $access->branch->is_deleted) {
+            array_push($bchs, $access->branch_id);
+        }
+     }
+
+     return $bchs;
+  }
+
+  /**
    * get the warehouses that the user has access, if a user is not received
    * take the user of session
    *
@@ -259,6 +293,53 @@ class SSessionUtils {
      }
 
      return $whss;
+  }
+
+  /**
+   * get the warehouses that the user has access, if a user is not received
+   * take the user of session
+   *
+   * @param  integer $iUser user id
+   * @param  integer $iBranch branch id
+   * @param  boolean $bWithCode indicates if the method return the name of warehouses with code
+   *
+   * @return array array of integers and name with the warehouses
+   */
+  public static function getUserBranchesArrayWithName($iUser = 0, $iPartner = 0, $bWithCode = false)
+  {
+     $oUser = $iUser == 0 ? \Auth::user() : User::find($iUser);
+
+     $branchess = array();
+     if (session('utils')->isSuperUser($oUser)) {
+        $branches = SBranch::selectRaw('CONCAT(code, '-', name) as branch_w_code,
+                                        name,
+                                        code,
+                                        id_branch')
+                              ->where('is_deleted', false);
+
+        if ($iPartner > 0) {
+           $branches = $branches->where('partner_id', $iPartner);
+        }
+
+        if ($bWithCode) {
+           $branches = $branches->lists('branch_w_code', 'id_branch');
+        }
+        else {
+           $branches = $branches->lists('name', 'id_branch');
+        }
+
+        return $branches;
+     }
+
+     $branchAccess = $oUser->userBranches;
+
+     foreach ($branchAccess as $access) {
+        if (! $access->branch->is_deleted) {
+            $branchess[$access->branch_id] = ($bWithCode ? $access->branch->code.'-' : '').$access->branch->name;
+        }
+     }
+
+     return $branchess;
   }
 
   /**
