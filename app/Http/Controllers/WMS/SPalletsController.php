@@ -264,7 +264,7 @@ class SPalletsController extends Controller
 
       view()->share('barcode',$barcode);
       view()->share('data',$data);
-      $pdf = PDF::loadView('vista_pdf_1');
+      $pdf = PDF::loadView('vista_pdf_aux');
       $paper_size = array(0,0,287,431);
       $pdf->setPaper($paper_size,'portrait');
       return $pdf->stream();

@@ -1,11 +1,22 @@
-<div style="font-size:66%; margin:-2px; padding:-20px; bottom:-20px; margin-right:-20px">
-  {{$data->id_pallet}}-{{$data->item->name}}-{{$data->unit->name}}
+<div style="font-size:110%; margin:40px 0px 0px 0px;">
+  <strong><center>{{session('company')->name}}</center></strong>
+  <br>
+  <br>
+  <strong>Tarima:</strong> {{$data->id_pallet}}
+  <br>
+  <br>
+  <strong>Producto:</strong> {{$data->item->name}}
+  <br>
+  <br>
+  <strong>Unidad de Medida:</strong> {{$data->unit->name}}
+  <br>
+  <br><br><br>
+  <center>
+    <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" height="70%" width="70%"/>
+  </center>
   <br>
   <center>
-    <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" height="60%" width="60%"/>
-  </center>
-  <center>
-    {{$barcode}} - {{session('company')->name}}
-    <br> Etiqueta: Tarima
+    {{$barcode}}
+    <br>
   </center>
 </div>
