@@ -463,7 +463,7 @@ class SStockManagment
      * @param  [type] $iDocClass    [description]
      * @return [type]               [description]
      */
-    private static function getBaseQuery($iDocCategory, $iDocClass, $iDocType)
+    public static function getBaseQuery($iDocCategory, $iDocClass, $iDocType)
     {
        $sub = SStockManagment::getSubQuery($iDocCategory, $iDocClass, $iDocType);
        $query = \DB::connection(session('db_configuration')->getConnCompany())

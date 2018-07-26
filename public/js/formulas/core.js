@@ -147,6 +147,7 @@ class Ingredient {
       this.iIdItem = 0;
       this.iIdUnit = 0;
       this.iIdItemRecipe = 1;
+      this.iIdItemFormula = 1;
       this.tStart = '';
       this.tEnd = '';
       this.dQuantity = 0;

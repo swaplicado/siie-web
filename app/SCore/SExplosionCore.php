@@ -6,6 +6,7 @@ use Carbon\Carbon;
 
 use App\SCore\SStockManagment;
 use App\ERP\SYear;
+use App\MMS\Formulas\SFormula;
 
 /**
  *
@@ -13,7 +14,8 @@ use App\ERP\SYear;
 class SExplosionCore {
 
   /**
-   * [explode description]
+   * determines the necessary ingredients to make the production orders contained
+   * on production plan
    *
    * @param  SProductionPlan  $oProductionPlan
    * @param  array[SWarehouse]   $lWarehouses [list of warehouses for explosion]
@@ -27,43 +29,22 @@ class SExplosionCore {
      $lIngredients = array();
      $lProdOrders = $oProductionPlan->orders;
 
-     $sSelect =  "
-                 mfr.quantity,
-                 mfr.item_id,
-                 mfr.unit_id,
-                 mfr.item_recipe_id,
-                 ei.code AS item_code,
-                 ei.name AS item,
-                 eu.code AS unit_code,
-                 mfr.id_formula_row
-                 ";
-
      foreach ($lProdOrders as $oPO) {
         $oFormula = $oPO->formula;
 
-        $lFormulaRows = \DB::connection(session('db_configuration')->getConnCompany())
-                          ->table('mms_formula_rows as mfr')
-                          ->join('erpu_items as ei', 'mfr.item_id', '=', 'ei.id_item')
-                          ->join('erpu_units as eu', 'mfr.unit_id', '=', 'eu.id_unit')
-                          ->where('formula_id', $oFormula->id_formula)
-                          ->where('mfr.is_deleted', false)
-                          ->select(\DB::raw($sSelect))
-                          ->get();
+        $lFormulaRows = $this->getRowsFromFormula($oFormula->id_formula);
 
-        foreach ($lFormulaRows as $oRow) {
-           $sKey = $oRow->item_id.'-'.$oRow->unit_id.'-'.$oRow->item_recipe_id;
-
-           if (in_array($sKey, $lIngredients)) {
-             $lIngredients[$sKey]->dRequiredQuantity += ($oRow->quantity * $oPO->charges);
-           }
-           else {
-             $oRow->dRequiredQuantity = ($oRow->quantity * $oPO->charges);
-             $lIngredients[$sKey] = $oRow;
-           }
-        }
+        $lIngredients = $this->formulaRowsToIngredients($lFormulaRows, $lIngredients, $oPO->charges, $bExplodeSubs);
      }
 
      $lStock = $this->getStockFromWarehouses($lWarehouses, $oDate)->get();
+
+     $aItems = array();
+     foreach ($lIngredients as $key => $oRow) {
+        array_push($aItems, $oRow->item_id);
+     }
+
+     $lBackOrder = $this->getBackOrder($aItems);
 
      foreach ($lIngredients as $key => $oRow) {
         $aKey = explode("-", $key);
@@ -84,12 +65,135 @@ class SExplosionCore {
           $oRow->dStock = 0;
           $oRow->dSegregated = 0;
         }
+
+        $bHasBackOrder = false;
+        foreach ($lBackOrder as $oBack) {
+            if ($iItem == $oBack->item_id && $iUnit == $oBack->unit_id) {
+                $oRow->dBackOrder = $oBack->pending;
+                $oRow->sPartner = $oBack->partner_name;
+                $bHasBackOrder = true;
+            }
+        }
+
+        if (! $bHasBackOrder) {
+          $oRow->dBackOrder = 0;
+          $oRow->sPartner = '?';
+        }
      }
 
      return $lIngredients;
   }
 
+  /**
+   * transform the formula row objects to ingredients (format to be showed in explosion)
+   *
+   * @param  array   $lFormulaRows Result of method of this class (from query)
+   * @param  array   $lIngredients list of ingredient objects
+   * @param  integer $iCharges     charges of production order
+   * @param  boolean $bExplodeSubs the sub formules will be exploded or not
+   *
+   * @return array
+   */
+  private function formulaRowsToIngredients($lFormulaRows = [], $lIngredients = [],
+                                                $iCharges = 0, $bExplodeSubs = false)
+  {
+      $lRecipes = array();
+      foreach ($lFormulaRows as $oRow) {
+         if ($oRow->item_recipe_id > 1 && $bExplodeSubs) {
+             array_push($lRecipes, $oRow->item_recipe_id);
+         }
+         else {
+             $sKey = $oRow->item_id.'-'.$oRow->unit_id.'-'.$oRow->item_recipe_id;
+             if (in_array($sKey, $lIngredients)) {
+               $lIngredients[$sKey]->dRequiredQuantity += ($oRow->quantity * $iCharges);
+             }
+             else {
+               $oRow->dRequiredQuantity = ($oRow->quantity * $iCharges);
+               $lIngredients[$sKey] = $oRow;
+             }
+         }
+      }
 
+      if (sizeof($lRecipes) > 0) {
+        $lIngredients = $this->explodeRecipes($lRecipes, $lIngredients, $iCharges);
+      }
+
+      return $lIngredients;
+  }
+
+  /**
+   * explode the subformulas based on recipe
+   *
+   * @param  array   $aRecipes     array of recipes contained in production order
+   * @param  array   $lIngredients list of ingredients
+   * @param  integer $iCharges     charges on production order
+   *
+   * @return array  the same received array with the added ingredients of subformulas
+   */
+  private function explodeRecipes($aRecipes = [], $lIngredients = [], $iCharges = 1)
+  {
+      foreach ($aRecipes as $iRecipe) {
+         $oFormula = SFormula::whereRaw('version = (SELECT MAX(version)
+                                                    FROM mms_formulas WHERE
+                                                    recipe = '.$iRecipe.')')
+                              ->where('is_deleted', false)
+                              ->where('recipe', $iRecipe)
+                              ->first();
+
+         $lIngredients = $this->formulaRowsToIngredients($this->getRowsFromFormula($oFormula->id_formula), $lIngredients,
+                                                          $iCharges, true);
+      }
+
+      return $lIngredients;
+  }
+
+  /**
+   * obtain the rows of formula with a query
+   *
+   * @param  integer $iFormula [description]
+   * @return array[Query]  mfr.quantity,
+   *                       mfr.item_id,
+   *                       mfr.unit_id,
+   *                       mfr.item_recipe_id,
+   *                       ei.code AS item_code,
+   *                       ei.name AS item,
+   *                       eu.code AS unit_code,
+   *                       mfr.id_formula_row
+   */
+  private function getRowsFromFormula($iFormula = 0)
+  {
+      $sSelect =  "
+                  mfr.quantity,
+                  mfr.item_id,
+                  mfr.unit_id,
+                  mfr.item_recipe_id,
+                  ei.code AS item_code,
+                  ei.name AS item,
+                  eu.code AS unit_code,
+                  mfr.id_formula_row
+                  ";
+
+      $lFormulaRows = \DB::connection(session('db_configuration')->getConnCompany())
+                        ->table('mms_formula_rows as mfr')
+                        ->join('erpu_items as ei', 'mfr.item_id', '=', 'ei.id_item')
+                        ->join('erpu_units as eu', 'mfr.unit_id', '=', 'eu.id_unit')
+                        ->where('formula_id', $iFormula)
+                        ->where('mfr.is_deleted', false)
+                        ->select(\DB::raw($sSelect))
+                        ->get();
+
+      return $lFormulaRows;
+  }
+
+
+  /**
+   * get the stock of multiple warehouses
+   *
+   * @param  array  $lWarehouses array of warehouses objects (SWarehouse)
+   * @param  Carbon $oDate  Date Carbon Object
+   *
+   * @return array[Query]
+   */
   public function getStockFromWarehouses($lWarehouses = [], $oDate = null)
   {
      $aWhss = array();
@@ -147,11 +251,61 @@ class SExplosionCore {
      return $lStock;
   }
 
-  public function FunctionName($value='')
+  /**
+   * get the back order of Items contained in array received
+   *
+   * @param  array  $aItems ids of items
+   *
+   * @return array[Query] (with get())
+   */
+  private function getBackOrder($aItems = [])
   {
      $lSupplies = SStockManagment::getBaseQuery(\Config::get('scsiie.DOC_CAT.PURCHASES'),
                                                 \Config::get('scsiie.DOC_CLS.ORDER'),
                                                 \Config::get('scsiie.DOC_TYPE.ORDER'));
+
+     $lSupplies =  $lSupplies->select('ed.id_document',
+                           'ed.dt_date',
+                           'ed.dt_doc',
+                           \DB::raw('CONCAT(ed.service_num, IF(ed.service_num = "", "", "-"), ed.num) as folio'),
+                           \DB::raw('CONCAT(edsrc.service_num, IF(edsrc.service_num = "", "", "-"), edsrc.num) as num_src'),
+                           'ed.is_closed',
+                           'ed.doc_src_id',
+                           'ed.doc_sys_status_id',
+                           'ed.external_id',
+                           'ed.partner_id',
+                           'ed.is_deleted',
+                           'ep.name AS partner_name',
+                           'ep.fiscal_id',
+                           'ep.code as cve_an',
+                           'edr.item_id',
+                           'edr.unit_id',
+                           \DB::raw("(SELECT COUNT(*) supp_inv
+                                                   FROM
+                                                   wms_mvts WHERE doc_invoice_id IN
+                                                   (SELECT id_document
+                                                   FROM erpu_documents
+                                                   WHERE doc_src_id = ed.id_document)
+                                                   AND NOT is_deleted) AS supp_inv"),
+                           \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
+                           \DB::raw('(SUM(edr.quantity) - ( COALESCE(SUM(
+                                       IF (wm.is_deleted IS NULL
+                                       OR (wm.is_deleted IS NOT NULL
+                                       AND wm.is_deleted = FALSE
+                                       AND wmr.is_deleted = FALSE),
+                                       wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
+                   )
+                   ->where('ed.is_closed', false)
+                   ->where('ed.is_deleted', false)
+                   ->where('edr.is_deleted', false)
+                   ->whereIn('edr.item_id', $aItems)
+                   ->groupBy('edr.item_id')
+                   ->groupBy('edr.unit_id')
+                   ->having('pending', '>', 0)
+                   ->get()
+                  ;
+
+    return $lSupplies;
   }
 
 }

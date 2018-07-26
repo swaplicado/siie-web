@@ -4,8 +4,10 @@ use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use App\SUtils\SProcess;
+use App\SCore\SProductionOrderCore;
+use App\SUtils\SGuiUtils;
+
 use App\MMS\SProductionOrder;
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
@@ -15,6 +17,7 @@ use App\MMS\STypeOrder;
 use App\ERP\SItem;
 use App\ERP\SUnit;
 use App\MMS\SProductionPlan;
+use App\MMS\SStatusOrder;
 use App\MMS\Formulas\SFormula;
 use App\MMS\Formulas\SFormulaRow;
 use App\MMS\Formulas\SFormulaSubstitute;
@@ -25,6 +28,7 @@ class SProductionOrdersController extends Controller
   private $oCurrentUserPermission;
   private $iFilter;
   private $sClassNav;
+  private $lOrderStatus;
 
   public function __construct()
   {
@@ -33,6 +37,10 @@ class SProductionOrdersController extends Controller
                          \Config::get('scsys.MODULES.MMS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+       $this->lOrderStatus = SStatusOrder::where('is_deleted', false)
+                                          ->orderBy('id_status', 'asc')
+                                          ->lists('name', 'id_status');
+       $this->lOrderStatus['0'] = 'TODAS';
   }
     /**
      * Display a listing of the resource.
@@ -42,7 +50,20 @@ class SProductionOrdersController extends Controller
      public function index(Request $request)
      {
          $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-         $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC')->get();
+         $iOrderStatus = $request->po_status == null ? \Config::get('scmms.PO_STATUS.ST_ALL') : $request->po_status;
+         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+
+         $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC');
+
+         if (\Config::get('scmms.PO_STATUS.ST_ALL') != $iOrderStatus) {
+             $order = $order->where('status_id', $iOrderStatus);
+         }
+
+         $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+
+         $order = $order->whereBetween('date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+
+         $order = $order->get();
 
          $order->each(function($order){
            $order->branch;
@@ -56,12 +77,15 @@ class SProductionOrdersController extends Controller
          });
 
 
-        $sTitle = 'Orden de producción';
+        $sTitle = trans('mms.PRODUCTION_ORDERS');
 
          return view('mms.orders.index')
              ->with('orders', $order)
+             ->with('lOrderStatus', $this->lOrderStatus)
+             ->with('iOrderStatus', $iOrderStatus)
              ->with('sTitle', $sTitle)
              ->with('actualUserPermission', $this->oCurrentUserPermission)
+             ->with('sFilterDate', $sFilterDate)
              ->with('iFilter', $this->iFilter);
      }
 
@@ -72,11 +96,12 @@ class SProductionOrdersController extends Controller
         return redirect()->route('notauthorized');
       }
 
-      $branch = SBranch::where('partner_id', session('partner')->id_partner)
-                  ->where('is_deleted', false)
-                  ->orderBy('name', 'ASC')
-                  ->lists('name', 'id_branch');
+      $branch = session('utils')->getUserBranchesArrayWithName(\Auth::user()->id,
+                                                      session('partner')->id_partner,
+                                                      true);
+
       $type = STypeOrder::orderBy('name','ASC')->lists('name','id_type');
+
       $item = SItem::select(\DB::raw("CONCAT(erpu_items.code, ' - ', erpu_items.name, '-', eu.code) as item"),
                                   \DB::raw("erpu_items.id_item"))
                     ->join('erpu_item_genders as eig', 'erpu_items.item_gender_id', '=', 'eig.id_item_gender')
@@ -89,17 +114,22 @@ class SProductionOrdersController extends Controller
                     ->where('eig.is_deleted', false)
                     ->where('erpu_items.is_deleted', false)
                     ->orderBy('eig.item_type_id', 'ASC')
+                    ->orderBy('item', 'ASC')
                     ->lists('item','erpu_items.id_item');
-      $formula = SFormula::orderBy('id_formula','ASC')->lists('identifier','id_formula');
-      $plan = SProductionPlan::orderBy('id_production_plan','ASC')->lists('production_plan','id_production_plan');
+
+      $plan = SProductionPlan::selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
+                                            "-", production_plan)) as plan,
+                                            id_production_plan')
+                              ->orderBy('id_production_plan', 'ASC')
+                              ->lists('plan','id_production_plan');
+
       $order = SProductionOrder::orderBy('id_order','ASC')->lists('folio','id_order');
       return view('mms.orders.createEdit')
                     ->with('branches', $branch)
                     ->with('plans', $plan)
                     ->with('father', $order)
                     ->with('types', $type)
-                    ->with('items',$item)
-                    ->with('formulas',$formula);
+                    ->with('items',$item);
     }
 
     /**
@@ -110,30 +140,31 @@ class SProductionOrdersController extends Controller
      */
     public function store(Request $request)
     {
-      $order = new SProductionOrder($request->all());
+        $order = new SProductionOrder($request->all());
 
-      $oOrder = SProductionOrder::max('folio');
+        $iLastFolio = SProductionOrder::max('folio');
 
-      $order->folio = ($oOrder + 1);
+        $order->folio = ($iLastFolio + 1);
 
-      $plan = SProductionPlan::find($request->plan_id);
-      $item = SItem::find($request->item_id);
-      if($order->father_order == "");{
-        $order->father_order = 0;
-      }
-      $order->status_id = 1;
-      $order->floor_id = $plan->floor_id;
-      $order->unit_id = $item->unit_id;
-      $order->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-      $order->updated_by_id = \Auth::user()->id;
-      $order->created_by_id = \Auth::user()->id;
+        $plan = SProductionPlan::find($request->plan_id);
 
-      $order->save();
+        $item = SItem::find($request->item_id);
+        if ($order->father_order == "") {
+          $order->father_order = 0;
+        }
+        $order->status_id = 1;
+        $order->floor_id = $plan->floor_id;
+        $order->branch_id = $plan->floor->branch_id;
+        $order->unit_id = $item->unit_id;
+        $order->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $order->updated_by_id = \Auth::user()->id;
+        $order->created_by_id = \Auth::user()->id;
 
-      Flash::success(trans('messages.REG_CREATED'))->important();
+        $order->save();
 
-      return redirect()->route('mms.orders.index');
+        Flash::success(trans('messages.REG_CREATED'))->important();
 
+        return redirect()->route('mms.orders.index');
     }
 
     /**
@@ -155,47 +186,55 @@ class SProductionOrdersController extends Controller
      */
     public function edit($id)
     {
-      $order = SProductionOrder::find($id);
-      session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $order);
+        $order = SProductionOrder::find($id);
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $order);
 
-      /*
-        This method tries to get the lock, if not is obtained returns an array of errors
-       */
-      $error = session('utils')->validateLock($order);
-      if (sizeof($error) > 0)
-      {
-        return redirect()->back()->withErrors($order);
-      }
+        /*
+          This method tries to get the lock, if not is obtained returns an array of errors
+         */
+        $error = session('utils')->validateLock($order);
+        if (sizeof($error) > 0)
+        {
+          return redirect()->back()->withErrors($order);
+        }
 
-      $branch = SBranch::where('partner_id', session('partner')->id_partner)
-                  ->where('is_deleted', false)
-                  ->orderBy('name', 'ASC')
-                  ->lists('name', 'id_branch');
-      $type = STypeOrder::orderBy('name','ASC')->lists('name','id_type');
-      $item = SItem::select(\DB::raw("CONCAT(erpu_items.code, ' - ', erpu_items.name, '-', eu.code) as item"),
-                                  \DB::raw("erpu_items.id_item"))
-                    ->join('erpu_item_genders as eig', 'erpu_items.item_gender_id', '=', 'eig.id_item_gender')
-                    ->join('erpu_units as eu', 'erpu_items.unit_id', '=', 'eu.id_unit')
-                    ->where(function ($q) {
-                          $q->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'))
-                          ->orWhere('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
-                      })
-                    ->where('eig.item_class_id', \Config::get('scsiie.ITEM_CLS.PRODUCT'))
-                    ->where('eig.is_deleted', false)
-                    ->where('erpu_items.is_deleted', false)
-                    ->orderBy('eig.item_type_id', 'ASC')
-                    ->lists('item','erpu_items.id_item');
-      $formula = SFormula::orderBy('id_formula','ASC')->lists('identifier','id_formula');
-      $plan = SProductionPlan::orderBy('id_production_plan','ASC')->lists('production_plan','id_production_plan');
-      $order = SProductionOrder::orderBy('id_order','ASC')->lists('folio','id_order');
-      return view('mms.orders.createEdit')
-                    ->with('orders',$order)
-                    ->with('branches', $branch)
-                    ->with('plans', $plan)
-                    ->with('father', $order)
-                    ->with('types', $type)
-                    ->with('items',$item)
-                    ->with('formulas',$formula);
+        $branch = SBranch::where('partner_id', session('partner')->id_partner)
+                    ->where('is_deleted', false)
+                    ->orderBy('name', 'ASC')
+                    ->lists('name', 'id_branch');
+
+        $type = STypeOrder::orderBy('name','ASC')->lists('name','id_type');
+        $item = SItem::select(\DB::raw("CONCAT(erpu_items.code, ' - ', erpu_items.name, '-', eu.code) as item"),
+                                    \DB::raw("erpu_items.id_item"))
+                      ->join('erpu_item_genders as eig', 'erpu_items.item_gender_id', '=', 'eig.id_item_gender')
+                      ->join('erpu_units as eu', 'erpu_items.unit_id', '=', 'eu.id_unit')
+                      ->where(function ($q) {
+                            $q->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'))
+                            ->orWhere('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
+                        })
+                      ->where('eig.item_class_id', \Config::get('scsiie.ITEM_CLS.PRODUCT'))
+                      ->where('eig.is_deleted', false)
+                      ->where('erpu_items.is_deleted', false)
+                      ->orderBy('eig.item_type_id', 'ASC')
+                      ->lists('item','erpu_items.id_item');
+
+        $formulas = SFormula::orderBy('recipe','ASC')
+                              ->orderBy('version', 'ASC')
+                              ->where('item_id', $order->item_id)
+                              ->selectRaw('id_formula, CONCAT(identifier, "-v", version) AS identifier')
+                              ->lists('identifier','id_formula');
+
+        $plan = SProductionPlan::orderBy('id_production_plan','ASC')->lists('production_plan','id_production_plan');
+        // $order = SProductionOrder::orderBy('id_order','ASC')->lists('folio','id_order');
+
+        return view('mms.orders.createEdit')
+                      ->with('orders', $order)
+                      ->with('branches', $branch)
+                      ->with('plans', $plan)
+                      ->with('father', $order)
+                      ->with('types', $type)
+                      ->with('items', $item)
+                      ->with('formulas', $formulas);
     }
 
     /**
@@ -207,29 +246,180 @@ class SProductionOrdersController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $oProductionOrder = SProductionOrder::find($id);
+        $oProductionOrder->fill($request->all());
 
-    }
+        $plan = SProductionOrder::find($request->plan_id);
 
-    public function activate(Request $request, $id)
-    {
+        $oProductionOrder->floor_id = $plan->floor_id;
+        $oProductionOrder->branch_id = $plan->floor->branch_id;
+        $oProductionOrder->updated_by_id = \Auth::user()->id;
 
+        $errors = $oProductionOrder->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
+        }
+
+        Flash::success(trans('messages.REG_EDITED'))->important();
+
+        return redirect()->route('mms.orders.index', 0);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Set the is_deleted flag to true.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $id)
     {
+        session('utils')->validateDestroy($this->oCurrentUserPermission->privilege_id);
 
+        $oProductionOrder = SProductionOrder::find($id);
+
+        $oProductionOrder->is_deleted = \Config::get('scsys.STATUS.DEL');
+        $oProductionOrder->updated_by_id = \Auth::user()->id;
+
+        $errors = $oProductionOrder->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->route('mms.orders.index')->withErrors($errors);
+        }
+        #$user->delete();
+
+        Flash::success(trans('messages.REG_DELETED'))->important();
+
+        return redirect()->route('mms.orders.index');
     }
 
-    public function findFormulas(Request $request){
-      $data= SFormula::select('id_formula','identifier')
-                      ->where('item_id',$request->id)
+    /**
+     * set the is_deleted flag to false
+     *
+     * @param  Request $request
+     * @param  integer  $id  id of SProductionOrder
+     *
+     * @return redirect()->route('mms.orders.index')
+     */
+    public function activate(Request $request, $id)
+    {
+        $oProductionOrder = SProductionOrder::find($id);
+
+        session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $oProductionOrder);
+
+        $oProductionOrder->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+        $oProductionOrder->updated_by_id = \Auth::user()->id;
+
+        $errors = $oProductionOrder->save();
+        if (sizeof($errors) > 0)
+        {
+           return redirect()->back()->withInput($request->input())->withErrors($error);
+        }
+
+        Flash::success(trans('messages.REG_ACTIVATED'))->important();
+
+        return redirect()->route('mms.orders.index');
+    }
+
+    /**
+     * [findFormulas description]
+     * @param  Request $request [description]
+     * @return [type]           [description]
+     */
+    public function findFormulas(Request $request) {
+      $data= SFormula::selectRaw('id_formula, CONCAT(identifier, "-v", version) AS identifier')
+                      ->where('item_id', $request->id)
+                      ->orderBy('recipe', 'ASC')
+                      ->orderBy('version', 'ASC')
                       ->get();
+
       return response()->json($data);
+    }
+
+    /**
+     * redirect to method change
+     *
+     * @param  integer   $iProductionOrder id of SProductionOrder
+     *
+     */
+    public function next($iProductionOrder)
+    {
+        $oRes = $this->changeStatus($iProductionOrder, \Config::get('scmms.NEXT_ST'));
+
+        if (!is_array($oRes) && $oRes) {
+            Flash::success(trans('messages.STATUS_CHANGED'))->important();
+
+            return redirect()->route('mms.orders.index');
+        }
+        else {
+            return redirect()->back()->withErrors($oRes);
+        }
+    }
+
+    /**
+     * redirect to method change
+     *
+     * @param  integer   $iProductionOrder id of SProductionOrder
+     *
+     */
+    public function previous($iProductionOrder)
+    {
+        $oRes = $this->changeStatus($iProductionOrder, \Config::get('scmms.PREVIOUS_ST'));
+
+        if (!is_array($oRes) && $oRes) {
+            Flash::success(trans('messages.STATUS_CHANGED'))->important();
+
+            return redirect()->route('mms.orders.index');
+        }
+        else {
+            return redirect()->back()->withErrors($oRes);
+        }
+    }
+
+    /**
+     * changes the status of registry
+     *
+     * @param  integer $iProductionOrder id of SProductionOrder
+     * @param  integer $iOperation       \Config::get('scmms.NEXT_ST')
+     *                                   \Config::get('scmms.PREVIOUS_ST')
+     * @return function
+     */
+    private function changeStatus($iProductionOrder, $iOperation)
+    {
+       $oProductionOrder = SProductionOrder::find($iProductionOrder);
+
+       session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $oProductionOrder);
+
+       $rValid = false;
+       if ($iOperation == \Config::get('scmms.NEXT_ST')) {
+         $rValid = SProductionOrderCore::validateNextStatus($oProductionOrder->id_order,
+                                                            $oProductionOrder->status_id);
+       }
+       else {
+         $rValid = SProductionOrderCore::validatePreviousStatus($oProductionOrder->id_order,
+                                                            $oProductionOrder->status_id);
+       }
+
+       if (!is_array($rValid) && $rValid) {
+           if ($iOperation == \Config::get('scmms.NEXT_ST')) {
+              $oProductionOrder->status_id = $oProductionOrder->status_id + 1;
+           }
+           else {
+              $oProductionOrder->status_id = $oProductionOrder->status_id - 1;
+           }
+
+           $oProductionOrder->updated_by_id = \Auth::user()->id;
+
+           $errors = $oProductionOrder->save();
+           if (sizeof($errors) > 0)
+           {
+              return $errors;
+           }
+
+           return true;
+       }
+       else {
+         return $rValid;
+       }
     }
 }

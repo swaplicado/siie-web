@@ -7,8 +7,8 @@
 		                        <h6>© Copyright Software Aplicado S.A. de C.V.</h6>
 		                    </div><!--end .col-md-4 .contact-email-->
 		                    <div class="col-md-6">
-		                        <?php date_default_timezone_set('America/Mexico_City');?>
-                                <h6 id="reloj" style="font-size:15px;"></h6>
+		                       
+                                {{-- <h6 id="reloj" style="font-size:15px;"></h6> --}}
 
 		                    </div><!--end .col-md-6-->
 		            </div><!--end .col-md-12-->
@@ -17,7 +17,7 @@
 		</center>
 </section>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"/>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"/>
 
 <script type="text/javascript">
     function startTime(){
@@ -42,4 +42,4 @@
       return i;
     }
     window.onload=function(){startTime();}
-</script>
+</script> --}}

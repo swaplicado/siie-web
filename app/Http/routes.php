@@ -292,6 +292,14 @@ Route::post('manage/changedate',[
         'uses' => 'MMS\SProductionOrdersController@Copy',
         'as'   => 'mms.orders.copy'
       ]);
+      Route::get('orders/{id}/next', [
+        'uses' => 'MMS\SProductionOrdersController@Next',
+        'as'   => 'mms.orders.next'
+      ]);
+      Route::get('orders/{id}/previous', [
+        'uses' => 'MMS\SProductionOrdersController@Previous',
+        'as'   => 'mms.orders.previous'
+      ]);
 
       /*
       * Explosion of materials

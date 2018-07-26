@@ -106,8 +106,10 @@
                     <td align="right">{{ session('utils')->
                         formatNumber($oExpRow->dSegregated,
                         \Config::get('scsiie.FRMT.QTY')) }}</td>
-                    <td>asfgads</td>
-                    <td>asfgads</td>
+                    <td align="right">{{ session('utils')->
+                        formatNumber($oExpRow->dBackOrder,
+                        \Config::get('scsiie.FRMT.QTY')) }}</td>
+                    <td>{{ $oExpRow->sPartner }}</td>
                 </tr>
               @endforeach
             </tbody>
