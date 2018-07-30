@@ -65,6 +65,7 @@ return [
     'labels'  =>  [
                   'AMOUNT' => 'Monto',
                   'BALANCE' => 'Saldo',
+                  'COMMENTS' => 'Comentarios',
                   'CONCEPT' => 'Concepto',
                   'CREDIT_NOTE' => 'Nota crédito',
                   'CREDITS' => 'Cargos',
@@ -89,6 +90,7 @@ return [
                   'PURCHASES_INVOICE' => 'FACTURA DE COMPRA',
                   'PURCHASES_ORDER' => 'PEDIDO DE COMPRA',
                   'QUANTITY' => 'Cantidad',
+                  'REFERENCE' =>  'Referencia',
                   'RET_TAXES' =>  'Impuestos retenidos ML',
                   'RET_TAXES_D' =>  'Impuestos retenidos MD',
                   'SALES_ADJUST' => 'NOTA CRÉDITO VENTA',

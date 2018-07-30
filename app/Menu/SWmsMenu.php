@@ -48,14 +48,26 @@ class SWmsMenu {
                 ->route('wms.movs.docs', trans('wms.WHS_DOCS'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
-                        Link::toRoute('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ'), trans('wms.MOV_STK_IN_ADJ')]))
+                        Link::toRoute('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ'),
+                                                                                        trans('wms.MOV_STK_IN_ADJ'),
+                                                                                        0,
+                                                                                        0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
-                        Link::toRoute('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ'),  trans('wms.MOV_STK_OUT_ADJ')]))
+                        Link::toRoute('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ'),
+                                                                                        trans('wms.MOV_STK_OUT_ADJ'),
+                                                                                        0,
+                                                                                        0]))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS')),
-                        Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_INTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'), trans('wms.MOV_WHS_INTERNAL_TRS_OUT')]))
+                        Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_INTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'),
+                                                                                                  trans('wms.MOV_WHS_INTERNAL_TRS_OUT'),
+                                                                                                  0,
+                                                                                                  2]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
-                        Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'), trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT')]))
+                        Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'),
+                                                                                                        trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'),
+                                                                                                        0,
+                                                                                                        0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
                         Link::toRoute('wms.movs.receptions', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),

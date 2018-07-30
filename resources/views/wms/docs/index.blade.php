@@ -145,7 +145,7 @@
 											break;
 										}
 										?>
-										<a href="{{ route('wms.movs.supply', [$iMvtInvType, $title, $doc->id_document]) }}" title="Surtir documento"
+										<a href="{{ route('wms.movs.supply', [$iMvtInvType, $title, $doc->id_document, 0]) }}" title="Surtir documento"
 											class="btn btn-default btn-sm">
 											<span class="glyphicon glyphicon-import" aria-hidden = "true"/>
 										</a>

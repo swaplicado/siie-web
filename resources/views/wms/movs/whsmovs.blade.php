@@ -22,6 +22,7 @@
 @endif
 	@include('wms.movs.subviews.header')
 	@include('wms.movs.subviews.documentrows')
+	@include('wms.movs.subviews.po')
 	@if (App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
 		@include('wms.movs.pallet')
 	@endif

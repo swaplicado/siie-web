@@ -40,8 +40,8 @@ class MmsAddProdPlanTable extends Migration {
             $table->increments('id_floor');
             $table->char('code', 50);
             $table->char('name', 100);
-            $table->integer('branch_id')->unsigned();
             $table->boolean('is_deleted');
+            $table->integer('branch_id')->unsigned();
             $table->integer('created_by_id')->unsigned();
             $table->integer('updated_by_id')->unsigned();
             $table->timestamps();
@@ -50,6 +50,11 @@ class MmsAddProdPlanTable extends Migration {
             $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
             $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('mms_floor')->insert([
+          	['id_floor' => '1','code' => 'NA','name' => 'N/A', 'is_deleted' => '1',
+            'branch_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
 
           Schema::connection($this->sConnection)->create('mms_production_planes', function (blueprint $table) {
           	$table->increments('id_production_plan');
@@ -67,6 +72,12 @@ class MmsAddProdPlanTable extends Migration {
           	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.users')->onDelete('cascade');
           	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.users')->onDelete('cascade');
           });
+
+          DB::connection($this->sConnection)->table('mms_production_planes')->insert([
+          	['id_production_plan' => '1','folio' => '0','production_plan' => 'N/A',
+            'dt_start' => '2017-01-01','dt_end' => '2017-01-01', 'is_deleted' => '1',
+            'floor_id' => '1', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ]);
         }
     }
 

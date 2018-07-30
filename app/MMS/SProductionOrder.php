@@ -11,6 +11,7 @@ class SProductionOrder extends SModel {
     protected $fillable = [
                             'id_order',
                             'folio',
+                            'identifier',
                             'plan_id',
                             'branch_id',
                             'floor_id',
@@ -21,7 +22,7 @@ class SProductionOrder extends SModel {
                             'formula_id',
                             'date',
                             'charges',
-                            'father_order',
+                            'father_order_id',
                             'is_deleted',
                             'created_by_id',
                             'updated_by_id',
@@ -39,6 +40,11 @@ class SProductionOrder extends SModel {
   public function floor()
   {
     return $this->belongsTo('App\MMS\SFloor');
+  }
+
+  public function father()
+  {
+    return $this->belongsTo('App\MMS\SProductionOrder', 'father_order_id');
   }
 
   public function formula()

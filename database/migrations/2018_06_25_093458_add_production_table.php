@@ -79,36 +79,45 @@ class AddProductionTable extends Migration
         ]);
 
         Schema::connection($this->sConnection)->create('mms_production_orders', function (blueprint $table) {
-          $table->increments('id_order');
-          $table->char('folio', 50);
-          $table->date('date');
-          $table->integer('charges');
-          $table->integer('father_order');
-          $table->boolean('is_deleted');
-          $table->integer('plan_id')->unsigned();
-          $table->integer('branch_id')->unsigned();
-          $table->integer('floor_id')->unsigned();
-          $table->integer('type_id')->unsigned();
-          $table->integer('status_id')->unsigned();
-          $table->integer('item_id')->unsigned();
-          $table->integer('unit_id')->unsigned();
-          $table->integer('formula_id')->unsigned();
-          $table->integer('created_by_id')->unsigned();
-          $table->integer('updated_by_id')->unsigned();
-          $table->timestamps();
+        	$table->increments('id_order');
+        	$table->char('folio', 50);
+        	$table->char('identifier', 150);
+        	$table->date('date');
+        	$table->integer('charges');
+        	$table->boolean('is_deleted');
+        	$table->integer('plan_id')->unsigned();
+        	$table->integer('branch_id')->unsigned();
+        	$table->integer('floor_id')->unsigned();
+        	$table->integer('type_id')->unsigned();
+        	$table->integer('status_id')->unsigned();
+        	$table->integer('item_id')->unsigned();
+        	$table->integer('unit_id')->unsigned();
+        	$table->integer('father_order_id')->unsigned();
+        	$table->integer('formula_id')->unsigned();
+        	$table->integer('created_by_id')->unsigned();
+        	$table->integer('updated_by_id')->unsigned();
+        	$table->timestamps();
 
-          $table->foreign('plan_id')->references('id_production_plan')->on('mms_production_planes')->onDelete('cascade');
-          $table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
-          $table->foreign('floor_id')->references('id_floor')->on('mms_floor')->onDelete('cascade');
-          $table->foreign('type_id')->references('id_type')->on('mms_type_order')->onDelete('cascade');
-          $table->foreign('status_id')->references('id_status')->on('mms_status_order')->onDelete('cascade');
-          $table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
-          $table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
-          $table->foreign('formula_id')->references('id_formula')->on('mms_formulas')->onDelete('cascade');
-
-          $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
-          $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+        	$table->foreign('plan_id')->references('id_production_plan')->on('mms_production_planes')->onDelete('cascade');
+        	$table->foreign('branch_id')->references('id_branch')->on('erpu_branches')->onDelete('cascade');
+        	$table->foreign('floor_id')->references('id_floor')->on('mms_floor')->onDelete('cascade');
+        	$table->foreign('type_id')->references('id_type')->on('mms_type_order')->onDelete('cascade');
+        	$table->foreign('status_id')->references('id_status')->on('mms_status_order')->onDelete('cascade');
+        	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
+        	$table->foreign('unit_id')->references('id_item_unit')->on('erpu_item_units')->onDelete('cascade');
+        	$table->foreign('father_order_id')->references('id_order')->on('mms_production_orders')->onDelete('cascade');
+        	$table->foreign('formula_id')->references('id_formula')->on('mms_formulas')->onDelete('cascade');
+        	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+        	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
         });
+
+        DB::connection($this->sConnection)->table('mms_production_orders')->insert([
+        	['id_order' => '1','folio' => '0','identifier' => '','date' => '2017-01-01',
+            'charges' => '0', 'is_deleted' => '1', 'plan_id' => '1', 'branch_id' => '1',
+            'floor_id' => '1', 'type_id' => '1', 'status_id' => '1', 'item_id' => '1',
+             'unit_id' => '1', 'father_order_id' => '1', 'formula_id' => '1',
+             'created_by_id' => '1', 'updated_by_id' => '1'],
+        ]);
       }
     }
 

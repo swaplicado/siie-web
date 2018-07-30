@@ -42,12 +42,16 @@
 																'placeholder' => trans('userinterface.placeholders.SELECT_ITEM'),
 																'required']) !!}
 						</div>
-						{!! Form::label('plan_id', trans('userinterface.labels.PLAN').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('identifier', trans('mms.labels.IDENTIFIER').'*', ['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-							{!! Form::select('plan_id', $plans, isset($orders) ?  $orders->plan_id : null ,
-																['class'=>'form-control select-plan',
-																'required']) !!}
+							{!! Form::text('identifier',
+									isset($orders) ? $orders->identifier : '',
+																		['class'=>'form-control',
+																		'placeholder' => trans('mms.placeholders.IDENTIFIER'),
+																		'style' => 'text-align: right;',
+																		'required']) !!}
 						</div>
+
 					</div>
 				</div>
 			</div>
@@ -60,14 +64,11 @@
                                 ['class'=>'form-control select-formula',
 																'required']) !!}
             </div>
-						{!! Form::label('date', trans('userinterface.labels.DATE_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('plan_id', trans('userinterface.labels.PLAN').'*',['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-							{!! Form::date('date',
-									isset($orders) ? $orders->date : session('work_date'),
-																		['class'=>'form-control',
-																		'placeholder' => trans('userinterface.placeholders.DATE_ORDER'),
-																		'style' => 'text-align: right;',
-																		'required']) !!}
+							{!! Form::select('plan_id', $plans, isset($orders) ?  $orders->plan_id : null ,
+																['class'=>'form-control select-plan',
+																'required']) !!}
 						</div>
 					</div>
 				</div>
@@ -83,10 +84,14 @@
 																'placeholder' => trans('userinterface.placeholders.SELECT_TYPE'),
 																'required']) !!}
 						</div>
-						{!! Form::label('father_order', trans('userinterface.labels.FATHER_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('date', trans('userinterface.labels.DATE_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-							{!! Form::select('father_order', $father, isset($orders) ?  $orders->father_order : null ,
-																['class'=>'form-control select-father','placeholder' => 'N/A']) !!}
+							{!! Form::date('date',
+									isset($orders) ? $orders->date : session('work_date'),
+																		['class'=>'form-control',
+																		'placeholder' => trans('userinterface.placeholders.DATE_ORDER'),
+																		'style' => 'text-align: right;',
+																		'required']) !!}
 						</div>
           </div>
         </div>
@@ -97,11 +102,16 @@
 						{!! Form::label('charges', trans('userinterface.labels.CHARGE').'*',['class'=>'col-md-1 control-label']) !!}
             <div class="col-md-4">
 							{!! Form::number('charges',
-					    	isset($orders) ? $orders->charges : 0, ['required','class'=>'form-control',
+					    	isset($orders) ? $orders->charges : 1, ['required','class'=>'form-control',
 									'min' => '0', 'placeholder' => trans('userinterface.placeholders.CHARGES'),
 									'style' => 'text-align: right;',
 									'required']) !!}
             </div>
+						{!! Form::label('father_order_id', trans('userinterface.labels.FATHER_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
+						<div class="col-md-4">
+							{!! Form::select('father_order_id', $father, isset($orders) ?  $orders->father_order_id : 1,
+																['class'=>'form-control select-father','placeholder' => 'N/A']) !!}
+						</div>
           </div>
         </div>
       </div>

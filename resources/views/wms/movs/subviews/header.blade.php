@@ -6,7 +6,9 @@
     @if (isset($oMovement->folio))
       <div class="form-group">
         {!! Form::label('folio', trans('userinterface.labels.MVT_FOLIO').'*') !!}
-        {!! Form::text('folio', $oMovement->folio, ['class'=>'form-control input-sm', 'placeholder' => trans('userinterface.placeholders.FOLIO'), 'readonly']) !!}
+        {!! Form::text('folio', $oMovement->folio, ['class'=>'form-control input-sm',
+                                'placeholder' => trans('userinterface.placeholders.FOLIO'),
+                                'readonly']) !!}
       </div>
     @endif
 
@@ -15,7 +17,8 @@
       {!! Form::label('mvt_whs_type_id', trans('userinterface.labels.MVT_TYPE').'*') !!}
       {!! Form::select('mvt_whs_type_id', $movTypes, $oMovement->mvt_whs_type_id, ['class'=>'form-control select-one',
                                                             'id' => 'mvt_whs_type_id',
-                                                            'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'), 'disabled']) !!}
+                                                            'placeholder' => trans('userinterface.placeholders.SELECT_MVT_TYPE'),
+                                                            'disabled']) !!}
     </div>
 
     <div class="form-group">
@@ -28,6 +31,18 @@
                                                             App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id) ?
                                                             'disabled' : '']) !!}
     </div>
+
+    @if ('1' == '1')
+      <div class="form-group">
+        {!! Form::button(trans('mms.labels.PRODUCTION_ORDER'),
+                                    ['class' => 'btn btn-default',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#po_modal',
+                                    'id' => 'po_btn'
+                                    ]) !!}
+      </div>
+    @endif
+
 
   </div>
   <div class="col-md-6">

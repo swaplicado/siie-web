@@ -120,16 +120,23 @@ class SProductionOrdersController extends Controller
       $plan = SProductionPlan::selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
                                             "-", production_plan)) as plan,
                                             id_production_plan')
+                              ->where('is_deleted', false)
                               ->orderBy('id_production_plan', 'ASC')
                               ->lists('plan','id_production_plan');
 
-      $order = SProductionOrder::orderBy('id_order','ASC')->lists('folio','id_order');
+        $father = SProductionOrder::orderBy('folio', 'DESC')
+                              ->selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
+                                                                    "-", identifier)) as prod_ord,
+                                                                    id_order')
+                              ->where('is_deleted', false)
+                              ->lists('prod_ord', 'id_order');
+
       return view('mms.orders.createEdit')
                     ->with('branches', $branch)
                     ->with('plans', $plan)
-                    ->with('father', $order)
+                    ->with('father', $father)
                     ->with('types', $type)
-                    ->with('items',$item);
+                    ->with('items', $item);
     }
 
     /**
@@ -149,8 +156,8 @@ class SProductionOrdersController extends Controller
         $plan = SProductionPlan::find($request->plan_id);
 
         $item = SItem::find($request->item_id);
-        if ($order->father_order == "") {
-          $order->father_order = 0;
+        if ($order->father_order_id == "") {
+          $order->father_order_id = 1;
         }
         $order->status_id = 1;
         $order->floor_id = $plan->floor_id;

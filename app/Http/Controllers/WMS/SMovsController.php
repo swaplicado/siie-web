@@ -45,6 +45,8 @@ use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
 use App\WMS\Data\SData;
 
+use App\MMS\SProductionOrder;
+
 class SMovsController extends Controller
 {
     private $oCurrentUserPermission;
@@ -227,7 +229,7 @@ class SMovsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0)
+    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0, $iPO = 0)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
@@ -261,6 +263,40 @@ class SMovsController extends Controller
         else
         {
             $oDocument = 0;
+        }
+
+        $lSrcPO = array();
+        $lDesPO = array();
+        $iSrcPO = 0;
+        $iDesPO = 0;
+
+        if ($iPO > 0) {
+          if ($iPO > 1) {
+            $lSrcPO = SProductionOrder::where('is_deleted', false)
+                                        ->selectRaw('LPAD(folio, '.session('long_folios').', "0") AS folio,
+                                                     id_order')
+                                        ->where('id_order', $iPO)
+                                        ->lists('folio', 'id_order');
+            $lDesPO = SProductionOrder::where('is_deleted', false)
+                                        ->selectRaw('LPAD(folio, '.session('long_folios').', "0") AS folio,
+                                                     id_order')
+                                        ->where('father_order_id', $iPO)
+                                        ->lists('folio', 'id_order');
+
+            $iSrcPO = $iPO;
+            $iDesPO = 0;
+          }
+          else {
+            $lSrcPO = SProductionOrder::where('is_deleted', false)
+                                        // ->where('id_prod', $iPO)
+                                        ->selectRaw('LPAD(folio, '.session('long_folios').', "0") AS folio,
+                                                     id_order')
+                                        ->lists('folio', 'id_order');
+            $lDesPO = [];
+
+            $iSrcPO = 0;
+            $iDesPO = 0;
+          }
         }
 
         $oMovType = SMvtType::find($mvtType);
@@ -371,6 +407,10 @@ class SMovsController extends Controller
                           ->with('branches', $branches)
                           ->with('whs_src', $iWhsSrc)
                           ->with('whs_des', $iWhsDes)
+                          ->with('lSrcPO', $lSrcPO)
+                          ->with('lDesPO', $lDesPO)
+                          ->with('iSrcPO', $iSrcPO)
+                          ->with('iDesPO', $iDesPO)
                           ->with('oTransitWarehouse', $oTransitWarehouse)
                           ->with('lPallets', $pallets)
                           ->with('dPerSupp', $oDbPerSupply->val_decimal)

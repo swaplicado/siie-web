@@ -13,6 +13,7 @@ return array(
     'AddLocksTable' => $baseDir . '/database/migrations/2017_08_01_000020_add_locks_table.php',
     'AddModulesTable' => $baseDir . '/database/migrations/2017_08_01_000001_add_modules_table.php',
     'AddPermissionsTable' => $baseDir . '/database/migrations/2017_08_01_000002_add_permissions_table.php',
+    'AddPoFk' => $baseDir . '/database/migrations/2018_07_26_102931_add_po_fk.php',
     'AddPrivilegesTable' => $baseDir . '/database/migrations/2017_08_01_000003_add_privileges_table.php',
     'AddProductionTable' => $baseDir . '/database/migrations/2018_06_25_093458_add_production_table.php',
     'AddRolesTables' => $baseDir . '/database/migrations/2017_08_01_000010_add_roles_tables.php',

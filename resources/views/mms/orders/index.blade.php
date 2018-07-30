@@ -90,14 +90,18 @@
                   @include('templates.list.options')
               </td>
               <td>{{ $orden->branch->name }}</td>
-                <td>{{ $orden->father_order }}</td>
-                <td>
-      						@if (! $orden->is_deleted)
-      								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
-      						@else
-      								<span class="label label-danger">{{ trans('userinterface.labels.INACTIVE') }}</span>
-      						@endif
-      					</td>
+              @if ($orden->father_order_id == '1')
+                <td>{{ 'NA' }}</td>
+              @else
+                <td>{{ 'OP-'.session('utils')->formatFolio($orden->father->folio) }}</td>
+              @endif
+              <td>
+    						@if (! $orden->is_deleted)
+    								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
+    						@else
+    								<span class="label label-danger">{{ trans('userinterface.labels.INACTIVE') }}</span>
+    						@endif
+    					</td>
             </tr>
           @endforeach
         </tbody>

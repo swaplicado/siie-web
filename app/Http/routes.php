@@ -465,7 +465,7 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@receiveTransfer',
       	'as' => 'wms.movs.receivetransfer'
       ]);
-      Route::get('/movs/{id}/{title}/create', [
+      Route::get('/movs/{id}/{title}/{doc}/{po}/create', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'
       ]);
@@ -489,31 +489,31 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@update',
         'as' => 'wms.movs.update'
       ]);
-      Route::get('/movs/{id?}/{title}/create/data', [
+      Route::get('/movs/{id?}/{title}/{doc}/{po}/create/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.create.data'
       ]);
-      Route::get('/movs/{id?}/{title}/create/search', [
+      Route::get('/movs/{id?}/{title}/{doc}/{po}/create/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.create.search'
       ]);
-      Route::post('/movs/{id?}/{title}/create/validaterow', [
+      Route::post('/movs/{id?}/{title}/{doc}/{po}/create/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.create.validaterow'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/supply', [
+      Route::get('/movs/{id}/{title}/{doc}/{po}/supply', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.supply'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/supply/data', [
+      Route::get('/movs/{id}/{title}/{doc}/{po}/supply/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.supply.data'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/supply/search', [
+      Route::get('/movs/{id}/{title}/{doc}/{po}/supply/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.supply.search'
       ]);
-      Route::post('/movs/{id}/{title}/{doc}/supply/validaterow', [
+      Route::post('/movs/{id}/{title}/{doc}/{po}/supply/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.supply.validaterow'
       ]);
