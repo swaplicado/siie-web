@@ -1,4 +1,4 @@
-<div style="font-size:110%; margin:40px 0px 0px 0px;">
+<div style="font-size:11; margin:30px 0px 0px 0px;">
   <strong><center>{{session('company')->name}}</center></strong>
   <br>
   <br>
@@ -12,7 +12,7 @@
   <br>
   <br><br><br>
   <center>
-    <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" height="70%" width="70%"/>
+    <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($barcode, 'C128',1,33)}}" alt="barcode" height="80%" width="80%"/>
   </center>
   <br>
   <center>
