@@ -11,22 +11,31 @@ class SAssign {
      function(data) {
         var serverData = JSON.parse(data);
 
-        this.oSrcPO = serverData.oSrcPO;
-        updateLabels();
+        assignCore.oSrcPO = serverData.oSrcPO;
+        assignCore.updateLabels();
      });
   }
 
   updateLabels() {
-    assignCore.oSrcPO
+    document.getElementById('src_item').innerText = assignCore.oSrcPO.item.name;
 
+    if (globalData.iAssignType == globalData.scmms.ASSIGN_TYPE.PP) {
+      document.getElementById('des_item').innerText = assignCore.oDesPO.item.name;
+    }
   }
 }
 
 var assignCore = new SAssign();
 
-function updateDesPOs() {
+function updatePOs() {
     var poSrc = document.getElementById('src_po').value;
     var poDes = document.getElementById('des_po').value;
 
     assignCore.goToServer(poSrc, poDes);
+}
+
+function openModal() {
+  updatePOs();
+
+  $('#po_modal').modal('show');
 }

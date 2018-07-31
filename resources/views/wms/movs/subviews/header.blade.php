@@ -36,8 +36,7 @@
       <div class="form-group">
         {!! Form::button(trans('mms.labels.PRODUCTION_ORDER'),
                                     ['class' => 'btn btn-info',
-                                    'data-toggle' => 'modal',
-                                    'data-target' => '#po_modal',
+                                    'onclick' => 'openModal()',
                                     'id' => 'po_btn'
                                     ]) !!}
       </div>

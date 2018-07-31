@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div id="po_modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -16,7 +16,7 @@
                                         trans('mms.labels.PRODUCTION_ORDER') :
                                         trans('mms.labels.SRC_PRODUCTION_ORDER').'*') !!}
               {!! Form::select('src_po', $lSrcPO, $iSrcPO, ['class'=>'form-control select-one',
-                                                              'onChange' => 'updateDesPOs()',
+                                                              'onChange' => 'updatePOs()',
                                                               'style' => 'text-align: right',
                                                               'id' => 'src_po']) !!}
             </div>
@@ -72,7 +72,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('actions.CLOSE') }}</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">{{ trans('actions.ACCEPT') }}</button>
       </div>
     </div>
 
