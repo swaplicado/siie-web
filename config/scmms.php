@@ -18,4 +18,9 @@ return [
           'ST_CLOSED' => '6',
     ],
 
+    'ASSIGN_TYPE' => [
+          'MP' => '1',
+          'PP' => '2',
+    ],
+
 ];

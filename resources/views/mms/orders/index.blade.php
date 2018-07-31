@@ -48,6 +48,7 @@
             <tr class="titlerow">
                 <th data-priority="1" style="text-align: center;">Folio</th>
                 <th data-priority="1" style="text-align: center;">Fecha</th>
+                <th data-priority="1">Identificador</th>
                 <th data-priority="1">Plan de producción</th>
                 <th>Planta</th>
                 <th>Tipo de orden</th>
@@ -67,6 +68,7 @@
             <tr>
                 <td>{{ session('utils')->formatFolio($orden->folio) }}</td>
                 <td>{{ $orden->date }}</td>
+                <td>{{ $orden->identifier }}</td>
                 <td>{{ session('utils')->formatFolio($orden->plan->folio).'-'.$orden->plan->production_plan }}</td>
                 <td>{{ $orden->floor->name }}</td>
                 <td>{{ $orden->type->name }}</td>

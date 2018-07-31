@@ -12,7 +12,9 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              {!! Form::label('src_po', trans('mms.labels.SRC_PRODUCTION_ORDER').'*') !!}
+              {!! Form::label('src_po', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+                                        trans('mms.labels.PRODUCTION_ORDER') :
+                                        trans('mms.labels.SRC_PRODUCTION_ORDER').'*') !!}
               {!! Form::select('src_po', $lSrcPO, $iSrcPO, ['class'=>'form-control select-one',
                                                               'onChange' => 'updateDesPOs()',
                                                               'style' => 'text-align: right',
@@ -21,9 +23,12 @@
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              {!! Form::label('des_po', trans('mms.labels.DES_PRODUCTION_ORDER' ).'*') !!}
+              {!! Form::label('des_po', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+                                        '--' :
+                                        trans('mms.labels.DES_PRODUCTION_ORDER' ).'*') !!}
               {!! Form::select('des_po', $lDesPO, $iDesPO, ['class'=>'form-control select-one',
                                                             'style' => 'text-align: right',
+                          $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ? 'disabled' : '',
                                                             'id' => 'des_po']) !!}
             </div>
           </div>
@@ -31,15 +36,19 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              {!! Form::label('src_item', trans('mms.labels.SRC_ITEM').'*') !!}
-              {!! Form::label('src_item', null, ['class'=>'form-control',
+              {!! Form::label('src_item', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+                                        trans('mms.labels.PRODUCT') :
+                                        trans('mms.labels.SRC_ITEM').'*') !!}
+              {!! Form::label('src_item', '--', ['class'=>'form-control',
                                                   'id' => 'src_item']) !!}
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              {!! Form::label('des_item', trans('mms.labels.DES_ITEM').'*') !!}
-              {!! Form::label('des_item', null, ['class'=>'form-control',
+              {!! Form::label('des_item', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+                                        '--' :
+                                        trans('mms.labels.DES_ITEM').'*') !!}
+              {!! Form::label('des_item', '--', ['class'=>'form-control',
                                                   'id' => 'des_item']) !!}
             </div>
           </div>

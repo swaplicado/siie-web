@@ -85,6 +85,26 @@ class SGuiValidations {
            }
        }
 
+       if (globalData.iAssignType > 0) {
+          switch (globalData.iAssignType) {
+            case globalData.scmms.ASSIGN_TYPE.PP:
+                  if (oMovement.iPODes == 0) {
+                    swal("Error", "Debe elegir una orden de producción destino.", "error");
+                    return false;
+                  }
+
+            case globalData.scmms.ASSIGN_TYPE.MP:
+                  if (oMovement.iPODes == 0) {
+                    swal("Error", "Debe elegir una orden de producción.", "error");
+                    return false;
+                  }
+              break;
+              
+            default:
+
+          }
+       }
+
        return true;
     }
 

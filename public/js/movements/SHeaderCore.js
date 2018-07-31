@@ -41,6 +41,9 @@ class SHeaderCore {
             movement.iBranchDes = document.getElementById('branch_des').value;
             movement.iWhsDes = 2;
         }
+
+        movement.iPOSrc = document.getElementById('src_po').value;
+        movement.iDESrc = document.getElementById('des_po').value;
     }
 
     /**

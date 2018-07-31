@@ -19,6 +19,10 @@
     this.lOperation = <?php echo json_encode(\Config::get('scwms.OPERATION')) ?>; //input-output
     this.bIsExternalTransfer = <?php echo json_encode($bIsExternalTransfer) ?>;
 
+    this.iAssignType = <?php echo json_encode($iAssType) ?>;
+
+    this.scmms = <?php echo json_encode(\Config::get('scmms')) ?>;
+
     this.MVT_CLS_IN = <?php echo json_encode(\Config::get('scwms.MVT_CLS_IN')) ?>; //
     this.MVT_CLS_OUT = <?php echo json_encode(\Config::get('scwms.MVT_CLS_OUT')) ?>; //
 

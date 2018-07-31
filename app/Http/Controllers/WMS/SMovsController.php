@@ -229,7 +229,7 @@ class SMovsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0, $iPO = 0)
+    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0, $iAssType = 0)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
@@ -270,34 +270,53 @@ class SMovsController extends Controller
         $iSrcPO = 0;
         $iDesPO = 0;
 
-        if ($iPO > 0) {
-          if ($iPO > 1) {
-            $lSrcPO = SProductionOrder::where('is_deleted', false)
-                                        ->selectRaw('LPAD(folio, '.session('long_folios').', "0") AS folio,
-                                                     id_order')
-                                        ->where('id_order', $iPO)
-                                        ->lists('folio', 'id_order');
-            $lDesPO = SProductionOrder::where('is_deleted', false)
-                                        ->selectRaw('LPAD(folio, '.session('long_folios').', "0") AS folio,
-                                                     id_order')
-                                        ->where('father_order_id', $iPO)
-                                        ->lists('folio', 'id_order');
+        $lItemsForOrders = array();
+        if ($iAssType > 0) {
+            switch ($iAssType) {
+              case \Config::get('scmms.ASSIGN_TYPE.MP'):
+                  $lSrcPO = SProductionOrder::where('is_deleted', false)
+                                            ->selectRaw('(CONCAT(LPAD(folio, '.
+                                                  session('long_folios').', "0"),
+                                                      "-", identifier)) as prod_ord,
+                                                      id_order')
+                                            ->lists('prod_ord', 'id_order');
+                  $lDesPO = [];
 
-            $iSrcPO = $iPO;
-            $iDesPO = 0;
-          }
-          else {
-            $lSrcPO = SProductionOrder::where('is_deleted', false)
-                                        // ->where('id_prod', $iPO)
-                                        ->selectRaw('LPAD(folio, '.session('long_folios').', "0") AS folio,
-                                                     id_order')
-                                        ->lists('folio', 'id_order');
-            $lDesPO = [];
+                  $iSrcPO = 0;
+                  $iDesPO = 0;
+                break;
+              case \Config::get('scmms.ASSIGN_TYPE.PP'):
+                // code...
+                break;
 
-            $iSrcPO = 0;
-            $iDesPO = 0;
-          }
+              default:
+                // code...
+                break;
+            }
+
+            $lItemsForOrders = SItem::whereRaw('id_item IN
+                                  (SELECT item_id FROM mms_production_orders
+                                    WHERE NOT is_deleted)')
+                                      ->get();
         }
+
+            // $lSrcPO = SProductionOrder::where('is_deleted', false)
+            //                         ->selectRaw('(CONCAT(LPAD(folio, '.
+            //                                   session('long_folios').', "0"),
+            //                                   "-", identifier)) as prod_ord,
+            //                                   id_order')
+            //                         ->where('id_order', $iPO)
+            //                         ->lists('prod_ord', 'id_order');
+            // $lDesPO = SProductionOrder::where('is_deleted', false)
+            //                         ->selectRaw('(CONCAT(LPAD(folio, '.
+            //                                     session('long_folios').', "0"),
+            //                                   "-", identifier)) as prod_ord,
+            //                                   id_order')
+            //                         ->where('father_order_id', $iPO)
+            //                         ->lists('prod_ord', 'id_order');
+            //
+            // $iSrcPO = $iPO;
+            // $iDesPO = 0;
 
         $oMovType = SMvtType::find($mvtType);
         $iMvtSubType = 1;
@@ -411,6 +430,8 @@ class SMovsController extends Controller
                           ->with('lDesPO', $lDesPO)
                           ->with('iSrcPO', $iSrcPO)
                           ->with('iDesPO', $iDesPO)
+                          ->with('iAssType', $iAssType)
+                          ->with('lItemsForOrders', $lItemsForOrders)
                           ->with('oTransitWarehouse', $oTransitWarehouse)
                           ->with('lPallets', $pallets)
                           ->with('dPerSupp', $oDbPerSupply->val_decimal)
@@ -1173,5 +1194,32 @@ class SMovsController extends Controller
         }
 
         return json_encode($oData);
+    }
+
+    public function getProductionData(Request $request)
+    {
+       $iSrcPO = $request->po_src;
+       $iDesPO = $request->po_des;
+       $iAssignType = $request->assig_type;
+
+       $oData = new \App\MMS\data\SData;
+
+       $oSrcPO = SProductionOrder::find($iSrcPO);
+       $oSrcPO->item;
+       $oSrcPO->formula;
+
+       $oData->oSrcPO = $oSrcPO;
+
+       switch ($iAssignType) {
+         case \Config::get('scmms.ASSIGN_TYPE.MP'):
+
+           break;
+
+         default:
+           // code...
+           break;
+       }
+
+       return json_encode($oData);
     }
 }

@@ -107,10 +107,12 @@
 									'style' => 'text-align: right;',
 									'required']) !!}
             </div>
-						{!! Form::label('father_order_id', trans('userinterface.labels.FATHER_ORDER').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('father_order_id', trans('userinterface.labels.FATHER_ORDER').'*',
+										['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
 							{!! Form::select('father_order_id', $father, isset($orders) ?  $orders->father_order_id : 1,
-																['class'=>'form-control select-father','placeholder' => 'N/A']) !!}
+																['class'=>'form-control select-father',
+																	'placeholder' => 'N/A']) !!}
 						</div>
           </div>
         </div>

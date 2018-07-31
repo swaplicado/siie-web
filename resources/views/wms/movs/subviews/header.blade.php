@@ -35,7 +35,7 @@
     @if ('1' == '1')
       <div class="form-group">
         {!! Form::button(trans('mms.labels.PRODUCTION_ORDER'),
-                                    ['class' => 'btn btn-default',
+                                    ['class' => 'btn btn-info',
                                     'data-toggle' => 'modal',
                                     'data-target' => '#po_modal',
                                     'id' => 'po_btn'

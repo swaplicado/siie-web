@@ -11,6 +11,8 @@ class SMovement {
       this.tDate = 0;
       this.iWhsSrc = 0;
       this.iWhsDes = 0;
+      this.iPOSrc = 0;
+      this.iPODes = 0;
       this.iDocumentId = 0;
       this.bIsDeleted = false;
 

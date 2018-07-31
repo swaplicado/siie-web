@@ -47,6 +47,7 @@ return [
                       'MAX_MIX' => 'Mezcla máxima',
                       'NAME_FORMULA' => 'Nombre de la fórmula',
                       'NO_EXPLODED' => 'No explosionada',
+                      'PRODUCT' => 'Producto',
                       'PRODUCTION_PLAN' => 'Plan de producción',
                       'PRODUCTION_ORDER' => 'Orden de producción',
                       'SRC_ITEM' => 'Producto origen',
