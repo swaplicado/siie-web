@@ -53,7 +53,8 @@
 	{!! Form::hidden('movement_object', null, ['id' => 'movement_object']) !!}
 	<div class="form-group" align="right">
 		<a id="idFreeze" style="display:none" class="btn btn-info" onclick="unfreeze()" role="button">{{ trans('actions.FREEZE') }}</a>
-		{!! Form::submit(trans('actions.SAVE'), ['class' => 'btn btn-primary', 'id' => 'saveButton', 'disabled']) !!}
+		{!! Form::submit(trans('actions.SAVE'), ['class' => 'btn btn-primary', 'id' => 'saveButton', 'disabled',
+													'onclick' => "this.disabled=true;this.form.submit();"]) !!}
 		<input type="button" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="window.history.back();"/>
 	</div>
 {!! Form::close() !!}
