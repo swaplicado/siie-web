@@ -27,6 +27,7 @@ class SMovement {
       this.iAuxIndex = 0;
       this.iAuxPallet = 0;
       this.iAuxPalletLocation = 0;
+      this.iAuxAssigType = 0;
     }
 
     get newId() {

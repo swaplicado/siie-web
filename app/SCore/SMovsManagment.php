@@ -217,7 +217,7 @@ class SMovsManagment {
        }
        catch (\Exception $e)
        {
-           dd($e);
+           \Log::error($e);
        }
     }
 
@@ -569,6 +569,33 @@ class SMovsManagment {
            $iWhsSrcDefLocation = $oSrcLocation->id_whs_location;
            $iWhsDesDefLocation = $oDesLocation->id_whs_location;
         }
+
+        if ($oMovement->aAuxPOs[SMovement::ASS_TYPE] > 0) {
+          switch ($oMovement->aAuxPOs[SMovement::ASS_TYPE]) {
+            case \Config::get('scmms.ASSIGN_TYPE.MP'):
+              $oMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
+              break;
+            case \Config::get('scmms.ASSIGN_TYPE.PP'):
+              $oMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
+              break;
+
+            default:
+              // code...
+              break;
+          }
+
+          if ($oMovement->aAuxPOs[SMovement::SRC_PO] > 0) {
+             if ($oMovement->aAuxPOs[SMovement::DES_PO] > 0) {
+                $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::DES_PO];
+             }
+             else {
+                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+             }
+          }
+        }
+
+
 
         $oMovement->aAuxRows = [];
         $oMirrorMovement->aAuxRows = [];

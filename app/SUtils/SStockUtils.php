@@ -104,7 +104,6 @@ class SStockUtils
                                  // dd($lSegStock->toSql());
                                 $lSegStock = $lSegStock->get();
 
-                                $dStock =
                                 $dSegregated = 0;
                                 if (sizeof($lSegStock) > 0) {
                                   $dSegregated = $lSegStock[0]->segregated;

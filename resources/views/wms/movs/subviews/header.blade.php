@@ -32,7 +32,7 @@
                                                             'disabled' : '']) !!}
     </div>
 
-    @if ('1' == '1')
+    @if ($iAssType > '0')
       <div class="form-group">
         {!! Form::button(trans('mms.labels.PRODUCTION_ORDER'),
                                     ['class' => 'btn btn-info',

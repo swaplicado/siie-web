@@ -541,6 +541,7 @@ class SMovsController extends Controller
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = $movement->src_mvt_id > 0 ? $movement->src_mvt_id : 1;
         $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, $oMovementJs->iDocumentId);
+        $movement->prod_ord_id = 1;
         $movement->auth_status_by_id = 1;
         $movement->closed_shipment_by_id = 1;
         $movement->created_by_id = \Auth::user()->id;
@@ -550,6 +551,10 @@ class SMovsController extends Controller
 
         $iPallet = $oMovementJs->iAuxPallet;
         $iPalletLocation = $oMovementJs->iAuxPalletLocation;
+
+        $movement->aAuxPOs[SMovement::SRC_PO] = $oMovementJs->iPOSrc;
+        $movement->aAuxPOs[SMovement::DES_PO] = $oMovementJs->iPODes;
+        $movement->aAuxPOs[SMovement::ASS_TYPE] = $oMovementJs->iAuxAssigType;
 
         $aResult = $oProcess->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
                                                     $movement, $movementRows,
@@ -756,6 +761,11 @@ class SMovsController extends Controller
                         ->with('lStock', $lStock)
                         ->with('bIsExternalTransfer', false)
                         ->with('dPerSupp', $oDbPerSupply->val_decimal)
+                        ->with('lSrcPO', [])
+                        ->with('lDesPO', [])
+                        ->with('iSrcPO', 0)
+                        ->with('iDesPO', 0)
+                        ->with('iAssType', 0)
                         ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
                         ->with('sTitle', 'Modificación')
                         ->with('bCanCreateLotProd', $oCanCreateLotProd->val_boolean);

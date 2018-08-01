@@ -62,7 +62,7 @@ class SWmsMenu {
                         Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_INTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'),
                                                                                                   trans('wms.MOV_WHS_INTERNAL_TRS_OUT'),
                                                                                                   0,
-                                                                                                  2]))
+                                                                                                  0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
                         Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'),
                                                                                                         trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'),

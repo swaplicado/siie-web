@@ -44,6 +44,7 @@ class SHeaderCore {
 
         movement.iPOSrc = document.getElementById('src_po').value;
         movement.iDESrc = document.getElementById('des_po').value;
+        movement.iAuxAssigType = globalData.iAssignType;
     }
 
     /**

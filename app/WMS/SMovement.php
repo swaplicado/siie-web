@@ -12,6 +12,11 @@ class SMovement extends SModel {
 
   public $aAuxRows = [];
   public $iAuxBranchDes = [];
+  public $aAuxPOs = [];
+
+  const SRC_PO = '0';
+  const DES_PO = '1';
+  const ASS_TYPE = '2';
 
   protected $fillable = [
                     'dt_date',

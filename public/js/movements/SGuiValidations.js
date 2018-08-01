@@ -94,12 +94,12 @@ class SGuiValidations {
                   }
 
             case globalData.scmms.ASSIGN_TYPE.MP:
-                  if (oMovement.iPODes == 0) {
+                  if (oMovement.iPOSrc == 0) {
                     swal("Error", "Debe elegir una orden de producción.", "error");
                     return false;
                   }
               break;
-              
+
             default:
 
           }
