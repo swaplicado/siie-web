@@ -48,6 +48,11 @@ class MmsAddPoFk extends Migration
                   ->onDelete('cascade');
         });
       }
+
+      DB::table('syss_permissions')->insert([
+        ['code' => '125','name' => 'ASIGNACIÓN A ORDENES DE PRODUCCIÓN',
+            'is_deleted' => '0','module_id' => '2'],
+      ]);
     }
 
     /**
@@ -67,5 +72,7 @@ class MmsAddPoFk extends Migration
             $table->dropColumn('prod_ord_id');
         });
       }
+
+      DB::table('syss_permissions')->where('code', '125')->delete();
     }
 }

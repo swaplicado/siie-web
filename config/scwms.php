@@ -35,8 +35,8 @@ return [
     'MVT_SPT_TP_CON' => '5', // consignment
 
     // applies only for production
-    'MVT_MFG_TP_MAT' => '1', // materials
-    'MVT_MFG_TP_PRO' => '2', // products
+    'MVT_MFG_TP_MAT' => '2', // materials
+    'MVT_MFG_TP_PRO' => '3', // products
 
     // applies only for adjustments
     'MVT_ADJ_TP_IFI' => '2', // initial and final inventory

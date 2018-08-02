@@ -6,4 +6,5 @@
 class SData
 {
     public $oSrcPO = null;
+    public $lDesPO = [];
 }

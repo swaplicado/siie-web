@@ -24,6 +24,8 @@ return [
       'EXPL_MAT_T'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
 
       'ASSIGNAMENT'  => 'Asignación de insumos y productos',
+      'ASSIGNAMENT_MATERIALS'  => 'Asignación de materia prima',
+      'ASSIGNAMENT_PRODUCTS'  => 'Asignación de productos',
       'ASSIGNAMENT_T'  => 'Lorem ipsum dolor sit amet consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
 
       'titles' => [

@@ -86,7 +86,29 @@ class SWmsMenu {
                         Link::toRoute('wms.inventory.initialinventory', trans('wms.GENERATE_INITIAL_INVENTORY')))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.INVENTORY_OPERATION')),
                         Link::toRoute('wms.inventory.physicalinventory', trans('wms.PHYSICAL_INVENTORY')))
-        )
+                ->html('', ['role' => 'separator', 'class' => 'divider'])
+                ->submenu(
+                    Link::to('#', trans('mms.PRODUCTION').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                        ->addClass('test'),
+                    \Menu::new()
+                        ->addParentClass('dropdown-submenu')
+                        ->addClass('dropdown-menu')
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.WHS_PURCHASES')),
+                                Link::toRoute('wms.movs.create', trans('mms.ASSIGNAMENT_MATERIALS'),
+                                          [\Config::get('scwms.MVT_TP_OUT_TRA'),
+                                          trans('mms.ASSIGNAMENT_MATERIALS'),
+                                          0,
+                                          \Config::get('scmms.ASSIGN_TYPE.MP')])
+                              )
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.WHS_PURCHASES')),
+                                Link::toRoute('wms.movs.create', trans('mms.ASSIGNAMENT_PRODUCTS'),
+                                          [\Config::get('scwms.MVT_TP_OUT_TRA'),
+                                          trans('mms.ASSIGNAMENT_PRODUCTS'),
+                                          0,
+                                          \Config::get('scmms.ASSIGN_TYPE.PP')])
+                              )
+                        )
+)
         ->submenu(
             Link::to('#', trans('wms.PUR_DOCS').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')

@@ -23,13 +23,13 @@
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              {!! Form::label('des_po', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+              {!! Form::label('des_po_label', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         '--' :
                                         trans('mms.labels.DES_PRODUCTION_ORDER' ).'*') !!}
-              {!! Form::select('des_po', $lDesPO, $iDesPO, ['class'=>'form-control select-one',
-                                                            'style' => 'text-align: right',
-                          $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ? 'disabled' : '',
-                                                            'id' => 'des_po']) !!}
+
+            <select class='form-control' name="des_po" id="des_po" value="">
+  							<option value="">{{ trans('mms.labels.DES_PRODUCTION_ORDER') }}</option>
+    				</select>
             </div>
           </div>
         </div>

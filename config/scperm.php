@@ -66,6 +66,7 @@ return [
                   'MMS_FLOORS' => '122',
                   'MMS_EXPLOSION_MATERIALS' => '123',
                   'MMS_PRODUCTION_ORDERS' => '124',
+                  'MMS_PROD_ORDERS_ASSIGNAMENTS' => '125',
                   'IMPORTATIONS' => '150',
 
                   'ERP' =>  '101',

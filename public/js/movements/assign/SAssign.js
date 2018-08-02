@@ -12,6 +12,7 @@ class SAssign {
         var serverData = JSON.parse(data);
 
         assignCore.oSrcPO = serverData.oSrcPO;
+        assignCore.updateDesProdOrders(serverData.lDesPO);
         assignCore.updateLabels();
      });
   }
@@ -20,8 +21,28 @@ class SAssign {
     document.getElementById('src_item').innerText = assignCore.oSrcPO.item.name;
 
     if (globalData.iAssignType == globalData.scmms.ASSIGN_TYPE.PP) {
-      document.getElementById('des_item').innerText = assignCore.oDesPO.item.name;
+      var poDes = document.getElementById('des_po').value;
     }
+  }
+
+  updateDesProdOrders(lDesPO) {
+      $('#des_po').empty();
+      $.each(lDesPO, function(index, oDesPO) {
+        var option = $("<option value=" + oDesPO.id_order + "></option>")
+                    .attr(oDesPO, index)
+                    .text(oDesPO.folio + '-' + oDesPO.identifier);
+
+        $('#des_po').append(option);
+      });
+
+      var poDes = document.getElementById('des_po').value;
+
+      $.each(lDesPO, function(index, oDesPO) {
+         if (oDesPO.id_order == poDes) {
+            document.getElementById('des_item').innerText = oDesPO.item.name;
+            // break;
+         }
+      });
   }
 }
 

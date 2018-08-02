@@ -86,6 +86,9 @@ class SGuiValidations {
        }
 
        if (globalData.iAssignType > 0) {
+         oMovement.iPOSrc = document.getElementById('src_po').value;
+         oMovement.iPODes = document.getElementById('des_po').value;
+         
           switch (globalData.iAssignType) {
             case globalData.scmms.ASSIGN_TYPE.PP:
                   if (oMovement.iPODes == 0) {

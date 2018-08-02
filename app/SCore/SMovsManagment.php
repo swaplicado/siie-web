@@ -574,9 +574,11 @@ class SMovsManagment {
           switch ($oMovement->aAuxPOs[SMovement::ASS_TYPE]) {
             case \Config::get('scmms.ASSIGN_TYPE.MP'):
               $oMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
+              $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
               break;
             case \Config::get('scmms.ASSIGN_TYPE.PP'):
               $oMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
+              $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
               break;
 
             default:
