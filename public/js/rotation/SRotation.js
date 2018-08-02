@@ -18,7 +18,16 @@ class SRotation {
       if (oRow.iItemId == elementToAdd.iItemId && oRow.iUnitId == elementToAdd.iUnitId) {
         for (var [keyLot, oLotRow] of oRow.lotRows) {
             if (! mLots.has(oLotRow.iLotId)) {
-              mLots.set(oLotRow.iLotId, oLotRow);
+              var oAux = new SLotRow();
+              oAux.iIdLotRow = oLotRow.iIdLotRow;
+              oAux.iLotId = oLotRow.iLotId;
+              oAux.sLot = oLotRow.sLot;
+              oAux.tExpDate = oLotRow.tExpDate;
+              oAux.dQuantity = oLotRow.dQuantity;
+              oAux.dPrice = oLotRow.dPrice;
+              oAux.bIsDeleted = oLotRow.bIsDeleted;
+
+              mLots.set(oLotRow.iLotId, oAux);
             }
             else {
               var oAux = mLots.get(oLotRow.iLotId);
