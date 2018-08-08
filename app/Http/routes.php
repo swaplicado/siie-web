@@ -300,6 +300,10 @@ Route::post('manage/changedate',[
         'uses' => 'MMS\SProductionOrdersController@Previous',
         'as'   => 'mms.orders.previous'
       ]);
+      Route::get('orders/{id}/kardex', [
+        'uses' => 'MMS\SProductionOrdersController@GetKardex',
+        'as'   => 'mms.orders.kardex'
+      ]);
 
       /*
       * Explosion of materials

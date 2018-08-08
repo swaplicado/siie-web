@@ -44,6 +44,7 @@ class SMovement extends SModel {
                     'doc_invoice_id',
                     'doc_debit_note_id',
                     'doc_credit_note_id',
+                    'prod_ord_id',
                     'mfg_dept_id',
                     'mfg_line_id',
                     'mfg_job_id',

@@ -49,9 +49,12 @@ return [
                       'MAX_MIX' => 'Mezcla máxima',
                       'NAME_FORMULA' => 'Nombre de la fórmula',
                       'NO_EXPLODED' => 'No explosionada',
+                      'ORDER_QUANTITY' => 'Cant. Ord.',
+                      'PO_KARDEX' => 'Tarjeta auxiliar de almacén',
                       'PRODUCT' => 'Producto',
                       'PRODUCTION_PLAN' => 'Plan de producción',
                       'PRODUCTION_ORDER' => 'Orden de producción',
+                      'PRODUCTION_ORDER_TYPE' => 'Tipo de orden',
                       'SRC_ITEM' => 'Producto origen',
                       'SRC_PRODUCTION_ORDER' => 'Orden de producción origen',
                       'DES_ITEM' => 'Producto destino',
@@ -72,5 +75,6 @@ return [
       'tooltips'  => [
                       'NEXT_STATUS' => 'Siguiente estatus',
                       'PREVIOUS_STATUS' => 'Estatus previo',
+                      'PO_KARDEX' => 'Tarjeta auxiliar de almacén',
                   ],
 ];

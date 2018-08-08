@@ -42,6 +42,9 @@
   @section('create')
     @include('templates.form.create')
   @endsection
+
+  @include('mms.orders.kardex')
+
   <div class="row">
     <table id="orders_table" class="table table-striped table-bordered display" cellspacing="0" width="100%">
         <thead>
@@ -80,6 +83,7 @@
                 <td style="text-align: center;">
                   @include('mms.orders.previous')
                   @include('mms.orders.next')
+                  @include('mms.orders.kardexbtn')
                   <?php
                     $oRegistry = $orden;
                     $iRegistryId = $orden->id_order;
@@ -113,6 +117,8 @@
 
 @section('js')
   <script src="{{ asset('js/mms/orders/tables.js')}}"></script>
+  <script src="{{ asset('js/mms/orders/SKardexCore.js')}}"></script>
+  <script src="{{ asset('js/mms/orders/SGuiKardex.js')}}"></script>
   <script src="{{ asset('moment/moment.js') }}"></script>
 	<script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
 
