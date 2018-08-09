@@ -382,6 +382,7 @@ class SStockManagment
                                               AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
+                          ->where('edr.is_deleted', false)
                           ->groupBy('edr.document_id')
                           ->orderBy('ed.dt_doc', 'DESC');
         }
@@ -433,6 +434,7 @@ class SStockManagment
                                               AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
                           )
+                          ->where('edr.is_deleted', false)
                           ->groupBy('edr.id_document_row')
                           ->groupBy('edr.document_id')
                           ->orderBy('ed.dt_doc', 'DESC');
