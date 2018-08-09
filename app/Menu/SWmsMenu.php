@@ -50,23 +50,19 @@ class SWmsMenu {
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
                         Link::toRoute('wms.movs.create', trans('wms.MOV_STK_IN_ADJ'), [\Config::get('scwms.MVT_TP_IN_ADJ'),
                                                                                         trans('wms.MOV_STK_IN_ADJ'),
-                                                                                        0,
                                                                                         0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
                         Link::toRoute('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ'),
                                                                                         trans('wms.MOV_STK_OUT_ADJ'),
-                                                                                        0,
                                                                                         0]))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS')),
                         Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_INTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'),
                                                                                                   trans('wms.MOV_WHS_INTERNAL_TRS_OUT'),
-                                                                                                  0,
                                                                                                   0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
                         Link::toRoute('wms.movs.create', trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'), [\Config::get('scwms.MVT_TP_OUT_TRA'),
                                                                                                         trans('wms.MOV_WHS_SEND_EXTERNAL_TRS_OUT'),
-                                                                                                        0,
                                                                                                         0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.TRANSFERS_EXTERNAL')),
                         Link::toRoute('wms.movs.receptions', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT')))
@@ -76,9 +72,11 @@ class SWmsMenu {
                         Link::toRoute('wms.movs.received', 'Traspasos externos recibidos'))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.PALLET_RECONFIG')),
-                        Link::toRoute('wms.movs.create', trans('wms.PALLET_DIVISION'), [\Config::get('scwms.PALLET_RECONFIG_IN'), trans('wms.PALLET_DIVISION')]))
+                        Link::toRoute('wms.movs.create', trans('wms.PALLET_DIVISION'),
+                              [\Config::get('scwms.PALLET_RECONFIG_IN'), trans('wms.PALLET_DIVISION'), 0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.PALLET_RECONFIG')),
-                        Link::toRoute('wms.movs.create', trans('wms.PALLET_ADD'), [\Config::get('scwms.PALLET_RECONFIG_OUT'), trans('wms.PALLET_ADD')]))
+                        Link::toRoute('wms.movs.create', trans('wms.PALLET_ADD'),
+                              [\Config::get('scwms.PALLET_RECONFIG_OUT'), trans('wms.PALLET_ADD'), 0]))
                 ->html('', ['role' => 'separator', 'class' => 'divider'])
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.INVENTORY_OPERATION')),
                         Link::toRoute('wms.inventory.emptywarehouse', trans('wms.EMPTY_WAREHOUSE')))
@@ -93,19 +91,19 @@ class SWmsMenu {
                     \Menu::new()
                         ->addParentClass('dropdown-submenu')
                         ->addClass('dropdown-menu')
-                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.WHS_PURCHASES')),
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
                                 Link::toRoute('wms.movs.create', trans('mms.ASSIGNAMENT_MATERIALS'),
-                                          [\Config::get('scwms.MVT_TP_OUT_TRA'),
-                                          trans('mms.ASSIGNAMENT_MATERIALS'),
-                                          0,
-                                          \Config::get('scmms.ASSIGN_TYPE.MP')])
+                                          [\Config::get('scwms.MVT_OUT_DLVRY_RM'),
+                                            trans('mms.ASSIGNAMENT_MATERIALS'),
+                                          0])
                               )
-                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.WHS_PURCHASES')),
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
                                 Link::toRoute('wms.movs.create', trans('mms.ASSIGNAMENT_PRODUCTS'),
-                                          [\Config::get('scwms.MVT_TP_OUT_TRA'),
-                                          trans('mms.ASSIGNAMENT_PRODUCTS'),
-                                          0,
-                                          \Config::get('scmms.ASSIGN_TYPE.PP')])
+                                          [\Config::get('scwms.MVT_OUT_DLVRY_PP'),
+                                            trans('mms.ASSIGNAMENT_PRODUCTS'),
+                                          0])
                               )
                         )
 )

@@ -21,9 +21,23 @@ return [
     'MVT_TP_OUT_PRO' => '13',
     'MVT_TP_OUT_EXP' => '14',
 
-    'PALLET_RECONFIG_IN'  =>  '15',
-    'PALLET_RECONFIG_OUT'  =>  '16',
+    'PALLET_RECONFIG_IN' => '15',
+    'PALLET_RECONFIG_OUT' => '16',
 
+    'MVT_OUT_DLVRY_RM' => '17', // output delivery raw material
+    'MVT_OUT_RTRN_RM' => '18', // output return raw material
+    'MVT_OUT_DLVRY_PP' => '19', // output delivery product in process
+    'MVT_OUT_RTRN_PP' => '20', // output return product in process
+    'MVT_OUT_DLVRY_FP' => '21', // output delivery finished product
+    'MVT_OUT_RTRN_FP' => '22', // output return finished product
+    'MVT_OUT_CONSUMPTION' => '23', // output consumption
+    'MVT_IN_DLVRY_RM' => '24',
+    'MVT_IN_RTRN_RM' => '25',
+    'MVT_IN_DLVRY_PP' => '26',
+    'MVT_IN_RTRN_PP' => '27',
+    'MVT_IN_DLVRY_FP' => '28',
+    'MVT_IN_RTRN_FP' => '29',
+    'MVT_IN_CONSUMPTION' => '30',
 
     'PHYSICAL_INVENTORY'  =>  '404',
 

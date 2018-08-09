@@ -229,7 +229,7 @@ class SMovsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0, $iAssType = 0)
+    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
@@ -263,57 +263,6 @@ class SMovsController extends Controller
         else
         {
             $oDocument = 0;
-        }
-
-        $lSrcPO = array();
-        $lDesPO = array();
-        $iSrcPO = 0;
-        $iDesPO = 0;
-
-        $lItemsForOrders = array();
-        if ($iAssType > 0) {
-            switch ($iAssType) {
-              case \Config::get('scmms.ASSIGN_TYPE.MP'):
-                  $lSrcPO = SProductionOrder::where('is_deleted', false)
-                                            ->selectRaw('(CONCAT(LPAD(folio, '.
-                                                  session('long_folios').', "0"),
-                                                      "-", identifier)) as prod_ord,
-                                                      id_order')
-                                            ->lists('prod_ord', 'id_order');
-                  $lDesPO = [];
-
-                  $iSrcPO = 0;
-                  $iDesPO = 0;
-                  break;
-
-              case \Config::get('scmms.ASSIGN_TYPE.PP'):
-                  $lSrcPO = SProductionOrder::where('is_deleted', false)
-                                            ->selectRaw('(CONCAT(LPAD(folio, '.
-                                                  session('long_folios').', "0"),
-                                                      "-", identifier)) as prod_ord,
-                                                      id_order')
-                                            ->whereRaw('id_order IN (SELECT father_order_id
-                                                                    FROM
-                                                                    mms_production_orders
-                                                                    WHERE father_order_id > 1
-                                                                    AND is_deleted = false
-                                                                    )')
-                                            ->lists('prod_ord', 'id_order');
-                  $lDesPO = [];
-
-                  $iSrcPO = 0;
-                  $iDesPO = 0;
-                break;
-
-              default:
-                // code...
-                break;
-            }
-
-            $lItemsForOrders = SItem::whereRaw('id_item IN
-                                  (SELECT item_id FROM mms_production_orders
-                                    WHERE NOT is_deleted)')
-                                      ->get();
         }
 
         $oMovType = SMvtType::find($mvtType);
@@ -354,6 +303,13 @@ class SMovsController extends Controller
         $oTransitWarehouse = null;
         $mvtComp = NULL;
         $pallets = array();
+
+        $lSrcPO = array();
+        $lDesPO = array();
+        $iSrcPO = 0;
+        $iDesPO = 0;
+        $iAssType = 0;
+        $lItemsForOrders = array();
 
         switch ($oMovement->mvt_whs_type_id) {
           case \Config::get('scwms.MVT_TP_IN_SAL'):
@@ -399,6 +355,54 @@ class SMovsController extends Controller
             }
             $mvtComp = SMvtInternalType::where('id_mvt_internal_type', $iMvtSubType)->lists('name', 'id_mvt_internal_type');
             $pallets = array();
+            break;
+
+          case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
+            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_MAT');
+            $mvtComp = SMvtMfgType::where('is_deleted', false)
+                                  ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_MAT'))
+                                  ->lists('name', 'id_mvt_mfg_type');
+
+            $lSrcPO = SProductionOrder::where('is_deleted', false)
+                                      ->selectRaw('(CONCAT(LPAD(folio, '.
+                                            session('long_folios').', "0"),
+                                                "-", identifier)) as prod_ord,
+                                                id_order')
+                                      ->lists('prod_ord', 'id_order');
+            $lDesPO = [];
+
+            $iSrcPO = 0;
+            $iDesPO = 0;
+
+            $iAssType = \Config::get('scmms.ASSIGN_TYPE.MP');
+
+            break;
+
+          case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+
+            $lSrcPO = SProductionOrder::where('is_deleted', false)
+                                      ->selectRaw('(CONCAT(LPAD(folio, '.
+                                            session('long_folios').', "0"),
+                                                "-", identifier)) as prod_ord,
+                                                id_order')
+                                      ->whereRaw('id_order IN (SELECT father_order_id
+                                                              FROM
+                                                              mms_production_orders
+                                                              WHERE father_order_id > 1
+                                                              AND is_deleted = false
+                                                              )')
+                                      ->lists('prod_ord', 'id_order');
+            $lDesPO = [];
+
+            $iSrcPO = 0;
+            $iDesPO = 0;
+
+            $iAssType = \Config::get('scmms.ASSIGN_TYPE.PP');
+
+            $lItemsForOrders = SItem::whereRaw('id_item IN
+                                  (SELECT item_id FROM mms_production_orders
+                                    WHERE NOT is_deleted)')
+                                  ->get();
             break;
 
           default:
@@ -454,19 +458,6 @@ class SMovsController extends Controller
         $iWhsId = 0;
         $iWhsSrc = 0;
         $iWhsDes = 0;
-
-        // if ($oMovementJs->iMvtType == \Config::get('scwms.PHYSICAL_INVENTORY')) {
-        //     $inventoryCore = new SInventoryCore();
-        //     $oResult = $inventoryCore->generatePhysicalInventory($request);
-        //
-        //     if (is_array($oResult) && sizeof($oResult) > 0) {
-        //       return redirect()->back()->withErrors($oResult)->withInput();
-        //     }
-        //
-        //     Flash::success(trans('messages.GENERATED_PHYSICAL_INVENTORY'))->important();
-        //
-        //     return redirect()->route('wms.movs.index', 0);
-        // }
 
         // the transfer implies two warehouses
         if ($oMovementJs->iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA'))

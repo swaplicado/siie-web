@@ -465,7 +465,7 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@receiveTransfer',
       	'as' => 'wms.movs.receivetransfer'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/{po}/create', [
+      Route::get('/movs/{id}/{title}/{doc}/create', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.create'
       ]);
@@ -489,31 +489,31 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@update',
         'as' => 'wms.movs.update'
       ]);
-      Route::get('/movs/{id?}/{title}/{doc}/{po}/create/data', [
+      Route::get('/movs/{id?}/{title}/{doc}/create/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.create.data'
       ]);
-      Route::get('/movs/{id?}/{title}/{doc}/{po}/create/search', [
+      Route::get('/movs/{id?}/{title}/{doc}/create/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.create.search'
       ]);
-      Route::post('/movs/{id?}/{title}/{doc}/{po}/create/validaterow', [
+      Route::post('/movs/{id?}/{title}/{doc}/create/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.create.validaterow'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/{po}/supply', [
+      Route::get('/movs/{id}/{title}/{doc}/supply', [
       	'uses' => 'WMS\SMovsController@create',
       	'as' => 'wms.movs.supply'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/{po}/supply/data', [
+      Route::get('/movs/{id}/{title}/{doc}/supply/data', [
         'uses' => 'WMS\SMovsController@getMovementData',
         'as' => 'wms.movs.supply.data'
       ]);
-      Route::get('/movs/{id}/{title}/{doc}/{po}/supply/search', [
+      Route::get('/movs/{id}/{title}/{doc}/supply/search', [
         'uses' => 'WMS\SMovsController@searchElement',
         'as' => 'wms.movs.supply.search'
       ]);
-      Route::post('/movs/{id}/{title}/{doc}/{po}/supply/validaterow', [
+      Route::post('/movs/{id}/{title}/{doc}/supply/validaterow', [
         'uses' => 'WMS\SMovsController@validateRow',
         'as' => 'wms.movs.supply.validaterow'
       ]);
@@ -537,7 +537,7 @@ Route::group(['prefix' => 'qms'], function () {
       	'uses' => 'WMS\SMovsController@print',
       	'as' => 'wms.movs.print'
       ]);
-      Route::get('/movs/{id?}/{title}/{doc}/{po}/create/productiondata', [
+      Route::get('/movs/{id?}/{title}/{doc}/create/productiondata', [
         'uses' => 'WMS\SMovsController@getProductionData',
         'as' => 'wms.movs.create.productiondata'
       ]);
