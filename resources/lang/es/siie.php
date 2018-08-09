@@ -65,6 +65,7 @@ return [
     'labels'  =>  [
                   'AMOUNT' => 'Monto',
                   'BALANCE' => 'Saldo',
+                  'CHARGES' => 'Cargos',
                   'COMMENTS' => 'Comentarios',
                   'CONCEPT' => 'Concepto',
                   'CREDIT_NOTE' => 'Nota crédito',
@@ -85,6 +86,7 @@ return [
                   'KEY' => 'Clave',
                   'NUM' => 'Núm.',
                   'ORDER' => 'Orden',
+                  'PAYMENTS' => 'Abonos',
                   'PARTNER' => 'Asociado de negocios',
                   'PURCHASES_ADJUST' => 'NOTA CRÉDITO COMPRA',
                   'PURCHASES_INVOICE' => 'FACTURA DE COMPRA',
