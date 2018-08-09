@@ -33,10 +33,18 @@ class SGuiUtils {
 
        if ($sWhs == 'whs_des') {
            return $iMovClassId == \Config::get('scwms.MVT_CLS_IN') ||
-   							$iMovTypeId == \Config::get('scwms.MVT_TP_OUT_TRA');
+   							$iMovTypeId == \Config::get('scwms.MVT_TP_OUT_TRA')
+                || $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
+                || $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_PP');
        }
 
        return false;
+    }
+
+    public static function isProductionMovement($iMovTypeId)
+    {
+       return $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
+              ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_PP');
     }
 
     /**

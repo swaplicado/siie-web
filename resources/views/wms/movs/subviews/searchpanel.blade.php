@@ -9,7 +9,8 @@
                   $oMovement->mvt_whs_type_id == \Config::get('scwms.PHYSICAL_INVENTORY') ||
                   ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION') &&
                     $oMovement->mvt_whs_type_id != \Config::get('scwms.MVT_TP_OUT_SAL')) ||
-                  App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
+                  App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id)
+                  || App\SUtils\SGuiUtils::isProductionMovement($oMovement->mvt_whs_type_id))
                 <div class="col-md-3">
                   {!! Form::label('', trans('actions.SEARCH_ELEMENT').'...') !!}
                   {!! Form::text('item', null, ['class'=>'form-control input-sm',

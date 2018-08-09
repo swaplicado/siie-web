@@ -128,6 +128,8 @@ class SMovsManagment {
 
           // The movement is trasfer
         case \Config::get('scwms.MVT_TP_OUT_TRA'):
+        case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
+        case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
           return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
 
           // the movement is pallet reconfiguration (pallet division)
@@ -551,8 +553,26 @@ class SMovsManagment {
         }
         else {
             $oMirrorMovement = clone $oMovement;
+
+            switch ($oMovement->mvt_whs_type_id) {
+              case \Config::get('scwms.MVT_TP_OUT_TRA'):
+                $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
+                break;
+
+              case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
+                $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_DLVRY_RM');
+                break;
+
+              case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+                $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_DLVRY_PP');
+                break;
+
+              default:
+                // code...
+                break;
+            }
+
             $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
-            $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_TP_IN_TRA');
             $oMirrorMovement->whs_id = $iWhsDes;
             $oMirrorMovement->is_system = true;
             $oWhs = SWarehouse::find($iWhsDes);
@@ -571,20 +591,18 @@ class SMovsManagment {
         }
 
         if ($oMovement->aAuxPOs[SMovement::ASS_TYPE] > 0) {
-          switch ($oMovement->aAuxPOs[SMovement::ASS_TYPE]) {
-            case \Config::get('scmms.ASSIGN_TYPE.MP'):
-              $oMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
-              $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
-              break;
-            case \Config::get('scmms.ASSIGN_TYPE.PP'):
-              $oMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
-              $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
-              break;
-
-            default:
-              // code...
-              break;
-          }
+          // switch ($oMovement->aAuxPOs[SMovement::ASS_TYPE]) {
+          //   case \Config::get('scmms.ASSIGN_TYPE.MP'):
+          //     $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
+          //     break;
+          //   case \Config::get('scmms.ASSIGN_TYPE.PP'):
+          //     $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
+          //     break;
+          //
+          //   default:
+          //     // code...
+          //     break;
+          // }
 
           if ($oMovement->aAuxPOs[SMovement::SRC_PO] > 0) {
              if ($oMovement->aAuxPOs[SMovement::DES_PO] > 0) {
@@ -596,8 +614,6 @@ class SMovsManagment {
              }
           }
         }
-
-
 
         $oMovement->aAuxRows = [];
         $oMirrorMovement->aAuxRows = [];

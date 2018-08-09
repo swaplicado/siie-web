@@ -63,14 +63,16 @@ class SGuiValidations {
           return false;
        }
 
-       if (oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || !globalData.bIsInputMov) {
+       if (oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || !globalData.bIsInputMov
+            || utilFunctions.isProductionMovement(oMovement.iMvtType)) {
          if (oMovement.iWhsSrc == 0) {
            swal("Error", "Debe elegir un almacén origen.", "error");
            return false;
          }
        }
 
-       if ((oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || globalData.bIsInputMov)
+       if ((oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || globalData.bIsInputMov
+            || utilFunctions.isProductionMovement(oMovement.iMvtType))
             && !globalData.bIsExternalTransfer) {
           if (oMovement.iWhsDes == 0) {
             swal("Error", "Debe elegir un almacén destino.", "error");
@@ -88,7 +90,7 @@ class SGuiValidations {
        if (globalData.iAssignType > 0) {
          oMovement.iPOSrc = document.getElementById('src_po').value;
          oMovement.iPODes = document.getElementById('des_po').value;
-         
+
           switch (globalData.iAssignType) {
             case globalData.scmms.ASSIGN_TYPE.PP:
                   if (oMovement.iPODes == 0) {

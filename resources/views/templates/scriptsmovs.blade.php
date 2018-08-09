@@ -22,6 +22,7 @@
 <script src="{{ asset('js/movements/search/SSearchCore.js')}}"></script>
 <script src="{{ asset('js/movements/search/SLocations.js')}}"></script>
 <script src="{{ asset('js/movements/assign/SAssign.js')}}"></script>
+<script src="{{ asset('js/movements/SFunctions.js')}}"></script>
 <script src="{{ asset('js/rotation/SRotation.js')}}"></script>
 <script src="{{ asset('js/movements/pallet_reconfig/SGuiReconfig.js')}}"></script>
 <script src="{{ asset('js/movements/pallet_reconfig/SReconfigurationCore.js')}}"></script>

@@ -24,7 +24,8 @@ class SHeaderCore {
           movement.iDocumentId = globalData.oDocument.id_document;
         }
 
-        if (movement.iMvtType == globalData.MVT_TP_OUT_TRA && !globalData.bIsExternalTransfer) {
+        if ((movement.iMvtType == globalData.MVT_TP_OUT_TRA && !globalData.bIsExternalTransfer)
+              || utilFunctions.isProductionMovement(movement.iMvtType)) {
             movement.iWhsSrc = document.getElementById('whs_src').value;
             movement.iWhsDes = document.getElementById('whs_des').value;
         }
@@ -314,7 +315,8 @@ function initializePanel(serverData) {
         locationsJs.setDefaultLocation(globalData.lFSrcLocations);
     }
 
-    if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+    if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA
+        || utilFunctions.isProductionMovement(oMovement.iMvtType)) {
         locationsJs.setDefaultLocationDes(globalData.lFDesLocations);
 
         if (globalData.bIsExternalTransfer) {

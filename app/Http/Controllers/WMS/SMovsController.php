@@ -379,6 +379,10 @@ class SMovsController extends Controller
             break;
 
           case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PRO');
+            $mvtComp = SMvtMfgType::where('is_deleted', false)
+                                  ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_PRO'))
+                                  ->lists('name', 'id_mvt_mfg_type');
 
             $lSrcPO = SProductionOrder::where('is_deleted', false)
                                       ->selectRaw('(CONCAT(LPAD(folio, '.
@@ -460,7 +464,8 @@ class SMovsController extends Controller
         $iWhsDes = 0;
 
         // the transfer implies two warehouses
-        if ($oMovementJs->iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA'))
+        if ($oMovementJs->iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA')
+            || SGuiUtils::isProductionMovement($oMovementJs->iMvtType))
         {
             $iWhsSrc = $oMovementJs->iWhsSrc;
             $iWhsDes = $oMovementJs->iWhsDes;
@@ -514,6 +519,11 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_TP_IN_EXP'):
           case \Config::get('scwms.MVT_TP_OUT_EXP'):
             $movement->mvt_exp_type_id = $oMovementJs->iMvtSubType;
+            break;
+
+          case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
+          case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+            $movement->mvt_mfg_type_id = $oMovementJs->iMvtSubType;
             break;
 
           default:
@@ -1103,16 +1113,20 @@ class SMovsController extends Controller
 
         $oProcess = new SMovsManagment();
 
-        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_OUT') ||
-              $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_OUT')
+              || $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')
+                || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_RM')
+                  || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_PP')) {
                 $oWarehouse = SWarehouse::find($request->whs_source);
                 $oData->iFolioSrc = $oProcess->getNewFolio($oWarehouse->branch_id,
                                                               $oWarehouse->id_whs,
                                                         \Config::get('scwms.MVT_CLS_OUT'),
                                                         $request->mvt_type);
         }
-        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_IN') ||
-              $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+        if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_IN')
+             || $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')
+              || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_RM')
+                || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_PP')) {
                 $oWarehouse = SWarehouse::find($request->whs_des);
                 $oData->iFolioDes = $oProcess->getNewFolio($oWarehouse->branch_id,
                                                               $oWarehouse->id_whs,

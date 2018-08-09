@@ -22,6 +22,7 @@
     this.iAssignType = <?php echo json_encode($iAssType) ?>;
 
     this.scmms = <?php echo json_encode(\Config::get('scmms')) ?>;
+    this.scwms = <?php echo json_encode(\Config::get('scwms')) ?>;
 
     this.MVT_CLS_IN = <?php echo json_encode(\Config::get('scwms.MVT_CLS_IN')) ?>; //
     this.MVT_CLS_OUT = <?php echo json_encode(\Config::get('scwms.MVT_CLS_OUT')) ?>; //
