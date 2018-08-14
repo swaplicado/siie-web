@@ -64,6 +64,7 @@ class ErpAddErpConfigurationsTable extends Migration {
             ['id_configuration' => '10','code' => '010','name' => 'CREAR LOTES PARA MATERIALES','val_boolean' => '1','val_int' => '0','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
             ['id_configuration' => '11','code' => '011','name' => 'CREAR LOTES PARA PRODUCTOS','val_boolean' => '1','val_int' => '0','val_text' => '','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
             ['id_configuration' => '12','code' => '012','name' => 'MONEDA LOCAL','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+            ['id_configuration' => '13','code' => '013','name' => 'ETIQUETAS TARIMA','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
           ]);
 
         }

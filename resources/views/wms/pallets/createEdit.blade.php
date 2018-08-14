@@ -41,10 +41,21 @@
 					    	isset($pallets) ? $pallets->pallet : null , ['required', 'maxlength' => '50', 'class'=>'form-control', 'placeholder' => 'Tarima...']) !!}
 
 						</div> --}}
+						@if(isset($pallets))
+							{!! Form::hidden('quantity','1') !!}
+						@else
+							{!! Form::label('quantity', 'Cantidad'.'*',['class'=>'col-md-1 control-label']) !!}
+							<div class="col-md-1">
+
+
+								{!! Form::number('quantity', 1, ['class'=>'form-control','placeholder'=> '0'])!!}
+
+							</div>
+						@endif
 
             {!! Form::label('item_id', trans('userinterface.labels.ITEM').'*',['class'=>'col-md-1 control-label']) !!}
 
-						<div class="col-md-10">
+						<div class="col-md-6">
 
 							{!! Form::select('item_id', $items, isset($pallets) ? $pallets->item->id_item : null ,
 																	['class'=>'form-control select-item',
