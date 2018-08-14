@@ -88,8 +88,13 @@ class SPalletsController extends Controller
      */
     public function store(Request $request)
     {
-        $pallets = new SPallet($request->all());
 
+        $listId="";
+        $arrayPallets=array();
+
+        for($i=0;$i<$request->quantity;$i++){
+
+        $pallets = new SPallet($request->all());
         $iLastId =  \DB::connection(session('db_configuration')->getConnCompany())
                           ->table('wms_pallets')
                           ->select(\DB::raw("(select max(id_pallet) from wms_pallets) AS id_max"))
@@ -101,13 +106,44 @@ class SPalletsController extends Controller
         $pallets->unit_id = $pallets->item->unit_id;
         $pallets->updated_by_id = \Auth::user()->id;
         $pallets->created_by_id = \Auth::user()->id;
-
+        if($listId=="")
+          $listId = $pallets->pallet;
+        else
+          $listId = $listId.",".$pallets->pallet;
         $pallets->save();
-
-        Flash::success(trans('messages.REG_CREATED'))->important();
-
+        }
+        Flash::success('Se han creado las siguientes tarimas '.$listId)->important();
+        $print = 1;
         return redirect()->route('wms.pallets.index',
-                            [$pallets->id_pallet, $pallets->item->name.'-'.$pallets->unit->code]);
+                            [$listId, $pallets->item->name.'-'.$pallets->unit->code]);
+    }
+
+    public function print($sId){
+      $arrayPallets=array();
+      $arrayBarcodes=array();
+      $arrayIds= explode(",",$sId);
+
+      $dataBarcode = SComponetBarcode::select('digits','id_component')
+                                      ->where('type_barcode','Tarima')
+                                      ->get()->lists('digits','id_component');
+      for($j=0;$j<sizeof($arrayIds);$j++){
+        $arrayPallets[$j] = SPallet::find($arrayIds[$j]);
+        $arrayPallets[$j]->item;
+        $arrayPallets[$j]->unit;
+        $arrayBarcodes[$j] = SBarcode::generatePalletBarcode($dataBarcode,$arrayPallets[$j]);
+      }
+
+      view()->share('barcode',$arrayBarcodes);
+      view()->share('data',$arrayPallets);
+      $pdf = PDF::loadView('vista_masiva_pdf');
+      $paper_size = array(0,0,287,431);
+      $pdf->setPaper($paper_size,'portrait');
+      return $pdf->stream();
+      // Flash::success('Se han creado las siguientes tarimas '.$listId)->important();
+      //
+      // return redirect()->route('wms.pallets.index',
+      //                     [$listId, $pallets->item->name.'-'.$pallets->unit->code]);
+
     }
 
     /**
@@ -264,6 +300,7 @@ class SPalletsController extends Controller
 
       view()->share('barcode',$barcode);
       view()->share('data',$data);
+      view()->share('contador',2);
       $pdf = PDF::loadView('vista_pdf_1');
       $paper_size = array(0,0,287,431);
       $pdf->setPaper($paper_size,'portrait');

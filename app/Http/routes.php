@@ -693,6 +693,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SPalletsController@Barcode',
         'as'   => 'wms.pallets.barcode'
       ]);
+      Route::get('pallets/{id}/print', [
+        'uses' => 'WMS\SPalletsController@Print',
+        'as'   => 'wms.pallets.print'
+      ]);
       Route::get('pallets/index/{id?}/{sitem?}',[
         'uses' => 'WMS\SPalletsController@index',
         'as' => 'wms.pallets.index'

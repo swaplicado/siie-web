@@ -70,7 +70,7 @@
 						swal(
 								'Tarima: ' + iPallet,
 								'Se ha creado para: ' + sItem,
-								'success'
+								'success',
 							);
 			 }
 	</script>
