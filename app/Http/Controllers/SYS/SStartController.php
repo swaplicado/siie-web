@@ -228,8 +228,8 @@ class SStartController extends Controller
         session(['currency' => $oCurrency]);
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
-        //session(['decimals_percent' => $oDecPercent->val_int]);
-      //  session(['long_folios' => $oLongFolios->val_int]);
+        session(['decimals_percent' => $oDecPercent->val_int]);
+        session(['long_folios' => $oLongFolios->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
