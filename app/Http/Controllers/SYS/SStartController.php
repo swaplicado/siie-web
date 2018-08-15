@@ -222,19 +222,21 @@ class SStartController extends Controller
         $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
         $oStock = new SStockManagment();
         $oSegregations = new SSegregationCore();
+        $oNumberLabels = SErpConfiguration::find(15);
 
         session(['partner' => $oPartner]);
         session(['currency' => $oCurrency]);
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
-        session(['decimals_percent' => $oDecPercent->val_int]);
-        session(['long_folios' => $oLongFolios->val_int]);
+        //session(['decimals_percent' => $oDecPercent->val_int]);
+      //  session(['long_folios' => $oLongFolios->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);
         session(['segregation' => $oSegregations]);
         $oTransitWarehouse->locations;
         session(['transit_whs' => $oTransitWarehouse]);
+        session(['number_label' => $oNumberLabels->val_int]);
 
 	      $sWorkDate =  $_COOKIE['tWorkDate'];
         $oWorkDate = Carbon::parse($sWorkDate);
