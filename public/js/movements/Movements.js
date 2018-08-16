@@ -116,6 +116,7 @@ class SMovementRow {
       this.lotRows = new Map();
       this.lAuxlotRows = null;
       this.lAuxlotsToCreate = null;
+      this.lPallets = null;
 
       this.iElementType = 404;
       this.oElement = null;

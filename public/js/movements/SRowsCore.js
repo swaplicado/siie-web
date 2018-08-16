@@ -44,7 +44,7 @@ class SRowsCore {
             elementToAdd.sItem,
             elementToAdd.sUnit,
             elementToAdd.sLocation,
-            elementToAdd.sPallet == 1 ? 'SIN TARIMA' : elementToAdd.sPallet,
+            elementToAdd.iPalletId == 1 ? 'SIN TARIMA' : elementToAdd.sPallet,
             parseFloat(elementToAdd.dPrice, 10).toFixed(globalData.DEC_AMT),
             parseFloat(elementToAdd.dQuantity, 10).toFixed(globalData.DEC_QTY),
             elementToAdd.bIsLot ? rowsCore.getLotsButton(elementToAdd.iIdRow) : '-',
@@ -206,18 +206,34 @@ class SRowsCore {
             elementToAdd.iLocationId = oLocation.id_whs_location;
             elementToAdd.sLocation = oLocation.code.toUpperCase();
 
-            if (headerCore.validateAndUdpateStock(elementToAdd, globalData.lOperation.INPUT)) {
-                if (globalData.iMvtType == globalData.MVT_TP_IN_PUR
-                      || globalData.iMvtType == globalData.MVT_TP_IN_SAL
-                        || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
-                  supplyCore.updateRow(elementToAdd, supplyCore.ADD);
-                }
-                rowsCore.addRow(elementToAdd);
-                guiValidations.showDelete();
+            var lElems = new Array();
+            if (elementToAdd.lPallets != null && elementToAdd.lPallets.length > 0) {
+              for (var i = 0; i < elementToAdd.lPallets.length; i++) {
+                var elementCopy = rowsCore.clone(elementToAdd);
 
-                if (globalData.isPalletReconfiguration) {
-                    guiReconfig.updatePallet(oMovement);
-                }
+                elementCopy.iPalletId = elementToAdd.lPallets[i];
+                elementCopy.sPallet = elementToAdd.lPallets[i];
+
+                lElems.push(elementCopy);
+              }
+            }
+
+            lElems.push(elementToAdd);
+
+            for (var index = 0; index < lElems.length; index++) {
+              if (headerCore.validateAndUdpateStock(lElems[index], globalData.lOperation.INPUT)) {
+                  if (globalData.iMvtType == globalData.MVT_TP_IN_PUR
+                        || globalData.iMvtType == globalData.MVT_TP_IN_SAL
+                          || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+                    supplyCore.updateRow(lElems[index], supplyCore.ADD);
+                  }
+                  rowsCore.addRow(lElems[index]);
+                  guiValidations.showDelete();
+
+                  if (globalData.isPalletReconfiguration) {
+                      guiReconfig.updatePallet(oMovement);
+                  }
+              }
             }
          }
       }
@@ -278,6 +294,15 @@ class SRowsCore {
      }
 
      return oJsRow;
+  }
+
+  clone(obj) {
+      if (null == obj || "object" != typeof obj) return obj;
+      var copy = new SMovementRow;
+      for (var attr in obj) {
+          if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+      }
+      return copy;
   }
 
 }
