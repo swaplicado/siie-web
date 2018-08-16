@@ -38,9 +38,9 @@ class ErpAddPalletsConfiguration extends Migration
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-        DB::connection($this->sConnection)->table('erp_configuration')->insert([
-          ['id_configuration' => '15','code' => '015','name' => 'TARIMAS','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
-        ]);
+        //DB::connection($this->sConnection)->table('erp_configuration')->insert([
+        //  ['id_configuration' => '15','code' => '015','name' => 'TARIMAS','val_boolean' => '0','val_int' => '2','val_text' => ' ','val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+        //]);
       }
     }
 
