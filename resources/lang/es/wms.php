@@ -100,6 +100,7 @@ return [
                       'OPENED' => 'Abierto',
                       'OUTPUTS' => 'Salidas',
                       'PALLET' => 'Tarima',
+                      'PALLETS' => 'Tarimas',
                       'PALLET_TO_DIVIDE' => 'Tarima a dividir',
                       'PALLET_TO_FILL' => 'Tarima destino',
                       'PENDING' => 'Pendiente',

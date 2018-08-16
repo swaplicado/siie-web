@@ -216,6 +216,7 @@ class SStartController extends Controller
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOC_ENABLED'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
         $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
+        $oNumberLabels = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PALLETS'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oCurrency = SCurrency::find($oErpConfLocCur->val_int);
@@ -235,6 +236,7 @@ class SStartController extends Controller
         session(['segregation' => $oSegregations]);
         $oTransitWarehouse->locations;
         session(['transit_whs' => $oTransitWarehouse]);
+        session(['number_label' => $oNumberLabels->val_int]);
 
 	      $sWorkDate =  $_COOKIE['tWorkDate'];
         $oWorkDate = Carbon::parse($sWorkDate);
