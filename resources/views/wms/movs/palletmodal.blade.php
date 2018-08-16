@@ -50,12 +50,21 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-5">
             {!! Form::label(trans('wms.labels.PALLET')) !!}
             {!! Form::label('name_pallet', '--',
                                 ['class' => 'form-control',
                                 'id' => 'name_pallet']) !!}
           </div>
+          @if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ'))
+            <div class="col-md-5">
+              {!! Form::label(trans('wms.labels.PALLETS').'') !!}
+              {!! Form::text('string_pallets', '',
+                                  ['class' => 'form-control',
+                                  'id' => 'string_pallets',
+                                  'placeholder' => 'p. ej. 1-5, 8, 11-13']) !!}
+            </div>
+          @endif
           <div class="col-md-1">
             {!! Form::label(trans('actions.CLEAN')) !!}
             <a onclick="cleanPallet()" title="{{ trans('actions.CLEAN') }}"

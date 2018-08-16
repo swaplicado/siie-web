@@ -113,8 +113,13 @@ class SPalletCore {
     guiFunctions.setPalletNameLabel('--');
     guiFunctions.setSearchPallet('');
 
+    if (globalData.iMvtType == globalData.MVT_TP_IN_ADJ) {
+      document.getElementById('string_pallets').value = '';
+    }
+
     if (elementToAdd != null) {
       elementToAdd.iPalletId = 1;
+      elementToAdd.lPallets = null;
       elementToAdd.sPallet = 'SIN TARIMA';
     }
   }
@@ -152,6 +157,49 @@ class SPalletCore {
       return true;
   }
 
+  validatePalletsString(sPallets) {
+    var re = /^(?!([ \d]*-){2})\d+(?: *[-,] *\d+)*$/;
+
+    var res = re.test(sPallets);
+
+    return res;
+  }
+
+  stringToPallets(sPallets) {
+    var aPallets = new Array();
+    var aPalletsTemp = sPallets.split(',');
+    var bError = false;
+
+    for (var index = 0; index < aPalletsTemp.length; index++) {
+      var elem = aPalletsTemp[index];
+      if (elem.includes('-')) {
+          var subs = elem.split('-');
+
+          if (subs.length == 2 && parseInt(subs[0]) <= parseInt(subs[1])) {
+              for (var palletNum = parseInt(subs[0]); palletNum <= parseInt(subs[1]); palletNum++) {
+                aPallets.push(palletNum);
+              }
+          }
+          else {
+            return new Array();
+          }
+      }
+      else if (palletCore.isNormalInteger(elem)) {
+          aPallets.push(parseInt(elem));
+      }
+      else {
+        return new Array();
+      }
+    }
+
+    return aPallets;
+  }
+
+  isNormalInteger(str) {
+      var n = Math.floor(Number(str));
+      return n !== Infinity && String(n) === str && n >= 0;
+  }
+
 }
 
 var palletCore = new SPalletCore();
@@ -187,18 +235,36 @@ function showPalletModal() {
 }
 
 function acceptPallet() {
-  if (elementToAdd.bIsLot) {
-      if (lLotsToAdd.size > 0) {
-        guiValidations.showAdd();
-      }
-  }
-  else {
-    guiValidations.showAdd();
-  }
+    if (elementToAdd.bIsLot) {
+        if (lLotsToAdd.size > 0) {
+          guiValidations.showAdd();
+        }
+    }
+    else {
+      guiValidations.showAdd();
+    }
 
-  if (elementToAdd.iPalletId > 1) {
-    guiFunctions.changeClassToSuccess('btn_pallet');
-  }
+    var sPallets = '';
+    if (globalData.iMvtType == globalData.MVT_TP_IN_ADJ) {
+      var sPallets = document.getElementById('string_pallets').value;
+
+      if (sPallets.length > 0) {
+        if (palletCore.validatePalletsString(sPallets)) {
+         elementToAdd.lPallets = palletCore.stringToPallets(sPallets);
+        }
+        else {
+          swal("Error", "El texto ingresado no es válido.", "error");
+          document.getElementById('string_pallets').value = '';
+        }
+      }
+      else {
+        elementToAdd.lPallets = null;
+      }
+    }
+
+    if (elementToAdd.iPalletId > 1 || sPallets.length > 0) {
+      guiFunctions.changeClassToSuccess('btn_pallet');
+    }
 }
 
 $('#accPallet').on('click', function(e) {

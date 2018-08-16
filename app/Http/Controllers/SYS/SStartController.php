@@ -216,20 +216,20 @@ class SStartController extends Controller
         $oLocationEn = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOC_ENABLED'));
         $olockTime = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCK_TIME'));
         $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
+        $oNumberLabels = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PALLETS'));
 
         $oPartner = SPartner::find($oErpConfigurationPartner->val_int);
         $oCurrency = SCurrency::find($oErpConfLocCur->val_int);
         $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
         $oStock = new SStockManagment();
         $oSegregations = new SSegregationCore();
-        $oNumberLabels = SErpConfiguration::find(15);
 
         session(['partner' => $oPartner]);
         session(['currency' => $oCurrency]);
         session(['decimals_amt' => $oDecAmount->val_int]);
         session(['decimals_qty' => $oDecQuantity->val_int]);
-        //session(['decimals_percent' => $oDecPercent->val_int]);
-      //  session(['long_folios' => $oLongFolios->val_int]);
+        session(['decimals_percent' => $oDecPercent->val_int]);
+        session(['long_folios' => $oLongFolios->val_int]);
         session(['location_enabled' => $oLocationEn->val_boolean]);
         session(['lock_time' => $olockTime->val_int]);
         session(['stock' => $oStock]);

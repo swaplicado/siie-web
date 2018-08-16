@@ -18,6 +18,7 @@ return [
                   'LOCAL_CURRENCY' => '12',
                   'DECIMALS_PERC' => '13',
                   'FOLIOS_LONG' => '14',
+                  'PALLETS' => '15',
                 ],
 
   'ATT' => [

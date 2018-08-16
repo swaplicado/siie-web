@@ -16,6 +16,7 @@ use App\SCore\SLotsValidations;
 use App\SCore\StransfersCore;
 use App\SCore\SMovsCore;
 use App\SCore\SInventoryCore;
+use App\SCore\SPalletsCore;
 
 use App\SUtils\SMovsUtils;
 use App\SUtils\SUtil;
@@ -1122,12 +1123,28 @@ class SMovsController extends Controller
                $oData->lNewLots = $oValidation->getLotsToCreate();
                $oData->lLotRows = $oValidation->getLots();
 
-
                if ($request->iMvtType == \Config::get('scwms.MVT_TP_OUT_SAL') && sizeof($oData->lErrors == 0)) {
                  $oValidation->validatelotsByExpiration($request->iMovement, $request->iPartner, $request->iAddress);
                  $oData->oLastLot = $oValidation->getLastLot();
                  $oData->lErrors = $oValidation->getErrors();
                }
+           }
+
+           $aPallets = $oRow->lPallets;
+
+           if (sizeof($aPallets) > 0) {
+             $lErrors = SPalletsCore::processPallets($oRow, $aPallets);
+
+             if (sizeof($lErrors) > 0) {
+                if ($oData->lErrors != null) {
+                  $aErrors = clone $oData->lErrors;
+                  array_push($aErrors, $lErrors);
+                  $oData->lErrors = $aErrors;
+                }
+                else {
+                  $oData->lErrors = $lErrors;
+                }
+             }
            }
 
         }
