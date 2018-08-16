@@ -22,6 +22,11 @@ class SPalletsCore {
        foreach ($aPallets as $iPallet) {
           $oPallet = SPallet::find($iPallet);
 
+          if ($oPallet == null) {
+             array_push($lErrors, "La tarima ".$iPallet." no existe");
+             continue;
+          }
+
           if ($oPallet->item_id != $oRow->iItemId || $oPallet->unit_id != $oRow->iUnitId) {
              array_push($lErrors, "La tarima ".$iPallet." no es del material/producto seleccionado");
           }
