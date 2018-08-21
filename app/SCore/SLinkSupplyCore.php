@@ -32,11 +32,15 @@ class SLinkSupplyCore {
 
         $query = \DB::connection(session('db_configuration')->getConnCompany())
                     ->table('wms_indirect_supply_links as wisl')
-                    ->where('mvt_row_id', $iMvtRowId)
                     ->where('des_doc_row_id', $iDocRowId)
                     ->where('is_deleted', false)
-                    ->select(\DB::raw($sSelect))
-                    ->get();
+                    ->select(\DB::raw($sSelect));
+
+        if ($iMvtRowId > 0) {
+          $query = $query->where('mvt_row_id', $iMvtRowId);
+        }
+
+        $query = $query->get();
 
        if (sizeof($query) > 0) {
           return $query[0]->qty_ind_supp_row;
@@ -102,7 +106,6 @@ class SLinkSupplyCore {
             $aByInvoices = SLinkSupplyCore::getInvoices($oMovRow->item_id,
                                                                   $oMovRow->unit_id,
                                                                   $oMovement->doc_order_id);
-            $oOrderSupply = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_ORDER, $oMovRow->doc_order_row_id);
 
             if (sizeof($aByInvoices) == 0) {
               continue;
@@ -113,10 +116,8 @@ class SLinkSupplyCore {
               $aInvoiceItem = SLinkSupplyCore::isItemInDocument($oMovRow->item_id, $oMovRow->unit_id, $oInvoice->rows);
               if (sizeof($aItemInMov) == 1) {
                  if (sizeof($aInvoiceItem) == 1) {
-                    $oInvSupply = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_INVOICE,
+                    $dInvRowSupp = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_INVOICE,
                                                                     $aInvoiceItem[0]->id_document_row);
-
-                    $dInvRowSupp = sizeof($oInvSupply) == 1 ? $oInvSupply[0]->inputs : 0;
 
                     if ($aInvoiceItem[0]->quantity >= ($oMovRow->quantity + $dInvRowSupp)) {
                       $oMovRow->doc_invoice_row_id = $aInvoiceItem[0]->id_document_row;
@@ -129,10 +130,8 @@ class SLinkSupplyCore {
                   $dCurrentSupply = SLinkSupplyCore::getCurrentSupply($lMovRows,
                                                       $aInvoiceItem[0]->id_document_row,
                                                       SLinkSupplyCore::TP_INVOICE);
-                  $oInvSupply = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_INVOICE,
+                  $dInvRowSupp = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_INVOICE,
                                                                   $aInvoiceItem[0]->id_document_row);
-
-                  $dInvRowSupp = sizeof($oInvSupply) == 1 ? $oInvSupply[0]->inputs : 0;
 
                   if (($dInvRowSupp + $dCurrentSupply) <= $aInvoiceItem[0]->quantity) {
                       $oMovRow->doc_invoice_row_id = $aInvoiceItem[0]->id_document_row;
@@ -151,16 +150,16 @@ class SLinkSupplyCore {
                                                     $oMovRow->doc_order_row_id,
                                                     SLinkSupplyCore::TP_ORDER);
 
-                if ($oQtyOnInvoices->on_invoice == $dCurrentSupply) {
+                $dQtyOnInvoices = sizeof($oQtyOnInvoices) == 1 ? $oQtyOnInvoices[0]->on_invoice : 0;
+
+                if ($dQtyOnInvoices == $dCurrentSupply) {
                    $lInvoicesRows = SLinkSupplyCore::getInvoicesRows($oMovRow->item_id,
                                                        $oMovRow->unit_id,
                                                        $oMovement->doc_order_id);
                    $bValid = true;
                    foreach ($lInvoicesRows as $oInRow) {
-                      $oInvRowSupply = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_INVOICE,
+                      $dInvRowSupp = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_INVOICE,
                                                                      $oInRow->id_document_row);
-
-                     $dInvRowSupp = sizeof($oInvRowSupply) == 1 ? $oInvRowSupply[0]->inputs : 0;
 
                       $bValid = ! $dInvRowSupp > 0;
                    }
@@ -199,9 +198,8 @@ class SLinkSupplyCore {
 
                if (sizeof($aOrderItem) > 0) {
                   if (sizeof($aOrderItem) == 1) {
-                      $oSupply = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_ORDER,
+                      $dRowSupp = SLinkSupplyCore::getSuppliedOfRow(SLinkSupplyCore::TP_ORDER,
                                                                   $aOrderItem[0]->id_document_row);
-                      $dRowSupp = sizeof($oSupply) == 1 ? $oSupply[0]->inputs : 0;
                       if (sizeof($aItemInMov) == 1) {
                          if (($dRowSupp + $oMovRow->quantity) >  $oInvoiceRow->quantity) {
                            // ERROR!!!
@@ -304,7 +302,14 @@ class SLinkSupplyCore {
 
         $oRes = $oRes->get();
 
-        return $oRes;
+        $dSupplied = 0;
+        if (sizeof($oRes) > 0) {
+          $dSupplied = $oRes[0]->inputs;
+        }
+
+        $dIndirectSupplied = SLinkSupplyCore::getIndirectSupplyRow(0, $iRow);
+
+        return ($dSupplied + $dIndirectSupplied);
     }
 
     private static function getCurrentSupply($lMovRows = [], $iDocRow = 0, $iDocT = 0)
@@ -331,6 +336,8 @@ class SLinkSupplyCore {
              break;
          }
        }
+
+       return $dSum;
     }
 
     private static function makeIndirectSupply($oMovRow = null, $dQuantityToLink = 0, $iSrcRow = 0, $iDesRow = 0)
