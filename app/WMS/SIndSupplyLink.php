@@ -9,6 +9,8 @@ class SIndSupplyLink extends Model {
   protected $primaryKey = 'id_indirect_supply_link';
   protected $table = 'wms_indirect_supply_links';
 
+  public $lAuxLotLinks = [];
+
   protected $fillable = [
                           'id_indirect_supply_link',
                           'quantity',
