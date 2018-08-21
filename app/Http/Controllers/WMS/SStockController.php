@@ -73,13 +73,14 @@ class SStockController extends Controller
             $orderBy1 = 'ws.item_id';
             $orderBy2 = 'ws.item_id';
 
-            $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
+            // $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
             break;
           case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET'):
             $select = $select.', '.'wp.id_pallet as pallet, ww.name as warehouse';
             $groupBy = ['ws.pallet_id','ws.item_id','ws.whs_id'];
             $orderBy1 = 'ws.pallet_id';
             $orderBy2 = 'ws.item_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
             break;
@@ -88,15 +89,17 @@ class SStockController extends Controller
             $groupBy = ['ws.lot_id','ws.item_id'];
             $orderBy1 = 'ws.lot_id';
             $orderBy2 = 'ws.item_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
-            
-            $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
+
+            // $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
             break;
           case \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION'):
             $select = $select.', wwl.name as location, eb.id_branch as branchid, ei.id_item as itemid, ("0") as maxmin';
             $groupBy = ['ws.location_id','ws.item_id'];
             $orderBy1 = 'ws.location_id';
             $orderBy2 = 'ws.item_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
             break;
@@ -111,6 +114,7 @@ class SStockController extends Controller
             $groupBy = ['ws.whs_id','ws.item_id'];
             $orderBy1 = 'ws.whs_id';
             $orderBy2 = 'ws.item_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
             break;
@@ -125,7 +129,9 @@ class SStockController extends Controller
             $groupBy = ['ws.branch_id','ws.item_id'];
             $orderBy1 = 'ws.branch_id';
             $orderBy2 = 'ws.item_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
+
             $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
             break;
           case \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE'):
@@ -139,20 +145,26 @@ class SStockController extends Controller
             $groupBy = ['ws.item_id','ws.lot_id','ws.whs_id'];
             $orderBy1 = 'ws.item_id';
             $orderBy2 = 'ws.lot_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = 'eb.id_branch';
+
             break;
+
           case \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT'):
             $select = $select.', '.'wp.id_pallet as pallet, wl.lot AS lot_, wl.dt_expiry';
             $groupBy = ['ws.pallet_id','ws.lot_id','ws.item_id'];
             $orderBy1 = 'ws.pallet_id';
             $orderBy2 = 'ws.lot_id';
+
             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
 
             $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
+
             break;
+
           case \Config::get('scwms.STOCK_TYPE.STK_GENERAL'):
             $select = $select.' , wl.lot AS lot_, wl.dt_expiry ,
                                   wp.id_pallet as pallet,
@@ -166,6 +178,7 @@ class SStockController extends Controller
             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'wp.id_pallet';
             $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
+
             break;
 
           default:
