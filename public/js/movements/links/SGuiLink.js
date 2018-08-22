@@ -5,6 +5,10 @@ class SGuiLink {
     toFixed(globalData.DEC_QTY);
   }
 
+  getQuantity() {
+    return parseFloat((document.getElementById('quantity').value), 10);
+  }
+
   setItem(sText) {
     document.getElementById('item').value = sText.toUpperCase();
   }

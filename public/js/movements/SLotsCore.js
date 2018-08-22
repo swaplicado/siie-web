@@ -57,7 +57,7 @@ class SLotsCore {
        lotToAdd.sLot = elementToAdd.sLot;
        lotToAdd.tExpDate = elementToAdd.tExpDate;
 
-       guiFunctions.setTextLot(elementToAdd.sLot);
+       guiFunctions.setTextLot(elementToAdd.sLot == 'NA' ? '' : elementToAdd.sLot);
        guiFunctions.setExpDateLot(elementToAdd.tExpDate);
        // guiFunctions.setQuantityLot(1);
 

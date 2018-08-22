@@ -15,6 +15,7 @@ class SMovementRow extends Model {
   public $dIndSupplied = [];
   public $iAuxLocationDesId = 0;
   public $dReceived = 0;
+  public $oAuxSupplyLink = 0;
 
   protected $fillable = [
                           'id_mvt_row',
