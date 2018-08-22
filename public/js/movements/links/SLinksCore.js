@@ -87,6 +87,11 @@ class SLinksCore {
   setData(index) {
       var oRow = linksCore.docRowtoJsRow(globalData.lDocRows[index]);
 
+      if (oRow.dQuantity <= 0) {
+        swal("Error", "No hay unidades pendientes por enlazar.", "error");
+        return false;
+      }
+
       linksCore.iDocumentRowId = oRow.iAuxDocRowId;
 
       guiLink.setItem(oRow.sItemCode + " " + oRow.sItem);
@@ -209,6 +214,10 @@ class SLinksCore {
 
              if (oMovRow.iIdRow == oRow.iIdRow && oMovRow.iAuxMovIndex == oRow.iAuxMovIndex) {
                  var dToLink = bIsAll ? parseFloat(oMovRow.dQuantity, 10) - parseFloat(oRow.dQtyIndSupplied, 10) : 0;
+                 if (dToLink > guiLink.getQuantity()) {
+                    continue;
+                 }
+
                  oMovRow.dAuxQuantity = dToLink;
 
                  if (oMovRow.bIsLot) {
@@ -251,6 +260,7 @@ function setDataToLink() {
 function assignAll() {
     linksCore.linkAllOrNothing(true);
 }
+
 function assignNothing() {
     linksCore.linkAllOrNothing(false);
 }

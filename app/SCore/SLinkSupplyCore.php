@@ -279,10 +279,12 @@ class SLinkSupplyCore {
     private static function getSuppliedOfRow($iDocT = 0, $iRow = 0)
     {
         $oRes = SStock::where('is_deleted', false)
-                      ->selectRaw('sum(input) AS inputs, sum(output) AS outputs')
+                      ->selectRaw('sum(input) AS inputs,
+                                  sum(output) AS outputs,
+                                  mvt_whs_class_id')
                       ->where(function ($query) {
                             $query->where('mvt_whs_type_id', \Config::get('scwms.MVT_TP_IN_PUR'))
-                                  ->orWhere('mvt_whs_type_id', \Config::get('scwms.MVT_TP_IN_SAL'));
+                                  ->orWhere('mvt_whs_type_id', \Config::get('scwms.MVT_TP_OUT_SAL'));
                         });
 
 
@@ -304,7 +306,12 @@ class SLinkSupplyCore {
 
         $dSupplied = 0;
         if (sizeof($oRes) > 0) {
-          $dSupplied = $oRes[0]->inputs;
+          if ($oRes[0]->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+            $dSupplied = $oRes[0]->inputs;
+          }
+          else {
+            $dSupplied = $oRes[0]->outputs;
+          }
         }
 
         $dIndirectSupplied = SLinkSupplyCore::getIndirectSupplyRow(0, $iRow);

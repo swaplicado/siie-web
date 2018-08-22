@@ -68,9 +68,12 @@ class SLinkLotsCore {
   }
 
   validateInput() {
+    var dSuppliedInRow = 0;
+
     for (var index = 0; index < linkLotsCore.oCurrentMovementRow.lotRows.size; index++) {
         var sAssigned = document.getElementById('r' + index).value;
         var dAssigned = parseFloat(sAssigned, 10);
+        dSuppliedInRow += dAssigned;
 
         var oLotRow = linkLotsCore.oCurrentMovementRow.getLotRow(index);
 
@@ -90,6 +93,11 @@ class SLinkLotsCore {
           swal("Error", "No puede asignar más cantidad de la pendiente.", "error");
           return false;
         }
+    }
+
+    if (dSuppliedInRow > guiLink.getQuantity()) {
+      swal("Error", "No puede asignar más cantidad de la pendiente.", "error");
+      return false;
     }
 
     return true;

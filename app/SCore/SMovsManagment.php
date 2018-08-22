@@ -526,13 +526,13 @@ class SMovsManagment {
     {
         $aMovements = array();
 
-        // if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
-        //       $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL')) {
-        //       $aRes = SLinkSupplyCore::linkSupply($oMovement, $aMovementRows);
-        //
-        //       $oMovement = $aRes[0];
-        //       $aMovementRows = $aRes[1];
-        // }
+        if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
+              $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL')) {
+              $aRes = SLinkSupplyCore::linkSupply($oMovement, $aMovementRows);
+
+              $oMovement = $aRes[0];
+              $aMovementRows = $aRes[1];
+        }
 
         $oMovement->aAuxRows = $aMovementRows;
         array_push($aMovements, $oMovement);
