@@ -14,40 +14,34 @@
               <div class="row">
                 <div class="col-md-7">
                   {!! Form::label('po', trans('mms.labels.PRODUCTION_ORDER')) !!}
-                  {!! Form::text('po', null, ['class'=>'form-control input-sm',
-                                                'readonly',
+                  {!! Form::label('po', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po']) !!}
                 </div>
                 <div class="col-md-5">
                   {!! Form::label('po_type', trans('mms.labels.PRODUCTION_ORDER_TYPE')) !!}
-                  {!! Form::text('po_type', null, ['class'=>'form-control input-sm',
-                                                'readonly',
+                  {!! Form::label('po_type', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po_type']) !!}
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-9">
                   {!! Form::label('item', trans('wms.labels.MAT_PROD')) !!}
-                  {!! Form::text('item', null, ['class'=>'form-control input-sm',
-                                                'readonly',
+                  {!! Form::label('item', null, ['class'=>'form-control input-sm',
                                                 'id' => 'item']) !!}
                 </div>
                 <div class="col-md-3">
                   {!! Form::label('po_qty', trans('mms.labels.ORDER_QUANTITY')) !!}
-                  {!! Form::text('po_qty', null, ['class'=>'form-control input-sm',
-                                                'readonly',
+                  {!! Form::label('po_qty', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po_qty']) !!}
                 </div>
               </div>
             </div>
             <div class="col-md-2">
               {!! Form::label('po_date', trans('siie.labels.DATE')) !!}
-              {!! Form::text('po_date', null, ['class'=>'form-control input-sm',
-                                                    'readonly',
+              {!! Form::label('po_date', null, ['class'=>'form-control input-sm',
                                                     'id' => 'po_date']) !!}
               {!! Form::label('unit', trans('wms.labels.UNIT')) !!}
-              {!! Form::number('unit', null, ['class'=>'form-control input-sm',
-                                                'readonly',
+              {!! Form::label('unit', null, ['class'=>'form-control input-sm',
                                                 'id' => 'unit']) !!}
             </div>
             <div class="col-md-3">
@@ -77,21 +71,20 @@
                             <th>{{ trans('userinterface.labels.DATE') }}</th>
                             <th>{{ trans('userinterface.labels.FOLIO') }}</th>
                             <th>{{ trans('wms.labels.MVT_TYPE') }}</th>
-                            <th>{{ trans('wms.labels.LOT_PALLET') }}</th>
+                            <th>{{ trans('wms.labels.MOVEMENT') }}</th>
+                            <th>{{ trans('wms.labels.MAT_PROD') }}</th>
+                            <th>{{ trans('wms.labels.PALLET') }}</th>
+                            <th>{{ trans('wms.labels.LOT') }}</th>
                             <th>{{ trans('wms.labels.EXPIRATION') }}</th>
                             <th>{{ trans('userinterface.labels.BRANCH') }}</th>
                             <th>{{ trans('userinterface.labels.WAREHOUSE') }}</th>
                             <th>{{ trans('userinterface.labels.LOCATION') }}</th>
                             <th>{{ trans('wms.labels.INPUTS') }}</th>
                             <th>{{ trans('wms.labels.OUTPUTS') }}</th>
-                            <th>{{ trans('wms.labels.STOCK') }}</th>
                             <th>{{ trans('wms.labels.UN') }}</th>
                             <th>{{ '$'.trans('siie.labels.DEBITS') }}</th>
                             <th>{{ '$'.trans('siie.labels.CREDITS') }}</th>
                             <th>{{ '$'.trans('siie.labels.BALANCE') }}</th>
-                            <th>{{ trans('siie.labels.ORDER') }}</th>
-                            <th>{{ trans('siie.labels.INVOICE') }}</th>
-                            <th>{{ trans('siie.labels.C_N') }}</th>
                         </tr>
                     </thead>
                     <tbody>

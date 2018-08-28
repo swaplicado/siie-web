@@ -60,6 +60,9 @@
             {!! Form::hidden('recipe', isset($oFormula->recipe) ?
                                         $oFormula->recipe : -1, ['id' => 'recipe']) !!}
             {!! Form::hidden('formula_object', -1, ['id' => 'formula_object']) !!}
+
+            {!! Form::hidden('quantity', isset($oFormula->quantity) ?
+                                        $oFormula->quantity : 1, ['id' => 'quantity']) !!}
           </div>
         </div>
         <div class="col-md-1">

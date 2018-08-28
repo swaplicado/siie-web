@@ -31,6 +31,7 @@ function modifyHeader() {
     guiValidations.enableHeader();
     guiValidations.hideModify();
     guiValidations.hideInfo();
+    guiValidations.hidePOBtn();
 
     rowsCore.cleanAddPanel();
     if (globalData.isPalletReconfiguration) {
@@ -63,16 +64,16 @@ class SGuiValidations {
           return false;
        }
 
-       if (oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || !globalData.bIsInputMov
-            || utilFunctions.isProductionMovement(oMovement.iMvtType)) {
+       if (oMovement.iMvtType == globalData.scwms.MVT_TP_OUT_TRA || !globalData.bIsInputMov
+            || utilFunctions.isProductionTransfer(oMovement.iMvtType)) {
          if (oMovement.iWhsSrc == 0) {
            swal("Error", "Debe elegir un almacén origen.", "error");
            return false;
          }
        }
 
-       if ((oMovement.iMvtType == globalData.MVT_TP_OUT_TRA || globalData.bIsInputMov
-            || utilFunctions.isProductionMovement(oMovement.iMvtType))
+       if ((oMovement.iMvtType == globalData.scwms.MVT_TP_OUT_TRA || globalData.bIsInputMov
+            || utilFunctions.isProductionTransfer(oMovement.iMvtType))
             && !globalData.bIsExternalTransfer) {
           if (oMovement.iWhsDes == 0) {
             swal("Error", "Debe elegir un almacén destino.", "error");
@@ -99,7 +100,9 @@ class SGuiValidations {
                   }
 
             case globalData.scmms.ASSIGN_TYPE.MP:
-                  if (oMovement.iPOSrc == 0) {
+            case globalData.scmms.ASSIGN_TYPE.PACK:
+            case globalData.scmms.ASSIGN_TYPE.FP:
+                  if (oMovement.iPOSrc == 0 || guiFunctions.getSrcItemLabel() == '--') {
                     swal("Error", "Debe elegir una orden de producción.", "error");
                     return false;
                   }
@@ -136,6 +139,13 @@ class SGuiValidations {
         $('#whs_src').attr("disabled", true).trigger("chosen:updated");
         $('#whs_des').attr("disabled", true).trigger("chosen:updated");
         $('#branch_des').attr("disabled", true).trigger("chosen:updated");
+
+        if (utilFunctions.isProductionMovement(oMovement.iMvtType)) {
+          $('#src_po').attr("disabled", true).trigger("chosen:updated");
+        }
+        if (utilFunctions.isProductionTransfer(oMovement.iMvtType)) {
+          $('#des_po').disabled = true;
+        }
     }
 
     /**
@@ -147,6 +157,13 @@ class SGuiValidations {
         $('#whs_src').attr("disabled", false).trigger("chosen:updated");
         $('#whs_des').attr("disabled", false).trigger("chosen:updated");
         $('#branch_des').attr("disabled", false).trigger("chosen:updated");
+
+        if (utilFunctions.isProductionMovement(oMovement.iMvtType)) {
+          $('#src_po').attr("disabled", false).trigger("chosen:updated");
+        }
+        if (utilFunctions.isProductionTransfer(oMovement.iMvtType)) {
+          $('#src_po').disabled = false;
+        }
     }
 
     /**
@@ -295,6 +312,24 @@ class SGuiValidations {
     }
 
     /**
+     * show the add button (to add new movement row)
+     */
+    showPOBtn() {
+      if (document.getElementById('prod_ord_div') != null) {
+          document.getElementById('prod_ord_div').style.display = "inline";
+      }
+    }
+
+    /**
+     * hide the button to delete movement rows
+     */
+    hidePOBtn() {
+      if (document.getElementById('prod_ord_div') != null) {
+        document.getElementById('prod_ord_div').style.display = "none";
+      }
+    }
+
+    /**
      * enable or disable the input of price
      * enable: input movement
      * disable: output movement
@@ -375,7 +410,8 @@ class SGuiValidations {
           return false;
       }
 
-      if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA && oLocationDes == null) {
+      if ((globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+            || utilFunctions.isProductionMovement(globalData.iMvtType)) && oLocationDes == null) {
         swal("Error", "Cuando realiza un traspeso debe seleccionar una ubicación destino.", "error");
         return false;
       }

@@ -432,6 +432,7 @@ class SStockController extends Controller
                   $oStock->doc_invoice_row_id = $movRow->doc_invoice_row_id;
                   $oStock->doc_debit_note_row_id = $movRow->doc_debit_note_row_id;
                   $oStock->doc_credit_note_row_id = $movRow->doc_credit_note_row_id;
+                  $oStock->prod_ord_id = $oMovement->prod_ord_id;
                   $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
                   $oStock->mfg_line_id = $oMovement->mfg_line_id;
                   $oStock->mfg_job_id = $oMovement->mfg_job_id;
@@ -500,6 +501,7 @@ class SStockController extends Controller
                 $oStock->doc_invoice_row_id = $movRow->doc_invoice_row_id;
                 $oStock->doc_debit_note_row_id = $movRow->doc_debit_note_row_id;
                 $oStock->doc_credit_note_row_id = $movRow->doc_credit_note_row_id;
+                $oStock->prod_ord_id = $oMovement->prod_ord_id;
                 $oStock->mfg_dept_id = $oMovement->mfg_dept_id;
                 $oStock->mfg_line_id = $oMovement->mfg_line_id;
                 $oStock->mfg_job_id = $oMovement->mfg_job_id;

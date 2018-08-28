@@ -100,9 +100,37 @@ class SWmsMenu {
                               )
                         ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
                                                   \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
+                                Link::toRoute('wms.movs.create', trans('mms.RETURN_MATERIALS'),
+                                          [\Config::get('scwms.MVT_OUT_RTRN_RM'),
+                                            trans('mms.RETURN_MATERIALS'),
+                                          0])
+                              )
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
+                                Link::toRoute('wms.movs.create', trans('mms.DELIVERY_PM'),
+                                          [\Config::get('scwms.MVT_OUT_DLVRY_RM'),
+                                            trans('mms.DELIVERY_PM'),
+                                          0])
+                              )
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
+                                Link::toRoute('wms.movs.create', trans('mms.RETURN_PACKING_MATERIAL'),
+                                          [\Config::get('scwms.MVT_OUT_RTRN_RM'),
+                                            trans('mms.RETURN_PACKING_MATERIAL'),
+                                          0])
+                              )
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
                                 Link::toRoute('wms.movs.create', trans('mms.ASSIGNAMENT_PRODUCTS'),
-                                          [\Config::get('scwms.MVT_OUT_DLVRY_PP'),
+                                          [\Config::get('scwms.MVT_IN_DLVRY_PP'),
                                             trans('mms.ASSIGNAMENT_PRODUCTS'),
+                                          0])
+                              )
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
+                                Link::toRoute('wms.movs.create', trans('mms.DELIVERY_FP'),
+                                          [\Config::get('scwms.MVT_IN_DLVRY_FP'),
+                                            trans('mms.DELIVERY_FP'),
                                           0])
                               )
                         )

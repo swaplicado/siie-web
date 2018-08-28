@@ -154,7 +154,7 @@ class SInventoryCore {
 
            if (is_array($result)) {
              if(sizeof($result) > 0) {
-                 array_push($result, $aResult);
+                 array_push($aResult, $result);
              }
            }
        }

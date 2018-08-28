@@ -32,10 +32,10 @@ class SGuiUtils {
        }
 
        if ($sWhs == 'whs_des') {
-           return $iMovClassId == \Config::get('scwms.MVT_CLS_IN') ||
-   							$iMovTypeId == \Config::get('scwms.MVT_TP_OUT_TRA')
-                || $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
-                || $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_PP');
+           return $iMovClassId == \Config::get('scwms.MVT_CLS_IN')
+              || $iMovTypeId == \Config::get('scwms.MVT_TP_OUT_TRA')
+                || $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM')
+                  || $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM');
        }
 
        return false;
@@ -44,7 +44,21 @@ class SGuiUtils {
     public static function isProductionMovement($iMovTypeId)
     {
        return $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
-              ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_PP');
+              ||  $iMovTypeId == \Config::get('scwms.MVT_IN_DLVRY_PP')
+              ||  $iMovTypeId == \Config::get('scwms.MVT_IN_DLVRY_FP')
+                || $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM');
+    }
+
+    public static function isProductionTransfer($iMovTypeId)
+    {
+       return $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
+              ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM');
+    }
+
+    public static function isProductionDelivery($iMovTypeId)
+    {
+       return $iMovTypeId == \Config::get('scwms.MVT_IN_DLVRY_PP')
+                || $iMovTypeId == \Config::get('scwms.MVT_IN_DLVRY_FP');
     }
 
     /**

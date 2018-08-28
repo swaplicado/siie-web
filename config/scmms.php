@@ -21,6 +21,8 @@ return [
     'ASSIGN_TYPE' => [
           'MP' => '1',
           'PP' => '2',
+          'FP' => '3',
+          'PACK' => '4',
     ],
 
 ];

@@ -7,7 +7,8 @@ class SPalletCore {
         guiFunctions.setPalletNameLabel(elementToAdd.sPallet);
       }
 
-      if (! globalData.bIsInputMov) {
+      if (! globalData.bIsInputMov
+          && !utilFunctions.isProductionDelivery(globalData.iMvtType)) {
         if (elementToAdd.bIsLot) {
           lLotsToAdd = new Map();
           var index = 0;
@@ -113,7 +114,9 @@ class SPalletCore {
     guiFunctions.setPalletNameLabel('--');
     guiFunctions.setSearchPallet('');
 
-    if (globalData.iMvtType == globalData.MVT_TP_IN_ADJ) {
+    if (globalData.iMvtType == globalData.MVT_TP_IN_ADJ
+          || globalData.iMvtType == globalData.MVT_TP_IN_PUR
+          || globalData.iMvtType == globalData.scwms.MVT_IN_DLVRY_FP) {
       document.getElementById('string_pallets').value = '';
     }
 
@@ -245,7 +248,9 @@ function acceptPallet() {
     }
 
     var sPallets = '';
-    if (globalData.iMvtType == globalData.MVT_TP_IN_ADJ) {
+    if (globalData.iMvtType == globalData.MVT_TP_IN_ADJ
+          || globalData.iMvtType == globalData.MVT_TP_IN_PUR
+            || globalData.iMvtType == globalData.scwms.MVT_IN_DLVRY_FP) {
       var sPallets = document.getElementById('string_pallets').value;
 
       if (sPallets.length > 0) {

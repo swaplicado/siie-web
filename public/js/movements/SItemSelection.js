@@ -111,7 +111,9 @@ class SItemSelection {
                 guiValidations.showLots();
               }
 
-              bAddDirectly = globalData.iMvtType != globalData.MVT_TP_IN_ADJ;
+              bAddDirectly = globalData.iMvtType != globalData.scwms.MVT_TP_IN_ADJ
+                              && globalData.iMvtType != globalData.scwms.MVT_IN_DLVRY_PP
+                              && !utilFunctions.isProductionDelivery(globalData.iMvtType);
               break;
 
           case globalData.lElementsType.LOCATIONS:

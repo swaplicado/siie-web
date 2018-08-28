@@ -1,5 +1,9 @@
 <?php namespace App\SUtils;
 
+use Carbon\Carbon;
+use App\SUtils\SGuiUtils;
+use App\SCore\SProductionCore;
+
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
 use App\WMS\SLocation;
@@ -7,8 +11,6 @@ use App\WMS\SWarehouse;
 use App\WMS\SLimit;
 use App\WMS\SItemContainer;
 use App\ERP\SYear;
-
-use Carbon\Carbon;
 
 /**
  * this class contains functions of utils
@@ -26,9 +28,13 @@ class SMovsUtils {
    *                                        \Config::get('scwms.ELEMENTS_TYPE.ITEMS')
    *                                        \Config::get('scwms.ELEMENTS_TYPE.LOTS')
    *                                        \Config::get('scwms.ELEMENTS_TYPE.PALLETS')
+   * @param  integer $iMvtType   Movement Type
    * @return array  a list result of query requested to server
    */
-  public static function getElementsToWarehouse($iWhsSrc = 0, $iWhsDes = 0, $iElementType = 0)
+  public static function getElementsToWarehouse($iWhsSrc = 0, $iWhsDes = 0,
+                                                  $iElementType = 0, $iSrcPO = 0,
+                                                    $iDesPO = 0, $iMvtType = 0,
+                                                    $iMvtSubType = 0)
   {
     // initialize the select for the query
     $sSelect = 'ei.id_item,
@@ -67,7 +73,21 @@ class SMovsUtils {
       $lItemContainers = SMovsUtils::getContainerConfiguration($iWhsDes);
 
       $lElements = SMovsUtils::getFilteredElements($lItemContainers, $sSelect, $iElementType);
-      $lElements = $lElements->get();
+      $lElements = SProductionCore::filterForProduction($lElements, $iMvtType, $iMvtSubType,
+                                                          $iSrcPO, $iDesPO);
+
+      $lElementsToReturn = array();
+      if ($iMvtType == \Config::get('scwms.MVT_IN_DLVRY_PP')
+            || $iMvtType == \Config::get('scwms.MVT_OUT_DLVRY_FP')) {
+
+          $lElements = $lElements->get();
+          $lElementsToReturn = SProductionCore::prepareReturn($lElements, $iMvtType,
+                                                              $iSrcPO, $iDesPO, $iElementType);
+      }
+      else {
+        $lElements = $lElements->get();
+      }
+
       $lElementsToReturn = $lElements;
     }
 
@@ -88,8 +108,14 @@ class SMovsUtils {
                             , 0)) AS stock';
 
       $sSelect = SMovsUtils::addSegregated($sSelect, $iWhsSrc, $iElementType);
+
+      $bWithStock = SProductionCore::filterProductionWithStock($iMvtType);
+
       $lElements = SMovsUtils::getElementsWithStock($lItemContainers, $sSelect,
-                                                        $iWhsSrc, $iElementType);
+                                                        $iWhsSrc, $iElementType, $bWithStock);
+
+      $lElements = SProductionCore::filterForProduction($lElements, $iMvtType, $iMvtSubType,
+                                                          $iSrcPO, $iDesPO);
       $lElements = $lElements->get();
 
       $lElementsToReturn = array();
@@ -269,7 +295,8 @@ class SMovsUtils {
    * @return Query result of query
    */
   public static function getElementsWithStock($lItemContainers = [], $sSelect = '',
-                                                $iWarehouseSrc = 0, $iElementType = 0)
+                                                $iWarehouseSrc = 0, $iElementType = 0,
+                                                $bWithStock = true)
   {
       $lElements = \DB::connection(session('db_configuration')->getConnCompany())
                   ->table('wms_stock as ws')
@@ -309,8 +336,11 @@ class SMovsUtils {
 
       $lElements = $lElements->orderBy('ei.code', 'ASC')
       ->orderBy('ei.name', 'ASC')
-      ->orderBy('ei.name', 'ASC')
-      ->having('stock', '>', '0');
+      ->orderBy('ei.name', 'ASC');
+
+      if ($bWithStock) {
+        $lElements = $lElements->having('stock', '>', '0');
+      }
 
       return $lElements;
   }
@@ -381,7 +411,7 @@ class SMovsUtils {
    *
    * @return array result of query
    */
-  public static function getStockFromWarehouse($iWhs = 0, $iMvt = 0)
+  public static function getStockFromWarehouse($iWhs = 0, $iMvt = 0, $iMvtType = 0, $iSrcPO = 0, $iDesPO = 0)
   {
       $aParameters = array();
       $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
@@ -422,6 +452,10 @@ class SMovsUtils {
       $aSegParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ws.whs_id';
 
       $oStock = session('stock')->getStockResult($aParameters, $aSegParameters);
+
+      // if (SGuiUtils::isProductionMovement($iMvtType)) {
+      //   $oStock = $oStock->where('ws.prod_ord_id', $iSrcPO);
+      // }
 
       $oStock = $oStock->groupBy('wwl.id_whs_location')
                         ->groupBy('wp.id_pallet')

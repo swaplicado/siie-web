@@ -409,9 +409,11 @@ class SProductionOrdersController extends Controller
 
        if (!is_array($rValid) && $rValid) {
            if ($iOperation == \Config::get('scmms.NEXT_ST')) {
+              $oProcessResult = SProductionOrderCore::toChangeStatus($oProductionOrder, $oProductionOrder->status_id + 1);
               $oProductionOrder->status_id = $oProductionOrder->status_id + 1;
            }
            else {
+              $oProcessResult = SProductionOrderCore::toChangeStatus($oProductionOrder, $oProductionOrder->status_id - 1);
               $oProductionOrder->status_id = $oProductionOrder->status_id - 1;
            }
 
@@ -432,7 +434,13 @@ class SProductionOrdersController extends Controller
 
     public function getKardex($iPO = 0)
     {
+       $oData = new \App\MMS\data\SData();
        $oPO = SProductionOrder::find($iPO);
+       $oPO->plan;
+       $oPO->formula;
+       $oPO->item;
+       $oPO->unit;
+       $oPO->type;
 
        $sJanuary = session('work_date')->year.'-01-01';
        $sCutoffDate = session('work_date')->toDateString();
@@ -441,7 +449,10 @@ class SProductionOrdersController extends Controller
                    CONCAT(wmt.code, "-", wm.folio) AS folio,
                    wmt.code AS mvt_code,
                    wmt.name AS mvt_name,
+                   CONCAT(ei.code, "-", ei.name) AS item,
                    wmr.pallet_id AS pallet,
+                   wl.lot,
+                   wl.dt_expiry,
                    eb.code AS branch_code,
                    ww.code AS whs_code,
                    wwl.code AS loc_code,
@@ -452,10 +463,12 @@ class SProductionOrdersController extends Controller
        $query = \DB::connection(session('db_configuration')->getConnCompany())
                      ->table('wms_mvts as wm')
                      ->join('wms_mvt_rows as wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
+                     ->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
                      ->join('wmss_mvt_types as wmt', 'wm.mvt_whs_type_id', '=', 'wmt.id_mvt_type')
                      ->join('erpu_items as ei', 'wmr.item_id', '=', 'ei.id_item')
                      ->join('erpu_units as eu', 'wmr.unit_id', '=', 'eu.id_unit')
                      ->join('wms_pallets as wp', 'wmr.pallet_id', '=', 'wp.id_pallet')
+                     ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot')
                      ->join('wmsu_whs_locations as wwl', 'wmr.location_id', '=', 'wwl.id_whs_location')
                      ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')
                      ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
@@ -469,6 +482,9 @@ class SProductionOrdersController extends Controller
                        ->orderBy('id_mvt', 'ASC')
                        ->get();
 
-       return json_encode($oPO);
+       $oData->oProductionOrder = $oPO;
+       $oData->lKardexRows = $query;
+
+       return json_encode($oData);
     }
 }

@@ -32,7 +32,8 @@ class SRowsCore {
   }
 
   addRow(elementToAdd) {
-      if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+      if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+          || utilFunctions.isProductionTransfer(globalData.iMvtType)) {
         transfersCore.addRow(elementToAdd);
       }
       else {
@@ -59,7 +60,8 @@ class SRowsCore {
   }
 
   deleteMovRow(tRow, index) {
-    if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+    if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+        || utilFunctions.isProductionTransfer(globalData.iMvtType)) {
       oTransfersMovsTable.row('.selected').remove().draw( false );
     }
     else {
@@ -179,7 +181,8 @@ class SRowsCore {
          else {
             if (elementToAdd.bIsLot) {
 
-              if (globalData.isPalletReconfiguration || !globalData.bIsInputMov) {
+              if (globalData.isPalletReconfiguration
+                  || (!globalData.bIsInputMov && !utilFunctions.isProductionDelivery(globalData.iMvtType))) {
                  if (serverData.lNewLots.length > 0) {
                    swal("Error", "No pueden crearse lotes en esta operación", "error");
                    return false;
@@ -322,7 +325,8 @@ function deleteElement() {
   var row = undefined;
   var index = undefined;
 
-  if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+  if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+      || utilFunctions.isProductionMovement(globalData.iMvtType)) {
     row = oTransfersMovsTable.row('.selected').data();
     index = oTransfersMovsTable.row('.selected').index();
   }

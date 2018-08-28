@@ -24,9 +24,17 @@ return [
       'EXPL_MAT_T'  => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
 
       'ASSIGNAMENT'  => 'Asignación de insumos y productos',
-      'ASSIGNAMENT_MATERIALS'  => 'Asignación de materia prima',
-      'ASSIGNAMENT_PRODUCTS'  => 'Asignación de productos',
+      'ASSIGNAMENT_MATERIALS'  => 'Entrega materia prima',
+      'RETURN_MATERIALS'  => 'Devolución materia prima',
+
+      'ASSIGNAMENT_PRODUCTS'  => 'Entrega de PP a almacén',
+      'RETURN_PP'  => 'Devolución de producto en proceso',
       'ASSIGNAMENT_T'  => 'Lorem ipsum dolor sit amet consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+
+      'DELIVERY_PM' => 'Entrega material de empaque',
+      'RETURN_PACKING_MATERIAL'  => 'Devolución material empaque',
+
+      'DELIVERY_FP' => 'Entrega de PT a almacén',
 
       'titles' => [
                       'CREATE_PRODUCTION_PLAN' => 'Crear plan de producción',
@@ -37,6 +45,7 @@ return [
                       'CHARGES' => 'Cargas',
                       'DATE_START' => 'Fecha inicial',
                       'DATE_END' => 'Fecha final',
+                      'DELIVERED' => 'Entregado',
                       'DURATION' => 'Duración',
                       'EXP' => 'Exp.',
                       'EXPLODED' => 'Explosionada',
@@ -50,6 +59,7 @@ return [
                       'NAME_FORMULA' => 'Nombre de la fórmula',
                       'NO_EXPLODED' => 'No explosionada',
                       'ORDER_QUANTITY' => 'Cant. Ord.',
+                      'PO_ITEM' => 'Producto de orden',
                       'PO_KARDEX' => 'Tarjeta auxiliar de almacén',
                       'PRODUCT' => 'Producto',
                       'PRODUCTION_PLAN' => 'Plan de producción',

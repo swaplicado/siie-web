@@ -46,7 +46,7 @@ oOrdersTable = $('#orders_table').DataTable({
   });
 
 
-oOrdersTable = $('#po_kardex_table').DataTable({
+oKardexTable = $('#po_kardex_table').DataTable({
       "language": {
         "sProcessing":     "Procesando...",
         "sLengthMenu":     "Mostrar _MENU_ registros",

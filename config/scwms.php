@@ -51,6 +51,8 @@ return [
     // applies only for production
     'MVT_MFG_TP_MAT' => '2', // materials
     'MVT_MFG_TP_PRO' => '3', // products
+    'MVT_MFG_TP_PACK' => '4', // packing material
+    'MVT_MFG_TP_FP' => '5', // finished product
 
     // applies only for adjustments
     'MVT_ADJ_TP_IFI' => '2', // initial and final inventory
@@ -123,6 +125,7 @@ return [
                         'ID_YEAR' => '8',
                         'DATE' => '9',
                         'ID_MVT' => '10',
+                        'PROD_ORD' => '11',
                         'WITH_SEGREGATED' => '100',
                         'AS_AS' => '101',
                       ],

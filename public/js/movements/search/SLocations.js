@@ -143,7 +143,8 @@ class SLocations {
           oData = globalData.lFSrcLocations;
       }
 
-      if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA) {
+      if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+          || utilFunctions.isProductionTransfer(globalData.iMvtType)) {
         var oDataDes = globalData.lFDesLocations;
 
         oLocationsDesTable = $('#locations_des_table').DataTable({

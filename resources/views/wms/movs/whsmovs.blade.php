@@ -23,6 +23,7 @@
 	@include('wms.movs.subviews.header')
 	@include('wms.movs.subviews.documentrows')
 	@include('wms.movs.subviews.po')
+	@include('wms.movs.subviews.pomodal')
 	@if (App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
 		@include('wms.movs.pallet')
 	@endif
@@ -32,7 +33,8 @@
   <div class="row">
     <div class="col-xs-12">
 			<div class="form-group">
-					@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA'))
+					@if($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA')
+								|| App\SUtils\SGuiUtils::isProductionTransfer($oMovement->mvt_whs_type_id))
 							@include('wms.movs.tables.whstransfers')
 					@else
 							@include('wms.movs.tables.adjustments')

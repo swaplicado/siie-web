@@ -104,7 +104,7 @@ class AddProductionTable extends Migration
         	$table->foreign('type_id')->references('id_type')->on('mms_type_order')->onDelete('cascade');
         	$table->foreign('status_id')->references('id_status')->on('mms_status_order')->onDelete('cascade');
         	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
-        	$table->foreign('unit_id')->references('id_item_unit')->on('erpu_item_units')->onDelete('cascade');
+        	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
         	$table->foreign('father_order_id')->references('id_order')->on('mms_production_orders')->onDelete('cascade');
         	$table->foreign('formula_id')->references('id_formula')->on('mms_formulas')->onDelete('cascade');
         	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');

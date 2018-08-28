@@ -7,4 +7,7 @@ class SData
 {
     public $oSrcPO = null;
     public $lDesPO = [];
+
+    public $oProductionOrder = null;
+    public $lKardexRows = [];
 }

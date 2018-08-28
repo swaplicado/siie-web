@@ -24,8 +24,8 @@ class SHeaderCore {
           movement.iDocumentId = globalData.oDocument.id_document;
         }
 
-        if ((movement.iMvtType == globalData.MVT_TP_OUT_TRA && !globalData.bIsExternalTransfer)
-              || utilFunctions.isProductionMovement(movement.iMvtType)) {
+        if ((movement.iMvtType == globalData.scwms.MVT_TP_OUT_TRA && !globalData.bIsExternalTransfer)
+              || utilFunctions.isProductionTransfer(movement.iMvtType)) {
             movement.iWhsSrc = document.getElementById('whs_src').value;
             movement.iWhsDes = document.getElementById('whs_des').value;
         }
@@ -71,6 +71,9 @@ class SHeaderCore {
                     '&whs_des=' + movement.iWhsDes +
                     '&mvt_cls=' + globalData.iMvtClass +
                     '&mvt_type=' + globalData.iMvtType +
+                    '&mvt_sub_type=' + movement.iMvtSubType +
+                    '&src_po=' + movement.iPOSrc +
+                    '&des_po=' + movement.iPODes +
                     '&mvt_id=' + idMov,
        function(data) {
           var serverData = JSON.parse(data);
@@ -141,7 +144,9 @@ class SHeaderCore {
       var bValid = false;
       var BreakException = {};
 
-      if (globalData.bIsInputMov || oMovRow.bIsDeleted) {
+      if (globalData.bIsInputMov
+            || oMovRow.bIsDeleted
+              || utilFunctions.isProductionDelivery(globalData.iMvtType)) {
         return true;
       }
 
@@ -315,8 +320,8 @@ function initializePanel(serverData) {
         locationsJs.setDefaultLocation(globalData.lFSrcLocations);
     }
 
-    if (globalData.iMvtType == globalData.MVT_TP_OUT_TRA
-        || utilFunctions.isProductionMovement(oMovement.iMvtType)) {
+    if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+        || utilFunctions.isProductionTransfer(oMovement.iMvtType)) {
         locationsJs.setDefaultLocationDes(globalData.lFDesLocations);
 
         if (globalData.bIsExternalTransfer) {
@@ -326,6 +331,11 @@ function initializePanel(serverData) {
             guiValidations.showLocationDes();
         }
         guiValidations.showLocationDesLabel();
+    }
+
+    if (utilFunctions.isProductionMovement(oMovement.iMvtType)) {
+        guiProduction.setProductionOrder(serverData.oProductionOrder);
+        guiValidations.showPOBtn();
     }
 
     $('#item').focus();

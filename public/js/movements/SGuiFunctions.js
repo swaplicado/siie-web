@@ -218,6 +218,15 @@ class SGuiFunctions {
     }
 
     /**
+     * get the value of label of production order
+     *
+     * @return {string} text searched
+     */
+    getSrcItemLabel() {
+      return document.getElementById('src_item').textContent;
+    }
+
+    /**
      * based in the current movement update the labels of quantity and amount
      *
      */

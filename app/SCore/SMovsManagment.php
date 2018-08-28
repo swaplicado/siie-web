@@ -16,7 +16,6 @@ use App\WMS\SExternalTransfer;
 
 use App\SUtils\SStockUtils;
 use App\SCore\SMovsCore;
-use App\SCore\SLinkSupplyCore;
 
 /**
  * this class manages the movement process
@@ -125,12 +124,14 @@ class SMovsManagment {
         case \Config::get('scwms.MVT_TP_IN_PUR'):
         case \Config::get('scwms.MVT_TP_IN_SAL'):
         case \Config::get('scwms.MVT_TP_OUT_SAL'):
+        case \Config::get('scwms.MVT_IN_DLVRY_PP'):
+        case \Config::get('scwms.MVT_IN_DLVRY_FP'):
           return $this->createTheMovement($oMovement, $aMovementRows);
 
           // The movement is trasfer
         case \Config::get('scwms.MVT_TP_OUT_TRA'):
         case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
-        case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+        case \Config::get('scwms.MVT_OUT_RTRN_RM'):
           return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
 
           // the movement is pallet reconfiguration (pallet division)
@@ -528,12 +529,23 @@ class SMovsManagment {
     {
         $aMovements = array();
 
-        if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR') ||
-              $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL')) {
-              $aRes = SLinkSupplyCore::linkSupply($oMovement, $aMovementRows);
+        switch ($oMovement->mvt_whs_type_id) {
+          case \Config::get('scwms.MVT_TP_IN_PUR'):
+          case \Config::get('scwms.MVT_TP_OUT_SAL'):
+                $aRes = SLinkSupplyCore::linkSupply($oMovement, $aMovementRows);
 
-              $oMovement = $aRes[0];
-              $aMovementRows = $aRes[1];
+                $oMovement = $aRes[0];
+                $aMovementRows = $aRes[1];
+            break;
+
+          case \Config::get('scwms.MVT_IN_DLVRY_PP'):
+          case \Config::get('scwms.MVT_IN_DLVRY_FP'):
+                $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+            break;
+
+          default:
+                $oMovement->prod_ord_id = 1;
+            break;
         }
 
         $oMovement->aAuxRows = $aMovementRows;
@@ -570,10 +582,14 @@ class SMovsManagment {
 
               case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
                 $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_DLVRY_RM');
+                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+                $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
                 break;
 
-              case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
-                $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_DLVRY_PP');
+              case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+                $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_RTRN_RM');
+                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+                $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
                 break;
 
               default:
@@ -597,31 +613,6 @@ class SMovsManagment {
 
            $iWhsSrcDefLocation = $oSrcLocation->id_whs_location;
            $iWhsDesDefLocation = $oDesLocation->id_whs_location;
-        }
-
-        if ($oMovement->aAuxPOs[SMovement::ASS_TYPE] > 0) {
-          // switch ($oMovement->aAuxPOs[SMovement::ASS_TYPE]) {
-          //   case \Config::get('scmms.ASSIGN_TYPE.MP'):
-          //     $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_MAT');
-          //     break;
-          //   case \Config::get('scmms.ASSIGN_TYPE.PP'):
-          //     $oMirrorMovement->mvt_mfg_type_id = \Config::get('scwms.MVT_MFG_TP_PRO');
-          //     break;
-          //
-          //   default:
-          //     // code...
-          //     break;
-          // }
-
-          if ($oMovement->aAuxPOs[SMovement::SRC_PO] > 0) {
-             if ($oMovement->aAuxPOs[SMovement::DES_PO] > 0) {
-                $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
-                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::DES_PO];
-             }
-             else {
-                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
-             }
-          }
         }
 
         $oMovement->aAuxRows = [];

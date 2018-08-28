@@ -17,6 +17,7 @@ use App\SCore\StransfersCore;
 use App\SCore\SMovsCore;
 use App\SCore\SInventoryCore;
 use App\SCore\SPalletsCore;
+use App\SCore\SProductionCore;
 
 use App\SUtils\SMovsUtils;
 use App\SUtils\SUtil;
@@ -44,9 +45,8 @@ use App\WMS\SItemContainer;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
-use App\WMS\Data\SData;
-
 use App\MMS\SProductionOrder;
+use App\WMS\Data\SData;
 
 class SMovsController extends Controller
 {
@@ -241,6 +241,7 @@ class SMovsController extends Controller
         $branches = array();
 
         $oMovement = new SMovement();
+        $oProductionOrder = SProductionOrder::find(1);
         $lDocData = array();
         $lStock = null;
 
@@ -359,27 +360,44 @@ class SMovsController extends Controller
             break;
 
           case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
-            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_MAT');
+          case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+            $lSrcPO = SProductionOrder::where('mms_production_orders.is_deleted', false)
+                        ->join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
+                        ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
+                        ->selectRaw('(CONCAT(LPAD(folio, '.
+                              session('long_folios').', "0"),
+                                  "-", identifier)) as prod_ord,
+                                  id_order');
+
+            if ($sTitle == trans('mms.DELIVERY_PM')
+                || $sTitle == trans('mms.RETURN_PACKING_MATERIAL')) {
+
+              $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PACK');
+              $iAssType = \Config::get('scmms.ASSIGN_TYPE.PACK');
+
+              $lSrcPO = $lSrcPO->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
+            }
+            else {
+              $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_MAT');
+              $iAssType = \Config::get('scmms.ASSIGN_TYPE.MP');
+
+              $lSrcPO = $lSrcPO->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'));
+            }
+
+            $lSrcPO = $lSrcPO->lists('prod_ord', 'id_order');
+
             $mvtComp = SMvtMfgType::where('is_deleted', false)
-                                  ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_MAT'))
+                                  ->where('id_mvt_mfg_type', $iMvtSubType)
                                   ->lists('name', 'id_mvt_mfg_type');
 
-            $lSrcPO = SProductionOrder::where('is_deleted', false)
-                                      ->selectRaw('(CONCAT(LPAD(folio, '.
-                                            session('long_folios').', "0"),
-                                                "-", identifier)) as prod_ord,
-                                                id_order')
-                                      ->lists('prod_ord', 'id_order');
             $lDesPO = [];
 
             $iSrcPO = 0;
             $iDesPO = 0;
 
-            $iAssType = \Config::get('scmms.ASSIGN_TYPE.MP');
-
             break;
 
-          case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+          case \Config::get('scwms.MVT_IN_DLVRY_PP'):
             $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PRO');
             $mvtComp = SMvtMfgType::where('is_deleted', false)
                                   ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_PRO'))
@@ -404,10 +422,30 @@ class SMovsController extends Controller
 
             $iAssType = \Config::get('scmms.ASSIGN_TYPE.PP');
 
-            $lItemsForOrders = SItem::whereRaw('id_item IN
-                                  (SELECT item_id FROM mms_production_orders
-                                    WHERE NOT is_deleted)')
-                                  ->get();
+            break;
+
+          case \Config::get('scwms.MVT_IN_DLVRY_FP'):
+            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_FP');
+            $mvtComp = SMvtMfgType::where('is_deleted', false)
+                                  ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_PRO'))
+                                  ->lists('name', 'id_mvt_mfg_type');
+
+            $lSrcPO = SProductionOrder::where('mms_production_orders.is_deleted', false)
+                                ->join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
+                                ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
+                                ->selectRaw('(CONCAT(LPAD(folio, '.
+                                      session('long_folios').', "0"),
+                                          "-", identifier)) as prod_ord,
+                                          id_order')
+                                ->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'))
+                                ->lists('prod_ord', 'id_order');
+            $lDesPO = [];
+
+            $iSrcPO = 0;
+            $iDesPO = 0;
+
+            $iAssType = \Config::get('scmms.ASSIGN_TYPE.FP');
+
             break;
 
           default:
@@ -438,6 +476,7 @@ class SMovsController extends Controller
                           ->with('iSrcPO', $iSrcPO)
                           ->with('iDesPO', $iDesPO)
                           ->with('iAssType', $iAssType)
+                          ->with('oProductionOrder', $oProductionOrder)
                           ->with('lItemsForOrders', $lItemsForOrders)
                           ->with('oTransitWarehouse', $oTransitWarehouse)
                           ->with('lPallets', $pallets)
@@ -466,7 +505,7 @@ class SMovsController extends Controller
 
         // the transfer implies two warehouses
         if ($oMovementJs->iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA')
-            || SGuiUtils::isProductionMovement($oMovementJs->iMvtType))
+            || SGuiUtils::isProductionTransfer($oMovementJs->iMvtType))
         {
             $iWhsSrc = $oMovementJs->iWhsSrc;
             $iWhsDes = $oMovementJs->iWhsDes;
@@ -523,7 +562,9 @@ class SMovsController extends Controller
             break;
 
           case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
-          case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+          case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+          case \Config::get('scwms.MVT_IN_DLVRY_PP'):
+          case \Config::get('scwms.MVT_OUT_DLVRY_FP'):
             $movement->mvt_mfg_type_id = $oMovementJs->iMvtSubType;
             break;
 
@@ -1076,7 +1117,7 @@ class SMovsController extends Controller
      */
     public function getMovementData(Request $request)
     {
-        $oData = new SData();
+        $oData = new \App\WMS\Data\SData();
 
         if ($request->mvt_type == \Config::get('scwms.PALLET_RECONFIG_IN')) {
             $request->whs_source = $request->whs_des;
@@ -1085,17 +1126,29 @@ class SMovsController extends Controller
         $oData->lItems = SMovsUtils::getElementsToWarehouse(
                                                       $request->whs_source,
                                                       $request->whs_des,
-                                                      \Config::get('scwms.ELEMENTS_TYPE.ITEMS')
+                                                      \Config::get('scwms.ELEMENTS_TYPE.ITEMS'),
+                                                      $request->src_po,
+                                                      $request->des_po,
+                                                      $request->mvt_type,
+                                                      $request->mvt_sub_type
                                                     );
         $oData->lPallets = SMovsUtils::getElementsToWarehouse(
                                                       $request->whs_source,
                                                       $request->whs_des,
-                                                      \Config::get('scwms.ELEMENTS_TYPE.PALLETS')
+                                                      \Config::get('scwms.ELEMENTS_TYPE.PALLETS'),
+                                                      $request->src_po,
+                                                      $request->des_po,
+                                                      $request->mvt_type,
+                                                      $request->mvt_sub_type
                                                     );
         $oData->lLots = SMovsUtils::getElementsToWarehouse(
                                                       $request->whs_source,
                                                       $request->whs_des,
-                                                      \Config::get('scwms.ELEMENTS_TYPE.LOTS')
+                                                      \Config::get('scwms.ELEMENTS_TYPE.LOTS'),
+                                                      $request->src_po,
+                                                      $request->des_po,
+                                                      $request->mvt_type,
+                                                      $request->mvt_sub_type
                                                     );
 
         $iWhs = 0;
@@ -1103,7 +1156,8 @@ class SMovsController extends Controller
             $oData->lSrcLocations = SMovsUtils::getResWarehouseLocations($request->whs_source)->get();
             $iWhs = $request->whs_source;
 
-            if ($request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')) {
+            if ($request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')
+                || SGuiUtils::isProductionMovement($request->mvt_type)) {
                 $oData->lDesLocations = SMovsUtils::getResWarehouseLocations($request->whs_des)->get();
             }
         }
@@ -1116,8 +1170,7 @@ class SMovsController extends Controller
 
         if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_OUT')
               || $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')
-                || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_RM')
-                  || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_PP')) {
+                || SGuiUtils::isProductionTransfer($request->mvt_type)) {
                 $oWarehouse = SWarehouse::find($request->whs_source);
                 $oData->iFolioSrc = $oProcess->getNewFolio($oWarehouse->branch_id,
                                                               $oWarehouse->id_whs,
@@ -1126,8 +1179,7 @@ class SMovsController extends Controller
         }
         if ($request->mvt_cls == \Config::get('scwms.MVT_CLS_IN')
              || $request->mvt_type == \Config::get('scwms.MVT_TP_OUT_TRA')
-              || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_RM')
-                || $request->mvt_type == \Config::get('scwms.MVT_OUT_DLVRY_PP')) {
+              || SGuiUtils::isProductionTransfer($request->mvt_type)) {
                 $oWarehouse = SWarehouse::find($request->whs_des);
                 $oData->iFolioDes = $oProcess->getNewFolio($oWarehouse->branch_id,
                                                               $oWarehouse->id_whs,
@@ -1135,7 +1187,21 @@ class SMovsController extends Controller
                                                               $request->mvt_type);
         }
 
-        $oData->lStock = SMovsUtils::getStockFromWarehouse($iWhs, $request->mvt_id);
+        $oData->lStock = SMovsUtils::getStockFromWarehouse($iWhs, $request->mvt_id,
+                                                                  $request->mvt_type,
+                                                                  $request->src_po,
+                                                                  $request->des_po);
+
+        if (SGuiUtils::isProductionMovement($request->mvt_type)) {
+            $oData->oProductionOrder = SProductionOrder::find($request->src_po);
+            $oData->oProductionOrder->formula;
+            $oData->oProductionOrder->plan;
+            $oData->oProductionOrder->type;
+            $oData->oProductionOrder->item;
+            $oData->oProductionOrder->unit;
+
+            $oData->oProductionOrder->dDelivered = SProductionCore::getDeliveredByPO($oData->oProductionOrder);
+        }
 
         return json_encode($oData);
     }

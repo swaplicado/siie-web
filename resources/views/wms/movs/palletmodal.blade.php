@@ -56,7 +56,9 @@
                                 ['class' => 'form-control',
                                 'id' => 'name_pallet']) !!}
           </div>
-          @if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ'))
+          @if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_ADJ')
+                || $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_IN_PUR')
+                  || $oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_IN_DLVRY_FP'))
             <div class="col-md-5">
               {!! Form::label(trans('wms.labels.PALLETS').'') !!}
               {!! Form::text('string_pallets', '',

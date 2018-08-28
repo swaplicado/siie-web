@@ -115,6 +115,7 @@
   </div>
 @endsection
 
+@include('mms.orders.jssection')
 @section('js')
   <script src="{{ asset('js/mms/orders/tables.js')}}"></script>
   <script src="{{ asset('js/mms/orders/SKardexCore.js')}}"></script>

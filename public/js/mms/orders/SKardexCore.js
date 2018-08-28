@@ -11,6 +11,9 @@ class SKardexCore {
      function(data) {
         var serverData = JSON.parse(data);
         console.log(serverData);
+        guiKardex.setKardex(serverData);
+
+        $('#poKardexModal').modal('show');
      });
 
      // $.ajax({
@@ -32,5 +35,4 @@ var kardexCore = new SKardexCore();
 
 function onKardexModal(iPO) {
     kardexCore.getKardex(iPO);
-    $('#poKardexModal').modal('show');
 }

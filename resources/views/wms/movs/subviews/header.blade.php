@@ -32,7 +32,7 @@
                                                             'disabled' : '']) !!}
     </div>
 
-    @if ($iAssType > '0')
+    @if (App\SUtils\SGuiUtils::isProductionMovement($oMovement->mvt_whs_type_id))
       <div class="form-group">
         {!! Form::button(trans('mms.labels.PRODUCTION_ORDER'),
                                     ['class' => 'btn btn-info',
