@@ -199,7 +199,6 @@ class SProductionCore {
         $query = \DB::connection(session('db_configuration')->getConnCompany())
                       ->table('wms_stock as ws')
                       ->where('ws.prod_ord_id', $iPO)
-                      // ->where('ws.whs_id', $iWhs)
                       ->where('is_deleted', false)
                       ->where('mvt_whs_class_id', \Config::get('scwms.MVT_CLS_IN'))
                       ->select(\DB::raw($sSelect))
