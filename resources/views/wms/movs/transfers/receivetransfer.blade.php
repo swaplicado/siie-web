@@ -56,6 +56,7 @@
 		<script type="text/javascript" src="{{ asset('js/movements/Movements.js')}}"></script>
 		<script type="text/javascript" src="{{ asset('js/movements/search/SLocations.js')}}"></script>
 		<script type="text/javascript" src="{{ asset('js/movements/SGuiValidations.js')}}"></script>
+		<script type="text/javascript" src="{{ asset('js/movements/SFunctions.js')}}"></script>
 		<script type="text/javascript" src="{{ asset('js/movements/transfers/tables.js')}}"></script>
 		<script type="text/javascript" src="{{ asset('js/movements/tables.js')}}"></script>
 		<script type="text/javascript" src="{{ asset('js/movements/validations.js')}}"></script>

@@ -12,17 +12,19 @@ class SAssign {
         var serverData = JSON.parse(data);
 
         assignCore.oSrcPO = serverData.oSrcPO;
-        assignCore.updateDesProdOrders(serverData.lDesPO);
+        // assignCore.updateDesProdOrders(serverData.lDesPO);
         assignCore.updateLabels();
      });
   }
 
   updateLabels() {
-    document.getElementById('src_item').innerText = assignCore.oSrcPO.item.name;
-
-    if (globalData.iAssignType == globalData.scmms.ASSIGN_TYPE.PP) {
-      var poDes = document.getElementById('des_po').value;
+    if (assignCore.oSrcPO != null) {
+      document.getElementById('src_item').innerText = assignCore.oSrcPO.item.name;
     }
+
+    // if (globalData.iAssignType == globalData.scmms.ASSIGN_TYPE.PP) {
+    //   var poDes = document.getElementById('des_po').value;
+    // }
   }
 
   updateDesProdOrders(lDesPO) {
@@ -50,7 +52,8 @@ var assignCore = new SAssign();
 
 function updatePOs() {
     var poSrc = document.getElementById('src_po').value;
-    var poDes = document.getElementById('des_po').value;
+    var poDes = 0;
+    // var poDes = document.getElementById('des_po').value;
 
     assignCore.goToServer(poSrc, poDes);
 }

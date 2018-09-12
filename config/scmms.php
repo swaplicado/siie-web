@@ -25,4 +25,15 @@ return [
           'PACK' => '4',
     ],
 
+    'MOVS_QUERY' => [
+                'RM_DELIVERY' => '1',
+                'RM_RETURN' => '2',
+                'PM_DELIVERY' => '3',
+                'PM_RETURN' => '4',
+                'PP_DELIVERY' => '5',
+                'PP_ASSIGNAMENT' => '6',
+                'FP_DELIVERY' => '7',
+                'CONSUMPTION_MVTS' => '8',
+              ],
+
 ];

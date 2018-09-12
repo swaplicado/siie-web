@@ -11,6 +11,7 @@
 		'CANCEL' => 'Cancelar',
 		'CLEAN' => 'Limpiar',
 		'CLOSE' => 'Cerrar',
+		'CONSUME' => 'Consumir',
 		'CONTINUE' => 'Continuar',
 		'CREATE' => 'Crear',
 		'DEVOLVE' => 'Devolver',

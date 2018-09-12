@@ -54,6 +54,16 @@ class SFormula extends SModel {
       return $this->belongsTo('App\ERP\SUnit');
     }
 
+    /**
+     * [unit description]
+     * Return object SItem
+     * @return SItem
+     */
+    public function item()
+    {
+      return $this->belongsTo('App\ERP\SItem');
+    }
+
     // /**
     //  * [rows description]
     //  * Return object SSegregartionRow

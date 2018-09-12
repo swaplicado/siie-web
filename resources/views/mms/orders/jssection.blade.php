@@ -12,5 +12,6 @@
   }
 
   var globalData = new GlobalData();
+  ordersCore.setOrders(<?php echo json_encode($orders) ?>);
 
 </script>

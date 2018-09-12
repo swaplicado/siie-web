@@ -90,14 +90,14 @@ class SGuiValidations {
 
        if (globalData.iAssignType > 0) {
          oMovement.iPOSrc = document.getElementById('src_po').value;
-         oMovement.iPODes = document.getElementById('des_po').value;
+         // oMovement.iPODes = document.getElementById('des_po').value;
 
           switch (globalData.iAssignType) {
             case globalData.scmms.ASSIGN_TYPE.PP:
-                  if (oMovement.iPODes == 0) {
-                    swal("Error", "Debe elegir una orden de producción destino.", "error");
-                    return false;
-                  }
+                  // if (oMovement.iPODes == 0) {
+                  //   swal("Error", "Debe elegir una orden de producción destino.", "error");
+                  //   return false;
+                  // }
 
             case globalData.scmms.ASSIGN_TYPE.MP:
             case globalData.scmms.ASSIGN_TYPE.PACK:
@@ -144,7 +144,7 @@ class SGuiValidations {
           $('#src_po').attr("disabled", true).trigger("chosen:updated");
         }
         if (utilFunctions.isProductionTransfer(oMovement.iMvtType)) {
-          $('#des_po').disabled = true;
+          // $('#des_po').disabled = true;
         }
     }
 
@@ -162,7 +162,7 @@ class SGuiValidations {
           $('#src_po').attr("disabled", false).trigger("chosen:updated");
         }
         if (utilFunctions.isProductionTransfer(oMovement.iMvtType)) {
-          $('#src_po').disabled = false;
+          // $('#src_po').disabled = false;
         }
     }
 

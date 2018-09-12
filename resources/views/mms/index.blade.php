@@ -6,20 +6,31 @@
 
   <div class="row">
     @include('templates.home.rapidaccess')
-    <?php echo createBlock(asset('images/wms/box.gif'), "#",
+    <?php echo createBlock(asset('images/wms/box.gif'), route('wms.stock.index',
+                                                      [\Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE'),
+                                                      trans('wms.WHS_STK')]),
                                     trans('wms.QRY_INVENTORY'), "primary3", trans('wms.QRY_INVENTORY_T')); ?>
+
     <?php echo createBlock(asset('images/mms/ingred_list.gif'), route('mms.formulas.index'),
                                     trans('mms.FORMULAS'), "primary3", trans('mms.FORMULAS_T')); ?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/wms/folder.gif'), "#",
+    <?php echo createBlock(asset('images/wms/folder.gif'), route('mms.orders.index'),
                                     trans('mms.PROD_ORDER'), "primary3", trans('mms.PROD_ORDER_T'));?>
+
     <?php echo createBlock(asset('images/wms/whss.gif'), route('mms.explosion.index'),
                                     trans('mms.EXPL_MAT'), "primary3", trans('mms.EXPL_MAT_T'));?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/wms/monta.gif'), "#",
+    <?php echo createBlock(asset('images/wms/monta.gif'),
+                        \App\SUtils\SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                      \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')) ?
+                                    route('wms.movs.create', [\Config::get('scwms.MVT_OUT_DLVRY_RM'),
+                                          trans('mms.ASSIGNAMENT_MATERIALS'),
+                                        0]) : '#',
                                     trans('mms.ASSIGNAMENT'), "primary3", trans('mms.ASSIGNAMENT_T'));?>
+
+
     <?php echo createBlock(asset('images/wms/reports.gif'), "#",
                                     trans('wms.REPORTS'), "primary3", trans('wms.REPORTS_T'));?>
   </div>

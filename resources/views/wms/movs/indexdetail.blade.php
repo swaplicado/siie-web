@@ -59,6 +59,8 @@
 								<th>{{ trans('userinterface.labels.DATE') }}</th>
 								<th>{{ trans('siie.labels.C_N') }}</th>
 								<th>{{ trans('userinterface.labels.DATE') }}</th>
+								<th>{{ trans('mms.labels.PO') }}</th>
+								<th>{{ trans('siie.labels.CREATED') }}</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -109,6 +111,12 @@
 									<td>{{ '---' }}</td>
 									<td>{{ '---' }}</td>
 								@endif
+								@if ($row->prod_ord_id == 1)
+									<td>N/A</td>
+								@else
+									<td>{{ 'OP-'.session('utils')->formatFolio($row->po_folio) }}</td>
+								@endif
+								<td>{{ $row->created_at }}</td>
 		        </tr>
 					@endforeach
 		    </tbody>

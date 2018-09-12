@@ -12,12 +12,12 @@
           <div class="row">
             <div class="col-md-7">
               <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-8">
                   {!! Form::label('po', trans('mms.labels.PRODUCTION_ORDER')) !!}
                   {!! Form::label('po', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po']) !!}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                   {!! Form::label('po_type', trans('mms.labels.PRODUCTION_ORDER_TYPE')) !!}
                   {!! Form::label('po_type', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po_type']) !!}
@@ -79,7 +79,7 @@
                             <th>{{ trans('userinterface.labels.BRANCH') }}</th>
                             <th>{{ trans('userinterface.labels.WAREHOUSE') }}</th>
                             <th>{{ trans('userinterface.labels.LOCATION') }}</th>
-                            <th>{{ trans('wms.labels.INPUTS') }}</th>
+                            <th style="text-align: right;">{{ trans('wms.labels.INPUTS') }}</th>
                             <th>{{ trans('wms.labels.OUTPUTS') }}</th>
                             <th>{{ trans('wms.labels.UN') }}</th>
                             <th>{{ '$'.trans('siie.labels.DEBITS') }}</th>

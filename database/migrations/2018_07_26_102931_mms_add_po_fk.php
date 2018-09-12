@@ -52,6 +52,10 @@ class MmsAddPoFk extends Migration
       DB::table('syss_permissions')->insert([
         ['code' => '125','name' => 'ASIGNACIÓN A ORDENES DE PRODUCCIÓN',
             'is_deleted' => '0','module_id' => '2'],
+        ['code' => '126','name' => 'CERRAR ÓRDENES DE PRODUCCIÓN',
+            'is_deleted' => '0','module_id' => '2'],
+        ['code' => '127','name' => 'CONSULTAS DE MOVIMIENTOS EN PRODUCCIÓN',
+            'is_deleted' => '0','module_id' => '2'],
       ]);
     }
 
@@ -64,7 +68,9 @@ class MmsAddPoFk extends Migration
     {
       foreach ($this->lDatabases as $base) {
         $this->sDataBase = $base;
-        SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
+        SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault,
+                                                $this->sHost, $this->sDataBase,
+                                                $this->sUser, $this->sPassword);
 
         Schema::connection($this->sConnection)->table('wms_mvts', function($table)
         {
@@ -74,5 +80,7 @@ class MmsAddPoFk extends Migration
       }
 
       DB::table('syss_permissions')->where('code', '125')->delete();
+      DB::table('syss_permissions')->where('code', '126')->delete();
+      DB::table('syss_permissions')->where('code', '127')->delete();
     }
 }

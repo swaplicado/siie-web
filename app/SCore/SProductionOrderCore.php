@@ -3,6 +3,7 @@
 use App\MMS\SProductionOrder;
 use App\MMS\SStatusOrder;
 use App\SCore\SProductionCore;
+use App\SUtils\SValidation;
 
 class SProductionOrderCore {
 
@@ -39,7 +40,10 @@ class SProductionOrderCore {
             break;
 
           case \Config::get('scmms.PO_STATUS.ST_CLOSED'):
-            $bValid = true;
+            $bValid = SValidation::hasPermission(\Config::get('scperm.PERMISSION.MMS_CLOSE_PO'));
+            if (! $bValid) {
+               return ['No tiene permiso para cerrar una orden de producción'];
+            }
             break;
 
           default:
@@ -116,7 +120,7 @@ class SProductionOrderCore {
 
           case \Config::get('scmms.PO_STATUS.ST_ENDED'):
             if ($oProductionOrder->status_id != \Config::get('scmms.PO_STATUS.ST_CLOSED')) {
-              $oResult = SProductionCore::makeConsumption($oProductionOrder->id_order);// warehouse??
+              redirect()->route('mms.orders.consumptions', $oProductionOrder->id_order);
             }
             break;
 

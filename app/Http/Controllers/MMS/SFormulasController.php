@@ -672,6 +672,18 @@ class SFormulasController extends Controller {
                                     ->with('bIsCopy', true);
     }
 
+    public function print($id = 0)
+    {
+      $oFormula = SFormula::find($id);
+      $oFormula->rows;
+
+      $view = view('mms.formulas.print', ['oFormula' => $oFormula])->render();
+      // set ukuran kertas dan orientasi
+      $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
+      // cetak
+      return $pdf->stream();
+    }
+
     public function getItemFormulas(Request $request)
     {
       try {

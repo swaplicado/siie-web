@@ -98,7 +98,8 @@ class SReceptions
                   ->where('wm1.is_deleted', false)
                   ->where('wet.is_deleted', false)
                   ->where('wet.src_branch_id', $iBranch)
-                  ->select(\DB::raw($sSelect));
+                  ->select(\DB::raw($sSelect))
+                  ->orderBy('wmdes.dt_date', 'DESC');
 
         $query = $query->get();
 
@@ -116,6 +117,8 @@ class SReceptions
     {
         $sSelect = '
                     wmdes.id_mvt,
+                    wm.id_mvt AS src_id_mvt,
+                    wm.is_deleted AS src_is_deleted,
                     wmdes.dt_date,
                     wmt.code AS mov_code,
                     wmt.name AS mov_name,
@@ -150,7 +153,8 @@ class SReceptions
                       })
                   ->where('wm.is_deleted', false)
                   ->select(\DB::raw($sSelect))
-                  ->groupBy('wmdes.id_mvt');
+                  ->groupBy('wmdes.id_mvt')
+                  ->orderBy('wmdes.dt_date', 'DESC');
 
         $query = $query->get();
 

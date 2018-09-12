@@ -240,6 +240,10 @@ Route::post('manage/changedate',[
   			'uses' => 'MMS\SFormulasController@Activate',
   			'as' => 'mms.formulas.activate'
   		]);
+      Route::get('formulas/{id}/print', [
+  			'uses' => 'MMS\SFormulasController@Print',
+  			'as' => 'mms.formulas.print'
+  		]);
 
       /*
       * Production planes
@@ -304,11 +308,27 @@ Route::post('manage/changedate',[
         'uses' => 'MMS\SProductionOrdersController@GetKardex',
         'as'   => 'mms.orders.kardex'
       ]);
+      Route::get('orders/{id}/consumptions', [
+        'uses' => 'MMS\SProductionOrdersController@GetConsumptions',
+        'as'   => 'mms.orders.consumptions'
+      ]);
+      Route::get('orders/{id}/consume', [
+        'uses' => 'MMS\SProductionOrdersController@Consume',
+        'as'   => 'mms.orders.consume'
+      ]);
 
       /*
       * Explosion of materials
       **/
       Route::resource('explosion','MMS\SExplosionMaterialsController');
+
+      /*
+      * Production movements query
+      **/
+      Route::get('movs/{queryType}/{title}/show',[
+        'uses' => 'MMS\SMovsQuerysController@show',
+        'as'   => 'mms.movs.show'
+      ]);
 
     });
 

@@ -5,6 +5,7 @@ use Laracasts\Flash\Flash;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\SUtils\SProcess;
+use App\SCore\SProductionCore;
 use App\SCore\SProductionOrderCore;
 use App\SUtils\SGuiUtils;
 
@@ -47,47 +48,47 @@ class SProductionOrdersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     public function index(Request $request)
-     {
-         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-         $iOrderStatus = $request->po_status == null ? \Config::get('scmms.PO_STATUS.ST_ALL') : $request->po_status;
-         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+   public function index(Request $request)
+   {
+       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+       $iOrderStatus = $request->po_status == null ? \Config::get('scmms.PO_STATUS.ST_ALL') : $request->po_status;
+       $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
 
-         $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC');
+       $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC');
 
-         if (\Config::get('scmms.PO_STATUS.ST_ALL') != $iOrderStatus) {
-             $order = $order->where('status_id', $iOrderStatus);
-         }
+       if (\Config::get('scmms.PO_STATUS.ST_ALL') != $iOrderStatus) {
+           $order = $order->where('status_id', $iOrderStatus);
+       }
 
-         $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+       $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
 
-         $order = $order->whereBetween('date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+       $order = $order->whereBetween('date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
-         $order = $order->get();
+       $order = $order->get();
 
-         $order->each(function($order){
-           $order->branch;
-           $order->plan;
-           $order->floor;
-           $order->formula;
-           $order->type;
-           $order->status;
-           $order->item;
-           $order->unit;
-         });
+       $order->each(function($order){
+         $order->branch;
+         $order->plan;
+         $order->floor;
+         $order->formula;
+         $order->type;
+         $order->status;
+         $order->item;
+         $order->unit;
+       });
 
 
-        $sTitle = trans('mms.PRODUCTION_ORDERS');
+      $sTitle = trans('mms.PRODUCTION_ORDERS');
 
-         return view('mms.orders.index')
-             ->with('orders', $order)
-             ->with('lOrderStatus', $this->lOrderStatus)
-             ->with('iOrderStatus', $iOrderStatus)
-             ->with('sTitle', $sTitle)
-             ->with('actualUserPermission', $this->oCurrentUserPermission)
-             ->with('sFilterDate', $sFilterDate)
-             ->with('iFilter', $this->iFilter);
-     }
+       return view('mms.orders.index')
+           ->with('orders', $order)
+           ->with('lOrderStatus', $this->lOrderStatus)
+           ->with('iOrderStatus', $iOrderStatus)
+           ->with('sTitle', $sTitle)
+           ->with('actualUserPermission', $this->oCurrentUserPermission)
+           ->with('sFilterDate', $sFilterDate)
+           ->with('iFilter', $this->iFilter);
+   }
 
     public function create()
     {
@@ -128,7 +129,10 @@ class SProductionOrdersController extends Controller
                               ->selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
                                                                     "-", identifier)) as prod_ord,
                                                                     id_order')
-                              ->where('is_deleted', false)
+                              ->where(function ($query) {
+                                  $query->where('is_deleted', false)
+                                        ->orWhere('id_order', 1);
+                              })
                               ->lists('prod_ord', 'id_order');
 
       return view('mms.orders.createEdit')
@@ -232,13 +236,21 @@ class SProductionOrdersController extends Controller
                               ->lists('identifier','id_formula');
 
         $plan = SProductionPlan::orderBy('id_production_plan','ASC')->lists('production_plan','id_production_plan');
-        // $order = SProductionOrder::orderBy('id_order','ASC')->lists('folio','id_order');
+        $father = SProductionOrder::orderBy('folio', 'DESC')
+                              ->selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
+                                                                    "-", identifier)) as prod_ord,
+                                                                    id_order')
+                              ->where(function ($query) {
+                                  $query->where('is_deleted', false)
+                                        ->orWhere('id_order', 1);
+                              })
+                              ->lists('prod_ord', 'id_order');
 
         return view('mms.orders.createEdit')
                       ->with('orders', $order)
                       ->with('branches', $branch)
                       ->with('plans', $plan)
-                      ->with('father', $order)
+                      ->with('father', $father)
                       ->with('types', $type)
                       ->with('items', $item)
                       ->with('formulas', $formulas);
@@ -353,14 +365,16 @@ class SProductionOrdersController extends Controller
     {
         $oRes = $this->changeStatus($iProductionOrder, \Config::get('scmms.NEXT_ST'));
 
-        if (!is_array($oRes) && $oRes) {
-            Flash::success(trans('messages.STATUS_CHANGED'))->important();
+        // if (!is_array($oRes) && $oRes) {
+        //     Flash::success(trans('messages.STATUS_CHANGED'))->important();
+        //
+        //     return redirect()->route('mms.orders.index');
+        // }
+        // else {
+        //     return redirect()->back()->withErrors($oRes);
+        // }
 
-            return redirect()->route('mms.orders.index');
-        }
-        else {
-            return redirect()->back()->withErrors($oRes);
-        }
+        return json_encode($oRes);
     }
 
     /**
@@ -373,14 +387,16 @@ class SProductionOrdersController extends Controller
     {
         $oRes = $this->changeStatus($iProductionOrder, \Config::get('scmms.PREVIOUS_ST'));
 
-        if (!is_array($oRes) && $oRes) {
-            Flash::success(trans('messages.STATUS_CHANGED'))->important();
+        // if (!is_array($oRes) && $oRes) {
+        //     Flash::success(trans('messages.STATUS_CHANGED'))->important();
+        //
+        //     return redirect()->route('mms.orders.index');
+        // }
+        // else {
+        //     return redirect()->back()->withErrors($oRes);
+        // }
 
-            return redirect()->route('mms.orders.index');
-        }
-        else {
-            return redirect()->back()->withErrors($oRes);
-        }
+        return json_encode($oRes);
     }
 
     /**
@@ -451,6 +467,8 @@ class SProductionOrdersController extends Controller
                    wmt.name AS mvt_name,
                    CONCAT(ei.code, "-", ei.name) AS item,
                    wmr.pallet_id AS pallet,
+                   IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
+                   IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs,
                    wl.lot,
                    wl.dt_expiry,
                    eb.code AS branch_code,
@@ -463,12 +481,12 @@ class SProductionOrdersController extends Controller
        $query = \DB::connection(session('db_configuration')->getConnCompany())
                      ->table('wms_mvts as wm')
                      ->join('wms_mvt_rows as wmr', 'wm.id_mvt', '=', 'wmr.mvt_id')
-                     ->join('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
+                     ->leftjoin('wms_mvt_row_lots as wmrl', 'wmr.id_mvt_row', '=', 'wmrl.mvt_row_id')
                      ->join('wmss_mvt_types as wmt', 'wm.mvt_whs_type_id', '=', 'wmt.id_mvt_type')
                      ->join('erpu_items as ei', 'wmr.item_id', '=', 'ei.id_item')
                      ->join('erpu_units as eu', 'wmr.unit_id', '=', 'eu.id_unit')
                      ->join('wms_pallets as wp', 'wmr.pallet_id', '=', 'wp.id_pallet')
-                     ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot')
+                     ->leftjoin('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot')
                      ->join('wmsu_whs_locations as wwl', 'wmr.location_id', '=', 'wwl.id_whs_location')
                      ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')
                      ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
@@ -478,7 +496,8 @@ class SProductionOrdersController extends Controller
                      ->where('wmr.is_deleted', false);
 
        $query = $query->select(\DB::raw($sSelect))
-                       ->orderBy('dt_date', 'ASC')
+                       ->orderBy('wm.dt_date', 'ASC')
+                       ->orderBy('wm.created_at', 'ASC')
                        ->orderBy('id_mvt', 'ASC')
                        ->get();
 
@@ -486,5 +505,21 @@ class SProductionOrdersController extends Controller
        $oData->lKardexRows = $query;
 
        return json_encode($oData);
+    }
+
+    public function getConsumptions($iProductionOrder)
+    {
+        $oResult = SProductionCore::getConsumption($iProductionOrder);// warehouse??
+
+        return json_encode($oResult);
+    }
+
+    public function consume(Request $request, $iProductionOrder)
+    {
+        $oResult = SProductionCore::getConsumption($iProductionOrder);// warehouse??
+
+        $aResult = SProductionCore::processConsumption($request, $oResult, $iProductionOrder);
+
+        return json_encode($aResult);
     }
 }

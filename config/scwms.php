@@ -38,6 +38,8 @@ return [
     'MVT_IN_DLVRY_FP' => '28',
     'MVT_IN_RTRN_FP' => '29',
     'MVT_IN_CONSUMPTION' => '30',
+    'MVT_IN_ASSIGN_PP' => '31',
+    'MVT_OUT_ASSIGN_PP' => '32',
 
     'PHYSICAL_INVENTORY'  =>  '404',
 

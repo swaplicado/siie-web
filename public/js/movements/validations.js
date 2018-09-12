@@ -15,6 +15,10 @@ class SValidation {
 
     var valid = true;
     for (var [key, row] of oMovement.rows) {
+      if (row.bIsDeleted) {
+        continue;
+      }
+
       if (row.iPalletId == 0) {
           swal("Error", "El renglón " + row.sItem + " no tiene una tarima seleccionada.", "error");
           valid = false;

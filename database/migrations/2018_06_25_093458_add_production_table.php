@@ -112,7 +112,7 @@ class AddProductionTable extends Migration
         });
 
         DB::connection($this->sConnection)->table('mms_production_orders')->insert([
-        	['id_order' => '1','folio' => '0','identifier' => '','date' => '2017-01-01',
+        	['id_order' => '1','folio' => '0','identifier' => 'N/A','date' => '2017-01-01',
             'charges' => '0', 'is_deleted' => '1', 'plan_id' => '1', 'branch_id' => '1',
             'floor_id' => '1', 'type_id' => '1', 'status_id' => '1', 'item_id' => '1',
              'unit_id' => '1', 'father_order_id' => '1', 'formula_id' => '1',

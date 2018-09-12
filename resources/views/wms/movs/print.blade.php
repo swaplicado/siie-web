@@ -37,7 +37,7 @@
             <td class='r1'>
               {{ $oMovement->mvtType->name }}
               <br>
-              {{ $oMovement->mvtType->code.'-'.$oMovement->folio }}
+              {{ $oMovement->mvtType->code.'-'.session('utils')->formatFolio($oMovement->folio) }}
         </tr>
       </table>
       <table width="100%">
@@ -79,7 +79,7 @@
             <td class='r1'>
                 {{ $oMovement->dt_date }}
                 <br>
-                {{ $oMovement->warehouse->name }}
+                {{ $oMovement->warehouse->code.' - '.$oMovement->warehouse->name.' - '.$oMovement->branch->name }}
             </td>
         </tr>
       </table>
@@ -89,16 +89,18 @@
                 Orden prod.:
             </td>
             <td>
-
+                {{ $oMovement->prod_ord_id > 1 ?
+                  session('utils')->formatFolio($oMovement->productionOrder->folio).' '.$oMovement->productionOrder->identifier :
+                      '----' }}
             </td>
             <td>
-                Referencia:
+                {{-- Referencia: --}}
             </td>
             <td>
 
             </td>
             <td class='r1'>
-                {{ $oMovement->branch->name }}
+                {{-- {{ $oMovement->branch->name }} --}}
             </td>
         </tr>
       </table>
@@ -107,7 +109,7 @@
         <div class="col-md-12">
           <table class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
       		    <thead>
-      		        <tr class="titlerow">
+      		        <tr class="titlerow" style="font-size: 16px;">
     								<th>{{ trans('userinterface.labels.CODE') }}</th>
                     <th>{{ trans('userinterface.labels.QUANTITY') }}</th>
                     <th>{{ trans('wms.labels.UN') }}</th>
@@ -120,7 +122,7 @@
       		    <tbody>
                 <?php $dTotal = 0; ?>
       					@foreach ($oMovement->rows as $row)
-      						<tr>
+      						<tr class="tb">
 						        <td>{{ $row->item->code }}</td>
                     <td class="trr">{{ session('utils')->formatNumber(($row->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
                     <td>{{ $row->unit->code }}</td>
@@ -130,7 +132,7 @@
 						        <td class="trr">{{ session('utils')->formatNumber(($row->quantity * $row->amount_unit), \Config::get('scsiie.FRMT.AMT')) }}</td>
                   </tr>
                   @foreach ($row->lotRows as $lotRow)
-                    <tr>
+                    <tr style="font-size: 12px;">
                       <td>{{ '' }}</td>
                       <td class="trr">{{ session('utils')->formatNumber(($lotRow->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
                       <td>{{ $row->unit->code }}</td>

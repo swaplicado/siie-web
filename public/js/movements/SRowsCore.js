@@ -326,7 +326,7 @@ function deleteElement() {
   var index = undefined;
 
   if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
-      || utilFunctions.isProductionMovement(globalData.iMvtType)) {
+      || utilFunctions.isProductionTransfer(globalData.iMvtType)) {
     row = oTransfersMovsTable.row('.selected').data();
     index = oTransfersMovsTable.row('.selected').index();
   }

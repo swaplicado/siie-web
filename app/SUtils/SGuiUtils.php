@@ -35,6 +35,7 @@ class SGuiUtils {
            return $iMovClassId == \Config::get('scwms.MVT_CLS_IN')
               || $iMovTypeId == \Config::get('scwms.MVT_TP_OUT_TRA')
                 || $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM')
+                || $iMovTypeId == \Config::get('scwms.MVT_OUT_ASSIGN_PP')
                   || $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM');
        }
 
@@ -46,13 +47,15 @@ class SGuiUtils {
        return $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
               ||  $iMovTypeId == \Config::get('scwms.MVT_IN_DLVRY_PP')
               ||  $iMovTypeId == \Config::get('scwms.MVT_IN_DLVRY_FP')
+              ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_ASSIGN_PP')
                 || $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM');
     }
 
     public static function isProductionTransfer($iMovTypeId)
     {
        return $iMovTypeId == \Config::get('scwms.MVT_OUT_DLVRY_RM')
-              ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM');
+              ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_RTRN_RM')
+                ||  $iMovTypeId == \Config::get('scwms.MVT_OUT_ASSIGN_PP');
     }
 
     public static function isProductionDelivery($iMovTypeId)
@@ -183,6 +186,34 @@ class SGuiUtils {
        $sName = strftime("%B", mktime(0, 0, 0, $iMonth, 1, 2000));
 
        return $sName;
+    }
+
+    public static function getClassOfPOStatus($iStatus = 0)
+    {
+        $sClass = '';
+
+        switch ($iStatus) {
+          case \Config::get('scmms.PO_STATUS.ST_NEW'):
+            $sClass = 'btn btn-default btn-xs';
+            break;
+          case \Config::get('scmms.PO_STATUS.ST_HEAVY'):
+            $sClass = 'btn btn-info btn-xs';
+            break;
+          case \Config::get('scmms.PO_STATUS.ST_FLOOR'):
+            $sClass = 'btn btn-primary btn-xs';
+            break;
+          case \Config::get('scmms.PO_STATUS.ST_PROCESS'):
+            $sClass = 'btn btn-success btn-xs';
+            break;
+          case \Config::get('scmms.PO_STATUS.ST_ENDED'):
+            $sClass = 'btn btn-danger btn-xs';
+            break;
+          case \Config::get('scmms.PO_STATUS.ST_CLOSED'):
+            $sClass = 'btn btn-secondary btn-xs';
+            break;
+          }
+
+        return $sClass;
     }
 
     /**

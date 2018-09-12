@@ -17,6 +17,7 @@ use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
 
 use App\MMS\SProductionOrder;
+use App\MMS\SPoPallet;
 
 /**
  *
@@ -33,12 +34,25 @@ class SProductionCore {
 
         switch ($iMvtType) {
           case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
-            if ($iMvtSubType == \Config::get('scwms.MVT_MFG_TP_MAT')) {
+            if ($iMvtSubType == \Config::get('scwms.MVT_MFG_TP_MAT')
+                  || $iMvtSubType == \Config::get('scwms.MVT_MFG_TP_PACK')) {
               $oElementsQuery = $oElementsQuery->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.DIRECT_MATERIAL_MATERIAL'));
             }
-            elseif ($iMvtSubType == \Config::get('scwms.MVT_MFG_TP_PACK')) {
-              $oElementsQuery = $oElementsQuery->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.DIRECT_PACKING_MATERIAL'));
-            }
+            // elseif () {
+            //   $oElementsQuery = $oElementsQuery->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.DIRECT_PACKING_MATERIAL'));
+            // }
+            break;
+
+          case \Config::get('scwms.MVT_IN_ASSIGN_PP'):
+            $oElementsQuery = $oElementsQuery->whereRaw('ei.id_item IN (
+                                                    SELECT item_id FROM
+                                                    mms_formula_rows
+                                                    WHERE formula_id =
+                                                    (SELECT formula_id FROM
+                                                    mms_production_orders
+                                                    WHERE id_order = '.$iSrcPO.')
+                                                  )')
+                                                ->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'));
             break;
 
           case \Config::get('scwms.MVT_OUT_RTRN_RM'):
@@ -187,58 +201,255 @@ class SProductionCore {
         return $oQuery;
     }
 
-    public static function makeConsumption($iPO = 0)
+    public static function getConsumption($iPO = 0)
     {
         $aResult = array();
+        $oPO = SProductionOrder::find($iPO);
 
-        $sSelect = ' sum(ws.input) as inputs,
-                     sum(ws.output) as outputs,
-                     (sum(ws.input) - sum(ws.output)) as stock,
-                     ws.*';
+        $oItem = $oPO->item;
+        $oGender = $oItem->gender;
 
-        $query = \DB::connection(session('db_configuration')->getConnCompany())
-                      ->table('wms_stock as ws')
-                      ->where('ws.prod_ord_id', $iPO)
-                      ->where('is_deleted', false)
-                      ->where('mvt_whs_class_id', \Config::get('scwms.MVT_CLS_IN'))
-                      ->select(\DB::raw($sSelect))
-                      ->groupBy('ws.branch_id')
-                      ->groupBy('ws.whs_id')
-                      ->groupBy('ws.location_id')
-                      ->groupBy('ws.pallet_id')
-                      ->groupBy('ws.lot_id')
-                      ->groupBy('ws.item_id')
-                      ->groupBy('ws.unit_id');
+        $sSelect =
+                   'SUM(IF (ws.mvt_whs_type_id = '.\Config::get('scwms.MVT_IN_DLVRY_RM').'
+                            OR ws.mvt_whs_type_id = '.\Config::get('scwms.MVT_IN_ASSIGN_PP').', ws.input, 0)) AS delivered,
+                   SUM(IF (ws.mvt_whs_type_id = '.\Config::get('scwms.MVT_OUT_RTRN_RM').', ws.output, 0)) AS returned,
+                   SUM(IF (ws.mvt_whs_type_id = '.\Config::get('scwms.MVT_OUT_CONSUMPTION').', ws.output, 0)) AS consumed,
+                   ei.code AS item_code,
+                   ei.name AS item,
+                   wl.lot,
+                   wl.dt_expiry,
+                   wp.id_pallet,
+                   wwl.code AS loc_code,
+                   ww.code AS whs_code,
+                   eb.code AS branch_code,
+                   eu.code AS unit_code,
+                   ws.item_id,
+                   ws.unit_id,
+                   ws.lot_id,
+                   ws.pallet_id,
+                   mpp.is_consumed,
+                   mpp.pallet_id AS mpp_pallet_id,
+                   ws.location_id,
+                   ws.whs_id,
+                   ws.branch_id
+                   ';
 
-        $lResult = $query->get();
+        $oQuery = session('stock')->getStockBaseQuery($sSelect);
 
-        $lMovements = SProductionCore::stockToMovements($lResult,
-                                                        session('work_year'),
-                                                        session('work_date')->toDateString(),
-                                                        $iPO);
+        $oQuery = $oQuery->where('ws.prod_ord_id', $iPO)
+                          ->leftjoin('mmss_po_pallets as mpp', function($join)
+                            {
+                                $join->on('ws.pallet_id', '=', 'mpp.pallet_id');
+                                $join->on('ws.prod_ord_id', '=', 'mpp.po_id');
+                            })
+                          ->groupBy('ws.branch_id')
+                          ->groupBy('ws.whs_id')
+                          ->groupBy('ws.location_id')
+                          ->groupBy('ws.pallet_id')
+                          ->groupBy('ws.lot_id')
+                          ->groupBy('ws.item_id')
+                          ->groupBy('ws.unit_id');
 
-        $oManagment = new SMovsManagment();
+        switch ($oGender->item_type_id) {
+          case \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'):
+            $oQuery = $oQuery->where(function ($querytemp) {
+                                  $querytemp->where('ws.mvt_whs_type_id', \Config::get('scwms.MVT_IN_DLVRY_RM'))
+                                        ->orWhere('ws.mvt_whs_type_id', \Config::get('scwms.MVT_OUT_RTRN_RM'))
+                                        ->orWhere('ws.mvt_whs_type_id', \Config::get('scwms.MVT_OUT_CONSUMPTION'));
+                              });
 
-        foreach ($lMovements as $mov) {
-            $result = $oManagment->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
-                                            $mov,
-                                            $mov->aAuxRows,
-                                            $mov->mvt_whs_class_id,
-                                            $mov->mvt_whs_type_id,
-                                            $mov->whs_id,
-                                            0,
-                                            0,
-                                            0,
-                                            $request);
+            break;
 
-            if (is_array($result)) {
-              if(sizeof($result) > 0) {
-                  array_push($aResult, $result);
-              }
-            }
+          case \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'):
+            $oQuery = $oQuery->where(function ($querytemp) {
+                                  $querytemp->where('ws.mvt_whs_type_id', \Config::get('scwms.MVT_IN_DLVRY_RM'))
+                                        ->orWhere('ws.mvt_whs_type_id', \Config::get('scwms.MVT_OUT_RTRN_RM'))
+                                        ->orWhere('ws.mvt_whs_type_id', \Config::get('scwms.MVT_IN_ASSIGN_PP'))
+                                        ->orWhere('ws.mvt_whs_type_id', \Config::get('scwms.MVT_OUT_CONSUMPTION'));
+                              });
+            break;
+
+          default:
+            // code...
+            break;
         }
 
-        return $aResult;
+        $lResult = $oQuery->get();
+        $lToreturn = array();
+
+        foreach ($lResult as $oStock) {
+          $bAddRow = true;
+
+          $bAddRow = ! ($oStock->pallet_id > 1 && $oStock->mpp_pallet_id == null);
+
+          if (! $oStock->is_consumed) {
+            $oStock->to_consume = $oStock->delivered - $oStock->returned - $oStock->consumed;
+
+            if ($oStock->to_consume > 0 && $bAddRow) {
+              array_push($lToreturn, $oStock);
+            }
+          }
+        }
+
+        return $lToreturn;
+    }
+
+    public static function processConsumption(Request $request, $lConsumRows = [], $iProductionOrder)
+    {
+       $sSelect = 'sum(ws.input) as inputs,
+                    sum(ws.output) as outputs,
+                    (sum(ws.input) - sum(ws.output)) as stock';
+
+       $bErrorByStock = false;
+       $bErrorByConsumption = false;
+       $aResult = array();
+       $lToConsume = array();
+       $iFolio = 0;
+
+       foreach ($lConsumRows as $oConsumRow) {
+          if ($oConsumRow->to_consume <= 0) {
+              continue;
+          }
+
+          $oStockQuery = SStockManagment::getStockBaseQuery($sSelect)
+                    ->where('ws.item_id', $oConsumRow->item_id)
+                    ->where('ws.unit_id', $oConsumRow->unit_id)
+                    ->where('ws.lot_id', $oConsumRow->lot_id)
+                    ->where('ws.pallet_id', $oConsumRow->pallet_id)
+                    ->where('ws.location_id', $oConsumRow->location_id)
+                    ->where('ws.whs_id', $oConsumRow->whs_id)
+                    ->where('ws.branch_id', $oConsumRow->branch_id)
+                    ->having('stock', '>', '0')
+                    ->get();
+
+          if (sizeof($oStockQuery) > 0) {
+            if ($oStockQuery[0]->stock < $oConsumRow->to_consume) {
+               if ($oConsumRow->pallet_id > 1) {
+                 $oResPoPall = SPoPallet::where('pallet_id', $oConsumRow->pallet_id)
+                                           ->where('po_id', $iProductionOrder)
+                                           ->get();
+
+                 // Si la tarima se reconfiguró pero fue asignada a la orden de producción
+                 // entonces se consume toda la tarima
+                 if (sizeof($oResPoPall) > 0) {
+                    $bConsumed = false;
+
+                    foreach ($oResPoPall as $oPoPall) {
+                       $bConsumed = $oPoPall->is_consumed;
+                    }
+
+                    if (! $bConsumed) {
+                      $oConsumRow->to_consume = $oStockQuery[0]->stock;
+                    }
+                 }
+                 else {
+                   //la tarima no está asignada a la orden de producción
+                   $bErrorByConsumption = true;
+                   array_push($aResult, 'No hay existencias suficientes para hacer el
+                                         consumo. Revise el movimiento');
+                 }
+               }
+               else {
+                 // no se puede consumir
+                 $bErrorByConsumption = true;
+                 array_push($aResult, 'No hay existencias suficientes para hacer el
+                                       consumo. Revise el movimiento');
+               }
+            }
+          }
+          else {
+            if ($oConsumRow->pallet_id > 1) {
+              $oStockQueryAux = SStockManagment::getStockBaseQuery($sSelect)
+                        ->where('ws.item_id', $oConsumRow->item_id)
+                        ->where('ws.unit_id', $oConsumRow->unit_id)
+                        ->where('ws.lot_id', $oConsumRow->lot_id)
+                        ->where('ws.pallet_id', 1)
+                        ->where('ws.location_id', $oConsumRow->location_id)
+                        ->where('ws.whs_id', $oConsumRow->whs_id)
+                        ->where('ws.branch_id', $oConsumRow->branch_id)
+                        ->having('stock', '>', '0')
+                        ->get();
+
+               if (sizeof($oStockQueryAux) > 0) {
+                  if ($oStockQueryAux[0]->stock >= $oConsumRow->to_consume) {
+                    $oConsumRow->pallet_id = 1;
+                  }
+                  else {
+                    $bErrorByConsumption = true;
+                    array_push($aResult, 'No hay existencias suficientes para hacer el
+                                          consumo. Revise el movimiento');
+                  }
+               }
+               else {
+                 $bErrorByConsumption = true;
+                 array_push($aResult, 'No hay existencias suficientes para hacer el
+                                       consumo. Revise el movimiento');
+               }
+            }
+            else {
+              $bErrorByConsumption = true;
+              array_push($aResult, 'No hay existencias suficientes para hacer el
+                                    consumo. Revise el movimiento');
+            }
+          }
+
+          if (!$bErrorByStock && !$bErrorByConsumption) {
+            array_push($lToConsume, $oConsumRow);
+          }
+       }
+
+       if (!$bErrorByStock && !$bErrorByConsumption) {
+          $lConsMovements = SProductionCore::stockToMovements($lToConsume, session('work_year'),
+                                        session('work_date')->toDateString(), $iProductionOrder);
+
+          $oManagment = new SMovsManagment();
+
+          foreach ($lConsMovements as $mov) {
+              $result = $oManagment->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
+                                              $mov,
+                                              $mov->aAuxRows,
+                                              $mov->mvt_whs_class_id,
+                                              $mov->mvt_whs_type_id,
+                                              $mov->whs_id,
+                                              0,
+                                              0,
+                                              0,
+                                              $request);
+
+              if (is_array($result)) {
+                if(sizeof($result) > 0) {
+                    array_push($aResult, $result);
+                }
+              }
+              else {
+                foreach ($mov->aAuxRows as $oMRow) {
+                  if ($oMRow->pallet_id > 1) {
+                    $lPoPallets = SPoPallet::where('pallet_id', $oMRow->pallet_id)
+                                              ->where('po_id', $iProductionOrder)
+                                              ->get();
+
+                    if (sizeof($lPoPallets) > 0) {
+                       foreach ($lPoPallets as $oPoPall) {
+                          $oPoPall->is_consumed = true;
+                          $oPoPall->save();
+                       }
+                    }
+                  }
+                }
+
+                $iFolio = $result;
+              }
+          }
+       }
+       else {
+         array_push($aResult, 'Error');
+       }
+
+       if (sizeof($aResult) == 0) {
+         $aResult = $iFolio;
+       }
+
+       return $aResult;
     }
 
     /**
@@ -273,7 +484,7 @@ class SProductionCore {
               $oMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_OUT');
               $oMovement->mvt_whs_type_id = \Config::get('scwms.MVT_OUT_CONSUMPTION');
               $oMovement->mvt_trn_type_id = 1;
-              $oMovement->mvt_adj_type_id = \Config::get('scwms.MVT_ADJ_TP_PRO');
+              $oMovement->mvt_adj_type_id = 1;
               $oMovement->mvt_mfg_type_id = 1;
               $oMovement->mvt_exp_type_id = 1;
               $oMovement->branch_id = $oStock->branch_id;
@@ -294,12 +505,14 @@ class SProductionCore {
               $oMovement->created_by_id = \Auth::user()->id;
               $oMovement->updated_by_id = \Auth::user()->id;
 
+              $oMovement->aAuxPOs[SMovement::SRC_PO] = $iPO;
+
               $aRows = array();
           }
 
           $oMovementRow = new SMovementRow();
 
-          $oMovementRow->quantity = $oStock->stock;
+          $oMovementRow->quantity = $oStock->to_consume;
           $oMovementRow->amount_unit = 0;
           $oMovementRow->amount = 0;
           $oMovementRow->length = 0;
@@ -320,7 +533,7 @@ class SProductionCore {
               $rowLots = array();
 
               $oMovementRowLot = new SMovementRowLot();
-              $oMovementRowLot->quantity = $oStock->stock;
+              $oMovementRowLot->quantity = $oStock->to_consume;
               $oMovementRowLot->amount_unit = 0;
               $oMovementRowLot->amount = 0;
               $oMovementRowLot->length = 0;
@@ -376,5 +589,65 @@ class SProductionCore {
 
          return $oQuery[0]->sum_inputs;
      }
+
+     /**
+      * link the assignament movement with pallet and production order
+      *
+      * @param  integer $iMovementType
+      * @param  integer $iProductionOrder (Id of production order)
+      * @param  array   $lMovements  (array of SMovementRow)
+      *
+      * @return boolean success or not
+      */
+    public static function managePoPallet($iMovementType = 0, $iProductionOrder = 0, $lRows = [])
+    {
+      $bMade = false;
+
+      try {
+        switch ($iMovementType) {
+          case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
+          case \Config::get('scwms.MVT_OUT_DLVRY_PP'):
+          case \Config::get('scwms.MVT_IN_DLVRY_FP'):
+            foreach ($lRows as $oRow) {
+               if ($oRow->pallet_id > 1) {
+                 $oRes = SPoPallet::where('pallet_id', $oRow->pallet_id)
+                                           ->where('po_id', $iProductionOrder)
+                                           ->get();
+                 if (sizeof($oRes) > 0) {
+                   continue;
+                 }
+
+                 $oPoPallet = new SPoPallet();
+                 $oPoPallet->po_id = $iProductionOrder;
+                 $oPoPallet->pallet_id = $oRow->pallet_id;
+                 $oPoPallet->save();
+               }
+            }
+
+            $bMade = true;
+            break;
+
+          case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+            foreach ($lRows as $oRow) {
+               if ($oRow->pallet_id > 1) {
+                  SPoPallet::where('po_id', $iProductionOrder)
+                              ->where('pallet_id', $oRow->pallet_id)
+                              ->delete();
+               }
+            }
+            $bMade = true;
+            break;
+
+          default:
+            $bMade = false;
+            break;
+        }
+      } catch (\Exception $e) {
+        $bMade = false;
+        \Log::error($e);
+      }
+
+      return $bMade;
+    }
 
 }

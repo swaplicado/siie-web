@@ -38,6 +38,8 @@ class SGuiKardex {
     guiKardex.setPOQuantity(oServerData.oProductionOrder.charges
                               * oServerData.oProductionOrder.formula.quantity);
 
+    oKardexTable.clear().draw();
+
     if (oServerData.lKardexRows.length > 0) {
       for (var i = 0; i < oServerData.lKardexRows.length; i++) {
         guiKardex.addKardexRow(oServerData.lKardexRows[i], i + 1);
@@ -53,18 +55,18 @@ class SGuiKardex {
         oKardexRow.mvt_code,
         oKardexRow.mvt_name,
         oKardexRow.item,
-        oKardexRow.pallet,
+        oKardexRow.pallet == 1 ? 'SIN TARIMA' : oKardexRow.pallet,
         oKardexRow.lot,
         oKardexRow.dt_expiry,
         oKardexRow.branch_code,
         oKardexRow.whs_code,
         oKardexRow.loc_code,
-        parseFloat(0, 10).toFixed(globalData.DEC_QTY),
-        parseFloat(0, 10).toFixed(globalData.DEC_QTY),
+        parseFloat(oKardexRow.inputs, 10).toFixed(globalData.DEC_QTY),
+        parseFloat(oKardexRow.outputs, 10).toFixed(globalData.DEC_QTY),
         oKardexRow.unit_code,
-        parseFloat(0, 10).toFixed(globalData.DEC_QTY),
-        parseFloat(0, 10).toFixed(globalData.DEC_QTY),
-        parseFloat(0, 10).toFixed(globalData.DEC_QTY)
+        parseFloat(0, 10).toFixed(globalData.DEC_AMT),
+        parseFloat(0, 10).toFixed(globalData.DEC_AMT),
+        parseFloat(0, 10).toFixed(globalData.DEC_AMT)
     ]).draw( false );
   }
 

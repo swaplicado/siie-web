@@ -85,6 +85,16 @@ class SMovement extends SModel {
   }
 
   /**
+   * [order description]
+   * Return object SDocument
+   * @return SProductionOrder
+   */
+  public function productionOrder()
+  {
+    return $this->belongsTo('App\MMS\SProductionOrder', 'prod_ord_id');
+  }
+
+  /**
    * [warehouse description]
    * Return object SWarehouse
    * @return SWarehouse

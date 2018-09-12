@@ -209,15 +209,15 @@ class SMovsController extends Controller
                                 ->lists('warehouse', 'id_whs');
 
         return view('wms.movs.transfers.receivetransfer')
-                                        ->with('oMovementSrc', $oMovementSrc)
-                                        ->with('oMovement', $oMovement)
-                                        ->with('iWhsSrc', $iWhsSrc)
-                                        ->with('oMovRef', $oMovRef)
-                                        ->with('iWhsDes', $iWhsDes)
-                                        ->with('warehouses', $warehouses)
-                                        ->with('iOperation', $iOperation)
-                                        ->with('sTitle', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'))
-                                        ;
+                        ->with('oMovementSrc', $oMovementSrc)
+                        ->with('oMovement', $oMovement)
+                        ->with('iWhsSrc', $iWhsSrc)
+                        ->with('oMovRef', $oMovRef)
+                        ->with('iWhsDes', $iWhsDes)
+                        ->with('warehouses', $warehouses)
+                        ->with('iOperation', $iOperation)
+                        ->with('sTitle', trans('wms.MOV_WHS_RECEIVE_EXTERNAL_TRS_OUT'))
+                        ;
     }
 
     /**
@@ -361,19 +361,29 @@ class SMovsController extends Controller
 
           case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
           case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+          case \Config::get('scwms.MVT_OUT_ASSIGN_PP'):
             $lSrcPO = SProductionOrder::where('mms_production_orders.is_deleted', false)
+                        ->where('status_id', '>=', \Config::get('scmms.PO_STATUS.ST_HEAVY'))
+                        ->where('status_id', '<=', \Config::get('scmms.PO_STATUS.ST_ENDED'))
                         ->join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
                         ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
                         ->selectRaw('(CONCAT(LPAD(folio, '.
                               session('long_folios').', "0"),
                                   "-", identifier)) as prod_ord,
-                                  id_order');
+                                  id_order')
+                        ->orderBy('folio', 'DESC');
 
             if ($sTitle == trans('mms.DELIVERY_PM')
                 || $sTitle == trans('mms.RETURN_PACKING_MATERIAL')) {
 
               $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PACK');
               $iAssType = \Config::get('scmms.ASSIGN_TYPE.PACK');
+
+              $lSrcPO = $lSrcPO->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
+            }
+            else if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_OUT_ASSIGN_PP')) {
+              $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PRO');
+              $iAssType = \Config::get('scmms.ASSIGN_TYPE.PP');
 
               $lSrcPO = $lSrcPO->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
             }
@@ -404,17 +414,19 @@ class SMovsController extends Controller
                                   ->lists('name', 'id_mvt_mfg_type');
 
             $lSrcPO = SProductionOrder::where('is_deleted', false)
-                                      ->selectRaw('(CONCAT(LPAD(folio, '.
-                                            session('long_folios').', "0"),
-                                                "-", identifier)) as prod_ord,
-                                                id_order')
-                                      ->whereRaw('id_order IN (SELECT father_order_id
-                                                              FROM
-                                                              mms_production_orders
-                                                              WHERE father_order_id > 1
-                                                              AND is_deleted = false
-                                                              )')
-                                      ->lists('prod_ord', 'id_order');
+                                  ->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
+                                  ->selectRaw('(CONCAT(LPAD(folio, '.
+                                        session('long_folios').', "0"),
+                                            "-", identifier)) as prod_ord,
+                                            id_order')
+                                  ->whereRaw('id_order IN (SELECT father_order_id
+                                                          FROM
+                                                          mms_production_orders
+                                                          WHERE father_order_id > 1
+                                                          AND is_deleted = false
+                                                          )')
+                                  ->orderBy('folio', 'DESC')
+                                  ->lists('prod_ord', 'id_order');
             $lDesPO = [];
 
             $iSrcPO = 0;
@@ -427,10 +439,11 @@ class SMovsController extends Controller
           case \Config::get('scwms.MVT_IN_DLVRY_FP'):
             $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_FP');
             $mvtComp = SMvtMfgType::where('is_deleted', false)
-                                  ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_PRO'))
+                                  ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_FP'))
                                   ->lists('name', 'id_mvt_mfg_type');
 
             $lSrcPO = SProductionOrder::where('mms_production_orders.is_deleted', false)
+                                ->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
                                 ->join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
                                 ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
                                 ->selectRaw('(CONCAT(LPAD(folio, '.
@@ -750,21 +763,23 @@ class SMovsController extends Controller
 
           $oIdTranWhs = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.WHS_ITEM_TRANSIT'));
           $oTransitWarehouse = SWarehouse::find($oIdTranWhs->val_int);
+
           $oMvtIn = SMovement::where('src_mvt_id', $id)
                                 ->take(1)->get();
+
           $iWhsDes = $oMvtIn[0]->whs_id;
 
-          if ($oMvtIn->mvt_mfg_type_id > 1) {
-            switch ($oMvtIn->mvt_mfg_type_id) {
+          if ($oMovement->mvt_mfg_type_id > 1) {
+            switch ($oMovement->mvt_mfg_type_id) {
               case \Config::get('scwms.MVT_MFG_TP_MAT'):
                     $iAssType = \Config::get('scmms.ASSIGN_TYPE.MP');
-                    $lSrcPO = SProductionOrder::where('id_order', $oMvtIn->prod_ord_id)
+                    $lSrcPO = SProductionOrder::where('id_order', $oMovement->prod_ord_id)
                                               ->selectRaw('(CONCAT(LPAD(folio, '.
                                                     session('long_folios').', "0"),
                                                         "-", identifier)) as prod_ord,
                                                         id_order')
                                               ->lists('prod_ord', 'id_order');
-                    $iSrcPO = $oMvtIn->prod_ord_id;
+                    $iSrcPO = $oMovement->prod_ord_id;
                     $lDesPO = [];
                     break;
 
@@ -1347,6 +1362,11 @@ class SMovsController extends Controller
        $oData = new \App\MMS\data\SData;
 
        $oSrcPO = SProductionOrder::find($iSrcPO);
+
+       if ($oSrcPO == null) {
+         return json_encode($oData);
+       }
+
        $oSrcPO->item;
        $oSrcPO->formula;
 
@@ -1357,17 +1377,17 @@ class SMovsController extends Controller
 
            break;
          case \Config::get('scmms.ASSIGN_TYPE.PP'):
-            $lDesPO = SProductionOrder::where('father_order_id', $iSrcPO)
-                              ->where('is_deleted', false)
-                              ->get();
-
-            foreach ($lDesPO as $oPO) {
-               $oPO->formula;
-               $oPO->item;
-               $oPO->unit;
-            }
-
-            $oData->lDesPO = $lDesPO;
+            // $lDesPO = SProductionOrder::where('father_order_id', $iSrcPO)
+            //                   ->where('is_deleted', false)
+            //                   ->get();
+            //
+            // foreach ($lDesPO as $oPO) {
+            //    $oPO->formula;
+            //    $oPO->item;
+            //    $oPO->unit;
+            // }
+            //
+            // $oData->lDesPO = $lDesPO;
            break;
 
          default:

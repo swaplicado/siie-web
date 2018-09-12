@@ -44,7 +44,7 @@ class SHeaderCore {
         }
 
         movement.iPOSrc = document.getElementById('src_po').value;
-        movement.iPODes = document.getElementById('des_po').value;
+        // movement.iPODes = document.getElementById('des_po').value;
         movement.iAuxAssigType = globalData.iAssignType;
     }
 
@@ -234,7 +234,10 @@ class SHeaderCore {
           });
       }
 
-      if (! globalData.bIsInputMov && !bFound) {
+      if (! globalData.bIsInputMov
+              && !bFound
+                  && globalData.lOperation.INPUT == iOperType
+                      && !globalData.bIsInputMov) {
         swal("Error", "El material/producto " +  oMovRow.sItemCode +
                        "-" + oMovRow.sItem + " no tiene existencias en " +
                       "la tarima, lote, ubicación y almacén seleccionados.", "error");

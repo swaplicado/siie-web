@@ -54,6 +54,8 @@ class MmsAddMovementsTypes extends Migration
           ['id_mvt_type' => '28','code' => 'EEPT','name' => 'ENTRADA ENTREGA PT','mvt_class_id' => '1','is_deleted' => '0'],
           ['id_mvt_type' => '29','code' => 'EDPT','name' => 'ENTRADA DEVOLUCIÓN PT','mvt_class_id' => '1','is_deleted' => '0'],
           ['id_mvt_type' => '30','code' => 'ECON','name' => 'ENTRADA CONSUMO INSUMOS Y PT','mvt_class_id' => '1','is_deleted' => '0'],
+          ['id_mvt_type' => '31','code' => 'EAPP','name' => 'ENTRADA ASIGNACIÓN PP','mvt_class_id' => '1','is_deleted' => '0'],
+          ['id_mvt_type' => '32','code' => 'SAPP','name' => 'SALIDA ASIGNACIÓN PP','mvt_class_id' => '2','is_deleted' => '0'],
         ]);
       }
     }
@@ -74,7 +76,7 @@ class MmsAddMovementsTypes extends Migration
                                               ->whereIn('id_mvt_type',
                                               ['17', '18', '19', '20', '21',
                                                 '22', '23', '24', '25', '26',
-                                                '27', '28', '29','30'
+                                                '27', '28', '29','30', '31','32'
                                                 ])
                                               ->delete();
       }

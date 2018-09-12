@@ -81,6 +81,11 @@
                     class="btn btn-primary btn-xs">
                     <span class="glyphicon glyphicon-expand" aria-hidden = "true"/>
                   </a>
+                  <a href="{{ route('mms.formulas.print', [$formula->id_formula]) }}"
+                    title="Imprimir" target="_blank"
+                    class="btn btn-default btn-xs">
+                    <span class="glyphicon glyphicon-print" aria-hidden = "true"/>
+                  </a>
       					</td>
             </tr>
           @endforeach

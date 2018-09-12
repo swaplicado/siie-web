@@ -15,7 +15,9 @@ use App\WMS\SStock;
 use App\WMS\SExternalTransfer;
 
 use App\SUtils\SStockUtils;
+use App\SUtils\SGuiUtils;
 use App\SCore\SMovsCore;
+use App\SCore\SProductionCore;
 
 /**
  * this class manages the movement process
@@ -125,6 +127,7 @@ class SMovsManagment {
         case \Config::get('scwms.MVT_TP_IN_SAL'):
         case \Config::get('scwms.MVT_TP_OUT_SAL'):
         case \Config::get('scwms.MVT_IN_DLVRY_PP'):
+        case \Config::get('scwms.MVT_OUT_CONSUMPTION'):
         case \Config::get('scwms.MVT_IN_DLVRY_FP'):
           return $this->createTheMovement($oMovement, $aMovementRows);
 
@@ -132,6 +135,7 @@ class SMovsManagment {
         case \Config::get('scwms.MVT_TP_OUT_TRA'):
         case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
         case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+        case \Config::get('scwms.MVT_OUT_ASSIGN_PP'):
           return $this->createTransfer($oMovement, $aMovementRows, $iWhsSrc, $iWhsDes, $iOperation);
 
           // the movement is pallet reconfiguration (pallet division)
@@ -205,6 +209,12 @@ class SMovsManagment {
 
                 $stkController = new SStockController();
                 $stkController->store($oRequest, $movement);
+
+                if (SGuiUtils::isProductionMovement($movement->mvt_whs_type_id)) {
+                  $bRes = SProductionCore::managePoPallet($movement->mvt_whs_type_id,
+                                                              $movement->prod_ord_id,
+                                                              $movement->rows);
+                }
 
                 if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
                   if ($movement->warehouse->is_quality) {
@@ -540,6 +550,7 @@ class SMovsManagment {
 
           case \Config::get('scwms.MVT_IN_DLVRY_PP'):
           case \Config::get('scwms.MVT_IN_DLVRY_FP'):
+          case \Config::get('scwms.MVT_OUT_CONSUMPTION'):
                 $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
             break;
 
@@ -588,6 +599,12 @@ class SMovsManagment {
 
               case \Config::get('scwms.MVT_OUT_RTRN_RM'):
                 $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_RTRN_RM');
+                $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+                $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
+                break;
+
+              case \Config::get('scwms.MVT_OUT_ASSIGN_PP'):
+                $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.MVT_IN_ASSIGN_PP');
                 $oMirrorMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
                 $oMovement->prod_ord_id = $oMovement->aAuxPOs[SMovement::SRC_PO];
                 break;

@@ -68,6 +68,7 @@ return [
                   'CHARGES' => 'Cargos',
                   'COMMENTS' => 'Comentarios',
                   'CONCEPT' => 'Concepto',
+                  'CREATED' => 'Creado',
                   'CREDIT_NOTE' => 'Nota crédito',
                   'CREDITS' => 'Cargos',
                   'C_N' => 'N.C.',

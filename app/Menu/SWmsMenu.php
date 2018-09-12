@@ -128,6 +128,13 @@ class SWmsMenu {
                               )
                         ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
                                                   \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
+                                Link::toRoute('wms.movs.create', trans('mms.ASSIGNAMENT_PP'),
+                                          [\Config::get('scwms.MVT_OUT_ASSIGN_PP'),
+                                            trans('mms.ASSIGNAMENT_PP'),
+                                          0])
+                              )
+                        ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                                  \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')),
                                 Link::toRoute('wms.movs.create', trans('mms.DELIVERY_FP'),
                                           [\Config::get('scwms.MVT_IN_DLVRY_FP'),
                                             trans('mms.DELIVERY_FP'),

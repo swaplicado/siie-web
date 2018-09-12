@@ -158,6 +158,8 @@ class SMovsCore {
                 wm.doc_invoice_id,
                 wm.doc_credit_note_id,
                 wm.doc_debit_note_id,
+                wm.prod_ord_id,
+                mpo.folio AS po_folio,
                 wm.is_deleted,
                 wm.created_at,
                 wm.updated_at,
@@ -174,6 +176,7 @@ class SMovsCore {
                        ->join('erpu_items as ei', 'wmr.item_id', '=', 'ei.id_item')
                        ->join('erpu_units as eu', 'wmr.unit_id', '=', 'eu.id_unit')
                        ->join('wms_pallets as wp', 'wmr.pallet_id', '=', 'wp.id_pallet')
+                       ->join('mms_production_orders as mpo', 'wm.prod_ord_id', '=', 'mpo.id_order')
                        ->join('wmss_mvt_trn_types as wmtt', 'wm.mvt_trn_type_id', '=', 'wmtt.id_mvt_trn_type')
                        ->join('wmss_mvt_adj_types as wmat', 'wm.mvt_adj_type_id', '=', 'wmat.id_mvt_adj_type')
                        ->join('wmss_mvt_mfg_types as wmmt', 'wm.mvt_mfg_type_id', '=', 'wmmt.id_mvt_mfg_type')
@@ -233,9 +236,13 @@ class SMovsCore {
                   ed_cn.num AS num_cn,
                   ed_cn.service_num AS ser_num_cn,
                   ed_cn.dt_date AS dt_cn,
+                  wm.prod_ord_id,
+                  mpo.folio AS po_folio,
                   wm.doc_order_id,
                   wm.doc_invoice_id,
-                  wm.doc_credit_note_id
+                  wm.doc_credit_note_id,
+                  wm.created_at,
+                  wm.updated_at
                   ';
 
       $movs = \DB::connection(session('db_configuration')->getConnCompany())
@@ -247,6 +254,7 @@ class SMovsCore {
                    ->join('erpu_units as eu', 'wmr.unit_id', '=', 'eu.id_unit')
                    ->join('wms_pallets as wp', 'wmr.pallet_id', '=', 'wp.id_pallet')
                    ->join('wms_lots as wl', 'wmrl.lot_id', '=', 'wl.id_lot')
+                   ->join('mms_production_orders as mpo', 'wm.prod_ord_id', '=', 'mpo.id_order')
                    ->join('wmsu_whs_locations as wwl', 'wmr.location_id', '=', 'wwl.id_whs_location')
                    ->join('wmsu_whs as ww', 'wm.whs_id', '=', 'ww.id_whs')
                    ->join('erpu_branches as eb', 'wm.branch_id', '=', 'eb.id_branch')

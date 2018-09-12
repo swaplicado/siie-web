@@ -67,6 +67,8 @@ return [
                   'MMS_EXPLOSION_MATERIALS' => '123',
                   'MMS_PRODUCTION_ORDERS' => '124',
                   'MMS_PROD_ORDERS_ASSIGNAMENTS' => '125',
+                  'MMS_CLOSE_PO' => '126',
+                  'MMS_PRODUCTION_QUERYS' => '127',
                   'IMPORTATIONS' => '150',
 
                   'ERP' =>  '101',

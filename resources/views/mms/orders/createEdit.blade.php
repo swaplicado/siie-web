@@ -79,7 +79,7 @@
           <div class="form-group row">
 						{!! Form::label('type_id', trans('userinterface.labels.TYPE').'*',['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-							{!! Form::select('type_id', $types, 	isset($orders) ? $orders->type->id_type : null,
+							{!! Form::select('type_id', $types, isset($orders) ? $orders->type->id_type : null,
 																['class'=>'form-control select-type',
 																'placeholder' => trans('userinterface.placeholders.SELECT_TYPE'),
 																'required']) !!}
@@ -110,9 +110,10 @@
 						{!! Form::label('father_order_id', trans('userinterface.labels.FATHER_ORDER').'*',
 										['class'=>'col-md-1 control-label']) !!}
 						<div class="col-md-4">
-							{!! Form::select('father_order_id', $father, isset($orders) ?  $orders->father_order_id : 1,
+							{!! Form::select('father_order_id', $father, isset($orders) ? $orders->father_order_id : 1,
 																['class'=>'form-control select-father',
-																	'placeholder' => 'N/A']) !!}
+																	'id' => 'father_order_id',
+																	'required']) !!}
 						</div>
           </div>
         </div>

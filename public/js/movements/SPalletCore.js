@@ -178,8 +178,8 @@ class SPalletCore {
       if (elem.includes('-')) {
           var subs = elem.split('-');
 
-          if (subs.length == 2 && parseInt(subs[0]) <= parseInt(subs[1])) {
-              for (var palletNum = parseInt(subs[0]); palletNum <= parseInt(subs[1]); palletNum++) {
+          if (subs.length == 2 && parseInt(subs[0].trim()) <= parseInt(subs[1].trim())) {
+              for (var palletNum = parseInt(subs[0].trim()); palletNum <= parseInt(subs[1].trim()); palletNum++) {
                 aPallets.push(palletNum);
               }
           }
@@ -187,12 +187,12 @@ class SPalletCore {
             return new Array();
           }
       }
-      else if (palletCore.isNormalInteger(elem)) {
-          aPallets.push(parseInt(elem));
-      }
-      else {
-        return new Array();
-      }
+      else if (palletCore.isNormalInteger(elem.trim())) {
+             aPallets.push(parseInt(elem.trim()));
+           }
+           else {
+             return new Array();
+           }
     }
 
     return aPallets;

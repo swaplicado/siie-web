@@ -10,7 +10,7 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
               {!! Form::label('src_po', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         trans('mms.labels.PRODUCTION_ORDER') :
@@ -21,7 +21,7 @@
                                                               'id' => 'src_po']) !!}
             </div>
           </div>
-          <div class="col-md-6">
+          {{-- <div class="col-md-6">
             <div class="form-group">
               {!! Form::label('des_po_label', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         '--' :
@@ -31,10 +31,10 @@
   							<option value="">{{ trans('mms.labels.DES_PRODUCTION_ORDER') }}</option>
     				</select>
             </div>
-          </div>
+          </div> --}}
         </div>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div class="form-group">
               {!! Form::label('src_item', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         trans('mms.labels.PRODUCT') :
@@ -43,7 +43,7 @@
                                                   'id' => 'src_item']) !!}
             </div>
           </div>
-          <div class="col-md-6">
+          {{-- <div class="col-md-6">
             <div class="form-group">
               {!! Form::label('des_item', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         '--' :
@@ -51,7 +51,7 @@
               {!! Form::label('des_item', '--', ['class'=>'form-control',
                                                   'id' => 'des_item']) !!}
             </div>
-          </div>
+          </div> --}}
         </div>
         <div class="row">
           <div class="col-md-2">

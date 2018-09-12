@@ -41,17 +41,25 @@
 												<td align="right">{{ session('utils')->formatNumber($mov->total, \Config::get('scsiie.FRMT.QTY')) }}</td>
 												<td align="right">{{ session('utils')->formatNumber($mov->indicted, \Config::get('scsiie.FRMT.QTY')) }}</td>
 												<td style="text-align: center;">
-				      						<?php
-				      								$oRegistry = $mov;
-				      								$iRegistryId = $mov->id_mvt;
-				      								$loptions = [
-				      									\Config::get('scsys.OPTIONS.EDIT'),
-				      									\Config::get('scsys.OPTIONS.DESTROY'),
-				      									\Config::get('scsys.OPTIONS.ACTIVATE')
-				      								];
-				      						?>
 													<div>
-															@include('templates.list.options')
+															<a href="{{ route('wms.movs.destroy', $mov->src_id_mvt) }}"
+																		style="visibility: {{ App\SUtils\SValidation::isRendered(\Config::get('scsys.OPERATION.DEL'), $actualUserPermission, $mov->created_by_id) }};"
+																		class="btn btn-danger btn-xs"
+																		title="{{ trans('userinterface.tooltips.DELETE') }}"
+																		data-btn-ok-label="{{ trans('messages.options.MSG_YES') }}"
+																		data-btn-cancel-label="{{ trans('messages.options.MSG_NO') }}"
+																		data-singleton="true" data-title="{{ trans('messages.confirm.MSG_CONFIRM') }}">
+																<span class="glyphicon glyphicon-trash" aria-hidden = "true"/>
+															</a>
+															@if ($mov->src_is_deleted == \Config::get('scsys.STATUS.DEL')
+															              && App\SUtils\SValidation::isRenderedB(\Config::get('scsys.OPERATION.DEL'), $actualUserPermission, $mov->created_by_id))
+															  <li>
+															    <a href="{{ route('wms.movs.activate', $mov->src_id_mvt) }}" class="btn btn-default btn-xs">
+															      <i class="glyphicon glyphicon-ok-sign"></i>
+															      &nbsp;{{ trans('userinterface.buttons.ACTIVATE') }}
+															    </a>
+															  </li>
+															@endif
 															<a
 															href="{{ route('wms.movs.print', $mov->id_mvt) }}"
 															title="{{ trans('actions.PRINT') }}"
