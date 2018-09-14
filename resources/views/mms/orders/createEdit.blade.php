@@ -99,7 +99,7 @@
       <div class="form-group">
         <div class="col-md-12">
           <div class="form-group row">
-						{!! Form::label('charges', trans('userinterface.labels.CHARGE').'*',['class'=>'col-md-1 control-label']) !!}
+						{!! Form::label('charges', trans('wms.labels.QUANTITY').'*',['class'=>'col-md-1 control-label']) !!}
             <div class="col-md-4">
 							{!! Form::number('charges',
 					    	isset($orders) ? $orders->charges : 1, ['required','class'=>'form-control',

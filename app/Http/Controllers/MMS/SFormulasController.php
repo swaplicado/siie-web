@@ -53,7 +53,9 @@ class SFormulasController extends Controller {
                       eu.code AS unit_code,
                       eu.name AS unit,
                       mf.created_by_id,
-                      mf.updated_by_id
+                      mf.updated_by_id,
+                      uc.username AS creation_user_name,
+                      uu.username AS mod_user_name
                     ';
 
         $Formulas = \DB::connection(session('db_configuration')->getConnCompany())

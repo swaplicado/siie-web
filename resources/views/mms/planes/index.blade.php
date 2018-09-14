@@ -36,7 +36,7 @@
     @include('templates.form.create')
   @endsection
   <div class="row">
-    <table id="planes_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+    <table id="planes_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
                 <th data-priority="1" style="text-align: center;">Folio</th>

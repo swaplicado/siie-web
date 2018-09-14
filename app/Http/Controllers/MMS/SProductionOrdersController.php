@@ -8,6 +8,7 @@ use App\SUtils\SProcess;
 use App\SCore\SProductionCore;
 use App\SCore\SProductionOrderCore;
 use App\SUtils\SGuiUtils;
+use App\Database\Config;
 
 use App\MMS\SProductionOrder;
 use App\SUtils\SUtil;
@@ -54,34 +55,74 @@ class SProductionOrdersController extends Controller
        $iOrderStatus = $request->po_status == null ? \Config::get('scmms.PO_STATUS.ST_ALL') : $request->po_status;
        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
 
-       $order = SProductionOrder::Search($request->name, $this->iFilter)->orderBy('id_order','ASC');
+       $sSelect = '
+                     mpo.id_order,
+                     mpo.folio,
+                     mpo.identifier,
+                     mpo.date,
+                     mpo.charges,
+                     mpo.is_deleted,
+                     mpo.plan_id,
+                     mpo.branch_id,
+                     mpo.floor_id,
+                     mpo.type_id,
+                     mpo.status_id,
+                     mpo.item_id,
+                     mpo.unit_id,
+                     mpo.father_order_id,
+                     mpo.formula_id,
+                     mpo.created_by_id,
+                     mpo.updated_by_id,
+                     mpo.created_at,
+                     mpo.updated_at,
+                     ei.code AS item_code,
+                     ei.name AS item,
+                     eu.code AS unit_code,
+                     eu.name AS unit,
+                     mpp.folio AS plan_folio,
+                     mpp.production_plan AS production_plan,
+                     mfl.name AS floor_name,
+                     mto.name AS type_name,
+                     mso.name AS status_name,
+                     mso.name AS status_name,
+                     mf.identifier AS form_identifier,
+                     mf.version AS form_version,
+                     eb.name AS branch_name,
+                     mpof.folio AS father_folio,
+                     uc.username AS creation_user_name,
+                     uu.username AS mod_user_name
+                   ';
+
+       $oOrdersQuery = \DB::connection(session('db_configuration')->getConnCompany())
+                    ->table('mms_production_orders as mpo')
+                    ->join('erpu_items as ei', 'mpo.item_id', '=', 'ei.id_item')
+                    ->join('erpu_units as eu', 'mpo.unit_id', '=', 'eu.id_unit')
+                    ->join('mms_production_planes as mpp', 'mpo.plan_id', '=', 'mpp.id_production_plan')
+                    ->join('mms_formulas as mf', 'mpo.formula_id', '=', 'mf.id_formula')
+                    ->join('erpu_branches as eb', 'mpo.branch_id', '=', 'eb.id_branch')
+                    ->join('mms_floor as mfl', 'mpo.floor_id', '=', 'mfl.id_floor')
+                    ->join('mms_type_order as mto', 'mpo.type_id', '=', 'mto.id_type')
+                    ->join('mms_status_order as mso', 'mpo.status_id', '=', 'mso.id_status')
+                    ->join('mms_production_orders as mpof', 'mpo.father_order_id', '=', 'mpof.id_order')
+                    ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uc', 'mpo.created_by_id', '=', 'uc.id')
+                    ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'mpo.updated_by_id', '=', 'uu.id');
 
        if (\Config::get('scmms.PO_STATUS.ST_ALL') != $iOrderStatus) {
-           $order = $order->where('status_id', $iOrderStatus);
+           $oOrdersQuery = $oOrdersQuery->where('status_id', $iOrderStatus);
        }
 
        $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
 
-       $order = $order->whereBetween('date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+       $oOrdersQuery = $oOrdersQuery->whereBetween('mpo.date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
-       $order = $order->get();
-
-       $order->each(function($order){
-         $order->branch;
-         $order->plan;
-         $order->floor;
-         $order->formula;
-         $order->type;
-         $order->status;
-         $order->item;
-         $order->unit;
-       });
-
+       $lOrders = $oOrdersQuery->select(\DB::raw($sSelect))
+                     ->where('mpo.identifier', 'LIKE', "%".$request->name."%")
+                     ->get();
 
       $sTitle = trans('mms.PRODUCTION_ORDERS');
 
        return view('mms.orders.index')
-           ->with('orders', $order)
+           ->with('orders', $lOrders)
            ->with('lOrderStatus', $this->lOrderStatus)
            ->with('iOrderStatus', $iOrderStatus)
            ->with('sTitle', $sTitle)

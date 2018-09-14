@@ -59,41 +59,46 @@
                 <th data-priority="1">Identificador</th>
                 <th data-priority="1">Plan de producción</th>
                 <th>Planta</th>
-                <th>Tipo de orden</th>
+                <th>Tipo de order</th>
                 <th data-priority="1">-</th>
-                <th data-priority="1">Estatus de orden</th>
+                <th data-priority="1">Estatus de order</th>
                 <th style="text-align: center;">Opciones</th>
+                <th data-priority="1" style="text-align: center;">Cve Item</th>
                 <th data-priority="1" style="text-align: center;">Item</th>
                 <th data-priority="1" style="text-align: center;">Un.</th>
                 <th data-priority="1" style="text-align: center;">Formula</th>
-                <th data-priority="1" style="text-align: center;">Cargas</th>
+                <th data-priority="1" style="text-align: right;">Cant.</th>
                 <th style="text-align: center;">Sucursal</th>
-                <th style="text-align: center;">Orden Padre</th>
+                <th style="text-align: center;">order Padre</th>
                 <th style="text-align: center;">Estatus</th>
+                <th>Creado</th>
+                <th>Usuario</th>
+                <th>Modificado</th>
+                <th>Usuario</th>
             </tr>
         </thead>
         <tbody>
-          @foreach ($orders as $orden)
+          @foreach ($orders as $order)
             <tr>
-                <td>{{ $orden->id_order }}</td>
-                <td>{{ session('utils')->formatFolio($orden->folio) }}</td>
-                <td>{{ $orden->date }}</td>
-                <td>{{ $orden->identifier }}</td>
-                <td>{{ session('utils')->formatFolio($orden->plan->folio).'-'.$orden->plan->production_plan }}</td>
-                <td>{{ $orden->floor->name }}</td>
-                <td>{{ $orden->type->name }}</td>
-                <td><a class="{{ App\SUtils\SGuiUtils::getClassOfPOStatus($orden->status_id) }}">
+                <td>{{ $order->id_order }}</td>
+                <td>{{ session('utils')->formatFolio($order->folio) }}</td>
+                <td>{{ $order->date }}</td>
+                <td>{{ $order->identifier }}</td>
+                <td>{{ session('utils')->formatFolio($order->plan_folio).'-'.$order->production_plan }}</td>
+                <td>{{ $order->floor_name }}</td>
+                <td>{{ $order->type_name }}</td>
+                <td><a class="{{ App\SUtils\SGuiUtils::getClassOfPOStatus($order->status_id) }}">
                       <i class="glyphicon glyphicon-certificate"></i>
                     </a>
                 </td>
-                <td>{{ $orden->status->name }}</td>
+                <td>{{ $order->status_name }}</td>
                 <td style="text-align: center;">
                   @include('mms.orders.previous')
                   @include('mms.orders.next')
                   @include('mms.orders.kardexbtn')
                   <?php
-                    $oRegistry = $orden;
-                    $iRegistryId = $orden->id_order;
+                    $oRegistry = $order;
+                    $iRegistryId = $order->id_order;
                     $loptions = [
                       \Config::get('scsys.OPTIONS.EDIT'),
                       \Config::get('scsys.OPTIONS.DESTROY'),
@@ -102,23 +107,28 @@
                   ?>
                   @include('templates.list.options')
               </td>
-              <td>{{ $orden->item->name }}</td>
-              <td>{{ $orden->unit->code }}</td>
-              <td>{{ $orden->formula->identifier.'-V'.$orden->formula->version }}</td>
-              <td>{{ $orden->charges }}</td>
-              <td>{{ $orden->branch->name }}</td>
-              @if ($orden->father_order_id == '1')
+              <td>{{ $order->item_code }}</td>
+              <td>{{ $order->item }}</td>
+              <td>{{ $order->unit_code }}</td>
+              <td>{{ $order->form_identifier.'-V'.$order->form_version }}</td>
+              <td style="text-align: right;">{{ $order->charges }}</td>
+              <td>{{ $order->branch_name }}</td>
+              @if ($order->father_order_id == '1')
                 <td>{{ 'NA' }}</td>
               @else
-                <td>{{ 'OP-'.session('utils')->formatFolio($orden->father->folio) }}</td>
+                <td>{{ 'OP-'.session('utils')->formatFolio($order->father_folio) }}</td>
               @endif
               <td>
-    						@if (! $orden->is_deleted)
+    						@if (! $order->is_deleted)
     								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
     						@else
     								<span class="label label-danger">{{ trans('userinterface.labels.INACTIVE') }}</span>
     						@endif
     					</td>
+              <td>{{ $order->created_at }}</td>
+              <td>{{ $order->creation_user_name }}</td>
+              <td>{{ $order->updated_at }}</td>
+              <td>{{ $order->mod_user_name }}</td>
             </tr>
           @endforeach
         </tbody>

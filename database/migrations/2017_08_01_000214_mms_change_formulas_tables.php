@@ -50,6 +50,7 @@ class MmsChangeFormulasTables extends Migration {
           	$table->char('notes', 250);
           	$table->decimal('quantity', 23,8);
           	$table->boolean('is_deleted');
+          	$table->integer('external_id')->unsigned();
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
@@ -65,35 +66,37 @@ class MmsChangeFormulasTables extends Migration {
           DB::connection($this->sConnection)->table('mms_formulas')->insert([
           	['id_formula' => '1','version' => '0','recipe' => '0',
             'identifier' => 'NA','dt_date' => '2017-01-01','notes' => 'NA',
-            'quantity' => '0','is_deleted' => '0','item_id' => '1','unit_id' => '1',
-            'created_by_id' => '1','updated_by_id' => '1'],
+            'quantity' => '0','is_deleted' => '0','external_id' => '0',
+            'item_id' => '1','unit_id' => '1','created_by_id' => '1',
+            'updated_by_id' => '1'],
           ]);
 
           Schema::connection($this->sConnection)->create('mms_formula_rows', function (blueprint $table) {
-            $table->increments('id_formula_row');
-            $table->decimal('quantity', 23,8);
-            $table->decimal('mass', 23,8);
-            $table->boolean('is_deleted');
-            $table->integer('formula_id')->unsigned();
-            $table->integer('item_id')->unsigned();
-            $table->integer('unit_id')->unsigned();
-            $table->integer('item_recipe_id')->unsigned();
-            $table->integer('created_by_id')->unsigned();
-            $table->integer('updated_by_id')->unsigned();
-            $table->timestamps();
+          	$table->increments('id_formula_row');
+          	$table->decimal('quantity', 23,8);
+          	$table->decimal('mass', 23,8);
+          	$table->boolean('is_deleted');
+          	$table->integer('external_id')->unsigned();
+          	$table->integer('formula_id')->unsigned();
+          	$table->integer('item_id')->unsigned();
+          	$table->integer('unit_id')->unsigned();
+          	$table->integer('item_recipe_id')->unsigned();
+          	$table->integer('created_by_id')->unsigned();
+          	$table->integer('updated_by_id')->unsigned();
+          	$table->timestamps();
 
-            $table->foreign('formula_id')->references('id_formula')->on('mms_formulas')->onDelete('cascade');
-            $table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
-            $table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
-            // $table->foreign('item_recipe_id')->references('recipe')->on('mms_formulas')->onDelete('cascade');
-            $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
-            $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+          	$table->foreign('formula_id')->references('id_formula')->on('mms_formulas')->onDelete('cascade');
+          	$table->foreign('item_id')->references('id_item')->on('erpu_items')->onDelete('cascade');
+          	$table->foreign('unit_id')->references('id_unit')->on('erpu_units')->onDelete('cascade');
+          	$table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
+          	$table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
           });
 
           DB::connection($this->sConnection)->table('mms_formula_rows')->insert([
-          	['id_formula_row' => '1','quantity' => '0','mass' => '0','is_deleted' => '1',
-            'formula_id' => '1','item_id' => '1','unit_id' => '1',
-            'item_recipe_id' => '1','created_by_id' => '1','updated_by_id' => '1'],
+          	['id_formula_row' => '1','quantity' => '0','mass' => '0',
+            'is_deleted' => '1','external_id' => '0','formula_id' => '1',
+            'item_id' => '1','unit_id' => '1','item_recipe_id' => '1',
+            'created_by_id' => '1','updated_by_id' => '1'],
           ]);
 
         }

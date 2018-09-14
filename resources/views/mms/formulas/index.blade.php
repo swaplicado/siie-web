@@ -47,6 +47,10 @@
                 <th data-priority="1" style="text-align: center;">Un</th>
                 <th data-priority="1" style="text-align: center;">Estatus</th>
                 <th style="text-align: center;">Opciones</th>
+                <th>Creado</th>
+                <th>Usuario</th>
+                <th>Modificado</th>
+                <th>Usuario</th>
             </tr>
         </thead>
         <tbody>

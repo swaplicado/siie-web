@@ -1,13 +1,14 @@
 <?php namespace App\SImportations;
 
 use App\MMS\Formulas\SFormula;
+use App\MMS\Formulas\SFormulaRow;
 use App\ERP\SItem;
 use App\ERP\SUnit;
 
 /**
  * this class import the data of item families from siie
  */
-class SImportFormulas {
+class SImportFormulaRows {
   protected $webhost        = 'localhost';
   protected $webusername    = 'root';
   protected $webpassword    = 'msroot';
@@ -34,7 +35,7 @@ class SImportFormulas {
    *
    * @return integer number of records imported
    */
-  public function importFormulas()
+  public function importFormulaRows()
   {
       $sql = "SELECT id_bom,
                   ts_start,
@@ -49,46 +50,54 @@ class SImportFormulas {
                   ts_edit,
                   ts_del
                   FROM mfg_bom
-                  WHERE lev = 0
-                  AND fid_item_n IS NULL";
+                  WHERE
+                  fid_item_n IS NOT NULL";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
+      $lWebFormulaRows = SFormulaRow::get();
+      $lFormulaRowsToWeb = array();
+
       $lWebFormulas = SFormula::get();
-      $lFormulas = array();
-      $lFormulasToWeb = array();
       $lWebItems = SItem::get();
       $lWebUnits = SUnit::get();
+
+      $lFormulasByItem = array();
       $lUnits = array();
       $lItems = array();
 
       foreach ($lWebItems as $value) {
           $lItems[$value->external_id] = $value;
       }
+
       foreach ($lWebUnits as $value) {
           $lUnits[$value->external_id] = $value;
       }
 
-      foreach ($lWebFormulas as $key => $value) {
-          $lFormulas[$value->external_id] = $value;
+      foreach ($lWebFormulaRows as $value) {
+          $lFormulaRows[$value->external_id] = $value;
       }
 
-      if ($result->num_rows > 0) {
+      foreach ($lWebFormulas as $key => $value) {
+          $lFormulasByItem[$value->item_id] = $value;
+      }
+
+      if (is_object($result) && $result->num_rows > 0) {
+
          // output data of each row
          while($row = $result->fetch_assoc()) {
-           if (! array_key_exists($row["id_bom"], $lFormulas)) {
-              array_push($lFormulasToWeb, SImportFormulas::siieToSiieWeb($row, $lItems, $lUnits));
-            }
+           if (! array_key_exists($row["id_bom"], $lFormulaRows)) {
+              array_push($lFormulaRowsToWeb, SImportFormulaRows::siieToSiieWeb($row, $lFormulasByItem, $lItems, $lUnits));
+           }
          }
       }
 
-       foreach ($lFormulasToWeb as $formula) {
-         $formula->recipe = SFormula::max('recipe') + 1;
-         $formula->save();
+       foreach ($lFormulaRowsToWeb as $formulaRow) {
+         $formulaRow->save();
        }
 
-       return sizeof($lFormulasToWeb);
+       return sizeof($lFormulaRowsToWeb);
   }
 
   /**
@@ -97,24 +106,23 @@ class SImportFormulas {
    * @param  Object $oSiieFormula
    * @return SFormula
    */
-  private static function siieToSiieWeb($oSiieFormula = '', $lWebItems = [], $lWebUnits = [])
+  private static function siieToSiieWeb($oSiieFormulaR = '', $lFormulasByItem = [], $lWebItems = [], $lWebUnits = [])
   {
-     $oFormula = new SFormula();
+     $oFormulaRow = new SFormulaRow();
 
-     $oFormula->version = 1;
-     $oFormula->identifier = $oSiieFormula["bom"];
-     $oFormula->dt_date = $oSiieFormula["ts_start"];
-     $oFormula->notes = '';
-     $oFormula->quantity = $oSiieFormula["qty"];
-     $oFormula->is_deleted = $oSiieFormula["b_del"];
-     $oFormula->external_id = $oSiieFormula["id_bom"];
-     $oFormula->item_id = $lWebItems[$oSiieFormula["fid_item"]]->id_item;
-     $oFormula->unit_id = $lWebUnits[$oSiieFormula["fid_unit"]]->id_unit;
-     $oFormula->created_by_id = 1;
-     $oFormula->updated_by_id = 1;
-     $oFormula->created_at = $oSiieFormula["ts_new"];
-     $oFormula->updated_at = $oSiieFormula["ts_edit"];
+     $oFormulaRow->quantity = $oSiieFormulaR["qty"];
+     $oFormulaRow->mass = 0;
+     $oFormulaRow->is_deleted = $oSiieFormulaR["b_del"];
+     $oFormulaRow->external_id = $oSiieFormulaR["id_bom"];
+     $oFormulaRow->formula_id = $lFormulasByItem[$lWebItems[$oSiieFormulaR["fid_item_n"]]->id_item]->id_formula;
+     $oFormulaRow->item_id = $lWebItems[$oSiieFormulaR["fid_item"]]->id_item;
+     $oFormulaRow->unit_id = $lWebUnits[$oSiieFormulaR["fid_unit"]]->id_unit;
+     $oFormulaRow->item_recipe_id = $lFormulasByItem[$lWebItems[$oSiieFormulaR["fid_item_n"]]->id_item]->recipe;
+     $oFormulaRow->created_by_id = 1;
+     $oFormulaRow->updated_by_id = 1;
+     $oFormulaRow->created_at = $oSiieFormulaR["ts_new"];
+     $oFormulaRow->updated_at = $oSiieFormulaR["ts_edit"];
 
-     return $oFormula;
+     return $oFormulaRow;
   }
 }

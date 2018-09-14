@@ -4,8 +4,8 @@
   @include('templates.head.shead')
 @endsection
 
-@section('title', $sTitle)
-@section('titlepanel', $sTitle)
+@section('title', $sTitle.' '.session('utils')->formatFolio($oProductionPlan->folio).'/'.$oProductionPlan->production_plan)
+@section('titlepanel', $sTitle.' '.session('utils')->formatFolio($oProductionPlan->folio).'/'.$oProductionPlan->production_plan)
 
 @section('menu')
 	@include('templates.menu.menumodules')

@@ -13,6 +13,7 @@ class SFormulaRow extends Model {
                             'quantity',
                             'mass',
                             'is_deleted',
+                            'external_id',
                             'formula_id',
                             'item_id',
                             'unit_id',

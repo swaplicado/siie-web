@@ -23,6 +23,7 @@ class SFormula extends SModel {
                             'notes',
                             'quantity',
                             'is_deleted',
+                            'external_id',
                             'item_id',
                             'unit_id',
                             'created_by_id',

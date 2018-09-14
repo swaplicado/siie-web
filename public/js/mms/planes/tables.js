@@ -27,6 +27,7 @@ oPlanesTable = $('#planes_table').DataTable({
                 "print": 'Imprimir'
             }
       },
+      "scrollX": true,
       "colReorder": true,
       "dom": 'Bfrtip',
       "lengthMenu": [

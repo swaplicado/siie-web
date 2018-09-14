@@ -1,4 +1,4 @@
-<title>@yield('title', 'Default')</title>
+<meta name="viewport" content="width=device-width">
 <link rel="stylesheet" type="text/css" href="{{ asset('chosen/chosen.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/general.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('css/navbars.css') }}">
