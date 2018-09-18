@@ -561,6 +561,7 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'Maatwebsite\\Excel\\Writers\\CellWriter' => __DIR__ . '/..' . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/CellWriter.php',
         'Maatwebsite\\Excel\\Writers\\LaravelExcelWriter' => __DIR__ . '/..' . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/LaravelExcelWriter.php',
         'MmsAddExplosionPermission' => __DIR__ . '/../..' . '/database/migrations/2018_07_10_165334_mms_add_explosion_permission.php',
+        'MmsAddExternalidform' => __DIR__ . '/../..' . '/database/migrations/2018_09_18_085132_mms_add_externalidform.php',
         'MmsAddFormulasNotesTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000202_mms_add_formulas_notes_table.php',
         'MmsAddFormulasSubsTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000201_mms_add_formulas_subs_table.php',
         'MmsAddFormulasTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000200_mms_add_formulas_table.php',

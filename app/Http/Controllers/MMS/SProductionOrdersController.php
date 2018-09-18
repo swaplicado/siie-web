@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\SUtils\SProcess;
 use App\SCore\SProductionCore;
 use App\SCore\SProductionOrderCore;
+use App\SCore\SExplosionCore;
 use App\SUtils\SGuiUtils;
 use App\Database\Config;
 
@@ -112,8 +113,19 @@ class SProductionOrdersController extends Controller
        }
 
        $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
-
        $oOrdersQuery = $oOrdersQuery->whereBetween('mpo.date', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+
+       switch ($this->iFilter) {
+         case \Config::get('scsys.FILTER.ACTIVES'):
+             $oOrdersQuery = $oOrdersQuery->where('mpo.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+           break;
+
+         case \Config::get('scsys.FILTER.DELETED'):
+             $oOrdersQuery = $oOrdersQuery->where('mpo.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+           break;
+
+         default:
+       }
 
        $lOrders = $oOrdersQuery->select(\DB::raw($sSelect))
                      ->where('mpo.identifier', 'LIKE', "%".$request->name."%")
@@ -394,6 +406,20 @@ class SProductionOrdersController extends Controller
                       ->get();
 
       return response()->json($data);
+    }
+
+    public function print($id = 0)
+    {
+        $oProductionOrder = SProductionOrder::find($id);
+        $oCore = new SExplosionCore();
+        $lIngredients = $oCore->explode($oProductionOrder, [], session('work_date'), false);
+
+        $view = view('mms.orders.printorder', ['oProductionOrder' => $oProductionOrder,
+                                          'lIngredients' => $lIngredients])->render();
+        // set ukuran kertas dan orientasi
+        $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
+        // cetak
+        return $pdf->stream();
     }
 
     /**

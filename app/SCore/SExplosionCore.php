@@ -6,7 +6,8 @@ use Carbon\Carbon;
 
 use App\SCore\SStockManagment;
 use App\ERP\SYear;
-use App\MMS\Formulas\SFormula;
+use App\MMS\SProductionPlan;
+use App\MMS\SProductionOrder;
 
 /**
  *
@@ -17,19 +18,30 @@ class SExplosionCore {
    * determines the necessary ingredients to make the production orders contained
    * on production plan
    *
-   * @param  SProductionPlan  $oProductionPlan
+   * @param  SProductionPlan-or-SProductionOrder  $oProduction
    * @param  array[SWarehouse]   $lWarehouses [list of warehouses for explosion]
    * @param  string  $sDate [date of cevaluation]
    * @param  boolean $bExplodeSubs [flag, the subformulas will be exploded too]
    *
    * @return array[Query]
    */
-  public function explode($oProductionPlan = null, $lWarehouses = [], $oDate = '', $bExplodeSubs = false)
+  public function explode($oProduction = null, $lWarehouses = [], $oDate = '', $bExplodeSubs = false)
   {
      $lIngredients = array();
-     $lProdOrders = $oProductionPlan->orders;
+     $lProdOrders = array();
+
+     if ($oProduction instanceof SProductionPlan) {
+       $lProdOrders = $oProduction->orders;
+     }
+     else if ($oProduction instanceof SProductionOrder) {
+       $lProdOrders[0] = $oProduction;
+     }
 
      foreach ($lProdOrders as $oPO) {
+        if ($oPO->is_deleted) {
+           continue;
+        }
+
         $oFormula = $oPO->formula;
 
         $lFormulaRows = $this->getRowsFromFormula($oFormula->id_formula);

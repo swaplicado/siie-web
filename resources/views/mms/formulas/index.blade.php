@@ -91,6 +91,10 @@
                     <span class="glyphicon glyphicon-print" aria-hidden = "true"/>
                   </a>
       					</td>
+                <td>{{ $formula->created_at }}</td>
+                <td>{{ $formula->creation_user_name }}</td>
+                <td>{{ $formula->updated_at }}</td>
+                <td>{{ $formula->mod_user_name }}</td>
             </tr>
           @endforeach
         </tbody>

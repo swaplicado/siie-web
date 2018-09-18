@@ -155,6 +155,7 @@ return array(
     'Maatwebsite\\Excel\\Writers\\CellWriter' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/CellWriter.php',
     'Maatwebsite\\Excel\\Writers\\LaravelExcelWriter' => $vendorDir . '/maatwebsite/excel/src/Maatwebsite/Excel/Writers/LaravelExcelWriter.php',
     'MmsAddExplosionPermission' => $baseDir . '/database/migrations/2018_07_10_165334_mms_add_explosion_permission.php',
+    'MmsAddExternalidform' => $baseDir . '/database/migrations/2018_09_18_085132_mms_add_externalidform.php',
     'MmsAddFormulasNotesTable' => $baseDir . '/database/migrations/2017_08_01_000202_mms_add_formulas_notes_table.php',
     'MmsAddFormulasSubsTable' => $baseDir . '/database/migrations/2017_08_01_000201_mms_add_formulas_subs_table.php',
     'MmsAddFormulasTable' => $baseDir . '/database/migrations/2017_08_01_000200_mms_add_formulas_table.php',

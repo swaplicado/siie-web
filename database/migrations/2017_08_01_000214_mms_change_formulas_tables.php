@@ -50,7 +50,6 @@ class MmsChangeFormulasTables extends Migration {
           	$table->char('notes', 250);
           	$table->decimal('quantity', 23,8);
           	$table->boolean('is_deleted');
-          	$table->integer('external_id')->unsigned();
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
           	$table->integer('created_by_id')->unsigned();
@@ -66,7 +65,7 @@ class MmsChangeFormulasTables extends Migration {
           DB::connection($this->sConnection)->table('mms_formulas')->insert([
           	['id_formula' => '1','version' => '0','recipe' => '0',
             'identifier' => 'NA','dt_date' => '2017-01-01','notes' => 'NA',
-            'quantity' => '0','is_deleted' => '0','external_id' => '0',
+            'quantity' => '0','is_deleted' => '0',
             'item_id' => '1','unit_id' => '1','created_by_id' => '1',
             'updated_by_id' => '1'],
           ]);
@@ -76,7 +75,6 @@ class MmsChangeFormulasTables extends Migration {
           	$table->decimal('quantity', 23,8);
           	$table->decimal('mass', 23,8);
           	$table->boolean('is_deleted');
-          	$table->integer('external_id')->unsigned();
           	$table->integer('formula_id')->unsigned();
           	$table->integer('item_id')->unsigned();
           	$table->integer('unit_id')->unsigned();
@@ -94,7 +92,7 @@ class MmsChangeFormulasTables extends Migration {
 
           DB::connection($this->sConnection)->table('mms_formula_rows')->insert([
           	['id_formula_row' => '1','quantity' => '0','mass' => '0',
-            'is_deleted' => '1','external_id' => '0','formula_id' => '1',
+            'is_deleted' => '1','formula_id' => '1',
             'item_id' => '1','unit_id' => '1','item_recipe_id' => '1',
             'created_by_id' => '1','updated_by_id' => '1'],
           ]);
