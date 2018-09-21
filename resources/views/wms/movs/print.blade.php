@@ -122,25 +122,29 @@
       		    <tbody>
                 <?php $dTotal = 0; ?>
       					@foreach ($oMovement->rows as $row)
-      						<tr class="tb">
-						        <td>{{ $row->item->code }}</td>
-                    <td class="trr">{{ session('utils')->formatNumber(($row->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
-                    <td>{{ $row->unit->code }}</td>
-						        <td>{{ $row->item->name }}</td>
-						        <td>{{ $row->pallet_id == '1' ? 'SIN TARIMA' :  $row->pallet_id }}</td>
-						        <td class="trr">{{ session('utils')->formatNumber(($row->amount_unit), \Config::get('scsiie.FRMT.AMT')) }}</td>
-						        <td class="trr">{{ session('utils')->formatNumber(($row->quantity * $row->amount_unit), \Config::get('scsiie.FRMT.AMT')) }}</td>
-                  </tr>
-                  @foreach ($row->lotRows as $lotRow)
-                    <tr style="font-size: 12px;">
-                      <td>{{ '' }}</td>
-                      <td class="trr">{{ session('utils')->formatNumber(($lotRow->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
+                  @if (! $row->is_deleted)
+        						<tr class="tb">
+  						        <td>{{ $row->item->code }}</td>
+                      <td class="trr">{{ session('utils')->formatNumber(($row->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
                       <td>{{ $row->unit->code }}</td>
-                      <td>{{ $lotRow->lot->lot }}</td>
-                      <td>{{ $lotRow->lot->dt_expiry }}</td>
+  						        <td>{{ $row->item->name }}</td>
+  						        <td>{{ $row->pallet_id == '1' ? 'SIN TARIMA' :  $row->pallet_id }}</td>
+  						        <td class="trr">{{ session('utils')->formatNumber(($row->amount_unit), \Config::get('scsiie.FRMT.AMT')) }}</td>
+  						        <td class="trr">{{ session('utils')->formatNumber(($row->quantity * $row->amount_unit), \Config::get('scsiie.FRMT.AMT')) }}</td>
                     </tr>
+                    <?php $dTotal += ($row->quantity * $row->amount_unit) ?>
+                  @endif
+                  @foreach ($row->lotRows as $lotRow)
+                    @if (! $lotRow->is_deleted)
+                      <tr style="font-size: 12px;">
+                        <td>{{ '' }}</td>
+                        <td class="trr">{{ session('utils')->formatNumber(($lotRow->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
+                        <td>{{ $row->unit->code }}</td>
+                        <td>{{ $lotRow->lot->lot }}</td>
+                        <td>{{ $lotRow->lot->dt_expiry }}</td>
+                      </tr>
+                    @endif
                   @endforeach
-                  <?php $dTotal += ($row->quantity * $row->amount_unit) ?>
                 @endforeach
               </tbody>
               <tfoot>

@@ -91,7 +91,8 @@ class SProductionOrdersController extends Controller
                      eb.name AS branch_name,
                      mpof.folio AS father_folio,
                      uc.username AS creation_user_name,
-                     uu.username AS mod_user_name
+                     uu.username AS mod_user_name,
+                     "0" AS rows
                    ';
 
        $oOrdersQuery = \DB::connection(session('db_configuration')->getConnCompany())
@@ -134,13 +135,29 @@ class SProductionOrdersController extends Controller
       $sTitle = trans('mms.PRODUCTION_ORDERS');
 
        return view('mms.orders.index')
-           ->with('orders', $lOrders)
-           ->with('lOrderStatus', $this->lOrderStatus)
-           ->with('iOrderStatus', $iOrderStatus)
-           ->with('sTitle', $sTitle)
-           ->with('actualUserPermission', $this->oCurrentUserPermission)
-           ->with('sFilterDate', $sFilterDate)
-           ->with('iFilter', $this->iFilter);
+               ->with('orders', $lOrders)
+               ->with('lOrderStatus', $this->lOrderStatus)
+               ->with('iOrderStatus', $iOrderStatus)
+               ->with('sTitle', $sTitle)
+               ->with('actualUserPermission', $this->oCurrentUserPermission)
+               ->with('sFilterDate', $sFilterDate)
+               ->with('iFilter', $this->iFilter);
+   }
+
+   public function getOrderDetail($iPO)
+   {
+       $oExplosion = new SExplosionCore();
+       $oProductionOrder = SProductionOrder::find($iPO);
+
+       $lRows = $oExplosion->getRowsFromFormula($oProductionOrder->formula_id);
+
+       foreach ($lRows as $oRow) {
+         $oRow->dRequired = $oRow->quantity * $oProductionOrder->charges;
+         $oConsumption = SProductionCore::getConsumption($iPO, $oRow->item_id, $oRow->unit_id);
+         $oRow->oConsumtion = $oConsumption;
+       }
+
+       return json_encode($lRows);
    }
 
     public function create()
@@ -408,14 +425,45 @@ class SProductionOrdersController extends Controller
       return response()->json($data);
     }
 
-    public function print($id = 0)
+    public function print($iPO = 0)
     {
-        $oProductionOrder = SProductionOrder::find($id);
+        $oExplosion = new SExplosionCore();
+        $oProductionOrder = SProductionOrder::find($iPO);
+
+        $lRows = $oExplosion->getRowsFromFormula($oProductionOrder->formula_id);
+
+        foreach ($lRows as $oRow) {
+          $oRow->dRequired = $oRow->quantity * $oProductionOrder->charges;
+
+          $oConsumption = SProductionCore::getConsumption($iPO, $oRow->item_id, $oRow->unit_id);
+          $dCharged = 0;
+          $dConsumed = 0;
+          $dReturned = 0;
+          $sLots = '';
+
+          if (sizeof($oConsumption) > 0) {
+              foreach ($oConsumption as $oConsum) {
+                $dCharged += $oConsum->delivered;
+                $dConsumed += $oConsum->consumed;
+                $dReturned += $oConsum->returned;
+
+                if ($oConsum->delivered > 0 || $oConsum->consumed > 0) {
+                  $sLots = $sLots.$oConsum->lot.'; ';
+                }
+              }
+          }
+
+          $oRow->dCharged = $dCharged - $dReturned;
+          $oRow->dConsumed = $dConsumed;
+          $oRow->dReturned = $dReturned;
+          $oRow->sLots = $sLots;
+        }
+
         $oCore = new SExplosionCore();
         $lIngredients = $oCore->explode($oProductionOrder, [], session('work_date'), false);
 
         $view = view('mms.orders.printorder', ['oProductionOrder' => $oProductionOrder,
-                                          'lIngredients' => $lIngredients])->render();
+                                          'lIngredients' => $lRows])->render();
         // set ukuran kertas dan orientasi
         $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
         // cetak
@@ -576,7 +624,7 @@ class SProductionOrdersController extends Controller
 
     public function getConsumptions($iProductionOrder)
     {
-        $oResult = SProductionCore::getConsumption($iProductionOrder);// warehouse??
+        $oResult = SProductionCore::getConsumption($iProductionOrder);
 
         return json_encode($oResult);
     }

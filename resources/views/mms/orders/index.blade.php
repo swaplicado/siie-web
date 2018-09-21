@@ -48,6 +48,7 @@
 
   @include('mms.orders.kardex')
   @include('mms.orders.consumptions')
+  @include('mms.orders.orderview')
 
   <div class="row">
     <table id="orders_table" class="table table-striped table-bordered display" cellspacing="0" width="100%">
@@ -99,17 +100,20 @@
                   <?php
                     $oRegistry = $order;
                     $iRegistryId = $order->id_order;
-                    $loptions = [
-                      \Config::get('scsys.OPTIONS.EDIT'),
-                      \Config::get('scsys.OPTIONS.DESTROY'),
-                      \Config::get('scsys.OPTIONS.ACTIVATE'),
-                    ];
+
+                    if ($order->status_id == \Config::get('scmms.PO_STATUS.ST_NEW')) {
+                      $loptions = [
+                        \Config::get('scsys.OPTIONS.EDIT'),
+                        \Config::get('scsys.OPTIONS.DESTROY'),
+                        \Config::get('scsys.OPTIONS.ACTIVATE'),
+                      ];
+                    }
+                    else {
+                      $loptions = [];
+                    }
                   ?>
-                  <a href="{{ route('mms.orders.print', [$order->id_order]) }}"
-                    title="Imprimir" target="_blank"
-                    class="btn btn-default btn-xs">
-                    <span class="glyphicon glyphicon-print" aria-hidden = "true"/>
-                  </a>
+                  @include('mms.orders.printbtn')
+                  @include('mms.orders.seeorder')
                   @include('templates.list.options')
               </td>
               <td>{{ $order->item_code }}</td>
@@ -148,6 +152,8 @@
   @include('mms.orders.jssection')
   <script src="{{ asset('js/mms/orders/SKardexCore.js')}}"></script>
   <script src="{{ asset('js/mms/orders/SGuiKardex.js')}}"></script>
+  <script src="{{ asset('js/mms/orders/SChargesCore.js')}}"></script>
+  <script src="{{ asset('js/mms/orders/SGuiCharges.js')}}"></script>
   <script src="{{ asset('moment/moment.js') }}"></script>
 	<script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
 

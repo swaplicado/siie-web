@@ -201,9 +201,32 @@ class SProductionCore {
         return $oQuery;
     }
 
-    public static function getConsumption($iPO = 0)
+    public static function getConsumption($iPO = 0, $iItemId = 0, $iUnitId = 0)
     {
-        $aResult = array();
+        $oQuery = SProductionCore::getConsumptionsQuery($iPO, $iItemId, $iUnitId);
+
+        $lResult = $oQuery->get();
+        $lToreturn = array();
+
+        foreach ($lResult as $oStock) {
+          $bAddRow = true;
+
+          $bAddRow = ! ($oStock->pallet_id > 1 && $oStock->mpp_pallet_id == null);
+
+          if (! $oStock->is_consumed) {
+            $oStock->to_consume = $oStock->delivered - $oStock->returned - $oStock->consumed;
+
+            if ($oStock->to_consume > 0 && $bAddRow) {
+              array_push($lToreturn, $oStock);
+            }
+          }
+        }
+
+        return $lToreturn;
+    }
+
+    private static function getConsumptionsQuery($iPO, $iItemId = 0, $iUnitId = 0)
+    {
         $oPO = SProductionOrder::find($iPO);
 
         $oItem = $oPO->item;
@@ -250,6 +273,11 @@ class SProductionCore {
                           ->groupBy('ws.item_id')
                           ->groupBy('ws.unit_id');
 
+        if ($iItemId > 0 && $iUnitId > 0) {
+            $oQuery = $oQuery->where('ws.item_id', $iItemId)
+                              ->where('ws.unit_id', $iUnitId);
+        }
+
         switch ($oGender->item_type_id) {
           case \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'):
             $oQuery = $oQuery->where(function ($querytemp) {
@@ -274,24 +302,7 @@ class SProductionCore {
             break;
         }
 
-        $lResult = $oQuery->get();
-        $lToreturn = array();
-
-        foreach ($lResult as $oStock) {
-          $bAddRow = true;
-
-          $bAddRow = ! ($oStock->pallet_id > 1 && $oStock->mpp_pallet_id == null);
-
-          if (! $oStock->is_consumed) {
-            $oStock->to_consume = $oStock->delivered - $oStock->returned - $oStock->consumed;
-
-            if ($oStock->to_consume > 0 && $bAddRow) {
-              array_push($lToreturn, $oStock);
-            }
-          }
-        }
-
-        return $lToreturn;
+        return $oQuery;
     }
 
     public static function processConsumption(Request $request, $lConsumRows = [], $iProductionOrder)
@@ -599,6 +610,7 @@ class SProductionCore {
       *
       * @return boolean success or not
       */
+
     public static function managePoPallet($iMovementType = 0, $iProductionOrder = 0, $lRows = [])
     {
       $bMade = false;

@@ -20,7 +20,7 @@ class SExplosionCore {
    *
    * @param  SProductionPlan-or-SProductionOrder  $oProduction
    * @param  array[SWarehouse]   $lWarehouses [list of warehouses for explosion]
-   * @param  string  $sDate [date of cevaluation]
+   * @param  string  $sDate [date of evaluation]
    * @param  boolean $bExplodeSubs [flag, the subformulas will be exploded too]
    *
    * @return array[Query]
@@ -172,7 +172,7 @@ class SExplosionCore {
    *                       eu.code AS unit_code,
    *                       mfr.id_formula_row
    */
-  private function getRowsFromFormula($iFormula = 0)
+  public function getRowsFromFormula($iFormula = 0)
   {
       $sSelect =  "
                   mfr.quantity,
@@ -192,6 +192,7 @@ class SExplosionCore {
                         ->where('formula_id', $iFormula)
                         ->where('mfr.is_deleted', false)
                         ->select(\DB::raw($sSelect))
+                        ->orderBy('ei.code', 'ASC')
                         ->get();
 
       return $lFormulaRows;

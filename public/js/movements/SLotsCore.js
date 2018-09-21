@@ -134,7 +134,7 @@ class SLotsCore {
       return false;
     }
 
-    if (guiFunctions.getQuantityLot() > guiFunctions.getQuantity()) {
+    if (guiFunctions.getQuantityLot() > utilFunctions.round(guiFunctions.getQuantity(), globalData.DEC_QTY)) {
       swal("Error", "La cantidad del lote no puede ser mayor a la del renglón.", "error");
       return false;
     }
@@ -145,7 +145,7 @@ class SLotsCore {
     }
 
     var auxQty = elementToAdd.dAuxQuantity + guiFunctions.getQuantityLot();
-    if (auxQty > guiFunctions.getQuantity()) {
+    if (utilFunctions.round(auxQty, globalData.DEC_QTY) > utilFunctions.round(guiFunctions.getQuantity(), globalData.DEC_QTY)) {
       swal("Error", "La cantidad a agregar superará a cantidad del renglón.", "error");
       return false;
     }
@@ -179,7 +179,7 @@ class SLotsCore {
           dSum += parseFloat(value.dQuantity, 10);
       }
 
-      if (dSum != guiFunctions.getQuantity()) {
+      if (utilFunctions.round(dSum, globalData.DEC_QTY) != utilFunctions.round(guiFunctions.getQuantity(), globalData.DEC_QTY)) {
           swal("Error", "La suma de cantidades de los lotes debe ser igual " +
           "a la cantidad del renglón.", "error");
           return false;

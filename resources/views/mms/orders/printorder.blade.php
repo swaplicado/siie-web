@@ -4,7 +4,7 @@
     <title>Saporis Comercial SA de CV</title>
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
     <style type='text/css'>
-          body {font-family:calibri;font-size:11pt;padding:0;margin:0;}
+          body {font-family:calibri;font-size:10pt;padding:0;margin:0;}
           a {color: #0000FF}
           a:hover {text-decoration:underline}
           table {border-collapse:collapse;}
@@ -97,7 +97,8 @@
                     <th>{{ '#' }}</th>
                     <th>{{ trans('userinterface.labels.CODE') }}</th>
                     <th>{{ trans('wms.labels.MAT_PROD') }}</th>
-                    <th>{{ trans('userinterface.labels.QUANTITY') }}</th>
+                    <th style="text-align: center;">{{ trans('userinterface.labels.QUANTITY') }}</th>
+                    <th style="text-align: center;">{{ trans('mms.labels.CHARGED') }}</th>
                     <th>{{ trans('wms.labels.UN') }}</th>
                     <th>{{ trans('wms.labels.LOTS') }}</th>
                   </tr>
@@ -109,9 +110,10 @@
                     <td>{{ $index }}</td>
                     <td>{{ $row->item_code }}</td>
                     <td>{{ $row->item }}</td>
-                    <td class="trr">{{ session('utils')->formatNumber(($row->dRequiredQuantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
+                    <td class="trr">{{ session('utils')->formatNumber(($row->dRequired), \Config::get('scsiie.FRMT.QTY')) }}</td>
+                    <td class="trr">{{ session('utils')->formatNumber(($row->dCharged), \Config::get('scsiie.FRMT.QTY')) }}</td>
                     <td>{{ $row->unit_code }}</td>
-                    <td>{{ 'Lotes' }}</td>
+                    <td>{{ $row->sLots }}</td>
                   </tr>
                   <?php $index++ ?>
                 @endforeach

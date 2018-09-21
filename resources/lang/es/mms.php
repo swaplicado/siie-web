@@ -58,6 +58,7 @@ return [
 
       'labels'  => [
                       'CHARGES' => 'Cargas',
+                      'CHARGED' => 'Cargado',
                       'DATE_START' => 'Fecha inicial',
                       'DATE_END' => 'Fecha final',
                       'DELIVERED' => 'Entregado',
@@ -80,6 +81,7 @@ return [
                       'PRODUCTION_PLAN' => 'Plan de producción',
                       'PRODUCTION_ORDER' => 'Orden de producción',
                       'PO' => 'Or. Prod.',
+                      'PO_FATHER' => 'O.P. Padre',
                       'PRODUCTION_ORDER_TYPE' => 'Tipo de orden',
                       'SRC_ITEM' => 'Producto origen',
                       'SRC_PRODUCTION_ORDER' => 'Orden de producción origen',

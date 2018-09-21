@@ -320,6 +320,10 @@ Route::post('manage/changedate',[
         'uses' => 'MMS\SProductionOrdersController@Print',
         'as'   => 'mms.orders.print'
       ]);
+      Route::get('orders/{id}/details', [
+        'uses' => 'MMS\SProductionOrdersController@GetOrderDetail',
+        'as'   => 'mms.orders.details'
+      ]);
 
       /*
       * Explosion of materials

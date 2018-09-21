@@ -24,40 +24,6 @@ class SSessionUtils {
   }
 
   /**
-   * Format the number received
-   * the decimals of number are configured in the
-   * table configuration of company on the database
-   *
-   * @param  string $value the number to be formatted
-   * @param  string $type  can be :
-   *                                \Config::get('scsiie.FRMT.AMT')
-   *                                \Config::get('scsiie.FRMT.QTY')
-   * @return string  the formatted number
-   */
-  public function formatNumber($value = '0', $type = '1')
-  {
-      try {
-        switch ($type) {
-          case \Config::get('scsiie.FRMT.AMT'):
-            $iDecimals = session('decimals_amt');
-            break;
-          case \Config::get('scsiie.FRMT.QTY'):
-            $iDecimals = session('decimals_qty');
-            break;
-
-          default:
-            $iDecimals = 1;
-            break;
-        }
-        return number_format($value, $iDecimals, '.', ',');
-
-      }
-      catch (Exception $e) {
-        return number_format(0, 1, '.', ',');
-      }
-  }
-
-  /**
    * Validate if the current user has the permission to edit
    *
    * @param  int $iPrivilege
@@ -357,6 +323,40 @@ class SSessionUtils {
       }
 
       return str_pad($oFolio, session('long_folios'), "0", STR_PAD_LEFT);
+  }
+
+  /**
+   * Format the number received
+   * the decimals of number are configured in the
+   * table configuration of company on the database
+   *
+   * @param  string $value the number to be formatted
+   * @param  string $type  can be :
+   *                                \Config::get('scsiie.FRMT.AMT')
+   *                                \Config::get('scsiie.FRMT.QTY')
+   * @return string  the formatted number
+   */
+  public function formatNumber($value = '0', $type = '1')
+  {
+      try {
+        switch ($type) {
+          case \Config::get('scsiie.FRMT.AMT'):
+            $iDecimals = session('decimals_amt');
+            break;
+          case \Config::get('scsiie.FRMT.QTY'):
+            $iDecimals = session('decimals_qty');
+            break;
+
+          default:
+            $iDecimals = 1;
+            break;
+        }
+        return number_format($value, $iDecimals, '.', ',');
+
+      }
+      catch (Exception $e) {
+        return number_format(0, 1, '.', ',');
+      }
   }
 
 }
