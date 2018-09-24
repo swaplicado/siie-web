@@ -153,7 +153,7 @@ class SProductionOrdersController extends Controller
 
        foreach ($lRows as $oRow) {
          $oRow->dRequired = $oRow->quantity * $oProductionOrder->charges;
-         $oConsumption = SProductionCore::getConsumption($iPO, $oRow->item_id, $oRow->unit_id);
+         $oConsumption = SProductionCore::getConsumption($iPO, $oRow->item_id, $oRow->unit_id, true);
          $oRow->oConsumtion = $oConsumption;
        }
 

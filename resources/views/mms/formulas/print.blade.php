@@ -94,14 +94,16 @@
               <tbody>
                 <?php $index = 1; ?>
                 @foreach ($oFormula->rows as $row)
-                  <tr>
-                    <td>{{ $index }}</td>
-                    <td>{{ $row->item->code }}</td>
-                    <td>{{ $row->item->name }}</td>
-                    <td class="trr">{{ session('utils')->formatNumber(($row->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
-                    <td>{{ $row->unit->code }}</td>
-                  </tr>
-                  <?php $index++ ?>
+                  @if (! $row->is_deleted)
+                    <tr>
+                      <td>{{ $index }}</td>
+                      <td>{{ $row->item->code }}</td>
+                      <td>{{ $row->item->name }}</td>
+                      <td class="trr">{{ session('utils')->formatNumber(($row->quantity), \Config::get('scsiie.FRMT.QTY')) }}</td>
+                      <td>{{ $row->unit->code }}</td>
+                    </tr>
+                    <?php $index++ ?>
+                  @endif
                 @endforeach
               </tbody>
               <tfoot>

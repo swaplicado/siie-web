@@ -50,12 +50,13 @@ class SImportFormulas {
                   ts_del
                   FROM mfg_bom
                   WHERE lev = 0
-                  AND fid_item_n IS NULL";
+                  AND fid_item_n IS NULL
+                  ORDER BY id_bom ASC";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
-      $lWebFormulas = SFormula::get();
+      $lWebFormulas = SFormula::orderBy('external_id', 'ASC')->get();
       $lFormulas = array();
       $lFormulasToWeb = array();
       $lWebItems = SItem::get();

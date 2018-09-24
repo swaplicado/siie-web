@@ -108,8 +108,7 @@ class SStockUtils
                                 if (sizeof($lSegStock) > 0) {
                                   $dSegregated = $lSegStock[0]->segregated;
                                 }
-
-                                 if (($oStock->stock - $dSegregated) < $oLotRow->quantity) {
+                                 if (bccomp($oLotRow->quantity, ($oStock->stock - $dSegregated), session('decimals_qty')) == 1) {
                                    try {
                                      if ($oRow->pallet_id == 1) {
                                        array_push($aErrors, "No hay suficientes existencias
@@ -159,7 +158,7 @@ class SStockUtils
                            $dSegregated = $lSegStock[0]->segregated;
                          }
 
-                        if (($oStock->stock - $dSegregated) < $oRow->quantity) {
+                        if (bccomp($oRow->quantity, ($oStock->stock - $dSegregated), session('decimals_qty')) == 1) {
                             if ($movRow->pallet_id == 1) {
                               array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
                                                       material/producto ".$movRow->item->name.

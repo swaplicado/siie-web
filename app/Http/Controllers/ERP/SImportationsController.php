@@ -91,19 +91,22 @@ class SImportationsController extends Controller {
       // $Formulas->importFormulas();
       // $FormulaRows = new \App\SImportations\SImportFormulaRows($this->sHost);
       // return $FormulaRows->importFormulaRows();
-      $branch = new SImportBranches($this->sHost);
-      return $branch->importBranches();
+     $branch = new SImportBranches($this->sHost);
+     return $branch->importBranches();
     }
+
     public function importAddresses()
     {
       $address = new SImportAddresses($this->sHost);
       return $address->importAddresses();
     }
+
     public function importDocuments($sDbName, $iYear = '2017')
     {
       $documents = new SImportDocuments($this->sHost, $sDbName);
       return $documents->importDocuments($iYear);
     }
+
     public function importDocumentRows($sDbName, $iYear = '2017')
     {
       $rows = new SImportDocumentRows($this->sHost, $sDbName);

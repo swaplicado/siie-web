@@ -201,7 +201,7 @@ class SProductionCore {
         return $oQuery;
     }
 
-    public static function getConsumption($iPO = 0, $iItemId = 0, $iUnitId = 0)
+    public static function getConsumption($iPO = 0, $iItemId = 0, $iUnitId = 0, $bWithConsum = false)
     {
         $oQuery = SProductionCore::getConsumptionsQuery($iPO, $iItemId, $iUnitId);
 
@@ -213,11 +213,17 @@ class SProductionCore {
 
           $bAddRow = ! ($oStock->pallet_id > 1 && $oStock->mpp_pallet_id == null);
 
-          if (! $oStock->is_consumed) {
+          if ($bWithConsum) {
             $oStock->to_consume = $oStock->delivered - $oStock->returned - $oStock->consumed;
+            array_push($lToreturn, $oStock);
+          }
+          else {
+            if (! $oStock->is_consumed) {
+              $oStock->to_consume = $oStock->delivered - $oStock->returned - $oStock->consumed;
 
-            if ($oStock->to_consume > 0 && $bAddRow) {
-              array_push($lToreturn, $oStock);
+              if ($oStock->to_consume > 0 && $bAddRow) {
+                array_push($lToreturn, $oStock);
+              }
             }
           }
         }
@@ -334,7 +340,7 @@ class SProductionCore {
                     ->get();
 
           if (sizeof($oStockQuery) > 0) {
-            if ($oStockQuery[0]->stock < $oConsumRow->to_consume) {
+            if (bccomp($oConsumRow->to_consume, $oStockQuery[0]->stock, session('decimals_qty')) == 1) {
                if ($oConsumRow->pallet_id > 1) {
                  $oResPoPall = SPoPallet::where('pallet_id', $oConsumRow->pallet_id)
                                            ->where('po_id', $iProductionOrder)
@@ -382,7 +388,7 @@ class SProductionCore {
                         ->get();
 
                if (sizeof($oStockQueryAux) > 0) {
-                  if ($oStockQueryAux[0]->stock >= $oConsumRow->to_consume) {
+                  if ($oStockQueryAux[0]->stock >= $dToConsume) {
                     $oConsumRow->pallet_id = 1;
                   }
                   else {
