@@ -84,9 +84,9 @@
 								$oRegistry = $item;
 								$iRegistryId = $item->id_item;
 								$loptions = [
-									\Config::get('scsys.OPTIONS.EDIT'),
-									\Config::get('scsys.OPTIONS.DESTROY'),
-									\Config::get('scsys.OPTIONS.ACTIVATE'),
+									// \Config::get('scsys.OPTIONS.EDIT'),
+									// \Config::get('scsys.OPTIONS.DESTROY'),
+									// \Config::get('scsys.OPTIONS.ACTIVATE'),
 									// \Config::get('scsys.OPTIONS.COPY'),
 								];
 						?>

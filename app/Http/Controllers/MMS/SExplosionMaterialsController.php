@@ -37,7 +37,9 @@ class SExplosionMaterialsController extends Controller {
     {
       $lPlanes = SProductionPlan::where('is_deleted', false)
                                  ->select('id_production_plan', \DB::raw("CONCAT(folio, '-', production_plan) as plan"))
-                                  ->lists('plan', 'id_production_plan');
+                                 ->orderBy('folio', 'DESC')
+                                 ->orderBy('dt_start', 'DESC')
+                                 ->lists('plan', 'id_production_plan');
 
       $lWarehouses = SWarehouse::where('is_deleted', false)
                                  ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as whs"))

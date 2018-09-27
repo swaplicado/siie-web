@@ -23,7 +23,7 @@
 @section('content')
 	<?php $sRoute='siie.bps' ?>
 	@section('create')
-		@include('templates.form.create')
+		{{-- @include('templates.form.create') --}}
 	@endsection
 	<table class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
@@ -73,12 +73,12 @@
 								$oRegistry = $bpartner;
 								$iRegistryId = $bpartner->id_partner;
 								$loptions = [
-									\Config::get('scsys.OPTIONS.EDIT'),
-									\Config::get('scsys.OPTIONS.DESTROY'),
-									\Config::get('scsys.OPTIONS.ACTIVATE'),
-									\Config::get('scsys.OPTIONS.DUPLICATE'),
-									\Config::get('scsys.OPTIONS.COPY'),
-									\Config::get('scsys.OPTIONS.NEW_BRANCH'),
+									// \Config::get('scsys.OPTIONS.EDIT'),
+									// \Config::get('scsys.OPTIONS.DESTROY'),
+									// \Config::get('scsys.OPTIONS.ACTIVATE'),
+									// \Config::get('scsys.OPTIONS.DUPLICATE'),
+									// \Config::get('scsys.OPTIONS.COPY'),
+									// \Config::get('scsys.OPTIONS.NEW_BRANCH'),
 								];
 						?>
 						@include('templates.list.options')

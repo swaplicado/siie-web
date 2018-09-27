@@ -35,27 +35,27 @@
 		<table id="docTable" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-								<th data-priority="1">Folio</th>
-		            <th data-priority="2">Fecha</th>
+								<th data-priority="1">{{ trans('wms.labels.FOLIO') }}</th>
+		            <th data-priority="2">{{ trans('siie.labels.DATE') }}</th>
 								<th>ID ERP</th>
-								<th data-priority="2">Ref.</th>
-		            <th data-priority="1">Asociado de negocios</th>
-		            <th>RFC</th>
+								<th data-priority="2">{{ trans('wms.labels.REF') }}</th>
+		            <th data-priority="1">{{ trans('siie.labels.BUSINESS_ASSOCIATE') }}</th>
+		            <th>{{ trans('siie.labels.FISCAL_ID') }}</th>
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
-									<th>Cantidad</th>
+									<th>{{ trans('siie.labels.QUANTITY') }}</th>
 			            <th>Cant. procesada</th>
 			            <th>Avance %</th>
-									<th>Ver</th>
+									<th>{{ trans('actions.SEE') }}</th>
 								@else
 									<th>Cve m/p</th>
-									<th>Mat/Prod</th>
-									<th>Cantidad</th>
-									<th>Surtida</th>
+									<th>{{ trans('wms.labels.MAT_PROD') }}</th>
+									<th>{{ trans('siie.labels.QUANTITY') }}</th>
+									<th>{{ trans('siie.labels.SUPPLIED') }}</th>
 									<th>Avance %</th>
-									<th>Un.</th>
+									<th>{{ trans('wms.labels.UN') }}</th>
 								@endif
 								<th>Cerrado</th>
-								<th>Abrir</th>
+								<th>{{ trans('actions.OPEN') }}</th>
 								<th>Status</th>
 		        </tr>
 		    </thead>

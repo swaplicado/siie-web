@@ -66,6 +66,7 @@ class SLocationsController extends Controller
         $lWarehouses = SWarehouse::orderBy('code', 'ASC')
                                   ->select('id_whs', \DB::raw("CONCAT(code, ' - ', name) as whs_name"))
                                   ->where('is_deleted', false)
+                                  ->where('branch_id', session('branch')->id_branch)
                                   ->lists('whs_name', 'id_whs');
 
         return view('wms.locs.createEdit')
@@ -125,6 +126,7 @@ class SLocationsController extends Controller
         $lWarehouses = SWarehouse::orderBy('code', 'ASC')
                                   ->select('id_whs', \DB::raw("CONCAT(code, ' - ', name) as whs_name"))
                                   ->where('is_deleted', false)
+                                  ->where('branch_id', session('branch')->id_branch)
                                   ->lists('whs_name', 'id_whs');
 
         return view('wms.locs.createEdit')
@@ -205,6 +207,7 @@ class SLocationsController extends Controller
 
         $lWarehouses = SWarehouse::orderBy('name', 'ASC')
                                   ->where('is_deleted', false)
+                                  ->where('branch_id', session('branch')->id_branch)
                                   ->lists('name', 'id_whs');
 
         return view('wms.locs.createEdit')->with('location', $locationCopy)

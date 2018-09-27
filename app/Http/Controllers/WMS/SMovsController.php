@@ -833,6 +833,92 @@ class SMovsController extends Controller
           $mvtComp = SMvtInternalType::where('id_mvt_internal_type', $iMvtSubType)->lists('name', 'id_mvt_internal_type');
           break;
 
+        case \Config::get('scwms.MVT_OUT_DLVRY_RM'):
+        case \Config::get('scwms.MVT_OUT_RTRN_RM'):
+        case \Config::get('scwms.MVT_OUT_ASSIGN_PP'):
+          $lSrcPO = SProductionOrder::where('mms_production_orders.is_deleted', false)
+                      ->where('id_order', $oMovement->prod_ord_id)
+                      ->selectRaw('(CONCAT(LPAD(folio, '.
+                            session('long_folios').', "0"),
+                                "-", identifier)) as prod_ord,
+                                id_order')
+                      ->orderBy('folio', 'DESC');
+
+          if ($sTitle == trans('mms.DELIVERY_PM')
+              || $sTitle == trans('mms.RETURN_PACKING_MATERIAL')) {
+
+            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PACK');
+            $iAssType = \Config::get('scmms.ASSIGN_TYPE.PACK');
+          }
+          else if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_OUT_ASSIGN_PP')) {
+            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PRO');
+            $iAssType = \Config::get('scmms.ASSIGN_TYPE.PP');
+
+            // $lSrcPO = $lSrcPO->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
+          }
+          else {
+            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_MAT');
+            $iAssType = \Config::get('scmms.ASSIGN_TYPE.MP');
+
+            // $lSrcPO = $lSrcPO->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.BASE_PRODUCT'));
+          }
+
+          $lSrcPO = $lSrcPO->lists('prod_ord', 'id_order');
+
+          $mvtComp = SMvtMfgType::where('is_deleted', false)
+                                ->where('id_mvt_mfg_type', $iMvtSubType)
+                                ->lists('name', 'id_mvt_mfg_type');
+
+          $lDesPO = [];
+
+          $iSrcPO = $oMovement->prod_ord_id;
+          $iDesPO = 0;
+
+          break;
+
+        case \Config::get('scwms.MVT_IN_DLVRY_PP'):
+          $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PRO');
+          $mvtComp = SMvtMfgType::where('is_deleted', false)
+                                ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_PRO'))
+                                ->lists('name', 'id_mvt_mfg_type');
+
+          $lSrcPO = SProductionOrder::where('id_order', $oMovement->prod_ord_id)
+                                ->selectRaw('(CONCAT(LPAD(folio, '.
+                                      session('long_folios').', "0"),
+                                          "-", identifier)) as prod_ord,
+                                          id_order')
+                                ->orderBy('folio', 'DESC')
+                                ->lists('prod_ord', 'id_order');
+          $lDesPO = [];
+
+          $iSrcPO = $oMovement->prod_ord_id;
+          $iDesPO = 0;
+
+          $iAssType = \Config::get('scmms.ASSIGN_TYPE.PP');
+
+          break;
+
+        case \Config::get('scwms.MVT_IN_DLVRY_FP'):
+          $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_FP');
+          $mvtComp = SMvtMfgType::where('is_deleted', false)
+                                ->where('id_mvt_mfg_type', \Config::get('scwms.MVT_MFG_TP_FP'))
+                                ->lists('name', 'id_mvt_mfg_type');
+
+          $lSrcPO = SProductionOrder::where('id_order', $oMovement->prod_ord_id)
+                              ->selectRaw('(CONCAT(LPAD(folio, '.
+                                    session('long_folios').', "0"),
+                                        "-", identifier)) as prod_ord,
+                                        id_order')
+                              ->lists('prod_ord', 'id_order');
+          $lDesPO = [];
+
+          $iSrcPO = $oMovement->prod_ord_id;
+          $iDesPO = 0;
+
+          $iAssType = \Config::get('scmms.ASSIGN_TYPE.FP');
+
+          break;
+
         default:
           # code...
           break;
@@ -863,10 +949,10 @@ class SMovsController extends Controller
                         ->with('lStock', $lStock)
                         ->with('bIsExternalTransfer', false)
                         ->with('dPerSupp', $oDbPerSupply->val_decimal)
-                        ->with('lSrcPO', [])
-                        ->with('lDesPO', [])
-                        ->with('iSrcPO', 0)
-                        ->with('iDesPO', 0)
+                        ->with('lSrcPO', $lSrcPO)
+                        ->with('lDesPO', $lDesPO)
+                        ->with('iSrcPO', $iSrcPO)
+                        ->with('iDesPO', $iDesPO)
                         ->with('iAssType', $iAssType)
                         ->with('bCanCreateLotMat', $oCanCreateLotMat->val_boolean)
                         ->with('sTitle', 'Modificación')
@@ -905,6 +991,9 @@ class SMovsController extends Controller
           $iWhsDes = $oMovement->whs_id;
        }
 
+       $oMovement->aAuxPOs[SMovement::SRC_PO] = $oMovementJs->iPOSrc;
+       $oMovement->aAuxPOs[SMovement::DES_PO] = $oMovementJs->iPODes;
+       $oMovement->aAuxPOs[SMovement::ASS_TYPE] = $oMovementJs->iAuxAssigType;
 
        $aResult = $oProcess->processTheMovement(\Config::get('scwms.OPERATION_TYPE.EDITION'),
                                                    $oMovement, $movementRows,

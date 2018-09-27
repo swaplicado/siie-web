@@ -8,6 +8,7 @@ use App\SCore\SStockManagment;
 use App\ERP\SYear;
 use App\MMS\SProductionPlan;
 use App\MMS\SProductionOrder;
+use App\MMS\Formulas\SFormula;
 
 /**
  *
@@ -110,8 +111,19 @@ class SExplosionCore {
                                                 $iCharges = 0, $bExplodeSubs = false)
   {
       $lRecipes = array();
+      $oFormula = null;
+      if (sizeof($lFormulaRows) > 0) {
+        $oFormula = SFormula::find($lFormulaRows[0]->formula_id);
+      }
+      else {
+         return array();
+      }
       foreach ($lFormulaRows as $oRow) {
-         if ($oRow->item_recipe_id > 1 && $bExplodeSubs) {
+         if ($oRow->item_recipe_id > 1
+              && $bExplodeSubs
+                && $oFormula->recipe != $oRow->item_recipe_id
+                  && $oRow->item_class_id == \Config::get('scsiie.ITEM_CLS.PRODUCT')
+                  ) {
              array_push($lRecipes, $oRow->item_recipe_id);
          }
          else {
@@ -182,13 +194,17 @@ class SExplosionCore {
                   ei.code AS item_code,
                   ei.name AS item,
                   eu.code AS unit_code,
-                  mfr.id_formula_row
+                  mfr.id_formula_row,
+                  mfr.formula_id,
+                  eig.item_type_id,
+                  eig.item_class_id
                   ";
 
       $lFormulaRows = \DB::connection(session('db_configuration')->getConnCompany())
                         ->table('mms_formula_rows as mfr')
                         ->join('erpu_items as ei', 'mfr.item_id', '=', 'ei.id_item')
                         ->join('erpu_units as eu', 'mfr.unit_id', '=', 'eu.id_unit')
+                        ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
                         ->where('formula_id', $iFormula)
                         ->where('mfr.is_deleted', false)
                         ->select(\DB::raw($sSelect))

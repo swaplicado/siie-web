@@ -122,12 +122,12 @@
         <button type="button" id='btnAdd' class="btn btn-success"
                     data-toggle="modal" {{ isset($oFormula->id_formula) ? '' : 'disabled' }}
                     onclick="cleanModal()"
-                    data-target="#modalIngredient">Agregar ingrediente</button>
+                    data-target="#modalIngredient">{{ trans('mms.labels.ADD_INGREDIENT') }}</button>
         <button type="button" id='btnEdit' class="btn btn-info"
                     data-toggle="modal"
                     onclick="setIngredient()"
-                    data-target="#modalIngredient">Modificar ingrediente</button>
-        <button type="button" id='btnDel' class="btn btn-danger">Borrar ingrediente</button>
+                    data-target="#modalIngredient">{{ trans('mms.labels.EDIT_INGREDIENT') }}</button>
+        <button type="button" id='btnDel' class="btn btn-danger">{{ trans('mms.labels.ERASE_INGREDIENT') }}</button>
         {{-- <button type="button" id='btnNote' data-toggle="modal"
                 class="btn btn-primary"
                 data-target="#modalNote">Notas</button> --}}
@@ -141,14 +141,14 @@
 						<tr class="titlerow">
 								<th>idRow</th>
 								<th>idFormulaRow</th>
-								<th data-priority="1" style="text-align: center;">Clave</th>
-								<th data-priority="1">Material/Producto</th>
-								<th data-priority="1" style="text-align: center;">Cantidad</th>
-								<th data-priority="1" style="text-align: center;">Un.</th>
-                <th data-priority="1" style="text-align: center;">Masa</th>
+								<th data-priority="1" style="text-align: center;">{{ trans('siie.labels.KEY') }}</th>
+								<th data-priority="1">{{ trans('wms.labels.MAT_PROD') }}</th>
+								<th data-priority="1" style="text-align: center;">{{ trans('siie.labels.QUANTITY') }}</th>
+								<th data-priority="1" style="text-align: center;">{{ trans('wms.labels.UN') }}</th>
+                <th data-priority="1" style="text-align: center;">{{ trans('siie.labels.MASS') }}</th>
 								<th data-priority="1" style="text-align: right;">%</th>
-                <th data-priority="1">Tipo</th>
-                <th data-priority="1">Fórmula</th>
+                <th data-priority="1">{{ trans('mms.labels.PRODUCTION_ORDER_TYPE') }}</th>
+                <th data-priority="1">{{ trans('mms.labels.FORMULA') }}</th>
 						</tr>
 				</thead>
 				<tbody>
@@ -183,7 +183,7 @@
           <tr>
             <th></th>
             <th></th>
-            <th>{{ 'TOTALES' }}</th>
+            <th>{{ trans('siie.labels.TOTALS') }}</th>
             <th></th>
             <th></th>
             <th></th>

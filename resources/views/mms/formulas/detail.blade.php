@@ -39,18 +39,18 @@
     <table id="formulas_detail_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
-                <th data-priority="1" style="text-align: center;">Cód. Ing</th>
-                <th>Ingrediente</th>
-                <th data-priority="1" style="text-align: center;">Cantidad</th>
-                <th data-priority="1" style="text-align: center;">Un</th>
-                <th data-priority="1">Ident. Formula</th>
+                <th data-priority="1" style="text-align: center;">{{ trans('siie.labels.CODE') }}</th>
+                <th>{{ trans('mms.labels.INGREDIENT') }}</th>
+                <th data-priority="1" style="text-align: center;">{{ trans('siie.labels.QUANTITY') }}</th>
+                <th data-priority="1" style="text-align: center;">{{ trans('wms.labels.UN') }}</th>
+                <th data-priority="1">{{ trans('mms.labels.ID_FORMULA') }}</th>
                 <th data-priority="1" style="text-align: center;">V.</th>
-                <th style="text-align: center;">Fecha</th>
-                <th data-priority="1" style="text-align: center;">Código</th>
-                <th>Item fórmula</th>
-                <th data-priority="1" style="text-align: center;">Un</th>
-                <th style="text-align: center;">Est.</th>
-                <th style="text-align: center;">Opciones</th>
+                <th style="text-align: center;">{{ trans('siie.labels.DATE') }}</th>
+                <th data-priority="1" style="text-align: center;">{{ trans('siie.labels.KEY') }}</th>
+                <th>{{ trans('mms.labels.MAT_PROD_FORM') }}</th>
+                <th data-priority="1" style="text-align: center;">{{ trans('wms.labels.UN') }}</th>
+                <th style="text-align: center;">{{ trans('siie.labels.STATUS') }}</th>
+                <th style="text-align: center;">{{ trans('siie.labels.OPTIONS') }}</th>
             </tr>
         </thead>
         <tbody>

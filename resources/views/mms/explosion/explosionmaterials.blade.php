@@ -77,15 +77,15 @@
         <table id="explosion_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
             <thead>
                 <tr class="titlerow">
-                    <th data-priority="1" style="text-align: center;">Clave</th>
-                    <th>Insumo</th>
-                    <th>Un.</th>
-                    <th>Necesidad</th>
-                    <th>Disponible</th>
-                    <th>Existencia</th>
-                    <th>Segregado</th>
-                    <th>Backorder</th>
-                    <th>Proveedores</th>
+                    <th data-priority="1" style="text-align: center;">{{ trans('siie.labels.KEY') }}</th>
+                    <th>{{ trans('mms.labels.SUPPLIES') }}</th>
+                    <th>{{ trans('wms.labels.UN') }}</th>
+                    <th>{{ trans('mms.labels.NEED') }}</th>
+                    <th>{{ trans('wms.labels.AVAILABLE') }}</th>
+                    <th>{{ trans('wms.labels.STOCK') }}</th>
+                    <th>{{ trans('wms.labels.SEGREGATED') }}</th>
+                    <th>{{ trans('wms.labels.BACKORDER') }}</th>
+                    <th>{{ trans('wms.labels.PROVIDER') }}</th>
                 </tr>
             </thead>
             <tbody>

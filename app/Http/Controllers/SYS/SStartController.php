@@ -248,6 +248,8 @@ class SStartController extends Controller
                         ->first();
         session(['work_year' => $oYear->id_year]);
 
+        session('utils')->setUserPermissions();
+
         return SStartController::branchwhs();
     }
 
@@ -256,6 +258,8 @@ class SStartController extends Controller
      */
     public function selectModule()
     {
+        session('utils')->setUserPermissions();
+
         return view('start.modules');
     }
 }

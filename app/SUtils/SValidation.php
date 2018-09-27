@@ -96,13 +96,20 @@ class SValidation {
              return true;
          }
 
-         foreach (\Auth::user()->userPermission as $oUserPermission)
-         {
-           if ($oUserPermission->permission->code == $sPermissionCode)
-           {
-               return true;
-           }
+         foreach (session('usr_permissions') as $oUserPermission) {
+             if ($oUserPermission->thePermission->code == $sPermissionCode)
+             {
+                 return $oUserPermission;
+             }
          }
+
+         // foreach (\Auth::user()->userPermission as $oUserPermission)
+         // {
+         //   if ($oUserPermission->permission->code == $sPermissionCode)
+         //   {
+         //       return true;
+         //   }
+         // }
        }
 
        return false;
@@ -124,16 +131,26 @@ class SValidation {
              return true;
          }
 
-         foreach (\Auth::user()->userPermission as $oUserPermission)
-         {
+         foreach (session('usr_permissions') as $oUserPermission) {
            if ($oUserPermission->permission_type_id == $iPermissionType)
            {
-             if ($oUserPermission->permission->code == $iPermissionCode)
+             if ($oUserPermission->thePermission->code == $iPermissionCode)
              {
-                 return true;
+                 return $oUserPermission;
              }
            }
          }
+
+         // foreach (\Auth::user()->userPermission as $oUserPermission)
+         // {
+         //   if ($oUserPermission->permission_type_id == $iPermissionType)
+         //   {
+         //     if ($oUserPermission->permission->code == $iPermissionCode)
+         //     {
+         //         return true;
+         //     }
+         //   }
+         // }
        }
 
        return false;

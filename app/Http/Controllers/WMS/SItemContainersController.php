@@ -78,12 +78,11 @@ class SItemContainersController extends Controller
         $lItemTypes = SItemType::where('is_deleted', false)->orderBy('name', 'ASC')->get();
         $lItemClass = SItemClass::where('is_deleted', false)->orderBy('name', 'ASC')->get();
 
-        $lBranches = SBranch::where('is_deleted', false)
-                                ->where('partner_id', session('partner')->id_partner)
-                                ->orderBy('name', 'ASC')
-                                ->lists('name', 'id_branch');
+        $lBranches = session('utils')->getUserBranchesArrayWithName(\Auth::user()->id, session('partner')->id_partner, true);
+
         $lWarehouses = SWarehouse::where('is_deleted', false)
                                 ->get();
+
         $lLocations = SLocation::where('is_deleted', false)->get();
 
         return view('wms.itemcontainers.createEdit')
@@ -207,10 +206,8 @@ class SItemContainersController extends Controller
         $lItemTypes = SItemType::where('is_deleted', false)->orderBy('name', 'ASC')->get();
         $lItemClass = SItemClass::where('is_deleted', false)->orderBy('name', 'ASC')->get();
 
-        $lBranches = SBranch::where('is_deleted', false)
-                             ->where('partner_id', session('partner')->id_partner)
-                             ->orderBy('name', 'ASC')
-                             ->lists('name', 'id_branch');
+        $lBranches = session('utils')->getUserBranchesArrayWithName(\Auth::user()->id, session('partner')->id_partner, true);
+
         $lWarehouses = SWarehouse::where('is_deleted', false)->get();
         $lLocations = SLocation::where('is_deleted', false)->get();
 

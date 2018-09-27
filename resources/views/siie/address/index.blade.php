@@ -15,7 +15,7 @@
 	<?php $sRoute="siie.address"?>
 
 	@section('create')
-		@include('templates.form.create')
+		{{-- @include('templates.form.create') --}}
 	@endsection
 	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
@@ -53,9 +53,9 @@
 								$oRegistry = $domicile;
 								$iRegistryId = $domicile->id_branch_address;
 								$loptions = [
-									\Config::get('scsys.OPTIONS.EDIT'),
-									\Config::get('scsys.OPTIONS.DESTROY'),
-									\Config::get('scsys.OPTIONS.ACTIVATE'),
+									// \Config::get('scsys.OPTIONS.EDIT'),
+									// \Config::get('scsys.OPTIONS.DESTROY'),
+									// \Config::get('scsys.OPTIONS.ACTIVATE'),
 								];
 						?>
 						@include('templates.list.options')

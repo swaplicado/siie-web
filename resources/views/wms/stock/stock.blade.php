@@ -46,34 +46,34 @@
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_GENERAL'))
-									<th data-priority="1">Tarima</th>
+									<th data-priority="1">{{ trans('wms.labels.PALLET') }}</th>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_GENERAL'))
-		            	<th data-priority="1">Lote</th>
-		            	<th data-priority="1">Vencimiento</th>
+		            	<th data-priority="1">{{ trans('wms.labels.LOT') }}</th>
+		            	<th data-priority="1">{{ trans('wms.labels.EXPIRATION') }}</th>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOCATION') ||
 								$iStockType == \Config::get('scwms.STOCK_TYPE.STK_GENERAL'))
-			            <th data-priority="1">Ubicación</th>
+			            <th data-priority="1">{{ trans('wms.labels.LOCATION') }}</th>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
 								 			$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
 												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
 												$iStockType == \Config::get('scwms.STOCK_TYPE.STK_GENERAL'))
-			            <th data-priority="1">Almacén</th>
+			            <th data-priority="1">{{ trans('wms.labels.WAREHOUSE') }}</th>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_BRANCH'))
-			            <th data-priority="1">Sucursal</th>
+			            <th data-priority="1">{{ trans('wms.labels.BRANCH') }}</th>
 								@endif
-								<th data-priority="1" style="color: green;">Disponible</th>
-								<th data-priority="1" style="color: blue;">Existencia</th>
-		            <th data-priority="2">Entradas</th>
-		            <th data-priority="2">Salidas</th>
-		            <th data-priority="1" style="color: red;">Segregado</th>
-								<th data-priority="1">Un.</th>
+								<th data-priority="1" style="color: green;">{{ trans('wms.labels.AVAILABLE') }}</th>
+								<th data-priority="1" style="color: blue;">{{ trans('wms.labels.STOCK') }}</th>
+		            <th data-priority="2">{{ trans('wms.labels.INPUTS') }}</th>
+		            <th data-priority="2">{{ trans('wms.labels.OUTPUTS') }}</th>
+		            <th data-priority="1" style="color: red;">{{ trans('wms.labels.SEGREGATED') }}</th>
+								<th data-priority="1">{{ trans('wms.labels.UN') }}</th>
 								<th data-priority="1">--</th>
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_WAREHOUSE') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||

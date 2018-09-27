@@ -49,7 +49,10 @@ class SItemsController extends Controller
             $iClassId = (session()->has('classIdAux') ? session('classIdAux') : 1);
         }
         session(['classIdAux' => $iClassId]);
-        $lGenders = SItemGender::where('item_class_id', $iClassId)->where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_gender');
+        $lGenders = SItemGender::where('item_class_id', $iClassId)
+                                ->where('is_deleted', false)
+                                ->orderBy('name', 'ASC')
+                                ->lists('name', 'id_item_gender');
         $lGenders[\Config::get('scsiie.FILTER_GENDER.ALL')] = 'Todos';
         // array_push($lGenders,'TODOS');
 
@@ -57,7 +60,8 @@ class SItemsController extends Controller
         $this->iFilterBulk = $request->filterBulk == null ? \Config::get('scsiie.FILTER_BULK.ALL') : $request->filterBulk;
         $this->iFilterLot = $request->filterLot == null ? \Config::get('scsiie.FILTER_LOT.ALL') : $request->filterLot;
         $this->iFilterGender = $request->filterGender == null ? \Config::get('scsiie.FILTER_GENDER.ALL') : $request->filterGender;
-        $lItems = SItem::Search($request->name, $this->iFilter, $this->iFilterLot, $this->iFilterBulk, $this->iFilterGender, $iClassId)->orderBy('name', 'ASC')->paginate(50);
+        $lItems = SItem::Search($request->name, $this->iFilter, $this->iFilterLot, $this->iFilterBulk, $this->iFilterGender, $iClassId)
+                        ->orderBy('code', 'ASC')->paginate(50);
 
         $sTitle = '';
 

@@ -50,6 +50,7 @@
 								<th data-priority="1">Doc</th>
 								<th>Clase</th>
 								<th>Cat</th>
+								<th>O.P.</th>
 		            <th>Opciones</th>
 		            <th data-priority="2">Creación</th>
 		            <th data-priority="2">Usuario</th>
@@ -97,6 +98,11 @@
 								@else
 									<td>N/A</td>
 									<td>N/A</td>
+									<td>N/A</td>
+								@endif
+								@if ($mov->prod_ord_id > 1)
+									<td>{{ session('utils')->formatFolio($mov->prod_ord_folio) }}</td>
+								@else
 									<td>N/A</td>
 								@endif
 								<td>

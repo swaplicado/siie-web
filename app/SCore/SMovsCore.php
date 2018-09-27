@@ -56,10 +56,12 @@ class SMovsCore {
                 ed_cn.service_num AS ser_num_cn,
                 ed_cn.dt_date AS dt_cn,
                 ed_cn.doc_category_id AS cn_category_id,
+                epo.folio AS prod_ord_folio,
                 wm.doc_order_id,
                 wm.doc_invoice_id,
                 wm.doc_credit_note_id,
                 wm.doc_debit_note_id,
+                wm.prod_ord_id,
                 wm.is_deleted,
                 wm.created_at,
                 wm.updated_at,
@@ -81,6 +83,7 @@ class SMovsCore {
                        ->join('erpu_documents as ed_ord', 'wm.doc_order_id', '=', 'ed_ord.id_document')
                        ->join('erpu_documents as ed_inv', 'wm.doc_invoice_id', '=', 'ed_inv.id_document')
                        ->join('erpu_documents as ed_cn', 'wm.doc_credit_note_id', '=', 'ed_cn.id_document')
+                       ->join('mms_production_orders as epo', 'wm.prod_ord_id', '=', 'epo.id_order')
                        ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uc', 'wm.created_by_id', '=', 'uc.id')
                        ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'wm.updated_by_id', '=', 'uu.id');
 

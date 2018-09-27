@@ -97,6 +97,11 @@
       oMovement.iIdMovement = <?php echo json_encode($oMovement->id_mvt) ?>;
   }
 
+  var iPo = <?php echo json_encode($oMovement->prod_ord_id) ?>;
+  if (iPo > 1) {
+      oMovement.iPOSrc = iPo;
+  }
+
   if (localStorage.getItem('movement') !== null) {
     var errors = <?php echo json_encode($errors->all()) ?>;
     console.log(errors);

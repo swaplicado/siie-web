@@ -14,7 +14,7 @@
 
 	<?php $sRoute='siie.branches' ?>
 	@section('create')
-		@include('templates.form.create')
+		{{-- @include('templates.form.create') --}}
 	@endsection
 	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
@@ -50,10 +50,10 @@
 								$oRegistry = $branch;
 								$iRegistryId = $branch->id_branch;
 								$loptions = [
-									\Config::get('scsys.OPTIONS.EDIT'),
-									\Config::get('scsys.OPTIONS.DESTROY'),
-									\Config::get('scsys.OPTIONS.ACTIVATE'),
-									\Config::get('scsys.OPTIONS.ADDRESS'),
+									// \Config::get('scsys.OPTIONS.EDIT'),
+									// \Config::get('scsys.OPTIONS.DESTROY'),
+									// \Config::get('scsys.OPTIONS.ACTIVATE'),
+									// \Config::get('scsys.OPTIONS.ADDRESS'),
 								];
 						?>
 						@include('templates.list.options')

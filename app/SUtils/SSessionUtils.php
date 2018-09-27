@@ -277,7 +277,7 @@ class SSessionUtils {
 
      $branchess = array();
      if (session('utils')->isSuperUser($oUser)) {
-        $branches = SBranch::selectRaw('CONCAT(code, '-', name) as branch_w_code,
+        $branches = SBranch::selectRaw('CONCAT(code, ' - ', name) as branch_w_code,
                                         name,
                                         code,
                                         id_branch')
@@ -301,7 +301,7 @@ class SSessionUtils {
 
      foreach ($branchAccess as $access) {
         if (! $access->branch->is_deleted) {
-            $branchess[$access->branch_id] = ($bWithCode ? $access->branch->code.'-' : '').$access->branch->name;
+            $branchess[$access->branch_id] = ($bWithCode ? $access->branch->code.' - ' : '').$access->branch->name;
         }
      }
 
@@ -357,6 +357,19 @@ class SSessionUtils {
       catch (Exception $e) {
         return number_format(0, 1, '.', ',');
       }
+  }
+
+  /**
+   * set or refresh the permissions of user to session.
+   */
+  public function setUserPermissions() {
+    $UsrPerm = \Auth::user()->userPermission;
+
+    foreach ($UsrPerm as $up) {
+       $up->thePermission = $up->permission;
+    }
+
+    session(['usr_permissions' => $UsrPerm]);
   }
 
 }

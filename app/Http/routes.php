@@ -573,6 +573,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SMovsController@getProductionData',
         'as' => 'wms.movs.create.productiondata'
       ]);
+      Route::get('/movs/{id}/edit/productiondata', [
+        'uses' => 'WMS\SMovsController@getProductionData',
+        'as' => 'wms.movs.edit.productiondata'
+      ]);
 
       /*
       * Stock

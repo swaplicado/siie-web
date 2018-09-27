@@ -38,13 +38,19 @@ class SUtil {
             return $userPermission;
         }
 
-        foreach (\Auth::user()->userPermission as $oUserPermission)
-        {
-            if ($oUserPermission->permission->code == $sPermissionCode)
+        foreach (session('usr_permissions') as $oUserPermission) {
+            if ($oUserPermission->thePermission->code == $sPermissionCode)
             {
                 return $oUserPermission;
             }
         }
+        // foreach (\Auth::user()->userPermission as $oUserPermission)
+        // {
+        //     if ($oUserPermission->permission->code == $sPermissionCode)
+        //     {
+        //         return $oUserPermission;
+        //     }
+        // }
       }
 
       return NULL;

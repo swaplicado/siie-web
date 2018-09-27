@@ -192,7 +192,7 @@ class SProductionOrdersController extends Controller
                                             "-", production_plan)) as plan,
                                             id_production_plan')
                               ->where('is_deleted', false)
-                              ->orderBy('id_production_plan', 'ASC')
+                              ->orderBy('dt_start', 'DESC')
                               ->lists('plan','id_production_plan');
 
         $father = SProductionOrder::orderBy('folio', 'DESC')
@@ -418,6 +418,7 @@ class SProductionOrdersController extends Controller
     public function findFormulas(Request $request) {
       $data= SFormula::selectRaw('id_formula, CONCAT(identifier, "-v", version) AS identifier')
                       ->where('item_id', $request->id)
+                      ->where('is_deleted', false)
                       ->orderBy('recipe', 'ASC')
                       ->orderBy('version', 'ASC')
                       ->get();
