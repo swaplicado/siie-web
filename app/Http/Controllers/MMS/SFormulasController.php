@@ -140,11 +140,22 @@ class SFormulasController extends Controller {
            default:
          }
 
+         if ($request->name != null) {
+            $Formulas = $Formulas->where(function ($query) use ($request) {
+                                      $query->where('identifier', 'like', '%'.$request->name.'%')
+                                            ->orWhere('ei.code', 'like', '%'.$request->name.'%')
+                                            ->orWhere('ei.name', 'like', '%'.$request->name.'%')
+                                            ->orWhere('ei_row.code', 'like', '%'.$request->name.'%')
+                                            ->orWhere('ei_row.name', 'like', '%'.$request->name.'%');
+                                  });
+         }
+
          $Formulas = $Formulas->select(\DB::raw($sSelect))
                                 ->where('mfr.is_deleted', false)
+                                ->orderBy('item_code_row', 'ASC')
                                 ->groupBy('mfr.id_formula_row');
 
-         $Formulas = $Formulas->get();
+         $Formulas = $Formulas->paginate(50);
 
          return view('mms.formulas.detail')
                  ->with('formulas', $Formulas)

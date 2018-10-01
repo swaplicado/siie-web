@@ -125,6 +125,7 @@ return [
                       'SOURCE_BRANCH' => 'Sucursal origen',
                       'STOCK' => 'Existencia',
                       'STOCKS' => 'Existencias',
+                      'SUBTYPE' => 'Sub tipo',
                       'SUPPLIED' => 'Surtido',
                       'TO_CONSUME' => 'A consumir',
                       'UNIT' => 'Unidad',

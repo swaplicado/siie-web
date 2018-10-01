@@ -48,15 +48,16 @@
 								<th data-priority="1">{{ trans('userinterface.labels.DATE') }}</th>
 		            <th data-priority="1">{{ trans('userinterface.labels.CODE') }}</th>
 		            <th data-priority="1">{{ trans('wms.labels.MAT_PROD') }}</th>
-								<th data-priority="1">Entradas</th>
-								<th data-priority="1">Salidas</th>
-								<th data-priority="1">Unidad</th>
-		            <th>Sucursal</th>
-		            <th>Almacén</th>
-		            <th>Tipo movimiento</th>
-		            <th>Tipo</th>
-								<th>Ord. Prod.</th>
+								<th data-priority="1">{{ trans('wms.labels.INPUTS') }}</th>
+								<th data-priority="1">{{ trans('wms.labels.OUTPUTS') }}</th>
+								<th data-priority="1">{{ trans('wms.labels.UN') }}</th>
+		            <th>{{ trans('wms.labels.BRANCH') }}</th>
+		            <th>{{ trans('wms.labels.WAREHOUSE') }}</th>
+		            <th>{{ trans('wms.labels.MVT_TYPE') }}</th>
+		            <th>{{ trans('wms.labels.SUBTYPE') }}</th>
+		            <th>{{ trans('mms.labels.PO') }}</th>
 								<th>{{ trans('siie.labels.CREATED') }}</th>
+								<th>{{ trans('siie.labels.CREATED_BY') }}</th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -78,8 +79,8 @@
 								<td>{{ $row->branch }}</td>
 								<td>{{ $row->warehouse }}</td>
 								<td>{{ $row->movement }}</td>
-								@if($row->mvt_exp_type_id > 1)
-									<td>{{ $row->exp_name }}</td>
+								@if($row->mvt_mfg_type_id > 1)
+									<td>{{ $row->mfg_name }}</td>
 								@else
 									<td>N/A</td>
 								@endif
@@ -89,6 +90,7 @@
 									<td>{{ 'OP-'.session('utils')->formatFolio($row->po_folio) }}</td>
 								@endif
 								<td>{{ $row->created_at }}</td>
+								<td>{{ $row->username_creation }}</td>
 		        </tr>
 					@endforeach
 		    </tbody>

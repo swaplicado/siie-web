@@ -21,6 +21,9 @@
       'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
       <div class="form-group">
         <div class="input-group">
+          {!! Form::text('name', null, ['class' => 'form-control',
+                                        'placeholder' => trans('userinterface.placeholders.SEARCH'),
+                                        'aria-describedby' => 'search']) !!}
           @include('templates.list.search')
           <span class="input-group-btn">
             <button id="searchbtn" type="submit" class="form-control">
@@ -36,7 +39,9 @@
     @include('templates.form.create')
   @endsection
   <div class="row">
-    <table id="formulas_detail_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+    <table
+    {{-- id="formulas_detail_table"  --}}
+    class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
                 <th data-priority="1" style="text-align: center;">{{ trans('siie.labels.CODE') }}</th>
@@ -94,6 +99,7 @@
           @endforeach
         </tbody>
     </table>
+    {!! $formulas->render() !!}
   </div>
 @endsection
 

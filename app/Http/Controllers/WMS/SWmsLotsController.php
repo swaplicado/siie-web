@@ -79,7 +79,12 @@ class SWmsLotsController extends Controller
      }
 
      $lLots = $lLots->select(\DB::raw($sSelect))
-                   ->where('lot', 'LIKE', "%".$request->name."%")
+                   ->where(function ($query) use ($request) {
+                        $query->where('lot', 'LIKE', "%".$request->name."%")
+                              ->orWhere('dt_expiry', 'LIKE', "%".$request->name."%")
+                              ->orWhere('ei.code', 'LIKE', "%".$request->name."%")
+                              ->orWhere('ei.name', 'LIKE', "%".$request->name."%");
+                    })
                    ->get();
 
       return view('wms.lots.index')

@@ -71,6 +71,7 @@ return [
                   'COMMENTS' => 'Comentarios',
                   'CONCEPT' => 'Concepto',
                   'CREATED' => 'Creado',
+                  'CREATED_BY' => 'Creado por',
                   'CREDIT_NOTE' => 'Nota crédito',
                   'CREDITS' => 'Cargos',
                   'C_N' => 'N.C.',
