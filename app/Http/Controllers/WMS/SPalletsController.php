@@ -92,28 +92,34 @@ class SPalletsController extends Controller
         $listId="";
         $arrayPallets=array();
 
-        for($i=0;$i<$request->quantity;$i++){
+        for($i=0; $i < $request->quantity; $i++) {
+          $pallets = new SPallet($request->all());
+          $iLastId =  \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('wms_pallets')
+                            ->select(\DB::raw("(select max(id_pallet) from wms_pallets) AS id_max"))
+                            ->take(1)
+                            ->get();
 
-        $pallets = new SPallet($request->all());
-        $iLastId =  \DB::connection(session('db_configuration')->getConnCompany())
-                          ->table('wms_pallets')
-                          ->select(\DB::raw("(select max(id_pallet) from wms_pallets) AS id_max"))
-                          ->take(1)
-                          ->get();
+          $pallets->pallet = ($iLastId[0]->id_max) + 1;
+          $pallets->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+          $pallets->unit_id = $pallets->item->unit_id;
+          $pallets->updated_by_id = \Auth::user()->id;
+          $pallets->created_by_id = \Auth::user()->id;
 
-        $pallets->pallet = ($iLastId[0]->id_max) + 1;
-        $pallets->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-        $pallets->unit_id = $pallets->item->unit_id;
-        $pallets->updated_by_id = \Auth::user()->id;
-        $pallets->created_by_id = \Auth::user()->id;
-        if($listId=="")
-          $listId = $pallets->pallet;
-        else
-          $listId = $listId.",".$pallets->pallet;
-        $pallets->save();
+          if($listId == "") {
+            $listId = $pallets->pallet;
+          }
+          else {
+            $listId = $listId.",".$pallets->pallet;
+          }
+          
+          $pallets->save();
         }
+
         Flash::success('Se han creado las siguientes tarimas '.$listId)->important();
+
         $print = 1;
+
         return redirect()->route('wms.pallets.index',
                             [$listId, $pallets->item->name.'-'.$pallets->unit->code]);
     }

@@ -419,12 +419,12 @@ class SMovsController extends Controller
                                         session('long_folios').', "0"),
                                             "-", identifier)) as prod_ord,
                                             id_order')
-                                  ->whereRaw('id_order IN (SELECT father_order_id
-                                                          FROM
-                                                          mms_production_orders
-                                                          WHERE father_order_id > 1
-                                                          AND is_deleted = false
-                                                          )')
+                                  // ->whereRaw('id_order IN (SELECT father_order_id
+                                  //                         FROM
+                                  //                         mms_production_orders
+                                  //                         WHERE father_order_id > 1
+                                  //                         AND is_deleted = false
+                                  //                         )')
                                   ->orderBy('folio', 'DESC')
                                   ->lists('prod_ord', 'id_order');
             $lDesPO = [];
