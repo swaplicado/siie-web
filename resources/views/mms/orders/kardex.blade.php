@@ -10,21 +10,26 @@
       </div>
       <div class="modal-body">
           <div class="row">
-            <div class="col-md-7">
+            <div class="col-md-10">
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-7">
                   {!! Form::label('po', trans('mms.labels.PRODUCTION_ORDER')) !!}
                   {!! Form::label('po', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po']) !!}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   {!! Form::label('po_type', trans('mms.labels.PRODUCTION_ORDER_TYPE')) !!}
                   {!! Form::label('po_type', null, ['class'=>'form-control input-sm',
                                                 'id' => 'po_type']) !!}
                 </div>
+                <div class="col-md-2">
+                  {!! Form::label('po_date', trans('siie.labels.DATE')) !!}
+                  {!! Form::label('po_date', null, ['class'=>'form-control input-sm',
+                                                        'id' => 'po_date']) !!}
+                </div>
               </div>
               <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-7">
                   {!! Form::label('item', trans('wms.labels.MAT_PROD')) !!}
                   {!! Form::label('item', null, ['class'=>'form-control input-sm',
                                                 'id' => 'item']) !!}
@@ -32,32 +37,27 @@
                 <div class="col-md-3">
                   {!! Form::label('po_qty', trans('mms.labels.ORDER_QUANTITY')) !!}
                   {!! Form::label('po_qty', null, ['class'=>'form-control input-sm',
+                                                'style' => 'text-align: right;',
                                                 'id' => 'po_qty']) !!}
+                </div>
+                <div class="col-md-2">
+                  {!! Form::label('unit', trans('wms.labels.UNIT')) !!}
+                  {!! Form::label('unit', null, ['class'=>'form-control input-sm',
+                                                      'id' => 'unit']) !!}
                 </div>
               </div>
             </div>
             <div class="col-md-2">
-              {!! Form::label('po_date', trans('siie.labels.DATE')) !!}
-              {!! Form::label('po_date', null, ['class'=>'form-control input-sm',
-                                                    'id' => 'po_date']) !!}
-              {!! Form::label('unit', trans('wms.labels.UNIT')) !!}
-              {!! Form::label('unit', null, ['class'=>'form-control input-sm',
-                                                'id' => 'unit']) !!}
-            </div>
-            <div class="col-md-3">
               {!! Form::label('charges', trans('siie.labels.CHARGES').'*') !!}
-              {!! Form::number('charges', 0, ['class'=>'form-control input-sm',
-                                              'readonly',
+              {!! Form::label('charges', 0, ['class'=>'form-control input-sm',
                                               'style' => 'text-align: right; color: green;',
                                               'id' => 'charges']) !!}
               {!! Form::label('payments', trans('siie.labels.PAYMENTS')) !!}
-              {!! Form::number('payments', 0, ['class'=>'form-control input-sm',
-                                              'readonly',
+              {!! Form::label('payments', 0, ['class'=>'form-control input-sm',
                                               'style' => 'text-align: right; color: red;',
                                               'id' => 'payments']) !!}
               {!! Form::label('balance', trans('siie.labels.BALANCE')) !!}
-              {!! Form::number('balance', 0, ['class'=>'form-control input-sm',
-                                              'readonly',
+              {!! Form::label('balance', 0, ['class'=>'form-control input-sm',
                                               'style' => 'text-align: right; color: blue;',
                                               'id' => 'balance']) !!}
             </div>

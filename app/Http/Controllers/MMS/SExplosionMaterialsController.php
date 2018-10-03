@@ -16,6 +16,7 @@ use App\ERP\SBranch;
 use App\SUtils\SProcess;
 
 use App\MMS\SProductionPlan;
+use App\MMS\SProductionOrder;
 use App\WMS\SWarehouse;
 
 class SExplosionMaterialsController extends Controller {
@@ -88,7 +89,9 @@ class SExplosionMaterialsController extends Controller {
                                                        ->groupBy('ws.whs_id')
                                                        ->get();
 
-       $lOrders = $oProductionPlan->orders;
+       $lOrders = SProductionOrder::where('plan_id', $iProductionPlan)
+                                    ->where('is_deleted', false)
+                                    ->get();
 
        return view('mms.explosion.explosionmaterials')
               ->with('lExplosion', $lExplosion)

@@ -180,6 +180,7 @@ class SMovsUtils {
 
       $lElements = $lElements->select(\DB::raw($sSelect))
                   ->where('ei.is_deleted', false)
+                  ->where('ei.is_inventory', true)
                   ->where('eig.item_class_id', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'));
 
       $lElements = SMovsUtils::filterWithConfiguration($lItemContainers, $lElements);
@@ -309,6 +310,7 @@ class SMovsUtils {
 
       $lElements =  $lElements->select(\DB::raw($sSelect))
                   ->where('ei.is_deleted', false)
+                  ->where('ei.is_inventory', true)
                   ->where('eig.item_class_id', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'))
                   ->where('ws.is_deleted', false)
                   ->where('ws.whs_id', $iWarehouseSrc);

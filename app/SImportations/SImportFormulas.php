@@ -106,7 +106,7 @@ class SImportFormulas {
      $oFormula->identifier = $oSiieFormula["bom"];
      $oFormula->dt_date = $oSiieFormula["ts_start"];
      $oFormula->notes = '';
-     $oFormula->quantity = $oSiieFormula["qty"];
+     $oFormula->quantity = $oSiieFormula["qty"] <= '0' ? 1 : $oSiieFormula["qty"];
      $oFormula->is_deleted = $oSiieFormula["b_del"];
      $oFormula->external_id = $oSiieFormula["id_bom"];
      $oFormula->item_id = $lWebItems[$oSiieFormula["fid_item"]]->id_item;

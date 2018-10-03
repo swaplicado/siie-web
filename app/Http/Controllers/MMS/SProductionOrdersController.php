@@ -585,6 +585,8 @@ class SProductionOrdersController extends Controller
                    wmr.pallet_id AS pallet,
                    IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.quantity, 0) AS inputs,
                    IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.quantity, 0) AS outputs,
+                   IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_IN').', wmr.amount, 0) AS charge,
+                   IF(wm.mvt_whs_class_id = '.\Config::get('scwms.MVT_CLS_OUT').', wmr.amount, 0) AS payment,
                    wl.lot,
                    wl.dt_expiry,
                    eb.code AS branch_code,

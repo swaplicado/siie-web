@@ -27,6 +27,18 @@ class SGuiKardex {
     document.getElementById('unit').innerText = sText;
   }
 
+  setCharges(dNumber) {
+    document.getElementById('charges').innerText = parseFloat(dNumber, 10).toFixed(globalData.DEC_AMT);
+  }
+
+  setPayments(dNumber) {
+    document.getElementById('payments').innerText = parseFloat(dNumber, 10).toFixed(globalData.DEC_AMT);
+  }
+
+  setBalance(dNumber) {
+    document.getElementById('balance').innerText = parseFloat(dNumber, 10).toFixed(globalData.DEC_AMT);
+  }
+
   setKardex(oServerData) {
     guiKardex.setProductionOrder(guiKardex.stringfill(oServerData.oProductionOrder.folio, 5, '0')
                                   + '-' + oServerData.oProductionOrder.identifier);
@@ -40,11 +52,21 @@ class SGuiKardex {
 
     oKardexTable.clear().draw();
 
+    var dCharges = 0;
+    var dPayments = 0;
+    var dBalance = 0;
     if (oServerData.lKardexRows.length > 0) {
       for (var i = 0; i < oServerData.lKardexRows.length; i++) {
+        dCharges += parseFloat(oServerData.lKardexRows[i].charge, 10);
+        dPayments += parseFloat(oServerData.lKardexRows[i].payment, 10);
+
         guiKardex.addKardexRow(oServerData.lKardexRows[i], i + 1);
       }
     }
+
+    guiKardex.setCharges(dCharges);
+    guiKardex.setPayments(dPayments);
+    guiKardex.setBalance(dPayments - dCharges);
   }
 
   addKardexRow(oKardexRow, index) {

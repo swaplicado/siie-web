@@ -85,7 +85,7 @@
                     <th>{{ trans('wms.labels.STOCK') }}</th>
                     <th>{{ trans('wms.labels.SEGREGATED') }}</th>
                     <th>{{ trans('wms.labels.BACKORDER') }}</th>
-                    <th>{{ trans('wms.labels.PROVIDER') }}</th>
+                    <th>{{ trans('siie.labels.PROVIDER') }}</th>
                 </tr>
             </thead>
             <tbody>
