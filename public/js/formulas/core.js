@@ -303,7 +303,7 @@ function setIngredient(iIngredientId) {
     $('.cls-ing').prop('disabled', true).trigger("chosen:updated");
     $('.cls-subs').val(oRow.iIdItemSubstitute).trigger("chosen:updated");
 
-    if (oRow.iIdItemRecipe != 1) {
+    if (oItem.id_item_type == oData.lItemTypes.BASE_PRODUCT) {
       $('sel_formula').val(oRow.iIdItemRecipe).trigger("chosen:updated");
       document.getElementById('div_formula').style.display = '';
       getFormulasOfItem(oItem.id_item);
@@ -314,15 +314,15 @@ function setIngredient(iIngredientId) {
     }
 
     document.getElementById('item_type').value = oItem.item_type;
-    document.getElementById('dt_start_ing').value = oRow.tStart;
-    document.getElementById('dt_end_ing').value = oRow.tEnd;
+    // document.getElementById('dt_start_ing').value = oRow.tStart;
+    // document.getElementById('dt_end_ing').value = oRow.tEnd;
     document.getElementById('quantityIngredient').value = oRow.dQuantity;
     document.getElementById('lUnitIngredient').innerHTML = sUnit;
     document.getElementById('lBulk').innerHTML = oItem.is_bulk ? 'A GRANEL' : 'POR UNIDAD';
-    document.getElementById('costIngredient').value = oRow.dCost;
-    document.getElementById('duration').value = oRow.dDuration;
-    document.getElementById('suggested').value = oRow.dSuggested;
-    document.getElementById('max').value = oRow.dMax;
+    // document.getElementById('costIngredient').value = oRow.dCost;
+    // document.getElementById('duration').value = oRow.dDuration;
+    // document.getElementById('suggested').value = oRow.dSuggested;
+    // document.getElementById('max').value = oRow.dMax;
 }
 
 /**
@@ -371,8 +371,15 @@ function addIngredient(oRow) {
     oData.jsFormula.addRow(oRow);
 
     var dTotalMass = 0;
-    for (var i = 0; i < oData.jsFormula.lFormulaRows.length; i++) {
-        dTotalMass += oData.jsFormula.lFormulaRows[i].dMass;
+    if (oData.oFormula.id_formula != undefined && oData.oFormula.id_formula != 0) {
+      for (var i = 0; i < oData.jsFormula.lFormulaRows.length; i++) {
+          dTotalMass += oData.jsFormula.lFormulaRows[i].dMass;
+      }
+    }
+    else {
+      oData.lIngredients.forEach(function(oFormulaRow) {
+        dTotalMass += parseFloat(oFormulaRow.item.mass * oFormulaRow.quantity, 10);
+      });
     }
 
     dPercentage = parseFloat(oRow.dMass, 10) == 0 ? 0 : parseFloat(oRow.dMass, 10) * 100 / dTotalMass;
@@ -385,7 +392,7 @@ function addIngredient(oRow) {
         parseFloat(oRow.dQuantity, 10).toFixed(oData.DEC_QTY),
         oItem.unit_code,
         parseFloat(oRow.dMass, 10).toFixed(oData.DEC_QTY),
-        parseFloat(dPercentage, 10).toFixed(oData.DEC_QTY),
+        parseFloat(dPercentage, 10).toFixed(oData.DEC_PERC),
         oItem.item_type,
         oRow.sItemRecipe
         // oRow.dCost,

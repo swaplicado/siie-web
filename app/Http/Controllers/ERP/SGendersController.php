@@ -44,7 +44,9 @@ class SGendersController extends Controller
         session(['classIdAux' => $iClassId]);
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-        $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)->orderBy('name', 'ASC');
+        $lGenders = SItemGender::Search($request->name, $this->iFilter, $iClassId)
+                                ->orderBy('name', 'ASC')
+                                ->get();
 
         foreach ($lGenders as $gender) {
           $gender->group;

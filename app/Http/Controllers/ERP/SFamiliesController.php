@@ -35,7 +35,9 @@ class SFamiliesController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lFamilies = SItemFamily::Search($request->name, $this->iFilter)->orderBy('name', 'ASC');
+      $lFamilies = SItemFamily::Search($request->name, $this->iFilter)
+                                ->orderBy('name', 'ASC')
+                                ->get();
 
       return view('siie.families.index')
           ->with('families', $lFamilies)

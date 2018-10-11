@@ -42,18 +42,46 @@
           </div>
       </div>
       <div class="col-md-6">
-          <div class="rows">
+          <div class="row">
+              <div class="col-md-6">
+                  {!! Form::label('radio', trans('mms.labels.EXPLODE_BY_ORDER')) !!}
+                  {!! Form::radio('explosion_by', '1', true, ['id' => 'by_order',
+                                                              'onChange' => 'explosionByChange()',
+                                                              'class' => 'form-control input-sm']) !!}
+              </div>
+              <div class="col-md-6">
+                  {!! Form::label('radio', trans('mms.labels.EXPLODE_BY_PLAN')) !!}
+                  {!! Form::radio('explosion_by', '2', false, ['id' => 'by_plan',
+                                                              'onChange' => 'explosionByChange()',
+                                                              'class' => 'form-control input-sm']) !!}
+              </div>
+          </div>
+          <div class="row" id="div_plan"  style="display: none;">
             <div class="col-md-12">
               <div class="form-group">
-                {!! Form::label('dt_date', trans('mms.placeholders.SELECT_PROD_PLAN').'*') !!}
+                {{-- {!! Form::label('production_plan', trans('mms.placeholders.SELECT_PROD_PLAN').'*') !!} --}}
                 {!! Form::select('production_plan', $lPlanes, null,
                           ['class'=>'form-control select-one',
                           'required',
+                          'id' => 'production_plan',
                           'placeholder' => trans('mms.placeholders.SELECT_PROD_PLAN')]) !!}
               </div>
             </div>
           </div>
-          <div class="rows">
+          <br>
+          <div class="row" id="div_order">
+            <div class="col-md-12">
+              <div class="form-group">
+                {{-- {!! Form::label('production_order', trans('mms.placeholders.SELECT_PROD_ORDER').'*') !!} --}}
+                {!! Form::select('production_order', $lOrders, null,
+                          ['class'=>'form-control select-one',
+                          'required',
+                          'id' => 'production_order',
+                          'placeholder' => trans('mms.placeholders.SELECT_PROD_ORDER')]) !!}
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-12">
               <div class="form-group">
                 {!! Form::label('explode_sub', trans('mms.labels.EXPLODE_SUB')) !!}
@@ -76,6 +104,7 @@
 @endsection
 
 @section('js')
+  <script src="{{ asset('js/mms/explosion/SExplosionCore.js') }}" charset="utf-8"></script>
   <script type="text/javascript">
       $('.chzn-select').chosen();
 

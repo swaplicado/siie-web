@@ -25,10 +25,13 @@ class SReceptions
           (SELECT SUM(quantity) FROM
             wms_mvt_rows WHERE
             mvt_id = mvt_reference_id
-            AND is_deleted = FALSE) AS total_quantity,
-          COALESCE((SELECT SUM(quantity) FROM wms_mvt_rows where mvt_id IN
-		       (SELECT id_mvt FROM wms_mvts WHERE src_mvt_id = mvt_reference_id AND NOT is_deleted)
-            AND NOT is_deleted), 0) AS received,
+              AND is_deleted = FALSE) AS total_quantity,
+          COALESCE((SELECT SUM(quantity)
+            FROM wms_mvt_rows where mvt_id IN
+		       (SELECT id_mvt FROM wms_mvts WHERE 
+           src_mvt_id = mvt_reference_id AND
+           NOT is_deleted)
+              AND NOT is_deleted), 0) AS received,
           wet.src_branch_id AS src_branch,
           wet.des_branch_id AS des_branch,
           eb_src.name AS src_branch_name,
@@ -47,6 +50,7 @@ class SReceptions
                   ->where('wet.des_branch_id', $iBranch)
                   ->select(\DB::raw($sSelect))
                   ->groupBy('wm.id_mvt')
+                  ->having('received < total_quantity')
                   ->orderBy('wm.folio');
                   ;
 

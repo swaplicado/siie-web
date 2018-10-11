@@ -113,7 +113,15 @@ var oIngredientsTable = $('#ingredients_table').DataTable({
             "targets": [2, 5], // your case first column
             "className": "text-center"
         }
-      ]
+      ],
+      "dom": 'Bfrtip',
+      "lengthMenu": [
+        [ 10, 25, 50, 100, -1 ],
+        [ 'Mostrar 10', 'Mostrar 25', 'Mostrar 50', 'Mostrar 100', 'Mostrar todo' ]
+      ],
+      "buttons": [
+            'pageLength', 'copy', 'csv', 'excel', 'print'
+        ]
   });
 
   // $('#ingredients_table').DataTable( {

@@ -346,6 +346,9 @@ class SSessionUtils {
           case \Config::get('scsiie.FRMT.QTY'):
             $iDecimals = session('decimals_qty');
             break;
+          case \Config::get('scsiie.FRMT.PERC'):
+            $iDecimals = session('decimals_percent');
+            break;
 
           default:
             $iDecimals = 1;

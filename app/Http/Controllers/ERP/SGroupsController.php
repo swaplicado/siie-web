@@ -36,7 +36,9 @@ class SGroupsController extends Controller
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
 
-      $lGroups = SItemGroup::Search($request->name, $this->iFilter)->orderBy('name', 'ASC');
+      $lGroups = SItemGroup::Search($request->name, $this->iFilter)
+                              ->orderBy('name', 'ASC')
+                              ->get();
 
       foreach ($lGroups as $group) {
         $group->family;

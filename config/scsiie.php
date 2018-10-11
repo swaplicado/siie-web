@@ -107,6 +107,7 @@ return [
   'FRMT' =>       [
                     'AMT' => '1',
                     'QTY' => '2',
+                    'PERC' => '3',
                   ],
 
   'FILTER_BULK' =>       [

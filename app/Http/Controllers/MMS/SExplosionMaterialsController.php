@@ -37,13 +37,21 @@ class SExplosionMaterialsController extends Controller {
     public function index(Request $request)
     {
       $lPlanes = SProductionPlan::where('is_deleted', false)
-                                 ->select('id_production_plan', \DB::raw("CONCAT(folio, '-', production_plan) as plan"))
+                                 ->select('id_production_plan', \DB::raw("CONCAT(LPAD(folio, ".
+                                       session('long_folios').", '0'), ' - ', production_plan) as plan"))
                                  ->orderBy('folio', 'DESC')
                                  ->orderBy('dt_start', 'DESC')
                                  ->lists('plan', 'id_production_plan');
 
+      $lOrders = SProductionOrder::where('is_deleted', false)
+                                 ->select('id_order', \DB::raw("CONCAT(LPAD(folio, ".
+                                       session('long_folios').", '0'), ' - ', identifier) as production_order"))
+                                 ->orderBy('folio', 'DESC')
+                                 ->orderBy('date', 'DESC')
+                                 ->lists('production_order', 'id_order');
+
       $lWarehouses = SWarehouse::where('is_deleted', false)
-                                 ->select('id_whs', \DB::raw("CONCAT(code, '-', name) as whs"))
+                                 ->select('id_whs', \DB::raw("CONCAT(code, ' - ', name) as whs"))
                                  ->where('branch_id', session('branch')->id_branch)
                                  ->lists('whs', 'id_whs');
 
@@ -52,6 +60,7 @@ class SExplosionMaterialsController extends Controller {
        return view('mms.explosion.explode')
            ->with('lWarehouses', $lWarehouses)
            ->with('lPlanes', $lPlanes)
+           ->with('lOrders', $lOrders)
            ->with('sTitle', $sTitle);
     }
 

@@ -69,6 +69,8 @@ return [
                       'EXP' => 'Exp.',
                       'EXPLODED' => 'Explosionada',
                       'EXPLODE_SUB' => 'Explosionar sub-fórmulas',
+                      'EXPLODE_BY_ORDER' => 'Explosionar por orden',
+                      'EXPLODE_BY_PLAN' => 'Explosionar por plan',
                       'FLOOR' => 'Planta',
                       'FORMULA' => 'Fórmula',
                       'FORMULAS' => 'Fórmulas',
@@ -108,6 +110,7 @@ return [
                       'NAME_FORMULA' => 'Nombre de la fórmula...',
                       'SELECT_FLOOR' => 'Seleccione planta...',
                       'SELECT_PROD_PLAN' => 'Seleccione plan de producción...',
+                      'SELECT_PROD_ORDER' => 'Seleccione orden de producción...',
                   ],
 
       'tooltips'  => [

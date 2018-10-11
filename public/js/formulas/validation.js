@@ -128,6 +128,38 @@ function validateIngredient(iIdItem, tStart, tEnd, dQuantity, dCost, dDuration,
     return true;
 }
 
+function validateFormula() {
+  console.log(oData.jsFormula);
+
+  if (! document.getElementById('product') > 1) {
+    swal("Error", "Debe seleccionar un material/producto.", "error");
+    return false;
+  }
+  if (oData.jsFormula.lFormulaRows.length == 0) {
+    swal("Error", "La fórmula no tiene renglones.", "error");
+    return false;
+  }
+  else {
+    for (var i = 0; i < oData.jsFormula.lFormulaRows.length; i++) {
+      var oFormulaRow = oData.jsFormula.lFormulaRows[i];
+      console.log(oFormulaRow);
+      if (oFormulaRow.iItemClass == oData.scsiie.ITEM_CLS.PRODUCT
+            && oFormulaRow.iIdItemRecipe <= 1) {
+          swal("Error", "El renglón " + oFormulaRow.sItem + " no tiene asignada una fórmula.", "error");
+          return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+function submitAction() {
+  if (validateFormula()) {
+     document.getElementById('theForm').submit();
+  }
+}
+
 function setFormulaToForm() {
   document.getElementById('formula_object').value = JSON.stringify(oData.jsFormula);
 }

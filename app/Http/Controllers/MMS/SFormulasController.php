@@ -251,6 +251,7 @@ class SFormulasController extends Controller {
            $lRows = $oBaseFormula->rows;
            foreach ($lRows as $row) {
               $row->sItemRecipe = $row->getLastVersion()->identifier;
+              $row->item->gender;
               $dTotalMass += $row->mass;
            }
 
@@ -668,11 +669,17 @@ class SFormulasController extends Controller {
         $oFormulaCopy->id_formula = 0;
         $oFormulaCopy->recipe = -1;
         $oFormulaCopy->version = 1;
+        $oFormulaCopy->identifier = '';
+        $oFormulaCopy->quantity = 1;
+
+        unset ($oFormulaCopy->item_id);
+        unset ($oFormulaCopy->unit_id);
 
         $dTotalMass = '0';
         $lRows = $oFormula->rows;
         foreach ($lRows as $row) {
            $row->sItemRecipe = $row->getLastVersion()->identifier;
+           $row->item->gender;
            $dTotalMass += $row->mass;
         }
 

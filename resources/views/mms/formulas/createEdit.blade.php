@@ -40,7 +40,7 @@
 @section('content')
   @include('mms.formulas.ingredient')
   {{-- @include('mms.formulas.notes') --}}
-  {!! Form::open(['route' => $oSend, 'method' => $method]) !!}
+  {!! Form::open(['route' => $oSend, 'method' => $method, 'id' => 'theForm']) !!}
   <div class="row">
     <div class="col-md-12">
       <div class="row">
@@ -51,6 +51,7 @@
               {!! Form::select('product', $products, isset($oFormula->item_id) ?
                                                       $oFormula->item_id.'-'.$oFormula->unit_id : null,
                         ['class'=>'form-control select-one', 'placeholder' => trans('wms.placeholders.SELECT_MAT_PROD'),
+                        'required', 'id' => 'product',
                          'onChange' => "setFormulaData(this)", (isset($oFormula->item_id) ? 'disabled' : '')]) !!}
             </div>
             {!! Form::hidden('item_id', isset($oFormula->item_id) ?
@@ -61,8 +62,6 @@
                                         $oFormula->recipe : -1, ['id' => 'recipe']) !!}
             {!! Form::hidden('formula_object', -1, ['id' => 'formula_object']) !!}
 
-            {!! Form::hidden('quantity', isset($oFormula->quantity) ?
-                                        $oFormula->quantity : 1, ['id' => 'quantity']) !!}
           </div>
         </div>
         <div class="col-md-1">
@@ -79,6 +78,7 @@
             {!! Form::text('identifier',
               isset($oFormula->identifier) ?  $oFormula->identifier : '', ['class'=>'form-control',
                   'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
+                  'required',
                   'placeholder' => trans('mms.placeholders.NAME_FORMULA'), 'required']) !!}
           </div>
         </div>
@@ -93,16 +93,30 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
+          <div class="form-group">
+            {!! Form::label('quantity', trans('siie.labels.QUANTITY').'*') !!}
+            {!! Form::number('quantity',
+                isset($oFormula->quantity) ? session('utils')->formatNumber($oFormula->quantity, \Config::get('scsiie.FRMT.QTY')) :
+                                            session('utils')->formatNumber(1, \Config::get('scsiie.FRMT.QTY')),
+                                                      ['class'=>'form-control input-sm',
+                                                      'required',
+                                                      'min' => '0.00001',
+                                                      'style' => 'text-align: right;',
+                                                      'id' => 'quantity']) !!}
+          </div>
+        </div>
+        <div class="col-md-2">
           <div class="form-group">
             {!! Form::label('dt_date', trans('userinterface.labels.DATE').'*') !!}
             {!! Form::date('dt_date',
                 isset($oFormula->dt_date) ? $oFormula->dt_date : session('work_date'),
                                                       ['class'=>'form-control input-sm',
+                                                      'required',
                                                       'id' => 'dt_date']) !!}
           </div>
         </div>
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 col-md-offset-2">
           <div class="form-group">
             {!! Form::label('notes', trans('userinterface.labels.NOTES').'*') !!}
             {!! Form::textarea('notes',
@@ -172,7 +186,7 @@
                   <td align="right">{{ session('utils')->
                         formatNumber(($ingredient->mass), \Config::get('scsiie.FRMT.QTY')) }}
                   </td>
-                  <td align="right">{{ session('utils')->formatNumber($dRowPercent, \Config::get('scsiie.FRMT.QTY')) }}</td>
+                  <td align="right">{{ session('utils')->formatNumber($dRowPercent, \Config::get('scsiie.FRMT.PERC')) }}</td>
                   <td>{{ $ingredient->item->gender->type->name }}</td>
                   <td>{{ ($ingredient->item_recipe_id > 1 ? $ingredient->getLastVersion()->identifier : 'NA') }}</td>
   						</tr>
@@ -188,7 +202,7 @@
             <th></th>
             <th></th>
             <th align="right">{{ session('utils')->formatNumber($dTotalMass, \Config::get('scsiie.FRMT.QTY')) }}</th>
-            <th align="right">{{ '% '.session('utils')->formatNumber(100, \Config::get('scsiie.FRMT.QTY')) }}</th>
+            <th align="right">{{ '% '.session('utils')->formatNumber(100, \Config::get('scsiie.FRMT.PERC')) }}</th>
             <th></th>
             <th></th>
           </tr>
@@ -197,7 +211,8 @@
 	</div>
   <br />
   <div class="form-group" align="right">
-		{!! Form::submit(trans('actions.SAVE'), ['class' => 'btn btn-primary']) !!}
+		{!! Form::button(trans('actions.SAVE'), ['class' => 'btn btn-primary',
+                                                'onClick' => 'submitAction()']) !!}
 		<input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}"
             class="btn btn-danger" onClick="location.href='{{ route('mms.formulas.index') }}'"/>
 	</div>
@@ -221,8 +236,10 @@
         this.scsiie = <?php echo json_encode(\Config::get('scsiie')) ?>;
         var qty = <?php echo json_encode(session('decimals_qty')) ?>;
         var amt = <?php echo json_encode(session('decimals_amt')) ?>;
+        var perc = <?php echo json_encode(session('decimals_percent')) ?>;
         this.DEC_QTY = parseInt(qty);
         this.DEC_AMT = parseInt(amt);
+        this.DEC_PERC = parseInt(perc);
 
         this.jsFormula = new FormulaJs();
         this.jsFormula.iRecipe = this.oFormula.recipe;
