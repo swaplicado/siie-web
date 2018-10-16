@@ -9,6 +9,7 @@ use App\ERP\SYear;
 use App\MMS\SProductionPlan;
 use App\MMS\SProductionOrder;
 use App\MMS\Formulas\SFormula;
+use App\MMS\data\SAuxuliarData;
 
 /**
  *
@@ -20,34 +21,66 @@ class SExplosionCore {
    * on production plan
    *
    * @param  SProductionPlan-or-SProductionOrder  $oProduction
+   * @param  integer $iExplosionType  [Type of explosion] \Config::get('scmms.EXPLOSION_BY.ORDER')
+*                                                          \Config::get('scmms.EXPLOSION_BY.PLAN')
+*                                                          \Config::get('scmms.EXPLOSION_BY.FILE')
    * @param  array[SWarehouse]   $lWarehouses [list of warehouses for explosion]
    * @param  string  $sDate [date of evaluation]
    * @param  boolean $bExplodeSubs [flag, the subformulas will be exploded too]
    *
    * @return array[Query]
    */
-  public function explode($oProduction = null, $lWarehouses = [], $oDate = '', $bExplodeSubs = false)
+  public function explode($oProduction = null, $iExplosionType = 0, $lWarehouses = [], $oDate = '', $bExplodeSubs = false)
   {
      $lIngredients = array();
      $lProdOrders = array();
+     $lFormulasToExplode = array();
 
-     if ($oProduction instanceof SProductionPlan) {
-       $lProdOrders = $oProduction->orders;
-     }
-     else if ($oProduction instanceof SProductionOrder) {
-       $lProdOrders[0] = $oProduction;
+     switch ($iExplosionType) {
+       case \Config::get('scmms.EXPLOSION_BY.ORDER'):
+         if ($oProduction instanceof SProductionOrder) {
+           $lProdOrders[0] = $oProduction;
+         }
+         else {
+           return ['Error, el objeto recibido no es una orden de producción'];
+         }
+         break;
+       case \Config::get('scmms.EXPLOSION_BY.PLAN'):
+         if ($oProduction instanceof SProductionPlan) {
+           $lProdOrders = $oProduction->orders;
+         }
+         else {
+           return ['Error, el objeto recibido no es un plan de producción'];
+         }
+         break;
+       case \Config::get('scmms.EXPLOSION_BY.FILE'):
+         if (is_array($oProduction) && $oProduction[0] instanceof SAuxuliarData) {
+           $lFormulasToExplode = $oProduction;
+         }
+         else {
+           return ['Error, el objeto recibido no es un arreglo de Fórmulas'];
+         }
+         break;
+
+       default:
+         return ['Error, opción desconocida'];
+         break;
      }
 
-     foreach ($lProdOrders as $oPO) {
-        if ($oPO->is_deleted) {
+     if ($iExplosionType != \Config::get('scmms.EXPLOSION_BY.FILE')) {
+       foreach ($lProdOrders as $oPO) {
+         if ($oPO->is_deleted) {
            continue;
-        }
+         }
 
-        $oFormula = $oPO->formula;
+         array_push($lFormulasToExplode, new SAuxuliarData($oPO->formula, $oPO->charges));
+       }
+     }
 
-        $lFormulaRows = $this->getRowsFromFormula($oFormula->id_formula);
+     foreach ($lFormulasToExplode as $oData) {
+       $lFormulaRows = $this->getRowsFromFormula($oData->value->id_formula);
 
-        $lIngredients = $this->formulaRowsToIngredients($lFormulaRows, $lIngredients, $oPO->charges, $bExplodeSubs);
+       $lIngredients = $this->formulaRowsToIngredients($lFormulaRows, $lIngredients, $oData->dQuantity, $bExplodeSubs);
      }
 
      $lStock = $this->getStockFromWarehouses($lWarehouses, $oDate)->get();
@@ -102,44 +135,46 @@ class SExplosionCore {
    *
    * @param  array   $lFormulaRows Result of method of this class (from query)
    * @param  array   $lIngredients list of ingredient objects
-   * @param  integer $iCharges     charges of production order
+   * @param  double $dCharges     charges of production order
    * @param  boolean $bExplodeSubs the sub formules will be exploded or not
    *
    * @return array
    */
   private function formulaRowsToIngredients($lFormulaRows = [], $lIngredients = [],
-                                                $iCharges = 0, $bExplodeSubs = false)
+                                                $dCharges = 0, $bExplodeSubs = false)
   {
       $lRecipes = array();
       $oFormula = null;
+
       if (sizeof($lFormulaRows) > 0) {
         $oFormula = SFormula::find($lFormulaRows[0]->formula_id);
       }
       else {
          return array();
       }
+
       foreach ($lFormulaRows as $oRow) {
          if ($oRow->item_recipe_id > 1
               && $bExplodeSubs
                 && $oFormula->recipe != $oRow->item_recipe_id
                   && $oRow->item_class_id == \Config::get('scsiie.ITEM_CLS.PRODUCT')
                   ) {
-             array_push($lRecipes, $oRow->item_recipe_id);
+             array_push($lRecipes, new SAuxuliarData($oRow->item_recipe_id, $oRow->quantity));
          }
          else {
              $sKey = $oRow->item_id.'-'.$oRow->unit_id.'-'.$oRow->item_recipe_id;
-             if (in_array($sKey, $lIngredients)) {
-               $lIngredients[$sKey]->dRequiredQuantity += ($oRow->quantity * $iCharges);
+             if (array_key_exists($sKey, $lIngredients)) {
+               $lIngredients[$sKey]->dRequiredQuantity = $lIngredients[$sKey]->dRequiredQuantity + ($oRow->quantity * $dCharges);
              }
              else {
-               $oRow->dRequiredQuantity = ($oRow->quantity * $iCharges);
+               $oRow->dRequiredQuantity = ($oRow->quantity * $dCharges);
                $lIngredients[$sKey] = $oRow;
              }
          }
       }
 
       if (sizeof($lRecipes) > 0) {
-        $lIngredients = $this->explodeRecipes($lRecipes, $lIngredients, $iCharges);
+        $lIngredients = $this->explodeRecipes($lRecipes, $lIngredients, $dCharges);
       }
 
       return $lIngredients;
@@ -150,22 +185,22 @@ class SExplosionCore {
    *
    * @param  array   $aRecipes     array of recipes contained in production order
    * @param  array   $lIngredients list of ingredients
-   * @param  integer $iCharges     charges on production order
+   * @param  double $dCharges     charges on production order
    *
    * @return array  the same received array with the added ingredients of subformulas
    */
-  private function explodeRecipes($aRecipes = [], $lIngredients = [], $iCharges = 1)
+  private function explodeRecipes($aRecipes = [], $lIngredients = [], $dCharges = 1)
   {
-      foreach ($aRecipes as $iRecipe) {
+      foreach ($aRecipes as $oData) {
          $oFormula = SFormula::whereRaw('version = (SELECT MAX(version)
                                                     FROM mms_formulas WHERE
-                                                    recipe = '.$iRecipe.')')
+                                                    recipe = '.$oData->value.')')
                               ->where('is_deleted', false)
-                              ->where('recipe', $iRecipe)
+                              ->where('recipe', $oData->value)
                               ->first();
 
          $lIngredients = $this->formulaRowsToIngredients($this->getRowsFromFormula($oFormula->id_formula), $lIngredients,
-                                                          $iCharges, true);
+                                                          ($dCharges * $oData->dQuantity), true);
       }
 
       return $lIngredients;
@@ -213,7 +248,6 @@ class SExplosionCore {
 
       return $lFormulaRows;
   }
-
 
   /**
    * get the stock of multiple warehouses
@@ -335,6 +369,32 @@ class SExplosionCore {
                   ;
 
     return $lSupplies;
+  }
+
+  public function getFormulasFromArray($lCsv = [])
+  {
+      $lToExplode = array();
+
+      foreach ($lCsv as $csvRow) {
+        $oFormula = $this->getFormulaByItemCode($csvRow->sItemKey);
+        if ($oFormula == null) {
+          return ['ERROR. No hay fórmula para: '.$csvRow->sItemKey];
+        }
+        array_push($lToExplode, new SAuxuliarData($oFormula, $csvRow->dQuantity));
+      }
+
+      return $lToExplode;
+  }
+
+  private function getFormulaByItemCode($sItemCode = '')
+  {
+      $oFormula = SFormula::join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
+                ->where('ei.code', trim($sItemCode))
+                ->orderBy('mms_formulas.updated_at', 'DESC')
+                ->take(1)
+                ->get();
+
+      return sizeof($oFormula) > 0 ? $oFormula[0] : null;
   }
 
 }

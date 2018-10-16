@@ -69,6 +69,7 @@ return [
                       'EXP' => 'Exp.',
                       'EXPLODED' => 'Explosionada',
                       'EXPLODE_SUB' => 'Explosionar sub-fórmulas',
+                      'EXPLODE_BY_FILE' => 'Exp. por archivo',
                       'EXPLODE_BY_ORDER' => 'Explosionar por orden',
                       'EXPLODE_BY_PLAN' => 'Explosionar por plan',
                       'FLOOR' => 'Planta',

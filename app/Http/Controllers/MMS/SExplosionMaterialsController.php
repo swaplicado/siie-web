@@ -74,33 +74,58 @@ class SExplosionMaterialsController extends Controller {
        $sTitle = trans('mms.EXPLOSION_MATERIALS');
 
        $sDate = $request->dt_date;
-       $iProductionPlan = $request->production_plan;
        $aWarehouses = json_decode($request->warehouses_array);
        $bExplodeSubs = $request->explode_sub;
-
-       $oProductionPlan = SProductionPlan::find($iProductionPlan);
        $lWarehouses = array();
        $sWarehouses = '';
 
        foreach ($aWarehouses as $iWhs) {
-          $oWhs = SWarehouse::find($iWhs);
-          $sWarehouses .= $oWhs->code.'-'.$oWhs->name.';';
-          array_push($lWarehouses, $oWhs);
+         $oWhs = SWarehouse::find($iWhs);
+         $sWarehouses .= $oWhs->code.'-'.$oWhs->name.';';
+         array_push($lWarehouses, $oWhs);
        }
 
        $oDate = Carbon::parse($sDate);
-
        $oExplosionCore = new SExplosionCore();
-       $lExplosion = $oExplosionCore->explode($oProductionPlan, $lWarehouses, $oDate, $bExplodeSubs);
+       $oProduction = null;
+
+       switch ($request->explosion_by) {
+         case \Config::get('scmms.EXPLOSION_BY.ORDER'):
+           $iProductionOrder= $request->production_order;
+           $oProduction = SProductionOrder::find($iProductionOrder);
+           $oProductionPlan = new SProductionPlan();
+
+           $lOrders = [$oProduction];
+           break;
+
+         case \Config::get('scmms.EXPLOSION_BY.PLAN'):
+           $iProductionPlan = $request->production_plan;
+           $oProduction = SProductionPlan::find($iProductionPlan);
+           $oProductionPlan = $oProduction;
+
+           $lOrders = SProductionOrder::where('plan_id', $iProductionPlan)
+                                        ->where('is_deleted', false)
+                                        ->get();
+           break;
+
+         case \Config::get('scmms.EXPLOSION_BY.FILE'):
+           $lData = json_decode($request->csv_file);
+           $oProduction = $oExplosionCore->getFormulasFromArray($lData);
+           $lOrders = array();
+           $oProductionPlan = new SProductionPlan();
+           break;
+
+         default:
+           // code...
+           break;
+       }
+
+       $lExplosion = $oExplosionCore->explode($oProduction, $request->explosion_by, $lWarehouses, $oDate, $bExplodeSubs);
        $lStock = $oExplosionCore->getStockFromWarehouses($lWarehouses, $oDate)
                                                        ->groupBy('ws.lot_id')
                                                        ->groupBy('ws.pallet_id')
                                                        ->groupBy('ws.whs_id')
                                                        ->get();
-
-       $lOrders = SProductionOrder::where('plan_id', $iProductionPlan)
-                                    ->where('is_deleted', false)
-                                    ->get();
 
        return view('mms.explosion.explosionmaterials')
               ->with('lExplosion', $lExplosion)
@@ -108,7 +133,7 @@ class SExplosionMaterialsController extends Controller {
               ->with('lOrders', $lOrders)
               ->with('sDate', $sDate)
               ->with('lWarehouses', $lWarehouses)
-              ->with('sWarehouses', $sWarehouses)
+              ->with('sWarehouses', $sWarehouses == '' ? '----' : $sWarehouses)
               ->with('lStock', $lStock)
               ->with('sTitle', $sTitle);
     }

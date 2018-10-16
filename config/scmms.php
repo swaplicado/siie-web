@@ -25,6 +25,12 @@ return [
           'PACK' => '4',
     ],
 
+    'EXPLOSION_BY' => [
+          'ORDER' => '1',
+          'PLAN' => '2',
+          'FILE' => '3',
+    ],
+
     'MOVS_QUERY' => [
                 'RM_DELIVERY' => '1',
                 'RM_RETURN' => '2',

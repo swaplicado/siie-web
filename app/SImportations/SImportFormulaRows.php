@@ -119,12 +119,22 @@ class SImportFormulaRows {
      $oFormulaRow->formula_id = $lFormulasByItem[$lWebItems[$oSiieFormulaR["fid_item_n"]]->id_item]->id_formula;
      $oFormulaRow->item_id = $lWebItems[$oSiieFormulaR["fid_item"]]->id_item;
      $oFormulaRow->unit_id = $lWebUnits[$oSiieFormulaR["fid_unit"]]->id_unit;
-     $oFormulaRow->item_recipe_id = $lFormulasByItem[$lWebItems[$oSiieFormulaR["fid_item_n"]]->id_item]->recipe;
+     $oFormulaRow->item_recipe_id = SImportFormulaRows::getRecipeId($oSiieFormulaR["fid_item"], $oSiieFormulaR["fid_unit"], $lWebItems, $lFormulasByItem);
      $oFormulaRow->created_by_id = 1;
      $oFormulaRow->updated_by_id = 1;
      $oFormulaRow->created_at = $oSiieFormulaR["ts_new"];
      $oFormulaRow->updated_at = $oSiieFormulaR["ts_edit"];
 
      return $oFormulaRow;
+  }
+
+  private static function getRecipeId($iItem = 0, $iUnit = 0, $lWebItems = [], $lFormulasByItem = [])
+  {
+      if (array_key_exists($lWebItems[$iItem]->id_item, $lFormulasByItem)) {
+        return $lFormulasByItem[$lWebItems[$iItem]->id_item]->recipe;
+      }
+      else {
+        return 1;
+      }
   }
 }

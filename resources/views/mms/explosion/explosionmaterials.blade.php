@@ -31,7 +31,9 @@
     <div class="col-md-6">
       <div class="form-group">
         {!! Form::label('production_plan', trans('mms.labels.PRODUCTION_PLAN')	) !!}
-        {!! Form::label('production_plan', session('utils')->formatFolio($oProductionPlan->folio).'-'.$oProductionPlan->production_plan,
+        {!! Form::label('production_plan', $oProductionPlan->id_production_plan > 0 ?
+                                            session('utils')->formatFolio($oProductionPlan->folio).'-'.$oProductionPlan->production_plan
+                                            : '----',
                         ['class' => 'form-control input-sm']) !!}
       </div>
     </div>
@@ -40,7 +42,7 @@
     <div class="col-md-6">
       <div class="form-group">
         {!! Form::label('warehouses', trans('wms.labels.WAREHOUSES')	) !!}
-        {!! Form::label('warehouses', $sWarehouses,
+        {!! Form::label('warehouses', sizeof($sWarehouses) > 0 ? $sWarehouses : '----',
                         ['class' => 'form-control input-sm']) !!}
       </div>
     </div>

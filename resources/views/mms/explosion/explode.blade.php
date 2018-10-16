@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-  {!! Form::open(['route' => 'mms.explosion.show', 'method' => 'GET']) !!}
+  {!! Form::open(['route' => 'mms.explosion.show', 'method' => 'GET', 'id' => 'theForm']) !!}
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
@@ -43,20 +43,26 @@
       </div>
       <div class="col-md-6">
           <div class="row">
-              <div class="col-md-6">
+              <div class="col-md-4">
                   {!! Form::label('radio', trans('mms.labels.EXPLODE_BY_ORDER')) !!}
-                  {!! Form::radio('explosion_by', '1', true, ['id' => 'by_order',
+                  {!! Form::radio('explosion_by', \Config::get('scmms.EXPLOSION_BY.ORDER'), true, ['id' => 'by_order',
                                                               'onChange' => 'explosionByChange()',
                                                               'class' => 'form-control input-sm']) !!}
               </div>
-              <div class="col-md-6">
+              <div class="col-md-4">
                   {!! Form::label('radio', trans('mms.labels.EXPLODE_BY_PLAN')) !!}
-                  {!! Form::radio('explosion_by', '2', false, ['id' => 'by_plan',
+                  {!! Form::radio('explosion_by', \Config::get('scmms.EXPLOSION_BY.PLAN'), false, ['id' => 'by_plan',
+                                                              'onChange' => 'explosionByChange()',
+                                                              'class' => 'form-control input-sm']) !!}
+              </div>
+              <div class="col-md-4">
+                  {!! Form::label('radio', trans('mms.labels.EXPLODE_BY_FILE')) !!}
+                  {!! Form::radio('explosion_by', \Config::get('scmms.EXPLOSION_BY.FILE'), false, ['id' => 'by_file',
                                                               'onChange' => 'explosionByChange()',
                                                               'class' => 'form-control input-sm']) !!}
               </div>
           </div>
-          <div class="row" id="div_plan"  style="display: none;">
+          <div class="row" id="div_plan" style="display: none;">
             <div class="col-md-12">
               <div class="form-group">
                 {{-- {!! Form::label('production_plan', trans('mms.placeholders.SELECT_PROD_PLAN').'*') !!} --}}
@@ -81,6 +87,19 @@
               </div>
             </div>
           </div>
+          <div class="row" id="div_file" style="display: none;">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="input-group input-file" name="Fichier1">
+                    <input type="file" id="file" accept=".csv" class="form-control" onchange="handleFile()"/>
+                    <span class="input-group-btn">
+                         <button id="resetbtn" class="btn btn-warning btn-reset" onclick="resetFile()" type="button">Reset</button>
+                    </span>
+                </div>
+                {!! Form::hidden('csv_file', null, ['id' => 'csv_file']) !!}
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
@@ -94,7 +113,9 @@
     <div class="row">
         <div class="col-md-3 col-md-offset-9">
           <div class="form-group" align="right">
-            {!! Form::submit(trans('actions.EXPLODE'), ['class' => 'btn btn-primary', 'onClick' => 'setWarehouses()']) !!}
+            {{-- {!! Form::submit(trans('actions.EXPLODE'), ['class' => 'btn btn-primary', 'onClick' => 'setFields()']) !!} --}}
+            <input type="button" name="{{ trans('actions.EXPLODE') }}" value="{{ trans('actions.EXPLODE') }}"
+                    class="btn btn-primary" onClick="validateData()"/>
             <input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}"
                     class="btn btn-danger" onClick="location.href='{{ route('mms.formulas.index') }}'"/>
           </div>
@@ -108,14 +129,10 @@
   <script type="text/javascript">
       $('.chzn-select').chosen();
 
-      function setWarehouses() {
-        var selectedValues = [];
-        $(".chzn-select :selected").each(function() {
-          selectedValues.push($(this).attr('value'));
-        });
-
-        console.log(selectedValues);
-        document.getElementById('warehouses_array').value = JSON.stringify(selectedValues);
+      function Data() {
+        this.scmms = <?php echo json_encode(\Config::get('scmms')); ?>;
       }
+
+      var oData = new Data();
   </script>
 @endsection
