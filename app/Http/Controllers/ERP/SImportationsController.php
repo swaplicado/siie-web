@@ -87,12 +87,12 @@ class SImportationsController extends Controller {
     }
     public function importBranches()
     {
-      $Formulas = new \App\SImportations\SImportFormulas($this->sHost);
-      $Formulas->importFormulas();
-      $FormulaRows = new \App\SImportations\SImportFormulaRows($this->sHost);
-      return $FormulaRows->importFormulaRows();
-     // $branch = new SImportBranches($this->sHost);
-     // return $branch->importBranches();
+      // $Formulas = new \App\SImportations\SImportFormulas($this->sHost);
+      // $Formulas->importFormulas();
+      // $FormulaRows = new \App\SImportations\SImportFormulaRows($this->sHost);
+      // return $FormulaRows->importFormulaRows();
+     $branch = new SImportBranches($this->sHost);
+     return $branch->importBranches();
     }
 
     public function importAddresses()
