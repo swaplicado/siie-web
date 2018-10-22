@@ -40,7 +40,7 @@ class SiieAddInvflag extends Migration
               $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
         Schema::connection($this->sConnection)->table('erpu_items', function (blueprint $table) {
-          $table->boolean('is_inventory')->after('is_bulk');
+          $table->boolean('is_inventory')->default(1)->after('is_bulk');
         });
       }
     }
