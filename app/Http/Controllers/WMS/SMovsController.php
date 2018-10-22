@@ -606,9 +606,9 @@ class SMovsController extends Controller
         $iPallet = $oMovementJs->iAuxPallet;
         $iPalletLocation = $oMovementJs->iAuxPalletLocation;
 
-        $movement->aAuxPOs[SMovement::SRC_PO] = $oMovementJs->iPOSrc;
-        $movement->aAuxPOs[SMovement::DES_PO] = $oMovementJs->iPODes;
-        $movement->aAuxPOs[SMovement::ASS_TYPE] = $oMovementJs->iAuxAssigType;
+        $movement->aAuxPOs[SMovement::SRC_PO] = isset($oMovementJs->iPOSrc) ? $oMovementJs->iPOSrc : 0;
+        $movement->aAuxPOs[SMovement::DES_PO] = isset($oMovementJs->iPODes) ? $oMovementJs->iPODes : 0;
+        $movement->aAuxPOs[SMovement::ASS_TYPE] = isset($oMovementJs->iAuxAssigType) ? $oMovementJs->iAuxAssigType : 0;
 
         $aResult = $oProcess->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
                                                     $movement, $movementRows,
