@@ -28,7 +28,7 @@ class SReceptions
               AND is_deleted = FALSE) AS total_quantity,
           COALESCE((SELECT SUM(quantity)
             FROM wms_mvt_rows where mvt_id IN
-		       (SELECT id_mvt FROM wms_mvts WHERE 
+		       (SELECT id_mvt FROM wms_mvts WHERE
            src_mvt_id = mvt_reference_id AND
            NOT is_deleted)
               AND NOT is_deleted), 0) AS received,
@@ -45,14 +45,13 @@ class SReceptions
                   ->join('erpu_branches AS eb_des', 'wet.des_branch_id', '=', 'eb_des.id_branch')
                   ->join('wms_mvts AS wm', 'wet.mvt_reference_id', '=', 'wm.id_mvt')
                   ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users AS u', 'wet.created_by_id', '=', 'u.id')
+                  ->select(\DB::raw($sSelect))
                   ->where('wm.is_deleted', false)
                   ->where('wm.whs_id', session('transit_whs')->id_whs)
-                  ->where('wet.des_branch_id', $iBranch)
-                  ->select(\DB::raw($sSelect))
+                  ->where('wet.des_branch_id', '=', $iBranch)
                   ->groupBy('wm.id_mvt')
-                  ->having('received < total_quantity')
-                  ->orderBy('wm.folio');
-                  ;
+                  ->orderBy('wm.folio', 'ASC')
+                  ->having('received', '<', 'total_quantity');
 
         $lResult = $query->get();
 
