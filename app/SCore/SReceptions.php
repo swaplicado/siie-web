@@ -51,7 +51,7 @@ class SReceptions
                   ->where('wet.des_branch_id', '=', $iBranch)
                   ->groupBy('wm.id_mvt')
                   ->orderBy('wm.folio', 'ASC')
-                  ->having('received', '<', 'total_quantity');
+                  ->havingRaw('received < total_quantity');
 
         $lResult = $query->get();
 
@@ -77,6 +77,8 @@ class SReceptions
                     wmt.code AS mov_code,
                     wmt.name AS mov_name,
                     wm1.folio,
+                    wm1.src_mvt_id AS src_id_mvt,
+                    wm1.is_deleted AS src_is_deleted,
                     (SELECT SUM(quantity) FROM wms_mvt_rows WHERE mvt_id = wm1.id_mvt
                                                 AND is_deleted = false) AS total,
                     (SELECT SUM(quantity) FROM wms_mvt_rows WHERE mvt_id = wm1.id_mvt
@@ -102,7 +104,7 @@ class SReceptions
                   ->where('wet.is_deleted', false)
                   ->where('wet.src_branch_id', $iBranch)
                   ->select(\DB::raw($sSelect))
-                  ->orderBy('wmdes.dt_date', 'DESC');
+                  ->orderBy('wm1.dt_date', 'DESC');
 
         $query = $query->get();
 

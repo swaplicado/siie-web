@@ -33,7 +33,7 @@
                   @foreach ($lList as $mov)
                       <tr>
                         <td>{{ $mov->id_mvt }}</td>
-                        <td>{{ $mov->folio }}</td>
+                        <td>{{ session('utils')->formatFolio($mov->folio) }}</td>
                         <td>{{ $mov->dt_date }}</td>
 												<td align="right">{{ session('utils')->formatNumber($mov->total_quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
 												<td align="right">{{ session('utils')->formatNumber($mov->received, \Config::get('scsiie.FRMT.QTY')) }}</td>

@@ -43,9 +43,14 @@
       <table width="100%">
         <tr style='height:18px'>
             <td class='tc'>
-                <?php $oAddress = session('branch')->getMainAddress(); ?>
+              <?php $oAddress = $oBranch->getMainAddress(); ?>
+              @if ($oAddress)
                 {{ strtoupper ($oAddress->street.' #'.$oAddress->num_ext.'. '.$oAddress->neighborhood.
                     ', '.$oAddress->locality.', '.$oAddress->state_name.'; CP '.$oAddress->zip_code) }}
+              @else
+                {{ '' }}
+              @endif
+
             </td>
         </tr>
       </table>

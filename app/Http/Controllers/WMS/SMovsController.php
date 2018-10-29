@@ -1112,8 +1112,10 @@ class SMovsController extends Controller
     {
        $oMovement = SMovement::find($id);
        $oMovement->rows;
+       $oBranch = SBranch::find($oMovement->branch_id);
 
-       $view = view('wms.movs.print', ['oMovement' => $oMovement])->render();
+       $view = view('wms.movs.print', ['oMovement' => $oMovement,
+                                        'oBranch' => $oBranch])->render();
         // set ukuran kertas dan orientasi
         $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
         // cetak

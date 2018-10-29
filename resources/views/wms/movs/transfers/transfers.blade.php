@@ -34,7 +34,7 @@
                   @foreach ($lList as $mov)
                       <tr>
                         <td>{{ $mov->id_mvt }}</td>
-                        <td style="text-align: center;">{{ $mov->mov_code.'-'.$mov->folio }}</td>
+                        <td style="text-align: center;">{{ $mov->mov_code.'-'.session('utils')->formatFolio($mov->folio) }}</td>
                         <td style="text-align: center;">{{ $mov->dt_date }}</td>
 												<td>{{ $mov->src_branch_name }}</td>
 												<td>{{ $mov->des_branch_name }}</td>
