@@ -140,7 +140,7 @@ class SImportDocuments
       if ($result->num_rows > 0) {
          // output data of each row
          while($row = $result->fetch_assoc()) {
-             if (array_key_exists($row["id_doc"], $lDocuments)) {
+             if (array_key_exists($row["id_year"].'_'.$row["id_doc"], $lDocuments)) {
                 if ($row["ts_edit"] > $oImportation->last_importation ||
                       $row["ts_del"] > $oImportation->last_importation) {
 
@@ -160,7 +160,7 @@ class SImportDocuments
                     $lDocuments[$row["id_doc"]]->total_cur = $row["tot_cur_r"];
                     $lDocuments[$row["id_doc"]]->is_closed = $row["b_close"];
                     $lDocuments[$row["id_doc"]]->is_deleted = $row["b_del"];
-                    $lDocuments[$row["id_doc"]]->external_id = $row["id_doc"];
+                    $lDocuments[$row["id_doc"]]->external_id = $row["id_year"].'_'.$row["id_doc"];
                     $lDocuments[$row["id_doc"]]->year_id = $lYears[$row["id_year"]];
                     $lDocuments[$row["id_doc"]]->billing_branch_id = $lWebBranches[$row["fid_cob"]];
                     $lDocuments[$row["id_doc"]]->doc_category_id = $row["fid_ct_dps"];
@@ -237,7 +237,7 @@ class SImportDocuments
        $oDocument->total_cur = $oSiieDocument["tot_cur_r"];
        $oDocument->is_closed = $oSiieDocument["b_close"];
        $oDocument->is_deleted = $oSiieDocument["b_del"];
-       $oDocument->external_id = $oSiieDocument["id_doc"];
+       $oDocument->external_id = $oSiieDocument["id_year"].'_'.$oSiieDocument["id_doc"];
        $oDocument->year_id = $lYears[$oSiieDocument["id_year"]];
        $oDocument->billing_branch_id = $lWebBranches[$oSiieDocument["fid_cob"]];
        $oDocument->doc_category_id = $oSiieDocument["fid_ct_dps"];
