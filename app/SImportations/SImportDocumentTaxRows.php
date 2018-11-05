@@ -69,10 +69,10 @@ class SImportDocumentTaxRows
         '2022' => '7',
       ];
 
-      if (array_key_exists(''.$lWebDocuments[$lYearsId[$iYear].'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId, $lWebDocumentRows)) {
+      if (array_key_exists(''.$lWebDocuments[$iYear.'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId, $lWebDocumentRows)) {
         $lTaxes = SDocumentRowTax::where('year_id', $lYearsId[$iYear])
-                                  ->where('document_id', $lWebDocuments[$lYearsId[$iYear].'_'.$iDocExternalId])
-                                  ->where('document_row_id', $lWebDocumentRows[''.$lWebDocuments[$lYearsId[$iYear].'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId]);
+                                  ->where('document_id', $lWebDocuments[$iYear.'_'.$iDocExternalId])
+                                  ->where('document_row_id', $lWebDocumentRows[''.$lWebDocuments[$iYear.'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId]);
         $lTaxes->delete();
       }
 
