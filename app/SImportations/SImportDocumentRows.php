@@ -105,7 +105,7 @@ class SImportDocumentRows {
          // output data of each row
          while($row = $result->fetch_assoc()) {
             if (array_key_exists($row["id_year"].'_'.$row["id_doc"], $lWebDocuments)) {
-                $sKey = ''.$lWebDocuments[$row["id_doc"]].$row["id_year"].$row["id_ety"];
+                $sKey = ''.$lWebDocuments[$row["id_year"].'_'.$row["id_doc"]].$row["id_year"].$row["id_ety"];
 
              if (array_key_exists($sKey, $lRows)) {
                 if ($row["ts_edit"] > $oImportation->last_importation ||

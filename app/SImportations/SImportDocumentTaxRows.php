@@ -69,10 +69,10 @@ class SImportDocumentTaxRows
         '2022' => '7',
       ];
 
-      if (array_key_exists(''.$lWebDocuments[$iDocExternalId].$lYearsId[$iYear].$iExternalRowId, $lWebDocumentRows)) {
+      if (array_key_exists(''.$lWebDocuments[$lYearsId[$iYear].'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId, $lWebDocumentRows)) {
         $lTaxes = SDocumentRowTax::where('year_id', $lYearsId[$iYear])
-                                  ->where('document_id', $lWebDocuments[$iDocExternalId])
-                                  ->where('document_row_id', $lWebDocumentRows[''.$lWebDocuments[$iDocExternalId].$lYearsId[$iYear].$iExternalRowId]);
+                                  ->where('document_id', $lWebDocuments[$lYearsId[$iYear].'_'.$iDocExternalId])
+                                  ->where('document_row_id', $lWebDocumentRows[''.$lWebDocuments[$lYearsId[$iYear].'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId]);
         $lTaxes->delete();
       }
 
@@ -115,7 +115,7 @@ class SImportDocumentTaxRows
       $oRow->tax = $oSiieRow["tax"];
       $oRow->tax_currency = $oSiieRow["tax_cur"];
       $oRow->external_id = $oSiieRow["id_tax"];
-      $oRow->document_id = $lWebDocuments[$oSiieRow["id_doc"]];
+      $oRow->document_id = $lWebDocuments[$oSiieRow["id_year"].'_'.$oSiieRow["id_doc"]];
       $oRow->year_id = $lYearsId[$oSiieRow["id_year"]];
 
       return $oRow;
