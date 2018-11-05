@@ -104,7 +104,7 @@ class SImportDocumentRows {
       if ($result->num_rows > 0) {
          // output data of each row
          while($row = $result->fetch_assoc()) {
-            if (array_key_exists($row["id_doc"], $lWebDocuments)) {
+            if (array_key_exists($row["id_year"].'_'.$row["id_doc"], $lWebDocuments)) {
                 $sKey = ''.$lWebDocuments[$row["id_doc"]].$row["id_year"].$row["id_ety"];
 
              if (array_key_exists($sKey, $lRows)) {
@@ -137,7 +137,7 @@ class SImportDocumentRows {
                     $lRows[$sKey]->item_id = $lWebItems[$row["fid_item"]];
                     $lRows[$sKey]->unit_id = $lWebUnits[$row["fid_unit"]];
                     $lRows[$sKey]->year_id = $lYearsId[$row["id_year"]];
-                    $lRows[$sKey]->document_id = $lWebDocuments[$row["id_doc"]];
+                    $lRows[$sKey]->document_id = $lWebDocuments[$row["id_year"].'_'.$row["id_doc"]];
                     $lRows[$sKey]->created_by_id = 1;
                     $lRows[$sKey]->updated_by_id = 1;
                     $lRows[$sKey]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
@@ -209,7 +209,7 @@ class SImportDocumentRows {
       $oRow->item_id = $lWebItems[$oSiieRow["fid_item"]];
       $oRow->unit_id = $lWebUnits[$oSiieRow["fid_unit"]];
       $oRow->year_id = $lYearsId[$oSiieRow["id_year"]];
-      $oRow->document_id = $lWebDocuments[$oSiieRow["id_doc"]];
+      $oRow->document_id = $lWebDocuments[$oSiieRow["id_year"].'_'.$oSiieRow["id_doc"]];
       $oRow->created_by_id = 1;
       $oRow->updated_by_id = 1;
       $oRow->created_at = $oSiieRow["ts_new"];
