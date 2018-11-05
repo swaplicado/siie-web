@@ -143,47 +143,48 @@ class SImportDocuments
              if (array_key_exists($row["id_year"].'_'.$row["id_doc"], $lDocuments)) {
                 if ($row["ts_edit"] > $oImportation->last_importation ||
                       $row["ts_del"] > $oImportation->last_importation) {
+                    $sKey = $row["id_year"].'_'.$row["id_doc"];
 
-                    $lDocuments[$row["id_doc"]]->dt_date = $row["dt"];
-                    $lDocuments[$row["id_doc"]]->dt_doc = $row["dt_doc"];
-                    $lDocuments[$row["id_doc"]]->num = $row["num"];
-                    $lDocuments[$row["id_doc"]]->service_num = $row["num_ser"];
-                    $lDocuments[$row["id_doc"]]->subtotal = $row["stot_r"];
-                    $lDocuments[$row["id_doc"]]->tax_charged = $row["tax_charged_r"];
-                    $lDocuments[$row["id_doc"]]->tax_retained = $row["tax_retained_r"];
-                    $lDocuments[$row["id_doc"]]->total = $row["tot_r"];
-                    $lDocuments[$row["id_doc"]]->exchange_rate = $row["exc_rate"];
-                    $lDocuments[$row["id_doc"]]->exchange_rate_sys = $row["exc_rate_sys"];
-                    $lDocuments[$row["id_doc"]]->subtotal_cur = $row["stot_cur_r"];
-                    $lDocuments[$row["id_doc"]]->tax_charged_cur = $row["tax_charged_cur_r"];
-                    $lDocuments[$row["id_doc"]]->tax_retained_cur = $row["tax_retained_cur_r"];
-                    $lDocuments[$row["id_doc"]]->total_cur = $row["tot_cur_r"];
-                    $lDocuments[$row["id_doc"]]->is_closed = $row["b_close"];
-                    $lDocuments[$row["id_doc"]]->is_deleted = $row["b_del"];
-                    $lDocuments[$row["id_doc"]]->external_id = $row["id_year"].'_'.$row["id_doc"];
-                    $lDocuments[$row["id_doc"]]->year_id = $lYears[$row["id_year"]];
-                    $lDocuments[$row["id_doc"]]->billing_branch_id = $lWebBranches[$row["fid_cob"]];
-                    $lDocuments[$row["id_doc"]]->doc_category_id = $row["fid_ct_dps"];
-                    $lDocuments[$row["id_doc"]]->doc_class_id = $row["fid_cl_dps"];
-                    $lDocuments[$row["id_doc"]]->doc_type_id = $row["fid_tp_dps"];
+                    $lDocuments[$sKey]->dt_date = $row["dt"];
+                    $lDocuments[$sKey]->dt_doc = $row["dt_doc"];
+                    $lDocuments[$sKey]->num = $row["num"];
+                    $lDocuments[$sKey]->service_num = $row["num_ser"];
+                    $lDocuments[$sKey]->subtotal = $row["stot_r"];
+                    $lDocuments[$sKey]->tax_charged = $row["tax_charged_r"];
+                    $lDocuments[$sKey]->tax_retained = $row["tax_retained_r"];
+                    $lDocuments[$sKey]->total = $row["tot_r"];
+                    $lDocuments[$sKey]->exchange_rate = $row["exc_rate"];
+                    $lDocuments[$sKey]->exchange_rate_sys = $row["exc_rate_sys"];
+                    $lDocuments[$sKey]->subtotal_cur = $row["stot_cur_r"];
+                    $lDocuments[$sKey]->tax_charged_cur = $row["tax_charged_cur_r"];
+                    $lDocuments[$sKey]->tax_retained_cur = $row["tax_retained_cur_r"];
+                    $lDocuments[$sKey]->total_cur = $row["tot_cur_r"];
+                    $lDocuments[$sKey]->is_closed = $row["b_close"];
+                    $lDocuments[$sKey]->is_deleted = $row["b_del"];
+                    $lDocuments[$sKey]->external_id = $row["id_year"].'_'.$row["id_doc"];
+                    $lDocuments[$sKey]->year_id = $lYears[$row["id_year"]];
+                    $lDocuments[$sKey]->billing_branch_id = $lWebBranches[$row["fid_cob"]];
+                    $lDocuments[$sKey]->doc_category_id = $row["fid_ct_dps"];
+                    $lDocuments[$sKey]->doc_class_id = $row["fid_cl_dps"];
+                    $lDocuments[$sKey]->doc_type_id = $row["fid_tp_dps"];
                     try {
-                      $src_id = $lDocsYear[$row["fid_src_doc_n"].$lYears[$row["fid_src_year_n"]]]->id_document;
+                      $src_id = $lDocuments[$lYears[$row["fid_src_year_n"]].'_'.$row["fid_src_doc_n"]]->id_document;
                     }
                     catch (\ErrorException $e) {
                       $src_id = 1;
                     }
-                    $lDocuments[$row["id_doc"]]->doc_src_id = is_numeric($src_id) ? $src_id : 1;
-                    $lDocuments[$row["id_doc"]]->doc_status_id = 1;
-                    $lDocuments[$row["id_doc"]]->doc_sys_status_id = $row["fid_st_dps"];
-                    $lDocuments[$row["id_doc"]]->currency_id = $lCurrencies[$row["fid_cur"]];
-                    $lDocuments[$row["id_doc"]]->partner_id = $lWebPartners[$row["fid_bp_r"]];
-                    $lDocuments[$row["id_doc"]]->branch_id = $lWebBranches[$row["fid_bpb"]];
-                    $lDocuments[$row["id_doc"]]->address_id = $lWebAddresses[$row["fid_bpb"].'-'.$row["fid_add"]];
-                    $lDocuments[$row["id_doc"]]->created_by_id = 1;
-                    $lDocuments[$row["id_doc"]]->updated_by_id = 1;
-                    $lDocuments[$row["id_doc"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
+                    $lDocuments[$sKey]->doc_src_id = is_numeric($src_id) ? $src_id : 1;
+                    $lDocuments[$sKey]->doc_status_id = 1;
+                    $lDocuments[$sKey]->doc_sys_status_id = $row["fid_st_dps"];
+                    $lDocuments[$sKey]->currency_id = $lCurrencies[$row["fid_cur"]];
+                    $lDocuments[$sKey]->partner_id = $lWebPartners[$row["fid_bp_r"]];
+                    $lDocuments[$sKey]->branch_id = $lWebBranches[$row["fid_bpb"]];
+                    $lDocuments[$sKey]->address_id = $lWebAddresses[$row["fid_bpb"].'-'.$row["fid_add"]];
+                    $lDocuments[$sKey]->created_by_id = 1;
+                    $lDocuments[$sKey]->updated_by_id = 1;
+                    $lDocuments[$sKey]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
-                    array_push($lDocumentsToWeb, $lDocuments[$row["id_doc"]]);
+                    array_push($lDocumentsToWeb, $lDocuments[$sKey]);
                 }
              }
              else {
@@ -244,7 +245,7 @@ class SImportDocuments
        $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
        $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
        try {
-         $src_id = $lDocsYear[$oSiieDocument["fid_src_doc_n"].$lYears[$oSiieDocument["fid_src_year_n"]]]->id_document;
+         $src_id = $lDocuments[$lYears[$oSiieDocument["fid_src_year_n"]].'_'.$oSiieDocument["fid_src_doc_n"]]->id_document;
        }
        catch (\ErrorException $e) {
          $src_id = 1;
