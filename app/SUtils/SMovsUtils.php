@@ -313,7 +313,9 @@ class SMovsUtils {
                   ->where('ei.is_inventory', true)
                   ->where('eig.item_class_id', '!=', \Config::get('scsiie.ITEM_CLS.SPENDING'))
                   ->where('ws.is_deleted', false)
-                  ->where('ws.whs_id', $iWarehouseSrc);
+                  ->where('ws.whs_id', $iWarehouseSrc)
+                  ->where('ws.branch_id', session('branch')->id_branch)
+                  ->where('ws.dt_date', '<=',session('work_date')->format('Y-m-d'));
 
       switch ($iElementType) {
         case \Config::get('scwms.ELEMENTS_TYPE.LOTS'):
@@ -458,6 +460,9 @@ class SMovsUtils {
       // if (SGuiUtils::isProductionMovement($iMvtType)) {
       //   $oStock = $oStock->where('ws.prod_ord_id', $iSrcPO);
       // }
+
+      $oStock = $oStock->where('eb.id_branch', session('branch')->id_branch)
+                        ->where('ws.dt_date', '<=',session('work_date')->format('Y-m-d'));
 
       $oStock = $oStock->groupBy('wwl.id_whs_location')
                         ->groupBy('wp.id_pallet')
