@@ -49,6 +49,7 @@ class SStockUtils
         $aParameters = array();
         $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] = session('work_date')->toDateString();
         $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oMovement->branch_id;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.WITHOUT_SEGREGATED')] = true;
@@ -58,14 +59,15 @@ class SStockUtils
           $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $oMovement->id_mvt;
         }
 
-        $lStock = session('stock')->getStockResult($aParameters);
+        $loStock = session('stock')->getStockResult($aParameters);
 
-        $lStock = $lStock->groupBy('id_item')
+        $loStock = $loStock->groupBy('id_item')
                             ->groupBy('id_unit')
                             ->groupBy('lot_id')
                             ->groupBy('pallet_id')
-                            ->groupBy('location_id')
-                            ->get();
+                            ->groupBy('location_id');
+                            
+        $lStock = $loStock->get();
 
         $lStockC = $lStock;
 
@@ -319,6 +321,7 @@ class SStockUtils
         $aParameters = array();
         $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $iYear;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] = session('work_date')->toDateString();
         $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $oRow->pallet_id;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oRow->unit_id;
         $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oRow->item_id;
