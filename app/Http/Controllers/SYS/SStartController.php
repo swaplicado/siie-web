@@ -238,7 +238,7 @@ class SStartController extends Controller
         session(['transit_whs' => $oTransitWarehouse]);
         session(['number_label' => $oNumberLabels->val_int]);
 
-	      $sWorkDate =  $_COOKIE['tWorkDate'];
+	      $sWorkDate =  $request->work_date;
         $oWorkDate = Carbon::parse($sWorkDate);
         session(['work_date' => $oWorkDate]);
 

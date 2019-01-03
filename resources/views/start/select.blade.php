@@ -9,7 +9,7 @@
     $i = 0;
   ?>
   <div class="form-group">
-      <div class="list-group">
+      <div id="company" class="list-group">
         @foreach($lUserCompany as $userCompanyRow)
             <a href="" id="{{ $userCompanyRow->company_id }}" class="list-group-item {{ $i == 0 ? 'active' : '' }}">
               {{ $userCompanyRow->company->name }}
