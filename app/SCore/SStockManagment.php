@@ -131,7 +131,7 @@ class SStockManagment
        }
        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
              $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] != 0) {
-           $stock->where('ws.dt_date', $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')]);
+           $stock->where('ws.dt_date', '<=', $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')]);
        }
        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ID_MVT'), $aParameters) &&
              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] != 0) {
