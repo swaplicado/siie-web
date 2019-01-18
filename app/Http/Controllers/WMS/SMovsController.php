@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\WMS\SStockController;
 use App\Http\Controllers\QMS\SSegregationsController;
 use Laracasts\Flash\Flash;
+use Carbon\Carbon;
+use App\ERP\SYear;
 use App\Http\Requests\WMS\SMovRequest;
 use App\SBarcode\SBarcode;
 use App\SUtils\SStockUtils;
@@ -588,10 +590,18 @@ class SMovsController extends Controller
 
         $oProcess = new SMovsManagment();
 
+        $sMvtDate =  $movement->dt_date;
+        $oMvtDate = Carbon::parse($sMvtDate);
+
+        $iYear = $oMvtDate->year;
+        $oYear = SYear::where('year', $iYear)
+                        ->where('is_deleted', false)
+                        ->first();
+
         $movement->whs_id = $iWhsId;
         $movement->branch_id = $movement->warehouse->branch_id;
         $movement->iAuxBranchDes = $oMovementJs->iBranchDes;
-        $movement->year_id = session('work_year');
+        $movement->year_id = $oYear->id_year;
         $movement->auth_status_id = 1; // ??? pendientes constantes de status
         $movement->src_mvt_id = $movement->src_mvt_id > 0 ? $movement->src_mvt_id : 1;
         $movement = $oProcess->assignForeignDoc($movement, $movement->mvt_whs_type_id, $oMovementJs->iDocumentId);
