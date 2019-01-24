@@ -51,6 +51,7 @@ class SImportationsController extends Controller {
                               ->with('docs', $docs)
                               ->with('rows1', $rows1)
                               ->with('rows2', $rows2)
+                              ->with('year', session('work_date')->year)
                               ->with('isImported', $isImported)
                               ->with('db_import', $oDbImport->val_text)
                               ->with('db_host', $oDbHost->val_text);

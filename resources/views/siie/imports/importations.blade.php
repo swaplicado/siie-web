@@ -81,7 +81,7 @@
               {!! Form::label('year', 'Año a importar') !!}
             </div>
             <div class="col-md-4">
-              {!! Form::number('year', '2018', ['class' => 'form-control', 'style' => 'text-align: center;']) !!}
+              {!! Form::number('year', $year, ['class' => 'form-control', 'style' => 'text-align: center;']) !!}
             </div>
           </div>
           <div class="row">
