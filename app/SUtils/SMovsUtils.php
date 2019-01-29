@@ -315,6 +315,7 @@ class SMovsUtils {
                   ->where('ws.is_deleted', false)
                   ->where('ws.whs_id', $iWarehouseSrc)
                   ->where('ws.branch_id', session('branch')->id_branch)
+                  ->where('ws.year_id', session('work_year'))
                   ->where('ws.dt_date', '<=',session('work_date')->format('Y-m-d'));
 
       switch ($iElementType) {

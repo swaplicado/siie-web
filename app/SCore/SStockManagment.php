@@ -151,7 +151,7 @@ class SStockManagment
 
         $select = 'ws.lot_id, wl.lot,sum(ws.input) as inputs,
                            sum(ws.output) as outputs,
-                           (sum(ws.input) - sum(ws.output)) as stock,
+                           sum(ws.input - ws.output) as stock,
                            AVG(ws.cost_unit) as cost_unit,
                            ei.code as item_code,
                            ei.name as item,
@@ -197,7 +197,7 @@ class SStockManagment
           $sSelect = 'ws.lot_id, wl.lot,
                            sum(ws.input) as inputs,
                            sum(ws.output) as outputs,
-                           (sum(ws.input) - sum(ws.output)) as stock,
+                           sum(ws.input - ws.output) as stock,
                            AVG(ws.cost_unit) as cost_unit,
                            ei.code as item_code,
                            ei.name as item,

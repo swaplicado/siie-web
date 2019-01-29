@@ -32,7 +32,7 @@ class SStockUtils
 
         $sSelect = 'sum(ws.input) as inputs,
                      sum(ws.output) as outputs,
-                     (sum(ws.input) - sum(ws.output)) as stock,
+                     sum(ws.input - ws.output) as stock,
                      AVG(ws.cost_unit) as cost_unit,
                      ei.code as item_code,
                      ei.name as item,
@@ -202,7 +202,7 @@ class SStockUtils
 
        $sSelect = 'sum(ws.input) as inputs,
                     sum(ws.output) as outputs,
-                    (sum(ws.input) - sum(ws.output)) as stock,
+                    sum(ws.input - ws.output) as stock,
                     AVG(ws.cost_unit) as cost_unit,
                     ei.code as item_code,
                     ei.name as item,
@@ -306,7 +306,7 @@ class SStockUtils
 
         $sSelect = 'sum(ws.input) as inputs,
                      sum(ws.output) as outputs,
-                     (sum(ws.input) - sum(ws.output)) as stock,
+                     sum(ws.input - ws.output) as stock,
                      AVG(ws.cost_unit) as cost_unit,
                      ei.code as item_code,
                      ei.name as item,
@@ -551,7 +551,7 @@ class SStockUtils
         $select = 'ws.location_id,
                       sum(ws.input) as inputs,
                       sum(ws.output) as outputs,
-                      (sum(ws.input) - sum(ws.output)) as stock';
+                      sum(ws.input - ws.output) as stock,';
 
         try {
           $stock = \DB::connection(session('db_configuration')->getConnCompany())
