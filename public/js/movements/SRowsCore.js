@@ -276,10 +276,10 @@ class SRowsCore {
      oJsRow.dQuantity = oRow.quantity;
      oJsRow.dPrice = oRow.amount_unit;
 
-     oJsRow.iDocOrderRowId = oRow.doc_order_id;
-     oJsRow.iDocInvoiceRowId = oRow.doc_invoice_id;
-     oJsRow.iDocDebitNoteRowId = oRow.doc_debit_note_id;
-     oJsRow.iDocCreditNoteRowId = oRow.doc_credit_note_id;
+     oJsRow.iDocOrderRowId = oRow.doc_order_row_id;
+     oJsRow.iDocInvoiceRowId = oRow.doc_invoice_row_id;
+     oJsRow.iDocDebitNoteRowId = oRow.doc_debit_note_row_id;
+     oJsRow.iDocCreditNoteRowId = oRow.doc_credit_note_row_id;
      oJsRow.bIsDeleted = oRow.is_deleted;
 
      oJsRow.sItem = oRow.item.name;
