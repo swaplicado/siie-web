@@ -1170,10 +1170,10 @@ class SMovsController extends Controller
            $oMvtRow->iAuxLocationDesId = $row->iLocationDesId;
 
            if ($row->iAuxDocRowId == 0) {
-              $oMvtRow->doc_order_row_id = $row->iDocOrderRowId;
-              $oMvtRow->doc_invoice_row_id = $row->iDocInvoiceRowId;
-              $oMvtRow->doc_debit_note_row_id = $row->iDocDebitNoteRowId;
-              $oMvtRow->doc_credit_note_row_id = $row->iDocCreditNoteRowId;
+              $oMvtRow->doc_order_row_id = isset($row->iDocOrderRowId) ? $row->iDocOrderRowId : 0;
+              $oMvtRow->doc_invoice_row_id = isset($row->iDocInvoiceRowId) ? $row->iDocInvoiceRowId : 0;
+              $oMvtRow->doc_debit_note_row_id = isset($row->iDocDebitNoteRowId) ? $row->iDocDebitNoteRowId : 0;
+              $oMvtRow->doc_credit_note_row_id = isset($row->iDocCreditNoteRowId) ? $row->iDocCreditNoteRowId : 0;
            }
            else {
              $oMvtRow = $oProcess->assignForeignRow($oMvtRow, $oMovement->mvt_whs_type_id, $row->iAuxDocRowId);
