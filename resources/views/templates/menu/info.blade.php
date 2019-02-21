@@ -31,7 +31,13 @@
          <div class="well well-sm">
            <a href="https://docs.google.com/document/d/1tYdh6WbB724pQdGyTVSIK-j6LUMaLXKuQtvA_E_BuzU/edit?usp=sharing"
             target="_blank">
-             Manual de usuario
+             Manual Almacenes y Calidad
+           </a>
+         </div>
+         <div class="well well-sm">
+           <a href="https://docs.google.com/document/d/1qmXq66fVFhPqCCGWHEbmMIevZmFtdWZzxWGpuDjz6c0/edit?usp=sharing"
+            target="_blank">
+             Manual Producción
            </a>
          </div>
        </div>
