@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\User;
 use App\ERP\SYear;
+use App\ERP\SBranch;
 use App\WMS\SWarehouse;
 
 class SSessionUtils {
@@ -277,7 +278,7 @@ class SSessionUtils {
 
      $branchess = array();
      if (session('utils')->isSuperUser($oUser)) {
-        $branches = SBranch::selectRaw('CONCAT(code, ' - ', name) as branch_w_code,
+        $branches = SBranch::selectRaw('CONCAT(code, "-", name) as branch_w_code,
                                         name,
                                         code,
                                         id_branch')
