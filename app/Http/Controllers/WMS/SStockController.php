@@ -92,6 +92,7 @@ class SStockController extends Controller
             $orderBy2 = 'ws.item_id';
 
             $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] = 'wl.id_lot';
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
 
             // $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
             break;
