@@ -26,9 +26,14 @@ class SSegregationCore
    *
    * @param  SMovement  $oMovement
    * @param  int  $iSegregationType can be quality, production or shipment
+   * @param  int  $iOperation \Config::get('scwms.OPERATION_TYPE.EDITION')
    */
-  public function segregate($oMovement, $iSegregationType)
+  public function segregate($oMovement, $iSegregationType, $iOperation)
   {
+      if ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) {
+          SSegregation::where('reference_id', $oMovement->id_mvt)->delete();
+      }
+      
       $this->processSegregation($oMovement, $iSegregationType, \Config::get('scqms.BYINSPECTING'));
   }
 
@@ -467,6 +472,10 @@ class SSegregationCore
       $oSegregation->save();
 
       foreach ($oMovement->rows as $movRow) {
+        if ($movRow->is_deleted) {
+          continue;
+        }
+        
         if (sizeof($movRow->lotRows) > 0) {
           $lSegRows = array();
           foreach ($movRow->lotRows as $lotRow) {

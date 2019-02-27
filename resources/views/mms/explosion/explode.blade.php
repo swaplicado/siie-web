@@ -16,7 +16,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="form-group">
-          {!! Form::label('branch', trans('wms.labels.UNIT')	) !!}
+          {!! Form::label('branch', trans('wms.labels.BRANCH')	) !!}
           {!! Form::label('branch', session('branch')->code.'-'.session('branch')->name,
                           ['id' => 'branch', 'class' => 'form-control input-sm']) !!}
         </div>
