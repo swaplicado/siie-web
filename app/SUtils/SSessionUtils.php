@@ -327,6 +327,23 @@ class SSessionUtils {
   }
 
   /**
+   * format the pallet number or text to longitude configured
+   * and fill with zeros to left
+   *
+   * @param  string $sPallet
+   *
+   * @return string
+   */
+  public function formatPallet($sPallet = '')
+  {
+      if ($sPallet == null) {
+        $sPallet = '';
+      }
+
+      return str_pad($sPallet, 6, "0", STR_PAD_LEFT);
+  }
+
+  /**
    * Format the number received
    * the decimals of number are configured in the
    * table configuration of company on the database

@@ -139,7 +139,7 @@
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_PALLET_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_GENERAL'))
-									<td>{{ $row->pallet == '1' ? 'SIN TARIMA' : $row->pallet }}</td>
+									<td>{{ $row->pallet == '1' ? 'SIN TARIMA' : session('utils')->formatPallet($row->pallet) }}</td>
 								@endif
 								@if ($iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT') ||
 											$iStockType == \Config::get('scwms.STOCK_TYPE.STK_BY_LOT_BY_WAREHOUSE') ||
