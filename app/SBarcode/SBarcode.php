@@ -113,14 +113,18 @@ use PDF;
    */
   public static function decodeBarcode($data){
     //If $data is a code of item return SITem
-    $answer = SItem::where('code',$data)
-                      ->first();
-    if($answer==null){
-    $answer = sPallet::where('id_pallet',$data)
-                      ->first();
+
+    $answer = SItem::where('code',$data)->first();
+
+    if ($answer == null) {
+      $answer = sPallet::where('id_pallet',$data)->first();
     }
 
-    if($answer==null){
+    if ($answer == null) {
+      $answer = SWmsLot::where('lot', $data)->orderBy('created_at', 'DESC')->first();
+    }
+
+    if ($answer == null) {
     //$type can be
     //1= lots
     //2= Pallets

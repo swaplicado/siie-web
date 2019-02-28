@@ -56,12 +56,16 @@
   						{!! Form::date('exp_date', null, ['class'=>'form-control input-sm',
   																															'id' => 'exp_date']) !!}
             </div>
-            <div class="col-sm-4 paddingsm">
+            <div class="col-sm-3 paddingsm">
               {!! Form::label(trans('userinterface.labels.QUANTITY').'*') !!}
               {!! Form::number('quantity_lot', 1, ['class'=>'form-control input-sm', 'id' => 'quantity_lot',
                                                     'placeholder' => trans('userinterface.placeholders.QUANTITY'),
                                                     'max' => '1000000000',
                                                     'style' => 'text-align: right;']) !!}
+            </div>
+            <div class="col-sm-1 paddingsm">
+              {!! Form::label('-', '-----', ['style' => 'color: white;']) !!}
+              {!! Form::label('lot_unit', '-', ['class'=>'form-control input-sm', 'id' => 'lot_unit']) !!}
             </div>
           </div>
           <div class="row">

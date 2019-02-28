@@ -400,6 +400,15 @@ class SGuiValidations {
     }
 
     /**
+     * set the text to unit label on principal view
+     *
+     * @param {string} sText
+     */
+    setLotUnitLabel(sText) {
+      document.getElementById('lot_unit').innerText = sText;
+    }
+
+    /**
      * validate the input for add a new row
      *
      * @return {boolean} true if the validation passed successfully
