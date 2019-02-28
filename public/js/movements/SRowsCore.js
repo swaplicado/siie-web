@@ -27,6 +27,7 @@ class SRowsCore {
     document.getElementById('accLots').disabled = false;
 
     guiValidations.hideLots();
+    guiValidations.setLotUnitLabel('-');
 
     $('#item').focus();
   }

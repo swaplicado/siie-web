@@ -71,12 +71,18 @@ class SItemSelection {
 
               lotsCore.setFoundLot();
               guiFunctions.setQuantityLot(guiFunctions.getQuantity());
-              lotsCore.addLot();
 
               guiValidations.showLots();
               guiValidations.showPallet();
 
-              bAddDirectly = true;
+              bAddDirectly = bAddDirectly = globalData.iMvtType != globalData.scwms.MVT_TP_IN_ADJ
+                              && globalData.iMvtType != globalData.scwms.MVT_IN_DLVRY_PP
+                              && !utilFunctions.isProductionDelivery(globalData.iMvtType);
+
+              if (bAddDirectly) {
+                lotsCore.addLot();
+              }
+
               break;
 
           case globalData.lElementsType.PALLETS:
@@ -159,6 +165,10 @@ class SItemSelection {
 
         guiValidations.setItemLabel(elementToAdd.sItemCode + '-' + elementToAdd.sItem);
         guiValidations.setUnitLabel(elementToAdd.sUnit);
+
+        if (elementToAdd.bIsLot) {
+          guiValidations.setLotUnitLabel(elementToAdd.sUnit);
+        }
 
         if (bAddDirectly) {
             addElement();
@@ -319,6 +329,7 @@ $('#select_item_button').on('click', function(e) {
     }
     else {
       guiValidations.showLots();
+      guiValidations.setLotUnitLabel(row['unit_code']);
       guiValidations.showPallet();
     }
 
