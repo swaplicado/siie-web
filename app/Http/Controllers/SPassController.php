@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\SPasswordRequest;
+use App\Http\Requests\SPasswordSuperRequest;
 
 use App\SUtils\SValidation;
 use App\SUtils\SUtil;
@@ -59,6 +60,26 @@ class SPassController extends Controller
     }
 
     /**
+     * Updates the user's password
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     */
+    public function updateSuperPass(SPasswordSuperRequest $request, $id)
+    {
+      $user = User::find($id);
+      $request_data = $request->All();
+
+      $user->password = bcrypt($request_data['password']);
+      $user->updated_by_id = \Auth::user()->id;
+      $user->save();
+
+      Flash::success(trans('messages.PASS_CHANGED'))->important();
+
+      return redirect()->route('start.selmod');
+    }
+
+    /**
      * change the password of user
      *
      * @param  int  $id
@@ -70,6 +91,20 @@ class SPassController extends Controller
         // dd($user);
 
         return view('admin.users.changepass')->with('user', $user);
+    }
+
+    /**
+     * change the password of user
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function changeSuperPass(Request $request, $id)
+    {
+        $user = User::find($id);
+        // dd($user);
+
+        return view('admin.users.changesuperpass')->with('user', $user);
     }
 
     public function changeDate(Request $request)

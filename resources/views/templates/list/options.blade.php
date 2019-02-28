@@ -36,6 +36,7 @@
 				@if (in_array(\Config::get('scsys.OPTIONS.MOD_PASS'), $loptions) &&
 						App\SUtils\SValidation::isRenderedB(\Config::get('scsys.OPERATION.SUPER'), $actualUserPermission, $v_created_by))
 					@include('templates.list.changepass')
+					@include('templates.list.changesuperpass')
 				@endif
 				@if (in_array(\Config::get('scsys.OPTIONS.MOD_PASS'), $loptions) &&
 						App\SUtils\SValidation::isRenderedB(\Config::get('scsys.OPERATION.SUPER'), $actualUserPermission, $v_created_by))

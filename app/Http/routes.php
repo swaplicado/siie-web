@@ -105,7 +105,15 @@ Route::post('manage/changedate',[
   		Route::put('users/{id}/updatepass',[
   			'uses' => 'SPassController@UpdatePass',
   			'as' => 'admin.users.updatepass'
-  		]);
+      ]);
+      Route::get('users/{id}/changesuperpass',[
+        'uses' => 'SPassController@changeSuperPass',
+        'as' => 'admin.users.changesuperpass'
+      ]);
+      Route::put('users/{id}/updatesuperpass',[
+        'uses' => 'SPassController@updateSuperPass',
+        'as' => 'admin.users.updatesuperpass'
+      ]);
 
       /*
       * privileges
