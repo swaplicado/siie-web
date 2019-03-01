@@ -105,7 +105,13 @@ class SMovsManagment {
             }
         }
 
-        return $movements[0]->folio;
+        $sTextToReturn = $movements[0]->mvtType->code.'-'.$movements[0]->folio;
+
+        if (sizeof($movements) == 2)   {
+           $sTextToReturn = $sTextToReturn.' y '.$movements[1]->mvtType->code.'-'.$movements[1]->folio;
+        }
+
+        return $sTextToReturn;
     }
 
     /**
