@@ -116,8 +116,8 @@ use PDF;
 
     $answer = SItem::where('code',$data)->first();
 
-    if ($answer == null) {
-      $answer = sPallet::where('id_pallet',$data)->first();
+    if ($answer == null && strtolower(substr($data, 0, 1)) ==  't') {
+      $answer = SPallet::where('id_pallet', substr($data, 1))->first();
     }
 
     if ($answer == null) {
