@@ -101,14 +101,14 @@ class SMovsManagment {
 
         if ($movements[0]->whs_id == session('transit_whs')->id_whs) {
             if (isset($movements[1])) {
-              return $movements[1]->folio;
+              return $movements[1]->mvtType->code.'-'.session('utils')->formatFolio($movements[1]->folio);
             }
         }
 
-        $sTextToReturn = $movements[0]->mvtType->code.'-'.$movements[0]->folio;
+        $sTextToReturn = $movements[0]->mvtType->code.'-'.session('utils')->formatFolio($movements[0]->folio);
 
         if (sizeof($movements) == 2)   {
-           $sTextToReturn = $sTextToReturn.' y '.$movements[1]->mvtType->code.'-'.$movements[1]->folio;
+           $sTextToReturn = $sTextToReturn.' y '.$movements[1]->mvtType->code.'-'.session('utils')->formatFolio($movements[1]->folio);
         }
 
         return $sTextToReturn;
