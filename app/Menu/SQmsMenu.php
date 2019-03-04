@@ -12,6 +12,18 @@ class SQmsMenu {
         ->link('', '')
         ->route('qms.home', trans('qms.MODULE'))
         ->submenu(
+            Link::to('#', trans('qms.ANALYSIS_CONFIG').'<span class="caret"></span>')
+                ->addClass('dropdown-toggle')
+                ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+            \Menu::new()
+            ->addClass('dropdown-menu')
+          ->route('qms.analysis.index', trans('qms.ANALYSIS'),
+                                          [
+                                            trans('qms.ANALYSIS')
+                                          ])
+
+        )
+        ->submenu(
             Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),

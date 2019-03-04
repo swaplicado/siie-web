@@ -5,6 +5,9 @@
 return [
       'MODULE'  => 'Módulo Calidad',
 
+      'ANALYSIS' => 'Análisis',
+      'ANALYSIS_CONFIG' => 'Configuración de análisis',
+      'ANALYSIS_TYPE' => 'Tipo de análisis',
       'QRY_BY_STATUS' => 'Productos por estatus',
       'QRY_BY_STATUS_T' => 'Consulta de  unidades retenidas en calidad por estatus.',
       'IN_INSPECTION' => 'En Inspección',
@@ -25,7 +28,18 @@ return [
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
 
+      'titles'  => [
+        'CREATE_ANALYSIS' => 'Crear análisis',
+        'EDIT_ANALYSIS' => 'Editar análisis',
+      ],
+
+      'labels'  => [
+        'ANALYSIS_NAME' => 'Nombre de análisis',
+        'ANALYSIS_TYPE' => 'Tipo de análisis',
+      ],
+
       'placeholders'  =>  [
                             'SELECT_STATUS' => 'Seleccione status',
+                            'SELECT_ANALYSIS_TYPE' => 'Seleccione tipo de análisis',
                           ],
 ];

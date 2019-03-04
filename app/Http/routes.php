@@ -404,6 +404,19 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SSegregationsController@prepareData',
         'as'   => 'qms.segregations.prepareData'
       ]);
+
+      /*
+      * Analysis
+      **/
+      Route::resource('analysis','QMS\AnalysisController');
+      Route::get('analysis/{id}/destroy',[
+        'uses' => 'QMS\AnalysisController@Destroy',
+        'as'   => 'qms.analysis.destroy'
+      ]);
+      Route::get('analysis/{id}/active',[
+        'uses' => 'QMS\AnalysisController@Activate',
+        'as'   => 'qms.analysis.activate'
+      ]);
   });
 
 //****************************************/ Warehouses Module/*************************
