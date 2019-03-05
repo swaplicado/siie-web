@@ -417,6 +417,11 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\AnalysisController@Activate',
         'as'   => 'qms.analysis.activate'
       ]);
+
+      /*
+      * Configurations Analysis vs Items
+      **/
+      Route::resource('anaconfigs','QMS\AnaConfigsController');
   });
 
 //****************************************/ Warehouses Module/*************************

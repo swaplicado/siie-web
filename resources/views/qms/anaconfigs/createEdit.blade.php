@@ -8,22 +8,22 @@
 	<?php
 			if (isset($bIsCopy))
 			{
-				$sRoute = 'wms.itemcontainers.store';
+				$sRoute = 'qms.anaconfigs.store';
 			}
 			else
 			{
-				$sRoute = 'wms.itemcontainers.update';
+				$sRoute = 'qms.anaconfigs.update';
 			}
 			$aux = $itemcontainer;
 	?>
 	@section('title', trans('userinterface.titles.EDIT_ITEM_CONTAINER'))
 @else
 	<?php
-		$sRoute='wms.itemcontainers.store';
+		$sRoute='qms.anaconfigs.store';
 	?>
 	@section('title', trans('userinterface.titles.CREATE_ITEM_CONTAINER'))
 @endif
-	<?php $sRoute2 = 'wms.itemcontainers.index' ?>
+	<?php $sRoute2 = 'qms.anaconfigs.index' ?>
 
 @section('content')
 
@@ -43,26 +43,19 @@
 		</div>
 
 		<div class="form-group">
-			{!! Form::label('aux_branch_id', trans('userinterface.labels.BRANCH').'*') !!}
-			{!! Form::select('aux_branch_id', $branches, isset($itemcontainer) ?  $itemcontainer->aux_branch_id : null,
-								['class'=>'form-control', 'onChange' => 'whenChangeBranch(\'aux_branch_id\')',
-								'placeholder' => trans('userinterface.placeholders.SELECT_BRANCH'), 'required']) !!}
-		</div>
-
-		<div class="form-group">
-			{!! Form::label('aux_whs_id', trans('userinterface.labels.WAREHOUSE')) !!}
-			<div class="whss">
-				{!! Form::select('aux_whs_id', array(), isset($itemcontainer) ?  $itemcontainer->aux_whs_id : null ,
-									['class'=>'form-control', 'onChange' => 'whenChangeWarehouse(\'aux_whs_id\')', 'placeholder' => trans('userinterface.placeholders.SELECT_WHS')]) !!}
-			</div>
-		</div>
-
-		<div class="form-group">
-			{!! Form::label('aux_location_id', trans('userinterface.labels.LOCATION')) !!}
-			<div class="locs">
-				{!! Form::select('aux_location_id', array(), isset($itemcontainer) ?  $itemcontainer->aux_location_id : null ,
-									['class'=>'form-control', 'placeholder' => trans('userinterface.placeholders.SELECT_LOCATION')]) !!}
-			</div>
+			{!! Form::label('l_ana', trans('qms.ANALYSIS').'*') !!}
+			<select name="aranalysis[]" class="chosen-select form-control" data-placeholder="Seleccione análisis" multiple>
+					<option value=""></option>
+					@foreach ($lTypes as $type)
+						<optgroup label="{{ $type->name }}">
+						@foreach ($lAnalysis as $analysis)
+							@if ($analysis->type_id == $type->id_analysis_type)
+								<option value="{{ $analysis->id_analysis }}">{{ $analysis->ana_name }}</option>
+							@endif
+						@endforeach
+						</optgroup>
+					@endforeach
+			</select>
 		</div>
 
 @endsection
@@ -78,9 +71,6 @@
 				this.GENDER = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.GENDER')); ?>;
 				this.ITEM = <?php echo json_encode(\Config::get('scsiie.ITEM_LINK.ITEM')); ?>;
 
-				this.lWarehouses = <?php echo json_encode($warehouses); ?>;
-				this.lLocations = <?php echo json_encode($locations); ?>;
-
 				this.lItemClasses = <?php echo json_encode($itemClasses); ?>;
 				this.lItemTypes = <?php echo json_encode($itemTypes); ?>;
 				this.lItemFamilies = <?php echo json_encode($families); ?>;
@@ -94,11 +84,6 @@
 			var whsId = <?php echo json_encode(isset($itemcontainer) ? $itemcontainer->aux_whs_id == "" ? 0 : $itemcontainer->aux_whs_id : 0); ?>;
 			var locationId = <?php echo json_encode(isset($itemcontainer) ? $itemcontainer->aux_location_id == "" ? 0 : $itemcontainer->aux_location_id : 0); ?>;
 		</script>
-		<script src="{{ asset('js/folios/folios.js')}}"></script>
+		<script src="{{ asset('js/qms/configs/Anaconfigs.js')}}"></script>
 		<script src="{{ asset('js/itemcontainers/itemcontainer.js')}}"></script>
-		<script>
-				whenChangeBranch('aux_branch_id');
-				document.getElementById('aux_whs_id').value = whsId;
-				document.getElementById('aux_location_id').value = locationId;
-		</script>
 @endsection

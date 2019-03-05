@@ -17,10 +17,8 @@ class SQmsMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
             ->addClass('dropdown-menu')
-          ->route('qms.analysis.index', trans('qms.ANALYSIS'),
-                                          [
-                                            trans('qms.ANALYSIS')
-                                          ])
+          ->route('qms.analysis.index', trans('qms.ANALYSIS'))
+          ->route('qms.anaconfigs.index', trans('qms.ANALYSIS_VS_ITEMS'))
 
         )
         ->submenu(
