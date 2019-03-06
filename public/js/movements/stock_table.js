@@ -106,7 +106,7 @@ oCompleteStockTable = $('#stock_com_table').DataTable({
             "width": "10%"
         },
         {
-            "targets": 5,
+            "targets": [5, 6, 7],
             "className": "text-right",
             "width": "5%"
         },
