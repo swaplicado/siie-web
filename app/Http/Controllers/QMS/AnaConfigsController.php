@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Laracasts\Flash\Flash;
+use Validator;
 
 use App\Database\Config;
 use App\SUtils\SValidation;
@@ -22,6 +23,7 @@ use App\ERP\SItem;
 
 use App\QMS\SAnalysisType;
 use App\QMS\SAnalysis;
+use App\QMS\SAnaConfig;
 
 class AnaConfigsController extends Controller
 {
@@ -50,6 +52,7 @@ class AnaConfigsController extends Controller
                     qac.updated_by_id,
                     qac.created_at,
                     qac.updated_at,
+                    qac.is_deleted,
                     uc.username AS creation_user_name,
                     uu.username AS mod_user_name
                     ';
@@ -71,8 +74,7 @@ class AnaConfigsController extends Controller
             default:
         }
 
-        $lConfigs = $lConfigs->select(\DB::raw($sSelect))
-                     ->get();
+        $lConfigs = $lConfigs->select(\DB::raw($sSelect))->get();
 
         return view('qms.anaconfigs.index')
                     ->with('lConfigs', $lConfigs)
@@ -130,11 +132,55 @@ class AnaConfigsController extends Controller
      */
     public function store(Request $request)
     {
-        $oConfiguration = new SAnalysis($request->all());
-        $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-        $oConfiguration->updated_by_id = \Auth::user()->id;
-        $oConfiguration->created_by_id = \Auth::user()->id;
-        $oConfiguration->save();
+        $validator = Validator::make($request->all(), [
+                        'item_link_type_id' => 'required',
+                        'item_link_id' => 'required',
+                        'aranalysis' => 'array|required',
+                    ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('qms.anaconfigs.create')
+                            ->withErrors($validator)
+                            ->withInput();
+        }
+
+        $aAnalysis = $request->aranalysis;
+        
+        $validator->after(function($validator) use ($aAnalysis, $request) {
+            foreach ($aAnalysis as $iAnalysis) {
+                $oConfiguration =  new SAnaConfig();
+
+                $oConfiguration->analysis_id = $iAnalysis;
+                $oConfiguration->item_link_type_id = $request->item_link_type_id;
+                $oConfiguration->item_link_id = $request->item_link_id;
+
+                if (! $oConfiguration->isValid()) {
+                    $validator->errors()->add('Error', 'La configuración ya existe.');
+                }
+            }
+        });
+        
+        if ($validator->fails()) {
+            return redirect()->route('qms.anaconfigs.create')
+            ->withErrors($validator)
+            ->withInput();
+        }
+        
+        \DB::connection(session('db_configuration')->getConnCompany())
+        ->transaction(function () use ($aAnalysis, $request) {
+            foreach ($aAnalysis as $iAnalysis) {
+                $oConfiguration =  new SAnaConfig();
+
+                $oConfiguration->analysis_id = $iAnalysis;
+                $oConfiguration->item_link_type_id = $request->item_link_type_id;
+                $oConfiguration->item_link_id = $request->item_link_id;
+                $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+                $oConfiguration->updated_by_id = \Auth::user()->id;
+                $oConfiguration->created_by_id = \Auth::user()->id;
+
+                $oConfiguration->save();
+            }
+        });
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 

@@ -49,6 +49,7 @@ class QmsAddAnaConfigs extends Migration
                 $table->integer('updated_by_id')->unsigned();
                 $table->timestamps();
                 
+                $table->unique(['analysis_id', 'item_link_type_id', 'item_link_id'], 'configuration_unique');
                 $table->foreign('analysis_id')->references('id_analysis')->on('qms_analysis')->onDelete('cascade');
                 $table->foreign('item_link_type_id')->references('id_item_link_type')->on('erps_item_link_types')->onDelete('cascade');
                 $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');

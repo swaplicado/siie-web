@@ -44,7 +44,7 @@
 
 		<div class="form-group">
 			{!! Form::label('l_ana', trans('qms.ANALYSIS').'*') !!}
-			<select name="aranalysis[]" class="chosen-select form-control" data-placeholder="Seleccione análisis" multiple>
+			<select name="aranalysis[]" class="chosen-select form-control" data-placeholder="Seleccione análisis" multiple required>
 					<option value=""></option>
 					@foreach ($lTypes as $type)
 						<optgroup label="{{ $type->name }}">

@@ -1,6 +1,7 @@
 <?php namespace App\Menu;
 
 use Spatie\Menu\Laravel\Link;
+use App\SUtils\SValidation;
 
 class SQmsMenu {
 
@@ -17,9 +18,10 @@ class SQmsMenu {
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
             ->addClass('dropdown-menu')
-          ->route('qms.analysis.index', trans('qms.ANALYSIS'))
-          ->route('qms.anaconfigs.index', trans('qms.ANALYSIS_VS_ITEMS'))
-
+          ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
+                  Link::toRoute('qms.analysis.index', trans('qms.ANALYSIS')))
+          ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
+                  Link::toRoute('qms.anaconfigs.index', trans('qms.ANALYSIS_VS_ITEMS')))
         )
         ->submenu(
             Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')
