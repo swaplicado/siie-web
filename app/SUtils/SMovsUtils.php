@@ -107,6 +107,10 @@ class SMovsUtils {
                             SUM(ws.output)
                             , 0)) AS stock';
 
+      if ($iElementType == \Config::get('scwms.ELEMENTS_TYPE.PALLETS')) {
+        $sSelect = $sSelect.', CONCAT(wl.lot, ", ") AS lots';
+      }
+
       $sSelect = SMovsUtils::addSegregated($sSelect, $iWhsSrc, $iElementType);
 
       $bWithStock = SProductionCore::filterProductionWithStock($iMvtType);
@@ -326,7 +330,8 @@ class SMovsUtils {
                                       ->groupBy('wl.id_lot');
               break;
         case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
-              $lElements = $lElements->whereRaw('ws.pallet_id = wp.id_pallet')
+              $lElements = $lElements->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
+                                      ->whereRaw('ws.pallet_id = wp.id_pallet')
                                       ->groupBy('ei.id_item')
                                       ->groupBy('ei.unit_id')
                                       ->groupBy('wp.id_pallet');
