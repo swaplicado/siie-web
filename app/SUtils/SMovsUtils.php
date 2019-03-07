@@ -60,7 +60,6 @@ class SMovsUtils {
       case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
         $sSelect = $sSelect.',
                     wp.id_pallet AS pallet,
-                    CONCAT(wl.lot, ", ") AS lots,
                     wp.id_pallet';
         break;
 
@@ -107,6 +106,10 @@ class SMovsUtils {
                             SUM(ws.input) -
                             SUM(ws.output)
                             , 0)) AS stock';
+
+      if ($iElementType == \Config::get('scwms.ELEMENTS_TYPE.PALLETS')) {
+        $sSelect = $sSelect.', CONCAT(wl.lot, ", ") AS lots';
+      }
 
       $sSelect = SMovsUtils::addSegregated($sSelect, $iWhsSrc, $iElementType);
 
@@ -327,7 +330,8 @@ class SMovsUtils {
                                       ->groupBy('wl.id_lot');
               break;
         case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
-              $lElements = $lElements->whereRaw('ws.pallet_id = wp.id_pallet')
+              $lElements = $lElements->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
+                                      ->whereRaw('ws.pallet_id = wp.id_pallet')
                                       ->groupBy('ei.id_item')
                                       ->groupBy('ei.unit_id')
                                       ->groupBy('wp.id_pallet');
@@ -398,8 +402,7 @@ class SMovsUtils {
                             function($join) {
                               $join->on('ei.id_item', '=', 'wp.item_id')
                                    ->on('ei.unit_id', '=', 'wp.unit_id');
-                            })
-                            ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot');
+                            });
             break;
       default:
         # code...
