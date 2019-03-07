@@ -107,6 +107,10 @@ class SValidation {
       return true;
   }
 
+  canSkipSegregation(iMvtType) {
+    return globalData.MVT_TP_OUT_TRA == iMvtType;
+  }
+
 }
 
 var validation = new SValidation();

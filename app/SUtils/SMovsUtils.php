@@ -122,9 +122,15 @@ class SMovsUtils {
       $lElementsToReturn = array();
       // Filter the elements with stock available greater than zero
       foreach ($lElements as $oItem) {
-        if ($oItem->stock > $oItem->segregated) {
-          $oItem->available_stock = session('utils')->
-                                      formatNumber($oItem->stock - $oItem->segregated, \Config::get('scsiie.FRMT.QTY'));
+        if (! SMovsUtils::canSkipSegregation($iMvtType)) {
+          if ($oItem->stock > $oItem->segregated) {
+            $oItem->available_stock = session('utils')->
+                                        formatNumber($oItem->stock - $oItem->segregated, \Config::get('scsiie.FRMT.QTY'));
+            array_push($lElementsToReturn, $oItem);
+          }
+        }
+        else {
+          $oItem->available_stock = session('utils')->formatNumber($oItem->stock, \Config::get('scsiie.FRMT.QTY'));
           array_push($lElementsToReturn, $oItem);
         }
       }
@@ -476,11 +482,23 @@ class SMovsUtils {
 
       $oStock = $oStock->get();
 
-      foreach ($oStock as $key => $row) {
-        $row->available_stock = $row->stock - $row->segregated;
+      if (SMovsUtils::canSkipSegregation($iMvt)) {
+        foreach ($oStock as $key => $row) {
+          $row->available_stock = $row->stock;
+        }
+      }
+      else {
+        foreach ($oStock as $key => $row) {
+          $row->available_stock = $row->stock - $row->segregated;
+        }
       }
 
       return $oStock;
+  }
+
+  public static function canSkipSegregation($iMvtType = 0)
+  {
+    return $iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA');
   }
 
 }

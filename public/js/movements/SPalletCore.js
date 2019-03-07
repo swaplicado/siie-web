@@ -145,16 +145,18 @@ class SPalletCore {
          }
       }
 
-      lPalletStock.forEach(function (oStock) {
-          if (parseFloat(oStock.segregated, 10) > 0) {
-              bHaveSegregated = true;
-          }
-      });
-
-      if (bHaveSegregated) {
-        swal("Error", "La tarima tiene unidades segregadas y no se "+
-                      "pueden hacer operaciones con ella.", "error");
-        return false;
+      if (! validation.canSkipSegregation(oMovement.iMvtType)) {
+        lPalletStock.forEach(function (oStock) {
+            if (parseFloat(oStock.segregated, 10) > 0) {
+                bHaveSegregated = true;
+            }
+        });
+  
+        if (bHaveSegregated) {
+          swal("Error", "La tarima tiene unidades segregadas y no se "+
+                        "pueden hacer operaciones con ella.", "error");
+          return false;
+        }
       }
 
       return true;
