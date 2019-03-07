@@ -46,11 +46,11 @@
                         <i class='glyphicon glyphicon-info-sign'></i>
                   </button>
             </td>
-            <?php
-              $i++;
-            ?>
         </tr>
       @endif
+      <?php
+        $i++;
+      ?>
     @endforeach
   </tbody>
 </table>

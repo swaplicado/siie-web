@@ -414,11 +414,11 @@ function updateTable(iElementType) {
               "title": "idPallet",
               "data": "id_pallet"
           }, {
-              "title": "idPallet",
-              "data": "id_pallet"
-          }, {
               "title": "Tarima",
               "data": "pallet"
+          }, {
+              "title": "Lotes",
+              "data": "lots"
           }, {
               "title": "Clave",
               "data": "item_code"
@@ -496,7 +496,6 @@ function updateTable(iElementType) {
     oElementsTable.column( 0 ).visible( false );
     oElementsTable.column( 1 ).visible( false );
     oElementsTable.column( 2 ).visible( false );
-    oElementsTable.column( 3 ).visible( false );
 
     document.getElementById('modal_title').innerText = 'Tarimas';
   }

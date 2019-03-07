@@ -52,11 +52,11 @@ class SPalletsController extends Controller
       });
 
       return view('wms.pallets.index')
-          ->with('pallets', $Pallets)
-          ->with('iId', $iId)
-          ->with('sItem', $sItem)
-          ->with('actualUserPermission', $this->oCurrentUserPermission)
-          ->with('iFilter', $this->iFilter);
+              ->with('pallets', $Pallets)
+              ->with('iId', $iId)
+              ->with('sItem', str_replace("/", "_", $sItem))
+              ->with('actualUserPermission', $this->oCurrentUserPermission)
+              ->with('iFilter', $this->iFilter);
     }
 
     /**
@@ -121,7 +121,7 @@ class SPalletsController extends Controller
         $print = 1;
 
         return redirect()->route('wms.pallets.index',
-                            [$listId, $pallets->item->name.'-'.$pallets->unit->code]);
+                            [$listId,  str_replace("/", "_", $pallets->item->name).'-'.$pallets->unit->code]);
     }
 
     public function print($sId){
