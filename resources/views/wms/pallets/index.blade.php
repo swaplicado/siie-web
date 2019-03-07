@@ -30,8 +30,8 @@
 				<tr>
 					<td>{{ $pallet->id_pallet }}</td>
 					{{-- <td>{{ $pallet->pallet }}</td> --}}
-					<td>{{$pallet->item->code.'-'}}{{ $pallet->item->name }}</td>
-					<td>{{ $pallet->unit->code.'-' }}{{ $pallet->unit->name }}</td>
+					<td>{{ $pallet->item_code.'-'.$pallet->item }}</td>
+					<td>{{ $pallet->unit_code.'-'.$pallet->unit }}</td>
 					<td>
 						@if (! $pallet->is_deleted)
 								<span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>
@@ -73,5 +73,17 @@
 								'success',
 							);
 			 }
-	</script>
+
+			//  $(document).ready(function() {
+			// 	oTable = $('#task').DataTable({
+			// 		"processing": true,
+			// 		"serverSide": true,
+			//  	"ajax": "route('wms.pallets.serverside')", //agregar llaves dobles de php para que imprima la ruta
+			// 		"columns": [
+			// 			{data: 'id_pallet'},
+			// 			{ "defaultContent": "<button>Click!</button>"}
+			// 		]
+			// 	});
+			// });
+			</script>
 @endsection
