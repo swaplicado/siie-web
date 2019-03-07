@@ -20,8 +20,6 @@
                         <th>{{ trans('wms.labels.LOCATION') }}</th>
                         <th>{{ trans('wms.labels.PALLET') }}</th>
                         <th>{{ trans('wms.labels.LOT') }}</th>
-                        <th>{{ trans('wms.labels.STOCK') }}</th>
-                        <th>{{ trans('wms.labels.SEGREGATED') }}</th>
                         <th>{{ trans('wms.labels.AVAILABLE') }}</th>
                         <th>{{ trans('wms.labels.UNIT') }}</th>
                     </tr>

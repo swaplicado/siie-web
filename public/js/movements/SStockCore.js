@@ -19,12 +19,9 @@ class SStockCore {
         oStock.location,
         oStock.pallet == '1' ? 'SIN TARIMA' : oStock.pallet,
         oStock.lot,
-        parseFloat(oStock.stock, 10).toFixed(globalData.DEC_QTY),
-        parseFloat(oStock.segregated, 10).toFixed(globalData.DEC_QTY),
-        parseFloat(oStock.stock
+        parseFloat((oStock.available_stock
                   + oStock.dInput
-                  - oStock.dOutput
-                  - oStock.segregated, 10).toFixed(globalData.DEC_QTY),
+                  - oStock.dOutput), 10).toFixed(globalData.DEC_QTY),
         oStock.unit
     ]).draw( false );
   }
