@@ -485,7 +485,7 @@ class SMovsUtils {
 
       $oStock = $oStock->get();
 
-      if (SMovsUtils::canSkipSegregation($iMvt)) {
+      if (SMovsUtils::canSkipSegregation($iMvtType)) {
         foreach ($oStock as $key => $row) {
           $row->available_stock = $row->stock;
         }

@@ -5,6 +5,7 @@ use App\WMS\SPallet;
 use App\WMS\SLocation;
 use App\WMS\SLimit;
 use App\ERP\SYear;
+use App\SUtils\SMovsUtils;
 
 use Carbon\Carbon;
 
@@ -107,7 +108,7 @@ class SStockUtils
                                 $lSegStock = $lSegStock->get();
 
                                 $dSegregated = 0;
-                                if (sizeof($lSegStock) > 0) {
+                                if (sizeof($lSegStock) > 0 && ! SMovsUtils::canSkipSegregation($oMovement->mvt_whs_type_id)) {
                                   $dSegregated = $lSegStock[0]->segregated;
                                 }
                                  if (bccomp($oLotRow->quantity, ($oStock->stock - $dSegregated), session('decimals_qty')) == 1) {
@@ -156,7 +157,7 @@ class SStockUtils
                                             ->get();
 
                          $dSegregated = 0;
-                         if (sizeof($lSegStock) > 0) {
+                         if (sizeof($lSegStock) > 0 && ! SMovsUtils::canSkipSegregation($oMovement->mvt_whs_type_id)) {
                            $dSegregated = $lSegStock[0]->segregated;
                          }
 
@@ -263,7 +264,7 @@ class SStockUtils
 
       $dQuantity = 0;
       foreach ($lPalletStock as $oPalletStock) {
-        if ($oPalletStock->segregated > 0) {
+        if ($oPalletStock->segregated > 0 && ! SMovsUtils::canSkipSegregation($iMovementType)) {
           array_push($aErrors, 'La tarima tiene unidades segregadas.');
           return $aErrors;
         }
