@@ -749,6 +749,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'WMS\SPalletsController@index',
         'as' => 'wms.pallets.index'
       ]);
+      // Route::get('pallets/{id}/serverside',[
+      //   'uses' => 'WMS\SPalletsController@getFromServer',
+      //   'as' => 'wms.pallets.serverside'
+      // ]);
 
       /*
       * documents

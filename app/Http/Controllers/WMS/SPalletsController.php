@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\WMS;
 
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
+use App\Database\Config;
 use App\Http\Controllers\Controller;
+use App\Http\Requests;
 use Laracasts\Flash\Flash;
+use PDF;
+use Yajra\Datatables\Datatables;
+
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
@@ -19,7 +22,6 @@ use App\ERP\SItem;
 use App\ERP\SUnit;
 use App\SBarcode\SBarcode;
 use App\WMS\SComponetBarcode;
-use PDF;
 
 class SPalletsController extends Controller
 {
@@ -42,14 +44,47 @@ class SPalletsController extends Controller
     public function index(Request $request, $iId = 0, $sItem = '')
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->get();
+      // $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->get();
 
-      $Pallets->each(function($Pallets) {
-        $Pallets->item;
-        $Pallets->unit;
-        $Pallets->userCreation;
-        $Pallets->userUpdate;
-      });
+      $sSelect = '
+                    id_pallet,
+                    wp.is_deleted,
+                    ei.code AS item_code,
+                    ei.name AS item,
+                    eu.code AS unit_code,
+                    eu.code AS unit,
+                    wp.created_by_id,
+                    wp.updated_by_id,
+                    wp.created_at,
+                    wp.updated_at
+                  ';
+
+      $Pallets = \DB::connection(session('db_configuration')->getConnCompany())
+                      ->table('wms_pallets as wp')
+                      ->join('erpu_items as ei', 'wp.item_id', '=', 'ei.id_item')
+                      ->join('erpu_units as eu', 'wp.unit_id', '=', 'eu.id_unit')
+                      ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uc', 'wp.created_by_id', '=', 'uc.id')
+                      ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'wp.updated_by_id', '=', 'uu.id');
+
+      switch ($this->iFilter) {
+        case \Config::get('scsys.FILTER.ACTIVES'):
+            $Pallets = $Pallets->where('wp.is_deleted', '=', "".\Config::get('scsys.STATUS.ACTIVE'));
+          break;
+
+        case \Config::get('scsys.FILTER.DELETED'):
+            $Pallets = $Pallets->where('wp.is_deleted', '=', "".\Config::get('scsys.STATUS.DEL'));
+          break;
+
+        default:
+      }
+
+      $Pallets = $Pallets->select(\DB::raw($sSelect))
+                    ->where(function ($query) use ($request) {
+                        $query->where('id_pallet', 'LIKE', "%".$request->name."%")
+                              ->orWhere('ei.code', 'LIKE', "%".$request->name."%")
+                              ->orWhere('ei.name', 'LIKE', "%".$request->name."%");
+                    })
+                    ->get();
 
       return view('wms.pallets.index')
               ->with('pallets', $Pallets)
@@ -58,6 +93,13 @@ class SPalletsController extends Controller
               ->with('actualUserPermission', $this->oCurrentUserPermission)
               ->with('iFilter', $this->iFilter);
     }
+
+    // public function getFromServer()
+    // {
+    //    $lPallets = SPallet::select(['id_pallet']);
+
+    //    return Datatables::of($lPallets)->make(true);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -81,7 +123,7 @@ class SPalletsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newpy created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
