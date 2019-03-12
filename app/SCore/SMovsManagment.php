@@ -80,38 +80,67 @@ class SMovsManagment {
           }
         }
 
-        if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
-          foreach ($movements as $mov) {
-
-             $iFolio = $this->getNewFolio($mov->branch_id, $mov->whs_id, $mov->mvt_whs_class_id, $mov->mvt_whs_type_id);
-             if ($iFolio > 0)
-             {
-                $mov->folio = $iFolio;
-             }
-             else
-             {
-               $aErrors[0] = "No hay un folio asignado para este tipo de movimiento";
-
-               return $aErrors;
-             }
+        if (sizeof($movements) == 1 && $movements[0]->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL')) {
+          $lMovs = $this->processDivision($movements[0], $iOperation, $oRequest);
+          if (is_string($lMovs[0])) {
+            return $lMovs;
           }
+          
+          return $this->toSaveMovements($lMovs, $iOperation, $oRequest);
         }
 
-        $this->saveMovement($movements, $oRequest, $iOperation);
+        $oMovs = $this->toSaveMovements($movements, $iOperation, $oRequest);
 
-        if ($movements[0]->whs_id == session('transit_whs')->id_whs) {
-            if (isset($movements[1])) {
-              return $movements[1]->mvtType->code.'-'.session('utils')->formatFolio($movements[1]->folio);
+        if (is_string($oMovs[0])) {
+          return [$oMovs];
+        }
+  
+        if ($oMovs[0]->whs_id == session('transit_whs')->id_whs) {
+            if (isset($oMovs[1])) {
+              return $oMovs[1]->mvtType->code.'-'.session('utils')->formatFolio($oMovs[1]->folio);
             }
         }
-
-        $sTextToReturn = $movements[0]->mvtType->code.'-'.session('utils')->formatFolio($movements[0]->folio);
-
-        if (sizeof($movements) == 2)   {
-           $sTextToReturn = $sTextToReturn.' y '.$movements[1]->mvtType->code.'-'.session('utils')->formatFolio($movements[1]->folio);
+  
+        $sTextToReturn = $oMovs[0]->mvtType->code.'-'.session('utils')->formatFolio($oMovs[0]->folio);
+  
+        if (sizeof($oMovs) == 2)   {
+           $sTextToReturn = $sTextToReturn.' y '.$oMovs[1]->mvtType->code.'-'.session('utils')->formatFolio($oMovs[1]->folio);
         }
-
+  
         return $sTextToReturn;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $movements
+     * @param int $iOperation \Config::get('scwms.OPERATION_TYPE.EDITION')
+     *                        \Config::get('scwms.OPERATION_TYPE.CREATION')
+     * @param Illuminate\Http\Request $oRequest
+     * 
+     * @return array if something is wrong the array will contain string with the errors
+     *               if all is ok the array will contain the saved movements
+     */
+    private function toSaveMovements(array $movements, $iOperation, $oRequest)
+    {
+      if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
+        foreach ($movements as $mov) {
+
+           $iFolio = $this->getNewFolio($mov->branch_id, $mov->whs_id, $mov->mvt_whs_class_id, $mov->mvt_whs_type_id);
+           if ($iFolio > 0)
+           {
+              $mov->folio = $iFolio;
+           }
+           else
+           {
+             $aErrors[0] = "No hay un folio asignado para este tipo de movimiento";
+
+             return $aErrors;
+           }
+        }
+      }
+
+      return $this->saveMovement($movements, $oRequest, $iOperation);
     }
 
     /**
@@ -167,6 +196,15 @@ class SMovsManagment {
       }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param array $movements
+     * @param Illuminate\Http\Request $oRequest
+     * @param int $iOperation \Config::get('scwms.OPERATION_TYPE.EDITION')
+     *                        \Config::get('scwms.OPERATION_TYPE.CREATION')
+     * @return void
+     */
     private function saveMovement($movements, $oRequest, $iOperation)
     {
         try
@@ -239,8 +277,11 @@ class SMovsManagment {
        }
        catch (\Exception $e)
        {
-           \Log::error($e);
+          \Log::error($e);
+          return [$e];
        }
+
+       return $movements;
     }
 
     public function saveLots($lNewLots = []) {
@@ -758,6 +799,60 @@ class SMovsManagment {
       array_push($aMovements, $oMirrorMovement); // add the mirror movement
       // dd($aMovements);
       return $aMovements;
+    }
+
+    private function processDivision(SMovement $oMovement = null, int $iOperation = 0, $oRequest)
+    {
+      $aMovRes = SMovsCore::processDivision($oMovement);
+
+      if ($aMovRes == null) {
+        return null;
+      }
+
+      $oMovRes = $aMovRes[0];
+
+      $aMovements = array();
+
+      $oMirrorMovement = clone $oMovRes;
+      // creation of mirror movement
+      $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_OUT'); // the object is cloned and set the opposite class
+      $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.PALLET_RECONFIG_OUT'); // set the opposite type of movement
+      $oMirrorMovement->mvt_trn_type_id = 1;
+      $oMirrorMovement->mvt_adj_type_id = 1;
+      $oMirrorMovement->mvt_mfg_type_id = 1;
+      $oMirrorMovement->mvt_exp_type_id = 1;
+      $oMirrorMovement->is_system = true;
+
+      $movementOutRows = array();
+      foreach ($oMovRes->aAuxRows as $oMovRow) {
+        $outRow = clone $oMovRow;
+
+        $oMovRow->pallet_id = 1;
+
+        array_push($movementOutRows, $outRow);
+      }
+
+      //  $oMovRes->aAuxRows = $movementRows; // set the auxiliar array of movements to principal movement
+      $oMirrorMovement->aAuxRows = $movementOutRows; // set the auxiliar array of movements to mirror movement
+
+      array_push($aMovements, $oMovRes); // add the principal movement
+      array_push($aMovements, $oMirrorMovement); // add the mirror movement
+      
+      $oRes = $this->toSaveMovements($aMovements, $iOperation, $oRequest);
+
+      if (is_string($oRes[0])) {
+        return [$oRes];
+      }
+
+      $oMov = $aMovRes[1];
+
+      foreach ($oMov->aAuxRows as $oMovRow) {
+        if ($oMovRow->isWithDivision()) {
+          $oMovRow->pallet_id = 1;
+        }
+      }
+       
+      return [$oMov];
     }
 
     /**
