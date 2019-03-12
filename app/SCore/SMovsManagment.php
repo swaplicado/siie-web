@@ -86,10 +86,11 @@ class SMovsManagment {
             return $lMovs;
           }
           
-          return $this->toSaveMovements($lMovs, $iOperation, $oRequest);
+          $oMovs = $this->toSaveMovements($lMovs, $iOperation, $oRequest);
         }
-
-        $oMovs = $this->toSaveMovements($movements, $iOperation, $oRequest);
+        else {
+          $oMovs = $this->toSaveMovements($movements, $iOperation, $oRequest);
+        }
 
         if (is_string($oMovs[0])) {
           return [$oMovs];
