@@ -60,12 +60,16 @@
 		            <td>{{ $row->item_code }}</td>
 		            <td>{{ $row->item }}</td>
 		            <td>{{ $row->unit }}</td>
-								@if ($typeView == 0)
+								@if ($typeView == 0 || $typeView == 2)
 		            	<td>{{ $row->lot_name }}</td>
 							  @else
 									<td> -- </td>
 								@endif
-								<td>{{ $row->pallet }}</td>
+								@if ($typeView == 2)
+		              <td> -- </td>
+							  @else
+									<td>{{ $row->pallet }}</td>
+								@endif
 								@if ($typeView == 0)
 									<td>{{ $row->segregated }}</td>
 								@else
@@ -104,7 +108,7 @@
 											<span class="glyphicon glyphicon-thumbs-down" aria-hidden = "true"/>
 										</a>
 									</td>
-								@else
+								@elseif ($typeView == 1)
 									<td>
 										<a data-toggle="modal" data-target="#classQltyP"
 												title="Evaluar material/producto"
@@ -125,6 +129,31 @@
 										<a data-toggle="modal" data-target="#classRfsP"
 												title="Rechazar material/producto"
 												onclick="classificateRfsP(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-thumbs-down" aria-hidden = "true"/>
+										</a>
+									</td>
+								@else
+									<td>
+										<a data-toggle="modal" data-target="#classQltyL"
+												title="Evaluar material/producto"
+												onclick="classificateQltyL(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-share" aria-hidden = "true"/>
+										</a>
+									</td>
+									<td>
+										<a data-toggle="modal" data-target="#classRlsL"
+												title="Liberar material/producto"
+												onclick="classificateRlsL(this)"
+												class="btn btn-default btn-sm">
+											<span class="glyphicon glyphicon-thumbs-up" aria-hidden = "true"/>
+										</a>
+									</td>
+									<td>
+										<a data-toggle="modal" data-target="#classRfsL"
+												title="Rechazar material/producto"
+												onclick="classificateRfsL(this)"
 												class="btn btn-default btn-sm">
 											<span class="glyphicon glyphicon-thumbs-down" aria-hidden = "true"/>
 										</a>
@@ -209,6 +238,38 @@
 			});
 		});
 
+		$(document).on('change', '.statusRFL',function(){
+			var eti_id=$(this).val();
+			console.log(eti_id);
+			 var opt=" ";
+			 var opt2=" ";
+			 status = eti_id;
+			$.ajax({
+				type:'get',
+				url:'{!!URL::to('qms/segregation/findWarehouse')!!}',
+				data:{'id':eti_id},
+
+					success:function(data){
+						opt+='<select class="form-control almacenP" id="almacenL"  name="almacenL" required>';
+						opt+='<option value=0>Seleccione un almacen</option>';
+							for(var i=0;i<data.length;i++){
+								opt+='<option value="'+data[i].id_whs+'">'+data[i].name+'</option>';
+						 }
+						 opt+='</select>';
+						 $('.warehouseL').empty(" ");
+						 $('.warehouseL').append(opt);
+						 opt2+='<select class="form-control ubicacion" id="ubicacionL"  name="ubicacionL" required>';
+						 opt2+='<option value=0>Seleccione una ubicacion</option>';
+							$('.locationL').empty(" ");
+						 $('.locationL').append(opt2);
+
+					},
+					error:function(){
+							console.log('falle');
+					}
+			});
+		});
+
 		$(document).on('change', '.almacen',function(){
 			var eti_id=$(this).val();
 			 var opt=" ";
@@ -261,6 +322,32 @@
 
 
 				});
+				$(document).on('change', '.almacenL',function(){
+					var eti_id=$(this).val();
+					 var opt=" ";
+					$.ajax({
+						type:'get',
+						url:'{!!URL::to('qms/segregation/findLocations')!!}',
+						data:{'id':eti_id,'status':status},
+
+							success:function(data){
+								console.log('success');
+								opt+='<select class="form-control" id="ubicacionL"  name="ubicacionL" required>';
+									for(var i=0;i<data.length;i++){
+										opt+='<option value="'+data[i].id_whs_location+'">'+data[i].name+'</option>';
+								 }
+								 opt+='</select>';
+								 $('.locationL').empty(" ");
+								 $('.locationL').append(opt);
+
+							},
+							error:function(){
+									console.log('falle');
+							}
+					});
+
+
+					});
 	});
 	</script>
 
