@@ -12,6 +12,7 @@ use App\WMS\SMvtType;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
+use App\WMS\SSuppDivision;
 
 /**
  *
@@ -315,8 +316,9 @@ class SMovsCore {
      *
      * @param SMovement $oMovement
      * 
-     * @return array or null 0 => (Movement to Pallet reconfiguration)
-     *                       1 => (Supply movement with rows modifications)
+     * @return array or null 0 => (Supply movement with rows modifications)
+     *                       1 => (Input Movement to Pallet reconfiguration)
+     *                       2 => (Output Movement to Pallet reconfiguration) this movement will be null  when the operation is creation
      */
     public static function processDivision(SMovement $oMovement = null)
     {
@@ -355,6 +357,9 @@ class SMovsCore {
       $lPalletsStock = array();
 
       foreach ($oMovement->aAuxRows as $row) {
+        if ($row->is_deleted == 1) {
+          continue;
+        }
         if ($row->pallet_id == 1) {
           continue;
         }
@@ -426,11 +431,22 @@ class SMovsCore {
       }
 
       if (sizeof($lMovementRows) > 0) {
-        $oDivMov = SMovsCore::createDivisionMov($oMovement->dt_date, $oMovement->branch_id, $oMovement->whs_id, $oMovement->year_id);
+        if ($oMovement->id_mvt > 0) {
+          $oSupp = SSuppDivision::where('mvt_reference_id', $oMovement->id_mvt)
+                                  ->where('is_deleted', false)
+                                  ->first();
 
-        $oDivMov->aAuxRows = $lMovementRows;
+          $oDivInputMov = SMovement::find($oSupp->in_division_id);
+          $oDivOutputMov = SMovement::find($oSupp->out_division_id);
+        }
+        else {
+          $oDivInputMov = SMovsCore::createDivisionMov($oMovement->dt_date, $oMovement->branch_id, $oMovement->whs_id, $oMovement->year_id);
+          $oDivOutputMov = null;
+        }
 
-        return [$oDivMov, $oMovement];
+        $oDivInputMov->aAuxRows = $lMovementRows;
+
+        return [$oMovement, $oDivInputMov, $oDivOutputMov];
       }
       else {
         return null;

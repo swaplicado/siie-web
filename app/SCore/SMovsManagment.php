@@ -13,6 +13,7 @@ use App\ERP\SDocument;
 use App\ERP\SDocumentRow;
 use App\WMS\SStock;
 use App\WMS\SExternalTransfer;
+use App\WMS\SSuppDivision;
 
 use App\SUtils\SStockUtils;
 use App\SUtils\SGuiUtils;
@@ -82,11 +83,31 @@ class SMovsManagment {
 
         if (sizeof($movements) == 1 && $movements[0]->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_SAL')) {
           $lMovs = $this->processDivision($movements[0], $iOperation, $oRequest);
-          if (is_string($lMovs[0])) {
+
+          if ($lMovs == null) {
+            $oMovs = $movements;
+
+            $oMovs = $this->toSaveMovements($movements, $iOperation, $oRequest);
+          }
+          else if (is_string($lMovs[0])) {
             return $lMovs;
           }
-          
-          $oMovs = $this->toSaveMovements($lMovs, $iOperation, $oRequest);
+          else {
+            $oMovs = $this->toSaveMovements([$lMovs[0]], $iOperation, $oRequest);
+
+            if ($iOperation == \Config::get('scwms.OPERATION_TYPE.CREATION')) {
+              $oSupDiv = new SSuppDivision();
+
+              $oSupDiv->is_deleted = false;
+              $oSupDiv->in_division_id = $lMovs[1];
+              $oSupDiv->out_division_id = $lMovs[2];
+              $oSupDiv->mvt_reference_id = $oMovs[0]->id_mvt;
+              $oSupDiv->created_by_id = \Auth::user()->id;
+              $oSupDiv->updated_by_id = \Auth::user()->id;
+  
+              $oSupDiv->save();
+            }
+          }
         }
         else {
           $oMovs = $this->toSaveMovements($movements, $iOperation, $oRequest);
@@ -208,81 +229,82 @@ class SMovsManagment {
      */
     private function saveMovement($movements, $oRequest, $iOperation)
     {
-        try
-        {
-          \DB::connection('company')->transaction(function() use ($movements, $iOperation, $oRequest) {
-            $i = 0;
-            $iSrcId = 0;
-            $lSavedMovements = array();
+      $lSavedMovements = array();
 
-            foreach ($movements as $mov) {
-                $movement = clone $mov;
+      try
+      {
+        \DB::connection('company')->transaction(function() use ($movements, $iOperation, $oRequest, &$lSavedMovements) {
+          $i = 0;
+          $iSrcId = 0;
+          
+          foreach ($movements as $mov) {
+              $movement = clone $mov;
 
-                if ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) {
-                    $res = $this->eraseMovement($movement->id_mvt);
-                    if (! true) {
-                       throw new \Exception($res, 1);
-                    }
-                }
+              if ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) {
+                  $res = $this->eraseMovement($movement->id_mvt);
+                  if (! true) {
+                      throw new \Exception($res, 1);
+                  }
+              }
 
-                if ($i == 1) {
-                  $movement->src_mvt_id = $iSrcId;
-                }
+              if ($i == 1) {
+                $movement->src_mvt_id = $iSrcId;
+              }
 
-                $movement->save();
+              $movement->save();
 
-                if ($i == 0) {
-                  $iSrcId = $movement->id_mvt;
-                }
+              if ($i == 0) {
+                $iSrcId = $movement->id_mvt;
+              }
 
-                foreach ($mov->aAuxRows as $movRow) {
-                  if (! $movRow->is_deleted) {
-                    $row = clone $movRow;
-                    $row->mvt_id = $movement->id_mvt;
-                    $row->save();
+              foreach ($mov->aAuxRows as $movRow) {
+                if (! $movRow->is_deleted) {
+                  $row = clone $movRow;
+                  $row->mvt_id = $movement->id_mvt;
+                  $row->save();
 
-                    foreach ($movRow->getAuxLots() as $lotRow) {
-                       $lRow = clone $lotRow;
-                       $lRow->mvt_row_id = $row->id_mvt_row;
-                       $lRow->save();
-                    }
+                  foreach ($movRow->getAuxLots() as $lotRow) {
+                      $lRow = clone $lotRow;
+                      $lRow->mvt_row_id = $row->id_mvt_row;
+                      $lRow->save();
                   }
                 }
+              }
 
-                $movement = SMovement::find($movement->id_mvt);
-                foreach ($movement->rows as $row) {
-                  $row->lotRows;
+              $movement = SMovement::find($movement->id_mvt);
+              foreach ($movement->rows as $row) {
+                $row->lotRows;
+              }
+
+              $stkController = new SStockController();
+              $stkController->store($oRequest, $movement);
+
+              if (SGuiUtils::isProductionMovement($movement->mvt_whs_type_id)) {
+                $bRes = SProductionCore::managePoPallet($movement->mvt_whs_type_id,
+                                                            $movement->prod_ord_id,
+                                                            $movement->rows);
+              }
+
+              if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+                if ($movement->warehouse->is_quality) {
+                    session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'), $iOperation);
                 }
+              }
 
-                $stkController = new SStockController();
-                $stkController->store($oRequest, $movement);
+              $i++;
+              array_push($lSavedMovements, $movement);
+          }
 
-                if (SGuiUtils::isProductionMovement($movement->mvt_whs_type_id)) {
-                  $bRes = SProductionCore::managePoPallet($movement->mvt_whs_type_id,
-                                                              $movement->prod_ord_id,
-                                                              $movement->rows);
-                }
+          $this->createExternalTransfer($lSavedMovements, $iOperation, $movements[0]->iAuxBranchDes);
+        });
+      }
+      catch (\Exception $e)
+      {
+        \Log::error($e);
+        return [$e];
+      }
 
-                if ($movement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
-                  if ($movement->warehouse->is_quality) {
-                      session('segregation')->segregate($movement, \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'), $iOperation);
-                  }
-                }
-
-                $i++;
-                array_push($lSavedMovements, $movement);
-            }
-
-            $this->createExternalTransfer($lSavedMovements, $iOperation, $movements[0]->iAuxBranchDes);
-          });
-       }
-       catch (\Exception $e)
-       {
-          \Log::error($e);
-          return [$e];
-       }
-
-       return $movements;
+      return $lSavedMovements;
     }
 
     public function saveLots($lNewLots = []) {
@@ -810,20 +832,28 @@ class SMovsManagment {
         return null;
       }
 
-      $oMovRes = $aMovRes[0];
+      // set the input reconfiguration movement
+      $oMovRes = $aMovRes[1];
 
       $aMovements = array();
 
-      $oMirrorMovement = clone $oMovRes;
-      // creation of mirror movement
-      $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_OUT'); // the object is cloned and set the opposite class
-      $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.PALLET_RECONFIG_OUT'); // set the opposite type of movement
-      $oMirrorMovement->mvt_trn_type_id = 1;
-      $oMirrorMovement->mvt_adj_type_id = 1;
-      $oMirrorMovement->mvt_mfg_type_id = 1;
-      $oMirrorMovement->mvt_exp_type_id = 1;
-      $oMirrorMovement->is_system = true;
+      // if the movement is edition
+      if ($oMovRes->id_mvt > 0) {
+        $oMirrorMovement = $aMovRes[2];
+      } 
+      else {
+        $oMirrorMovement = clone $oMovRes;
 
+        // creation of mirror movement
+        $oMirrorMovement->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_OUT'); // the object is cloned and set the opposite class
+        $oMirrorMovement->mvt_whs_type_id = \Config::get('scwms.PALLET_RECONFIG_OUT'); // set the opposite type of movement
+        $oMirrorMovement->mvt_trn_type_id = 1;
+        $oMirrorMovement->mvt_adj_type_id = 1;
+        $oMirrorMovement->mvt_mfg_type_id = 1;
+        $oMirrorMovement->mvt_exp_type_id = 1;
+        $oMirrorMovement->is_system = true;
+      }
+      
       $movementOutRows = array();
       foreach ($oMovRes->aAuxRows as $oMovRow) {
         $outRow = clone $oMovRow;
@@ -836,6 +866,9 @@ class SMovsManagment {
       //  $oMovRes->aAuxRows = $movementRows; // set the auxiliar array of movements to principal movement
       $oMirrorMovement->aAuxRows = $movementOutRows; // set the auxiliar array of movements to mirror movement
 
+      // $oMovRes->rows()->delete();
+      // $oMirrorMovement->rows()->delete();
+
       array_push($aMovements, $oMovRes); // add the principal movement
       array_push($aMovements, $oMirrorMovement); // add the mirror movement
       
@@ -845,7 +878,7 @@ class SMovsManagment {
         return [$oRes];
       }
 
-      $oMov = $aMovRes[1];
+      $oMov = $aMovRes[0];
 
       foreach ($oMov->aAuxRows as $oMovRow) {
         if ($oMovRow->isWithDivision()) {
@@ -853,7 +886,7 @@ class SMovsManagment {
         }
       }
        
-      return [$oMov];
+      return [$oMov, $oRes[0]->id_mvt, $oRes[1]->id_mvt];
     }
 
     /**
@@ -872,6 +905,17 @@ class SMovsManagment {
         $lReferencedMovs = SMovement::where('src_mvt_id', $oMovement->id_mvt)
                                       ->where('is_deleted', $iAction == \Config::get('scwms.MOV_ACTION.ACTIVATE'))
                                       ->get();
+
+        $aMovsIds = SSuppDivision::where('mvt_reference_id', $oMovement->id_mvt)
+                                  ->where('is_deleted', false)
+                                  ->select('in_division_id')
+                                  ->get();
+
+        if (sizeof($aMovsIds) > 0) {
+          foreach ($aMovsIds as $iId) {
+           $lReferencedMovs->push(SMovement::find($iId->in_division_id));
+          }
+        }
 
         foreach ($lReferencedMovs as $oMov) {
            $aInternalErrors = $this->canMovBeErasedOrActivated($oMov, $iAction);
@@ -960,6 +1004,17 @@ class SMovsManagment {
           $lReferencedMovs = SMovement::where('src_mvt_id', $oMov->id_mvt)
                                       ->where('is_deleted', false)
                                       ->get();
+
+          $aMovsIds = SSuppDivision::where('mvt_reference_id', $oMov->id_mvt)
+                                      ->where('is_deleted', false)
+                                      ->select('in_division_id')
+                                      ->get();
+
+          if (sizeof($aMovsIds) > 0) {
+            foreach ($aMovsIds as $iId) {
+              $lReferencedMovs->push(SMovement::find($iId->in_division_id));
+            }
+          }
 
           foreach ($lReferencedMovs as $refMov) {
              $aRes = $this->eraseMov($refMov, $request);
