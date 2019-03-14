@@ -16,6 +16,7 @@ class SMovementRow extends Model {
   public $iAuxLocationDesId = 0;
   public $dReceived = 0;
   public $oAuxSupplyLink = 0;
+  public $bWithDivision = 0;
 
   protected $fillable = [
                           'id_mvt_row',
@@ -180,6 +181,18 @@ class SMovementRow extends Model {
   {
     return $this->dReceived;
   }
+
+  public function setWithDivision($value = false)
+  {
+    $this->bWithDivision = $value;
+  }
+
+  public function isWithDivision()
+  {
+    return $this->bWithDivision;
+  }
+
+
 
   /**
    * [scopeSearch description]

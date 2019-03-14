@@ -23,6 +23,8 @@ return [
       'VIEW_QUA_PALLET' => 'Cuarentena tarimas',
       'VIEW_INS_PALLET' => 'Por inspeccionar tarimas',
       'VIEW_INS_QUA' => 'Cuarentena codigo de barras',
+      'VIEW_INS_LOT' => 'Por inspeccionar por lote',
+      'VIEW_QUA_LOT' => 'Cuarentena por lote',
       'VIEW_REL' => 'Liberar codigo de barras',
       'VIEW_REF' => 'Rechazar codigo de barras',
       'BINNACLE' => 'Bitácora de calidad',

@@ -12,6 +12,7 @@ use App\WMS\SMvtType;
 use App\WMS\SMovement;
 use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
+use App\WMS\SSuppDivision;
 
 /**
  *
@@ -310,4 +311,224 @@ class SMovsCore {
         return ['Error en el estatus del material/producto'];
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param SMovement $oMovement
+     * 
+     * @return array or null 0 => (Supply movement with rows modifications)
+     *                       1 => (Input Movement to Pallet reconfiguration)
+     *                       2 => (Output Movement to Pallet reconfiguration) this movement will be null  when the operation is creation
+     */
+    public static function processDivision(SMovement $oMovement = null)
+    {
+      if ($oMovement->mvt_whs_type_id != \Config::get('scwms.MVT_TP_OUT_SAL')) {
+        return null;
+      }
+
+      $sSelect = 'sum(ws.input) as inputs,
+                    sum(ws.output) as outputs,
+                    sum(ws.input - ws.output) as stock,
+                    AVG(ws.cost_unit) as cost_unit,
+                    ei.code as item_code,
+                    ei.name as item,
+                    eu.code as unit_code,
+                    ei.is_lot,
+                    ei.id_item,
+                    eu.id_unit,
+                    ws.lot_id,
+                    wl.lot,
+                    ws.pallet_id,
+                    ws.location_id
+                    ';
+
+      $aParameters = array();
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oMovement->year_id;
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = $oMovement->branch_id;
+      $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $oMovement->whs_id;
+
+      if ($oMovement->id_mvt > 0) {
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $oMovement->id_mvt;
+      }
+
+      $lMovementRows = array();
+
+      $lPalletsStock = array();
+
+      foreach ($oMovement->aAuxRows as $row) {
+        if ($row->is_deleted == 1) {
+          continue;
+        }
+        if ($row->pallet_id == 1) {
+          continue;
+        }
+
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $row->pallet_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $row->unit_id;
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $row->item_id;
+
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = $row->location_id;
+
+        $lPalletStock = session('stock')->getStockResult($aParameters);
+
+        $lPalletStk = $lPalletStock->having('stock', '>', '0')
+                                    ->get();
+        
+        $bAllPallet = false;
+        foreach ($lPalletStk as $oStk) {
+          if ($oStk->stock == $row->quantity) {
+            $bAllPallet = true;
+            break;
+          }
+        }
+
+        if ($bAllPallet) {
+          continue;
+        }
+
+        $lPalletStock = $lPalletStock->groupBy('ws.lot_id')
+                                      ->having('stock', '>', '0')
+                                      ->get();
+
+        foreach ($lPalletStock as $oPalletStock) {
+          if (! array_key_exists($row->pallet_id, $lPalletsStock)) {
+            $lPalletsStock[$row->pallet_id] = $oPalletStock->stock;
+          }
+
+          if ($row->item->is_lot) {
+            $bCurrentLotFound = false;
+
+            foreach ($row->getAuxLots() as $oAuxLot) {
+              if ($oAuxLot->is_deleted) {
+                  continue;
+              }
+              if ($oAuxLot->lot_id == $oPalletStock->lot_id) {
+                  if ($oAuxLot->quantity <= $lPalletsStock[$row->pallet_id]) {
+                    // creación de movimiento de división de tarima
+                    // actualización del stock de la tarima
+                    $oDivRow = SMovsCore::createDivisionRow($row->pallet_id, $row->item_id, $row->unit_id, $row->location_id, $oAuxLot->quantity, $oAuxLot->lot_id);
+                    array_push($lMovementRows, $oDivRow);
+
+                    $lPalletsStock[$row->pallet_id] -= $oAuxLot->quantity;
+                    $row->setWithDivision(true);
+                  }
+
+                  $bCurrentLotFound = true;
+              }
+            }
+          }
+          else {
+            if ($oAuxLot->quantity <= $lPalletsStock[$row->pallet_id]) {
+              $oDivRow = SMovsCore::createDivisionRow($row->pallet_id, $row->item_id, $row->unit_id, $row->quantity, 0);
+              array_push($lMovementRows, $oDivRow);
+  
+              $lPalletsStock[$row->pallet_id] -= $row->quantity;
+              $row->setWithDivision(true);
+            }
+          }
+        }
+      }
+
+      if (sizeof($lMovementRows) > 0) {
+        if ($oMovement->id_mvt > 0) {
+          $oSupp = SSuppDivision::where('mvt_reference_id', $oMovement->id_mvt)
+                                  ->where('is_deleted', false)
+                                  ->first();
+
+          $oDivInputMov = SMovement::find($oSupp->in_division_id);
+          $oDivOutputMov = SMovement::find($oSupp->out_division_id);
+        }
+        else {
+          $oDivInputMov = SMovsCore::createDivisionMov($oMovement->dt_date, $oMovement->branch_id, $oMovement->whs_id, $oMovement->year_id);
+          $oDivOutputMov = null;
+        }
+
+        $oDivInputMov->aAuxRows = $lMovementRows;
+
+        return [$oMovement, $oDivInputMov, $oDivOutputMov];
+      }
+      else {
+        return null;
+      }
+    }
+
+    private static function createDivisionRow(int $iPallet, int $iItem, int $iUnit, int $iLocation, float $dQuantity, int $iLot)
+    {
+      $oRow = new SMovementRow();
+
+      $oRow->quantity = $dQuantity;
+      $oRow->amount_unit = 0;
+      $oRow->amount = 0;
+      $oRow->length = 0;
+      $oRow->surface = 0;
+      $oRow->volume = 0;
+      $oRow->mass = 0;
+      $oRow->is_deleted = 0;
+      $oRow->item_id = $iItem;
+      $oRow->unit_id = $iUnit;
+      $oRow->pallet_id = $iPallet;
+      $oRow->location_id = $iLocation;
+      $oRow->doc_order_row_id = 1;
+      $oRow->doc_invoice_row_id = 1;
+      $oRow->doc_debit_note_row_id = 1;
+      $oRow->doc_credit_note_row_id = 1;
+
+      if ($iLot > 0) {
+        $oLotRow = new SMovementRowLot();
+
+        $oLotRow->quantity = $dQuantity;
+        $oLotRow->amount_unit = 0;
+        $oLotRow->amount = 0;
+        $oLotRow->length = 0;
+        $oLotRow->surface = 0;
+        $oLotRow->volume = 0;
+        $oLotRow->mass = 0;
+        $oLotRow->is_deleted = 0;
+        $oLotRow->lot_id = $iLot;
+
+        $oRow->setAuxLots([0 => $oLotRow]);
+      }
+      
+      return $oRow;
+    }
+
+    private static function createDivisionMov(string $sDate, int $iBranch, int $iWhs, int $iYear) {
+      $oDivMov = new SMovement();
+
+      $oDivMov->dt_date = $sDate;
+      $oDivMov->total_amount = 0;
+      $oDivMov->total_length = 0;
+      $oDivMov->total_surface = 0;
+      $oDivMov->total_volume = 0;
+      $oDivMov->total_mass = 0;
+      $oDivMov->is_closed_shipment = 0;
+      $oDivMov->is_deleted = false;
+      $oDivMov->is_system = true;
+      $oDivMov->mvt_whs_class_id = \Config::get('scwms.MVT_CLS_IN');
+      $oDivMov->mvt_whs_type_id = \Config::get('scwms.PALLET_RECONFIG_IN');
+      $oDivMov->mvt_trn_type_id = 1;
+      $oDivMov->mvt_adj_type_id = 1;
+      $oDivMov->mvt_mfg_type_id = 1;
+      $oDivMov->mvt_exp_type_id = 1;
+      $oDivMov->branch_id = $iBranch;
+      $oDivMov->whs_id = $iWhs;
+      $oDivMov->year_id = $iYear;
+      $oDivMov->auth_status_id = 1;
+      $oDivMov->src_mvt_id = 1;
+      $oDivMov->doc_order_id = 1;
+      $oDivMov->doc_invoice_id = 1;
+      $oDivMov->doc_debit_note_id = 1;
+      $oDivMov->doc_credit_note_id = 1;
+      $oDivMov->prod_ord_id = 1;
+      $oDivMov->mfg_dept_id = 1;
+      $oDivMov->mfg_line_id = 1;
+      $oDivMov->mfg_job_id = 1;
+      $oDivMov->auth_status_by_id = 1;
+      $oDivMov->closed_shipment_by_id = 1;
+      $oDivMov->created_by_id = \Auth::user()->id;
+      $oDivMov->updated_by_id = \Auth::user()->id;
+
+      return $oDivMov;
+    }
 }

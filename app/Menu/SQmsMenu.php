@@ -57,6 +57,20 @@ class SQmsMenu {
                                             \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'),
                                             \Config::get('scqms.TYPE_VIEW.BY_PALLET')
                                           ])
+          ->route('qms.segregations.index', trans('qms.VIEW_INS_LOT'),
+                                          [
+                                            trans('qms.VIEW_INS_LOT'),
+                                            \Config::get('scqms.SEGREGATION_TYPE.INSPECTED'),
+                                            \Config::get('scqms.QMS_VIEW.INSPECTIONCLASSIFY'),
+                                            \Config::get('scqms.TYPE_VIEW.BY_ONLY_LOT')
+                                          ])
+          ->route('qms.segregations.index', trans('qms.VIEW_QUA_LOT'),
+                                          [
+                                            trans('qms.VIEW_QUA_LOT'),
+                                            \Config::get('scqms.SEGREGATION_TYPE.QUARANTINE'),
+                                            \Config::get('scqms.QMS_VIEW.QUARANTINECLASSIFY'),
+                                            \Config::get('scqms.TYPE_VIEW.BY_ONLY_LOT')
+                                          ])
 
       )
 

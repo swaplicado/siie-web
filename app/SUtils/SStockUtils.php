@@ -274,7 +274,7 @@ class SStockUtils
                continue;
             }
             if ($oAuxLot->lot_id == $oPalletStock->lot_id) {
-                if ($oAuxLot->quantity != $oPalletStock->stock) {
+                if ($oAuxLot->quantity != $oPalletStock->stock && $iMovementType != \Config::get('scwms.MVT_TP_OUT_SAL')) {
                   array_push($aErrors, 'La tarima debe moverse completa.');
                   return $aErrors;
                 }
