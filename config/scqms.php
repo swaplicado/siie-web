@@ -37,6 +37,7 @@ return [
     'TYPE_VIEW' => [
                       'BY_LOT'=>'0',
                       'BY_PALLET'=>'1',
+                      'BY_ONLY_LOT'=>'2',
                   ],
 
 ];

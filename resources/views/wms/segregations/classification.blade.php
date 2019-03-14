@@ -590,3 +590,261 @@
 
   </div>
 </div>
+<!-- Modal -->
+<div id="classQltyL" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Clasificación de material/producto</h4>
+      </div>
+      <div class="modal-body" id='appQlL'>
+        <div class="row">
+          <div class="col-md-6">
+            Clave
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.item_code }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Item
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.item }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Unidad
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.unit }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Lote
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.lot }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Estatus actual de calidad
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.status }}</b>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-md-6">
+            Estatus Calidad nuevo
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+
+            {!! Form::select('statusQlL', $lStatusSeg, null,
+                            ['class'=>'form-control', 'id' => 'statusQlL',
+														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
+                            'required', ]) !!}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeClassQlL" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="classRlsL" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Clasificación de material/producto</h4>
+      </div>
+      <div class="modal-body" id='appRlL'>
+        <div class="row">
+          <div class="col-md-6">
+            Clave
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.item_code }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Item
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.item }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Unidad
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.unit }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Lote
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.lot }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Estatus actual de calidad
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.status }}</b>
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-md-6">
+            Estatus Calidad nuevo
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::select('statusRlL', $lStatusRec, null,
+                            ['class'=>'form-control', 'id' => 'statusRlL',
+														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
+                            'required', ]) !!}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Notas
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::text('notes',null,['class' => 'form-control',
+                                                  'id' => 'notesRlL']) !!}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeClassRlL" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="classRfsL" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Clasificación de material/producto</h4>
+      </div>
+      <div class="modal-body" id='appRfL'>
+        <div class="row">
+          <div class="col-md-6">
+            Clave
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.item_code }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Item
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.item }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Unidad
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.unit }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Lote
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.lot }}</b>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Estatus actual de calidad
+          </div>
+          <div class="col-md-6">
+            <b>@{{ dataItem.status }}</b>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col-md-6">
+            Estatus Calidad nuevo
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::select('statusRfL', $lStatusLib, null,
+                            ['class'=>'form-control statusRFP', 'id' => 'statusRfL',
+														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
+                            'required', ]) !!}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Almacenes
+          </div>
+          <div class="col-md-4">
+            Ubicaciones
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 warehouseL">
+
+          </div>
+          <div class="col-md-6 locationL">
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            Notas
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            {!! Form::text('notes',null,['class' => 'form-control',
+                                                  'id' => 'notesRFL']) !!}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="closeClassRL" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
