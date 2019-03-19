@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class QmsAddAnalisis extends Migration
+class QmsAddResultsTable extends Migration
 {
     private $lDatabases;
     private $sConnection;
@@ -38,21 +38,23 @@ class QmsAddAnalisis extends Migration
             $this->sDataBase = $base;
             SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault,
                   $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
-    
-            Schema::connection($this->sConnection)->create('qms_analysis', function (blueprint $table) {	
-                $table->increments('id_analysis');
-                $table->char('code', 3);
-                $table->char('name', 50);
+
+            Schema::connection($this->sConnection)->create('qms_results', function (blueprint $table) {	
+                $table->bigIncrements('id_result');
+                $table->date('dt_date');
+                $table->decimal('result_value', 15,6);
                 $table->boolean('is_deleted');
-                $table->integer('type_id')->unsigned();
+                $table->integer('lot_id')->unsigned();
+                $table->integer('analysis_id')->unsigned();
                 $table->integer('created_by_id')->unsigned();
                 $table->integer('updated_by_id')->unsigned();
                 $table->timestamps();
                 
-                $table->foreign('type_id')->references('id_analysis_type')->on('qmss_analysis_types')->onDelete('cascade');
+                $table->foreign('lot_id')->references('id_lot')->on('wms_lots')->onDelete('cascade');
+                $table->foreign('analysis_id')->references('id_analysis')->on('qms_analysis')->onDelete('cascade');
                 $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
                 $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
-            });	
+            });
         }
     }
 
@@ -68,7 +70,7 @@ class QmsAddAnalisis extends Migration
             SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault,
                         $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-            Schema::connection($this->sConnection)->drop('qms_analysis');
+            Schema::connection($this->sConnection)->drop('qms_results');
         }
     }
 }

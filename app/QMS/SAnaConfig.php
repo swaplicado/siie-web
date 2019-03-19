@@ -13,6 +13,8 @@ class SAnaConfig extends SModel {
                             'analysis_id',
                             'item_link_type_id',
                             'item_link_id',
+                            'min_value',
+                            'max_value',
                             'created_by_id',
                             'updated_by_id',
                           ];

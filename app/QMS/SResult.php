@@ -2,21 +2,19 @@
 
 use App\ERP\SModel;
 
-class SAnalysis extends SModel {
+class SResult extends SModel {
 
     protected $connection = 'siie';
-    protected $primaryKey = 'id_analysis';
-    protected $table = 'qms_analysis';
+    protected $primaryKey = 'id_result';
+    protected $table = 'qms_results';
 
     protected $fillable = [
-                            'id_analysis',
-                            'code',
-                            'name',
-                            'standard',
-                            'min_value',
-                            'max_value',
+                            'id_result',
+                            'dt_date',
+                            'result_value',
                             'is_deleted',
-                            'type_id',
+                            'lot_id',
+                            'analysis_id',
                             'created_by_id',
                             'updated_by_id',
                         ];

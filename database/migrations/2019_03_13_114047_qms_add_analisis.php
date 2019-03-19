@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class QmsAddAnaConfigs extends Migration
+class QmsAddAnalisis extends Migration
 {
     private $lDatabases;
     private $sConnection;
@@ -26,7 +26,7 @@ class QmsAddAnaConfigs extends Migration
       $this->sUser = NULL;
       $this->sPassword = NULL;
     }
-
+    
     /**
      * Run the migrations.
      *
@@ -39,19 +39,20 @@ class QmsAddAnaConfigs extends Migration
             SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault,
                   $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
     
-            Schema::connection($this->sConnection)->create('qms_ana_configs', function (blueprint $table) {	
-                $table->increments('id_config');
+            Schema::connection($this->sConnection)->create('qms_analysis', function (blueprint $table) {	
+                $table->increments('id_analysis');
+                $table->char('code', 5);
+                $table->char('name', 50);
+                $table->char('standard', 100);
+                $table->decimal('min_value', 15,6);
+                $table->decimal('max_value', 15,6);
                 $table->boolean('is_deleted');
-                $table->integer('analysis_id')->unsigned();
-                $table->integer('item_link_type_id')->unsigned();
-                $table->integer('item_link_id')->unsigned();
+                $table->integer('type_id')->unsigned();
                 $table->integer('created_by_id')->unsigned();
                 $table->integer('updated_by_id')->unsigned();
                 $table->timestamps();
-                
-                $table->unique(['analysis_id', 'item_link_type_id', 'item_link_id'], 'configuration_unique');
-                $table->foreign('analysis_id')->references('id_analysis')->on('qms_analysis')->onDelete('cascade');
-                $table->foreign('item_link_type_id')->references('id_item_link_type')->on('erps_item_link_types')->onDelete('cascade');
+
+                $table->foreign('type_id')->references('id_analysis_type')->on('qmss_analysis_types')->onDelete('cascade');
                 $table->foreign('created_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
                 $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
             });	
@@ -69,8 +70,8 @@ class QmsAddAnaConfigs extends Migration
             $this->sDataBase = $base;
             SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault,
                         $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
-    
-            Schema::connection($this->sConnection)->drop('qms_ana_configs');
+
+            Schema::connection($this->sConnection)->drop('qms_analysis');
         }
     }
 }

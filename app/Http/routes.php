@@ -422,6 +422,23 @@ Route::group(['prefix' => 'qms'], function () {
       * Configurations Analysis vs Items
       **/
       Route::resource('anaconfigs','QMS\AnaConfigsController');
+      Route::get('anaconfigs/{id}/destroy',[
+        'uses' => 'QMS\AnaConfigsController@Destroy',
+        'as'   => 'qms.anaconfigs.destroy'
+      ]);
+      Route::get('anaconfigs/{id}/active',[
+        'uses' => 'QMS\AnaConfigsController@Activate',
+        'as'   => 'qms.anaconfigs.activate'
+      ]);
+
+       /*
+      * Results of lots analysis
+      **/
+      Route::resource('results','QMS\SResultsController');
+      Route::get('results/index/getanalysis',[
+        'uses' => 'QMS\SResultsController@GetAnalysis',
+        'as'   => 'qms.results.getanalysis'
+      ]);
   });
 
 //****************************************/ Warehouses Module/*************************

@@ -6,7 +6,7 @@ return [
       'MODULE'  => 'Módulo Calidad',
 
       'ANALYSIS' => 'Análisis',
-      'ANALYSIS_CONFIG' => 'Configuración de análisis',
+      'ANALYSIS_CONFIG' => 'Configuración',
       'ANALYSIS_TYPE' => 'Tipo de análisis',
       'ANALYSIS_VS_ITEMS' => 'Análisis vs Ítems',
       'QRY_BY_STATUS' => 'Productos por estatus',
@@ -30,6 +30,7 @@ return [
       'BINNACLE' => 'Bitácora de calidad',
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
+      'SEGREGATED_LOTS' => 'Lotes segregados',
 
       'titles'  => [
         'CREATE_ANALYSIS' => 'Crear análisis',
@@ -39,6 +40,9 @@ return [
       'labels'  => [
         'ANALYSIS_NAME' => 'Nombre de análisis',
         'ANALYSIS_TYPE' => 'Tipo de análisis',
+        'STANDARD' => 'Norma',
+        'MIN_VALUE' => 'Valor mínimo',
+        'MAX_VALUE' => 'Valor máximo',
       ],
 
       'placeholders'  =>  [

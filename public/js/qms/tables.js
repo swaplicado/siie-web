@@ -88,11 +88,11 @@ $('#anaconfigs_table').DataTable({
         ],
         "columnDefs": [
           {
-              "targets": [0, 2],
+              "targets": [4, 5, 7, 9],
               "className": "text-center"
           },
           {
-              "targets": [3, 4, 5, 6],
+              "targets": [2, 3],
               "className": "text-right"
           }
         ]

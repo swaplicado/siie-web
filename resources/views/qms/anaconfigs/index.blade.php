@@ -39,7 +39,11 @@
     <table id="anaconfigs_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
-                <th data-priority="1">ID</th>
+                <th data-priority="1">Análisis</th>
+                <th data-priority="1">Tipo Conf.</th>
+                <th data-priority="1">Referencia</th>
+                <th data-priority="1">{{ trans('qms.labels.MIN_VALUE') }}</th>
+                <th data-priority="1">{{ trans('qms.labels.MAX_VALUE') }}</th>
                 <th data-priority="1" style="text-align: center;">Estatus</th>
                 <th style="text-align: center;">Opciones</th>
                 <th>Creado</th>
@@ -51,7 +55,11 @@
         <tbody>
           @foreach ($lConfigs as $anaconfig)
             <tr>
-                <td>{{ $anaconfig->id_config }}</td>
+                <td>{{ $anaconfig->_analysis }}</td>
+                <td>{{ $anaconfig->_ntype }}</td>
+                <td>{{ $anaconfig->_nname }}</td>
+                <td>{{  $anaconfig->min_value }}</td>
+                <td>{{ $anaconfig->max_value }}</td>
                 <td style="text-align: center;">
                     @if (! $anaconfig->is_deleted)
                         <span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>

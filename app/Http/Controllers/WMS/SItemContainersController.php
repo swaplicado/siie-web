@@ -49,8 +49,6 @@ class SItemContainersController extends Controller
 
       $lItemContainers = SItemContainer::Search($request->name, $this->iFilter)->orderBy('container_type_id', 'ASC')->paginate(20);
 
-      // dd($lLimits);
-
       return view('wms.itemcontainers.index')
                   ->with('itemcontainers', $lItemContainers)
                   ->with('actualUserPermission', $this->oCurrentUserPermission)

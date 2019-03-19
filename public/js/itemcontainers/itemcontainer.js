@@ -8,6 +8,7 @@ function whenChangeLink(idSelectLink) {
 
     var opt = '<select class="form-control select-one"  name="item_link_id" id="item_link_id">';
     // opt +='<option value="' + 0 + '">Seleccione Tipo...</option>';
+    var bUpdate = true;
 
     switch (iLinkId) {
       case oData.ALL:
@@ -44,11 +45,13 @@ function whenChangeLink(idSelectLink) {
               });
               break;
       default:
-
+            bUpdate = false;
     }
 
-    $('.linid').empty(" ");
-    $('.linid').append(opt);
+    if (bUpdate) {
+        $('.linid').empty(" ");
+        $('.linid').append(opt);
+    }
 
     // $('.wh').chosen({
     //   placeholder_select_single: 'Seleccione un item...'
