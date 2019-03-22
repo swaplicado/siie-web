@@ -33,7 +33,7 @@ class AnaConfigsController extends Controller
 
     public function __construct()
     {
-        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.MMS_FORMULAS'), \Config::get('scsys.MODULES.QMS'));
+        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION'), \Config::get('scsys.MODULES.QMS'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
@@ -49,6 +49,7 @@ class AnaConfigsController extends Controller
 
         $sSelect = 'qac.id_config,
                     CONCAT(qa.code, "-", qa.name) AS _analysis,
+                    qat.code AS _ana_type,
                     qac.min_value,
                     qac.max_value,
                     qac.created_by_id,
@@ -81,6 +82,7 @@ class AnaConfigsController extends Controller
         $lConfigs = \DB::connection(session('db_configuration')->getConnCompany())
                      ->table('qms_ana_configs as qac')
                      ->join('qms_analysis as qa', 'qac.analysis_id', '=', 'qa.id_analysis')
+                     ->join('qmss_analysis_types as qat', 'qa.type_id', '=', 'qat.id_analysis_type')
                      ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uc', 'qac.created_by_id', '=', 'uc.id')
                      ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'qac.updated_by_id', '=', 'uu.id');
 

@@ -88,12 +88,14 @@ oCaptureTable = $('#capture_table_id').DataTable({
       ],
       "columnDefs": [
         {
-            "targets": [2],
+            "targets": [3],
             "className": "text-center"
         },
         {
-            "targets": [3, 4, 5],
+            "targets": [4, 5, 6],
             "className": "text-right"
         }
       ]
 });
+
+oCaptureTable.column( 0 ).visible( false );

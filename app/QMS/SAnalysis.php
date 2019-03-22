@@ -15,6 +15,7 @@ class SAnalysis extends SModel {
                             'standard',
                             'min_value',
                             'max_value',
+                            'specification',
                             'is_deleted',
                             'type_id',
                             'created_by_id',

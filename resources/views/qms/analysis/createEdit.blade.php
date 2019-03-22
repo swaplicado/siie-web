@@ -115,4 +115,4 @@
 		});
 
   </script>
-	@endsection
+@endsection

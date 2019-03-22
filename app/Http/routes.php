@@ -435,9 +435,17 @@ Route::group(['prefix' => 'qms'], function () {
       * Results of lots analysis
       **/
       Route::resource('results','QMS\SResultsController');
-      Route::get('results/index/getanalysis',[
-        'uses' => 'QMS\SResultsController@GetAnalysis',
-        'as'   => 'qms.results.getanalysis'
+      // Route::get('results',[
+      //   'uses' => 'QMS\SResultsController@index',
+      //   'as'   => 'qms.results.index'
+      // ]);
+      Route::get('results/create/{id_lot}/{id_type}',[
+        'uses' => 'QMS\SResultsController@create',
+        'as'   => 'qms.results.create'
+      ]);
+      Route::get('/results/print/{id_lot}', [
+      	'uses' => 'QMS\SResultsController@Print',
+      	'as' => 'qms.results.print'
       ]);
   });
 

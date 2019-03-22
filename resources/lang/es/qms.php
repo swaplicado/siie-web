@@ -31,10 +31,12 @@ return [
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
       'SEGREGATED_LOTS' => 'Lotes segregados',
+      'RESULTS' => 'Resultados',
 
       'titles'  => [
         'CREATE_ANALYSIS' => 'Crear análisis',
         'EDIT_ANALYSIS' => 'Editar análisis',
+        'CAPTURE_RESULTS' => 'Captura de Resultados',
       ],
 
       'labels'  => [
@@ -43,6 +45,11 @@ return [
         'STANDARD' => 'Norma',
         'MIN_VALUE' => 'Valor mínimo',
         'MAX_VALUE' => 'Valor máximo',
+        'PHYSIOCHEMICAL' => 'Fisicoquímico',
+        'PHYSIOCHEMICALS' => 'FISICOQUÍMICOS',
+        'MICROBIOLOGICAL' => 'Microbiológico',
+        'MICROBIOLOGICALS' => 'MICROBIOLÓGICOS',
+        'QLTY_CERTIFICATE' => 'Certificado de Calidad',
       ],
 
       'placeholders'  =>  [

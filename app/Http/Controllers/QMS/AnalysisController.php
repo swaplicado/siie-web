@@ -23,7 +23,7 @@ class AnalysisController extends Controller
 
     public function __construct()
     {
-        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.MMS_FORMULAS'), \Config::get('scsys.MODULES.QMS'));
+        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION'), \Config::get('scsys.MODULES.QMS'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }

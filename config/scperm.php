@@ -62,6 +62,7 @@ return [
                   'INVENTORY_OPERATION' => '016',
                   'QUALITY' => '050',
                   'QMS_ANALYSIS_CONFIGURATION' => '051',
+                  'QMS_RESULTS' => '052',
                   'MMS_FORMULAS' => '120',
                   'MMS_PRODUCTION_PLANES' => '121',
                   'MMS_FLOORS' => '122',

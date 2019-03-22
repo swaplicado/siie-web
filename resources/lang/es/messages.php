@@ -15,6 +15,7 @@
 		'GENERATED_INVENTORY' => 'El inventario inicial se ha generado exitosamente',
 		'GENERATED_PHYSICAL_INVENTORY' => 'El inventario físico se ha generado exitosamente',
 		'STATUS_CHANGED' => 'El estatus de la orden ha sido modificado',
+		'RESULTS_SAVED' => 'Los resultados fueron guardados',
 
 		'FORMULA_RECURSION_ERROR' => 'Error, uno de los ingredientes o
 																	sub ingredientes es el mismo que una fórmula padre: ',

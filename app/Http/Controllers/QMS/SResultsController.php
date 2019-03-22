@@ -10,6 +10,8 @@ use App\SUtils\SValidation;
 use App\SUtils\SProcess;
 use App\SUtils\SMenu;
 use App\SUtils\SUtil;
+use App\Database\Config;
+use App\ERP\SErpConfiguration;
 
 use App\QMS\SAnalysis;
 use App\QMS\SAnaConfig;
@@ -25,7 +27,7 @@ class SResultsController extends Controller
 
     public function __construct()
     {
-        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.MMS_FORMULAS'), \Config::get('scsys.MODULES.QMS'));
+        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_RESULTS'), \Config::get('scsys.MODULES.QMS'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
     }
@@ -38,7 +40,6 @@ class SResultsController extends Controller
     public function index(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-
         
         $sSelect = "
                     wl.id_lot,
@@ -77,9 +78,14 @@ class SResultsController extends Controller
                     ->with('iFilter', $this->iFilter);
     }
 
-    public function getAnalysis(Request $request)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create($idLot, $idType)
     {
-        $oLot = SWmsLot::find($request->idLot);
+        $oLot = SWmsLot::find($idLot);
         $oItem = $oLot->item;
 
         $sSelect = "
@@ -90,68 +96,74 @@ class SResultsController extends Controller
                         qa.type_id,
                         qac.min_value,
                         qac.max_value,
-                        qat.code as _typecode
+                        qat.code as _typecode,
+                        item_link_type_id,
+                        item_link_id,
+                        id_analysis_type,
+                        qac.is_deleted AS qac_is_deleted,
+                        qa.is_deleted AS qa_is_deleted,
+                        COALESCE((SELECT result_value FROM qms_results 
+                            WHERE lot_id = ".$oLot->id_lot." AND analysis_id = qa.id_analysis 
+                            ORDER BY id_result DESC LIMIT 1), 0) AS _result,
+                        COALESCE((SELECT username 
+                            FROM ".\DB::connection(Config::getConnSys())->getDatabaseName().".users 
+                            WHERE id = (SELECT updated_by_id FROM qms_results 
+                            WHERE lot_id = ".$oLot->id_lot." AND analysis_id = qa.id_analysis 
+                            ORDER BY id_result DESC LIMIT 1)), '') AS _mod_user
                     ";
 
-        $lConfigs = \DB::connection(session('db_configuration')->getConnCompany())
+        $lConfigsSub = \DB::connection(session('db_configuration')->getConnCompany())
                             ->table('qms_ana_configs as qac')
                             ->join('qms_analysis as qa', 'qac.analysis_id', '=', 'qa.id_analysis')
-                            ->join('qmss_analysis_types as qat', 'qa.type_id', '=', 'qat.id_analysis_type')
-                            ->where('qac.is_deleted', false)
-                            ->where('qa.is_deleted', false);
-
-        $lConfigs = $lConfigs->where(function ($query) use ($oItem) {
-                            $query->orWhere(function ($query) use ($oItem) {
-                                $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.ITEM'))
-                                        ->where('item_link_id', $oItem->id_item);
-                            })->orWhere(function ($query) use ($oItem) {
-                                $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.GENDER'))
-                                        ->where('item_link_id', $oItem->item_gender_id);
-                            })->orWhere(function ($query) use ($oItem) {
-                                $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.GROUP'))
-                                        ->where('item_link_id', $oItem->gender->item_group_id);
-                            })->orWhere(function ($query) use ($oItem) {
-                                $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.FAMILY'))
-                                        ->where('item_link_id', $oItem->gender->group->family->id_item_family);
-                            })->orWhere(function ($query) use ($oItem) {
-                                $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.TYPE'))
-                                        ->where('item_link_id', $oItem->gender->item_type_id);
-                            })->orWhere(function ($query) use ($oItem) {
-                                $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.CLASS'))
-                                        ->where('item_link_id', $oItem->gender->item_class_id);
-                            });
-                        });
+                            ->join('qmss_analysis_types as qat', 'qa.type_id', '=', 'qat.id_analysis_type');
                             
-        $lConfigsQ = $lConfigs->distinct('analysis_id')
-                                ->select(\DB::raw($sSelect))
-                                ->get();
+        $lConfigsSub = $lConfigsSub->orderBy('qac.item_link_type_id', 'DESC')
+                                    ->select(\DB::raw($sSelect));
 
-        $aAnalysis = $lConfigs->distinct('analysis_id')->lists('analysis_id');
+        $lQuery = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table(\DB::raw("({$lConfigsSub->toSql()}) as sub"))
+                            // ->mergeBindings($lConfigsSub->getQuery()->getQuery())
+                            ->where('qac_is_deleted', false)
+                            ->where('qa_is_deleted', false)
+                            ->where('id_analysis_type', $idType)
+                            ->where(function ($query) use ($oItem) {
+                                $query->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.ITEM'))
+                                            ->where('item_link_id', $oItem->id_item);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.GENDER'))
+                                            ->where('item_link_id', $oItem->item_gender_id);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.GROUP'))
+                                            ->where('item_link_id', $oItem->gender->item_group_id);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.FAMILY'))
+                                            ->where('item_link_id', $oItem->gender->group->family->id_item_family);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.TYPE'))
+                                            ->where('item_link_id', $oItem->gender->item_type_id);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.CLASS'))
+                                            ->where('item_link_id', $oItem->gender->item_class_id);
+                                });
+                            })
+                            ->groupBy('id_analysis')
+                            ->orderBy('item_link_type_id', 'DESC');
 
-        // $lAnalysis = SAnalysis::where('is_deleted', false)
-        //                         ->whereIn('id_analysis', $lConfigs)
-        //                         ->orderBy('item_link_type_id', 'DESC')
-        //                         ->get();
+        $lQuery = $lQuery->get();
+
+        $aAnalysis = $lConfigsSub->distinct('analysis_id')->lists('analysis_id');
 
         $lResults = SResult::where('is_deleted', false)->where('lot_id', $oLot->id_lot)->whereIn('analysis_id', $aAnalysis)->get();
 
-        $oResponse = new SDataResponse();
-        $oResponse->setAnalysis($lConfigsQ);
-        $oResponse->setResults($lResults);
-        $oResponse->oItem = $oItem;
-        $oResponse->oLot = $oLot;
-
-        return json_encode($oResponse);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('qms.lots_results.createEdit')
+                    ->with('lAnalysis', $lQuery)
+                    ->with('lResults', $lResults)
+                    ->with('oItem', $oItem)
+                    ->with('oLot', $oLot)
+                    ->with('title', $idType == \Config::get('scqms.ANALYSIS_TYPE.FQ') ? 
+                                                    trans('qms.labels.PHYSIOCHEMICALS') : 
+                                                    trans('qms.labels.MICROBIOLOGICALS'));
     }
 
     /**
@@ -162,7 +174,103 @@ class SResultsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $lResults = array();
+        $lParameters = $request->all();
+        foreach ($lParameters as $name => $val) {
+            $aValues = explode("_", $name);
+            if (sizeof($aValues) == 2 && $aValues[0] == "dresult") {
+                $lResults[$aValues[1]] = $val;
+            }
+        }
+
+        \DB::transaction(function () use ($lResults, $request)  {
+            foreach ($lResults as $key => $value) {
+                $oResult = SResult::where('lot_id', $request->idlot)
+                            ->where('analysis_id', $key)
+                            ->orderBy('id_result', 'DESC')
+                            ->first();
+                
+                if ($oResult != null) {
+                    $oResult->result_value = $value;
+                    $oResult->updated_by_id = \Auth::user()->id;
+                    $oResult->save();
+                }
+                else {
+                    $oNewResult = new SResult();
+
+                    $oNewResult->dt_date = session('work_date')->toDateString();
+                    $oNewResult->result_value = $value;
+                    $oNewResult->is_deleted = false;
+                    $oNewResult->lot_id = $request->idlot;
+                    $oNewResult->analysis_id = $key;
+                    $oNewResult->created_by_id = \Auth::user()->id;
+                    $oNewResult->updated_by_id = \Auth::user()->id;
+
+                    $oNewResult->save();
+                }
+            }
+        });
+        
+
+        Flash::success(trans('messages.RESULTS_SAVED'))->important();
+
+        return redirect()->route('qms.results.index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function print($lotid)
+    {
+        $oBranch = session('branch');
+        $oLot = SWmsLot::find($lotid);
+
+        $sSelect = "
+                        qr.id_result,
+                        qr.result_value,
+                        qr.analysis_id,
+                        qa.name AS _analysis,
+                        qa.standard,
+                        qa.specification,
+                        qa.min_value,
+                        qa.max_value
+                    ";
+
+        $lResults = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('qms_results as qr')
+                            ->join('qms_analysis as qa', 'qr.analysis_id', '=', 'qa.id_analysis');
+
+        $lResultsGen = $lResults->select(\DB::raw($sSelect))
+                                ->where('qr.is_deleted', false)
+                                ->where('lot_id', $lotid)
+                                ->orderBy('qa.order_num', 'ASC');
+
+        $lResultsGenFq = clone $lResultsGen;
+        $lResultsGenQm = clone $lResultsGen;
+
+        $lFQResults = $lResultsGenFq->where('qa.type_id', \Config::get('scqms.ANALYSIS_TYPE.FQ'))
+                                    ->get();
+        $lMBResults = $lResultsGenQm->where('qa.type_id', \Config::get('scqms.ANALYSIS_TYPE.MB'))
+                                    ->get();
+
+        $oQltySup = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.QLTY_SUPERVISOR'));
+        $oQltyMgr = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.QLTY_MANAGER'));
+
+        $view = view('qms.lots_results.print', ['oBranch' => $oBranch,
+                                                'oLot' => $oLot,
+                                                'lFQResults' => $lFQResults,
+                                                'lMBResults' => $lMBResults,
+                                                'sSupervisor' => $oQltySup->val_text,
+                                                'sManager' => $oQltyMgr->val_text
+                                                ])
+                                                ->render();
+        // set ukuran kertas dan orientasi
+        $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
+        // cetak
+        return $pdf->stream();
     }
 
     /**

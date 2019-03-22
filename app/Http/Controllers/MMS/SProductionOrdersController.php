@@ -40,9 +40,9 @@ class SProductionOrdersController extends Controller
                          \Config::get('scsys.MODULES.MMS'));
 
        $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
-       $this->lOrderStatus = SStatusOrder::where('is_deleted', false)
-                                          ->orderBy('id_status', 'asc')
-                                          ->lists('name', 'id_status');
+      //  $this->lOrderStatus = SStatusOrder::where('is_deleted', false)
+      //                                     ->orderBy('id_status', 'asc')
+      //                                     ->lists('name', 'id_status');
        $this->lOrderStatus['0'] = 'TODAS';
   }
     /**

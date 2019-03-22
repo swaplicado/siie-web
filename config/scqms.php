@@ -40,4 +40,9 @@ return [
                       'BY_ONLY_LOT'=>'2',
                   ],
 
+    'ANALYSIS_TYPE' => [
+                      'FQ'=>'1',
+                      'MB'=>'2',
+                  ],
+
 ];

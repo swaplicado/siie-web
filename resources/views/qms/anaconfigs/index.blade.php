@@ -40,6 +40,7 @@
         <thead>
             <tr class="titlerow">
                 <th data-priority="1">Análisis</th>
+                <th data-priority="1">T. A.</th>
                 <th data-priority="1">Tipo Conf.</th>
                 <th data-priority="1">Referencia</th>
                 <th data-priority="1">{{ trans('qms.labels.MIN_VALUE') }}</th>
@@ -56,6 +57,7 @@
           @foreach ($lConfigs as $anaconfig)
             <tr>
                 <td>{{ $anaconfig->_analysis }}</td>
+                <td>{{ $anaconfig->_ana_type }}</td>
                 <td>{{ $anaconfig->_ntype }}</td>
                 <td>{{ $anaconfig->_nname }}</td>
                 <td>{{  $anaconfig->min_value }}</td>

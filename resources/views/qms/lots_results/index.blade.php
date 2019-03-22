@@ -21,25 +21,41 @@
                 <th data-priority="1" style="text-align: center;">Cantidad</th>
                 <th data-priority="1" style="text-align: center;">Un</th>
                 <th data-priority="1" style="text-align: center;">Estatus</th>
+                <th data-priority="1" style="text-align: center;">FQ</th>
+                <th data-priority="1" style="text-align: center;">MB</th>
                 <th data-priority="1" style="text-align: center;">-</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($lSegregatedLots as $sLot)
+            @foreach ($lSegregatedLots as $oSegLot)
                 <tr>
-                    <td>{{ $sLot->lot }}</td>
-                    <td>{{ $sLot->_item }}</td>
-                    <td>{{ $sLot->_seg }}</td>
-                    <td>{{ $sLot->_unit }}</td>
-                    <td>{{ $sLot->_evtname }}</td>
+                    <td>{{ $oSegLot->lot }}</td>
+                    <td>{{ $oSegLot->_item }}</td>
+                    <td>{{ $oSegLot->_seg }}</td>
+                    <td>{{ $oSegLot->_unit }}</td>
+                    <td>{{ $oSegLot->_evtname }}</td>
                     <td>
-                        <a
-                            onClick="getModal({{ $sLot->id_lot }})"
-                            title="Capture resultados"
-                                class="btn btn-info btn-sm">
-                                <span class="glyphicon glyphicon-list-alt" aria-hidden = "true"/>
+                        <a href="{{ route('qms.results.create', [$oSegLot->id_lot, \Config::get('scqms.ANALYSIS_TYPE.FQ')]) }}"
+                            class="btn btn-info btn-xs"
+                            title="{{ trans('qms.titles.CAPTURE_RESULTS').' '.trans('qms.labels.PHYSIOCHEMICALS') }}">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                         </a>
-                    </td>
+					</td>
+                    <td>
+                        <a href="{{ route('qms.results.create', [$oSegLot->id_lot, \Config::get('scqms.ANALYSIS_TYPE.MB')]) }}"
+                            class="btn btn-success btn-xs"
+                            title="{{ trans('qms.titles.CAPTURE_RESULTS').' '.trans('qms.labels.MICROBIOLOGICALS') }}">
+                            <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                        </a>
+					</td>
+                    <td>
+                        <a href="{{ route('qms.results.print', [$oSegLot->id_lot]) }}"
+                            class="btn btn-default btn-xs"
+                            target="_blank"
+                            title="{{ trans('actions.PRINT') }}">
+                            <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+                        </a>
+					</td>
                 </tr>
             @endforeach
     </table>
@@ -48,22 +64,6 @@
 
 @section('js')
   <script src="{{ asset('js/qms/lots_results/tables.js')}}"></script>
-  <script src="{{ asset('js/qms/lots_results/SGuiResults.js')}}"></script>
-  <script src="{{ asset('js/qms/lots_results/SResults.js')}}"></script>
-  <script src="{{ asset('js/qms/lots_results/SCaptureRow.js')}}"></script>
-
-  <script type="text/javascript">
-    function GlobalData () {
-        this.scwms = <?php echo json_encode(\Config::get('scwms')) ?>;
-        this.scqms = <?php echo json_encode(\Config::get('scqms')) ?>;
-
-        this.DEC_QTY = <?php echo json_encode(session('decimals_qty')) ?>;
-        this.DEC_AMT = <?php echo json_encode(session('decimals_amt')) ?>;
-    }
-
-    const globalData = new GlobalData();
-
-   </script>
 @endsection
 
 @section('footer')
