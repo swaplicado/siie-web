@@ -145,21 +145,29 @@ class SPalletCore {
          }
       }
 
-      if (! validation.canSkipSegregation(oMovement.iMvtType)) {
-        lPalletStock.forEach(function (oStock) {
-            if (parseFloat(oStock.segregated, 10) > 0) {
-                bHaveSegregated = true;
-            }
-        });
-  
-        if (bHaveSegregated) {
+      lPalletStock.forEach(function (oStock) {
+          if (parseFloat(oStock.segregated, 10) > 0) {
+              bHaveSegregated = true;
+          }
+      });
+
+      if (bHaveSegregated) {
+        if (! validation.canSkipSegregation(oMovement.iMvtType)) {
           swal("Error", "La tarima tiene unidades segregadas y no se "+
                         "pueden hacer operaciones con ella.", "error");
+          return false;
+        }
+
+        if (! palletCore.validateSegregation()) {
           return false;
         }
       }
 
       return true;
+  }
+
+  validateSegregation() {
+    return confirm("La tarima tiene unidades segregadas, ¿Desea moverla?");
   }
 
   validatePalletsString(sPallets) {
