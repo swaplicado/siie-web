@@ -41,6 +41,7 @@ class AnalysisController extends Controller
                     qa.id_analysis,
                     qa.code,
                     qa.name,
+                    qa.result_unit,
                     qa.is_deleted,
                     qa.type_id,
                     qat.code AS type_code,

@@ -58,12 +58,12 @@
                 <thead>
                     <tr>
                         <th>i</th>
-                        <th>Análisis</th>
+                        <th data-priority="1">Análisis</th>
                         <th>Norma</th>
-                        <th>Tipo</th>
+                        <th data-priority="1">Tipo</th>
                         <th>Min</th>
                         <th>Max</th>
-                        <th>Resultado</th>
+                        <th data-priority="1">Resultado</th>
                         <th>Modif</th>
                     </tr>
                 </thead>
@@ -82,6 +82,7 @@
                             <td><input type="number" id="dresult_{{ $oAnalysis->id_analysis }}"
                                     name="dresult_{{ $oAnalysis->id_analysis }}"
                                     class="form-control input-sm"
+                                    step="0.000001",
                                     style="text-align: right;"
                                     value="{{ $oAnalysis->_result }}">
                             </td>

@@ -38,13 +38,14 @@ $('#analysiss_table').DataTable({
         ],
         "columnDefs": [
           {
-              "targets": [0, 2],
+              "targets": [0, 2, 3],
               "className": "text-center"
-          },
-          {
-              "targets": [3, 4, 5, 6],
-              "className": "text-right"
           }
+          // ,
+          // {
+          //     "targets": [3, 4, 5, 6],
+          //     "className": "text-right"
+          // }
         ]
   });
 
@@ -88,11 +89,11 @@ $('#anaconfigs_table').DataTable({
         ],
         "columnDefs": [
           {
-              "targets": [4, 5, 7, 9],
+              "targets": [1, 6],
               "className": "text-center"
           },
           {
-              "targets": [2, 3],
+              "targets": [4, 5],
               "className": "text-right"
           }
         ]

@@ -10,6 +10,7 @@ use App\SUtils\SValidation;
 use App\SUtils\SProcess;
 use App\SUtils\SMenu;
 use App\SUtils\SUtil;
+use App\SUtils\SGuiUtils;
 use App\Database\Config;
 use App\ERP\SErpConfiguration;
 
@@ -40,41 +41,36 @@ class SResultsController extends Controller
     public function index(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         
         $sSelect = "
-                    wl.id_lot,
-                    wl.lot,
-                    wl.dt_expiry,
-                    SUM(IF(wsr.segregation_mvt_type_id = '".\Config::get('scqms.SEGREGATION.INCREMENT')."', wsr.quantity, 0)) AS _inc,
-                    SUM(IF(wsr.segregation_mvt_type_id = '".\Config::get('scqms.SEGREGATION.DECREMENT')."', wsr.quantity, 0)) AS _dec,
-                    (SUM(IF(wsr.segregation_mvt_type_id = '".\Config::get('scqms.SEGREGATION.INCREMENT')."', wsr.quantity, 0)) -
-                    SUM(IF(wsr.segregation_mvt_type_id = '".\Config::get('scqms.SEGREGATION.DECREMENT')."', wsr.quantity, 0))) AS _seg,
-                    wsr.segregation_event_id,
-                    qse.name as _evtname,
-                    CONCAT(ei.code, '-', ei.name) as _item,
-                    CONCAT(eu.code) as _unit
+                        wl.id_lot,
+                        wl.lot,
+                        wl.dt_expiry,
+                        CONCAT(ei.code, '-', ei.name) AS _item,
+                        CONCAT(eu.code) AS _unit,
+                        (SELECT COUNT(id_result) FROM qms_results AS qr WHERE lot_id = wl.id_lot AND NOT qr.is_deleted) AS _nresults
                     ";
 
         $lSegregatedLots = \DB::connection(session('db_configuration')->getConnCompany())
-                            ->table('wms_segregations as ws')
-                            ->join('wms_segregation_rows as wsr', 'ws.id_segregation', '=', 'wsr.segregation_id')
-                            ->join('qmss_segregation_events as qse', 'qse.id_segregation_event', '=', 'wsr.segregation_event_id')
-                            ->join('wms_lots as wl', 'wsr.lot_id', '=', 'wl.id_lot')
-                            ->join('erpu_items as ei', 'wsr.item_id', '=', 'ei.id_item')
-                            ->join('erpu_units as eu', 'wsr.unit_id', '=', 'eu.id_unit');
+                            ->table('wms_lots as wl')
+                            ->join('erpu_items as ei', 'wl.item_id', '=', 'ei.id_item')
+                            ->join('erpu_units as eu', 'wl.unit_id', '=', 'eu.id_unit');
         
-        $lSegregatedLots = $lSegregatedLots->where('ws.is_deleted', false)
-                                        ->where('wsr.is_deleted', false)
-                                        ->having('_seg','>', '0');
+        $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+
+        $lSegregatedLots = $lSegregatedLots->where('wl.is_deleted', false)
+                                        ->whereBetween('wl.created_at', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
 
         $lSegregatedLots = $lSegregatedLots->select(\DB::raw($sSelect))
-                                            ->groupBy('wsr.lot_id')
-                                            ->groupBy('ws.segregation_type_id')
+                                            ->orderBy('wl.lot', 'ASC')
+                                            ->orderBy('wl.dt_expiry', 'ASC')
                                             ->get();
 
         return view('qms.lots_results.index')
                     ->with('lSegregatedLots', $lSegregatedLots)
                     ->with('actualUserPermission', $this->oCurrentUserPermission)
+                    ->with('sFilterDate', $sFilterDate)
                     ->with('iFilter', $this->iFilter);
     }
 
@@ -148,7 +144,8 @@ class SResultsController extends Controller
                                 });
                             })
                             ->groupBy('id_analysis')
-                            ->orderBy('item_link_type_id', 'DESC');
+                            ->orderBy('item_link_type_id', 'DESC')
+                            ->orderBy('id_analysis', 'ASC');
 
         $lQuery = $lQuery->get();
 
@@ -193,6 +190,7 @@ class SResultsController extends Controller
                 if ($oResult != null) {
                     $oResult->result_value = $value;
                     $oResult->updated_by_id = \Auth::user()->id;
+
                     $oResult->save();
                 }
                 else {
@@ -223,9 +221,10 @@ class SResultsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function print($lotid)
+    public function print(Request $request)
     {
         $oBranch = session('branch');
+        $lotid = $request->id_lot;
         $oLot = SWmsLot::find($lotid);
 
         $sSelect = "
@@ -235,6 +234,7 @@ class SResultsController extends Controller
                         qa.name AS _analysis,
                         qa.standard,
                         qa.specification,
+                        qa.result_unit,
                         qa.min_value,
                         qa.max_value
                     ";
@@ -260,13 +260,15 @@ class SResultsController extends Controller
         $oQltyMgr = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.QLTY_MANAGER'));
 
         $view = view('qms.lots_results.print', ['oBranch' => $oBranch,
-                                                'oLot' => $oLot,
-                                                'lFQResults' => $lFQResults,
-                                                'lMBResults' => $lMBResults,
-                                                'sSupervisor' => $oQltySup->val_text,
-                                                'sManager' => $oQltyMgr->val_text
+                                                    'oLot' => $oLot,
+                                                    'sDate' => $request->cert_date,
+                                                    'lFQResults' => $lFQResults,
+                                                    'lMBResults' => $lMBResults,
+                                                    'sSupervisor' => $oQltySup->val_text,
+                                                    'sManager' => $oQltyMgr->val_text
                                                 ])
                                                 ->render();
+        
         // set ukuran kertas dan orientasi
         $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);
         // cetak

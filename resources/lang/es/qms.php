@@ -6,6 +6,7 @@ return [
       'MODULE'  => 'Módulo Calidad',
 
       'ANALYSIS' => 'Análisis',
+      'ANALYSIS_BY_LOT' => 'Análisis por lote',
       'ANALYSIS_CONFIG' => 'Configuración',
       'ANALYSIS_TYPE' => 'Tipo de análisis',
       'ANALYSIS_VS_ITEMS' => 'Análisis vs Ítems',
@@ -45,6 +46,7 @@ return [
         'STANDARD' => 'Norma',
         'MIN_VALUE' => 'Valor mínimo',
         'MAX_VALUE' => 'Valor máximo',
+        'RESULT_UNIT' => 'Unidad de resultado',
         'PHYSIOCHEMICAL' => 'Fisicoquímico',
         'PHYSIOCHEMICALS' => 'FISICOQUÍMICOS',
         'MICROBIOLOGICAL' => 'Microbiológico',

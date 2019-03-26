@@ -48,6 +48,7 @@
 							{!! Form::text('name',
 									isset($oAnalysis) ? $oAnalysis->name : '',
 																		['class'=>'form-control',
+																		'placeholder' => 'ACIDEZ [%]',
 																		'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
 																		'required']) !!}
 						</div>
@@ -58,6 +59,7 @@
 							{!! Form::text('standard',
 									isset($oAnalysis) ? $oAnalysis->standard : '',
 																		['class'=>'form-control',
+																		'placeholder' => 'NOM-111-SSA1-1994',
 																		'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
 																		'required']) !!}
 						</div>
@@ -85,6 +87,17 @@
 																		'placeholder' => "1.0",
 																		'step'=> "0.01",
 																		'style' => 'text-align: right;',
+																		'required']) !!}
+						</div>
+					</div>
+					<div class="form-group row">
+						{!! Form::label('result_unit', trans('qms.labels.RESULT_UNIT').'*', ['class'=>'col-md-3 control-label']) !!}
+						<div class="col-md-5">
+							{!! Form::text('result_unit',
+									isset($oAnalysis) ? $oAnalysis->result_unit : '',
+																		['class'=>'form-control',
+																		'placeholder' => 'UFC/g',
+																		'onKeyup' => 'javascript:this.value=this.value.toUpperCase();',
 																		'required']) !!}
 						</div>
 					</div>

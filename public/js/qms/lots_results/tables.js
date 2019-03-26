@@ -38,12 +38,8 @@ $('#lots_results_table').DataTable({
       ],
       "columnDefs": [
         {
-            "targets": [0, 3],
+            "targets": [0, 1, 3, 4, 5, 6, 7],
             "className": "text-center"
-        },
-        {
-            "targets": [2],
-            "className": "text-right"
         }
       ]
 });

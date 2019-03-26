@@ -48,21 +48,21 @@
           <td class="hss" width="15%">
             <b>PRODUCTO:</b>
           </td>
-          <td class="hss" width="50%">
+          <td class="hss" width="55%">
             {{ $oLot->item->name }}
           </td>
-          <td class="hss" width="20%">
+          <td class="hss trr" width="20%">
             <b>FECHA DE EMISIÓN:</b>
           </td>
-          <td class="hss" width="15%">
-            {{ session('work_date')->format('d/m/Y') }}
+          <td class="hss trr" width="10%">
+            {{ (new \Carbon\Carbon($sDate))->format('d/m/Y') }}
           </td>
         </tr>
         <tr>
             <td class="hss" width="15%">
               <b>LOTE:</b>
             </td>
-            <td class="hss" width="50%">
+            <td class="hss" width="55%">
               {{ $oLot->lot }}
             </td>
           </tr>
@@ -70,8 +70,8 @@
             <td class="hss" width="15%">
              <b>CADUCIDAD:</b>
             </td>
-            <td class="hss" width="50%">
-                {{ $oLot->dt_expiry }}
+            <td class="hss" width="55%">
+                {{ (new \Carbon\Carbon($oLot->dt_expiry))->format('d/m/Y') }}
             </td>
           </tr>
       </table>
@@ -94,7 +94,7 @@
                     <td>{{ $oFQRes->standard }}</td>
                     {{-- <td>{{ $oFQRes->min_value.'-'.$oFQRes->max_value }}</td> --}}
                     <td>{{ $oFQRes->specification }}</td>
-                    <td class="tc"><b>{{ $oFQRes->result_value }}</b></td>
+                    <td class="tc"><b>{{ $oFQRes->result_value.' '.$oFQRes->result_unit }}</b></td>
                   </tr>
               @endforeach
           </table>
@@ -121,7 +121,7 @@
                 </tr>
                 <tr class="little8">
                   <td>Textura</td>
-                  <td>Líquido espero fluído</td>
+                  <td>Líquido espeso fluído</td>
                   <td><b>CUMPLE</b></td>
                 </tr>
                 <tr class="little8">
@@ -148,7 +148,7 @@
                     <td>{{ $oMBRes->standard }}</td>
                     {{-- <td>{{ $oMBRes->min_value.'-'.$oMBRes->max_value }}</td> --}}
                     <td>{{ $oMBRes->specification }}</td>
-                    <td class="tc"><b>{{ $oMBRes->result_value }}</b></td>
+                    <td class="tc"><b>{{ $oMBRes->result_value.' '.$oMBRes->result_unit }}</b></td>
                   </tr>
               @endforeach
           </table>
@@ -204,7 +204,7 @@
           <table width="100%">
             <tr>
                 <td class="little tc">
-                  Oriente Cuatro #602 Col. Ciudad Industrial CP 58200 Morelia, México. Tel. 3232300 Ext. 109. www.saporis.com
+                  Oriente Cuatro #602 Col. Ciudad Industrial CP 58200 Morelia, México. Tel. 3232300 Ext. 109. www.saporis.mx
                 </td>
             </tr>
             <tr>
