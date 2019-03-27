@@ -183,7 +183,7 @@ class SPalletsController extends Controller
 
       view()->share('barcode',$arrayBarcodes);
       view()->share('data',$arrayPallets);
-      $pdf = PDF::loadView('vista_masiva_pdf');
+      $pdf = PDF::loadView('massive_pdf');
       $paper_size = array(0,0,287,431);
       $pdf->setPaper($paper_size,'portrait');
       return $pdf->stream();
@@ -349,7 +349,7 @@ class SPalletsController extends Controller
       view()->share('barcode',$barcode);
       view()->share('data',$data);
       view()->share('contador',2);
-      $pdf = PDF::loadView('vista_pdf_1');
+      $pdf = PDF::loadView('pallet_pdf');
       $paper_size = array(0,0,287,431);
       $pdf->setPaper($paper_size,'portrait');
       return $pdf->stream();
