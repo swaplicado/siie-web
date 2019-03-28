@@ -178,6 +178,40 @@ class SCodesController extends Controller
               ->with('lotStock',$lotStock);
 
     }
+    public function decodePallet(Request $request){
+      
+      $data = SBarcode::decodeBarcode($request->codigo);
+      if($data == null || $data->id_item!=null)
+      {
+        Flash::error('No existe el producto');
+        return redirect()->route('qms.segregations.segregatePalletsIndex');
+      }
+      $data->item;
+      $data->unit;
+      $type = substr($request->codigo, 0 , 1 );
+
+      if($type == 1){
+        Flash::error('No es una tarima');
+        return redirect()->route('qms.segregations.segregatePalletsIndex');
+      }else
+        if($type == 2){
+          $a=array('',$data->item->id_item,$data->unit->id_unit,0,$data->id_pallet,0,0,session('branch')->id_branch,session('work_year'));
+          $stock=SStockManagment::getStock($a);
+          if($stock[2] > 0){
+            Flash::error('La tarima ya esta segregada');
+            return redirect()->route('qms.segregations.segregatePalletsIndex');
+          }else if($stock < 1){
+            Flash::error('La tarima no esta disponible para segregar');
+            return redirect()->route('qms.segregations.segregatePalletsIndex');
+          }
+          session('segregation')->processSegregationPallet($data);
+          Flash::success('Se a segregado la tarima');
+          return redirect()->route('qms.segregations.segregatePalletsIndex');
+        }else{
+          Flash::error('No es un codigo de barras');
+          return redirect()->route('qms.segregations.segregatePalletsIndex');
+        }
+    }
 
     public function decodeWith(Request $request){
       $data = SBarcode::decodeBarcode($request->codigo);

@@ -171,6 +171,12 @@ class SSegregationsController extends Controller
         return response()->json($data);
       }
     }
+
+    public function segregatePalletsIndex(){
+       return view('qms.segregatePallets.index');
+
+    }
+
     public function findLocations(Request $request){
       if($request->status==8){
         $data = SLocation::select('id_whs_location','name')

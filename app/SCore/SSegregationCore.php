@@ -11,6 +11,7 @@ use App\WMS\SMovementRow;
 use App\WMS\SMovementRowLot;
 use App\WMS\SLocation;
 use App\Database\Config;
+use App\SUtils\SStockUtils; 
 
 
 use App\SCore\SMovsManagment;
@@ -643,58 +644,60 @@ class SSegregationCore
       $oSegregation->created_by_id = \Auth::user()->id;
       $oSegregation->updated_by_id = \Auth::user()->id;
       $oSegregation->save();
+      $oSegRow = new SSegregationRow();
 
-      foreach ($oMovement->rows as $movRow) {
-        if ($movRow->is_deleted) {
-          continue;
-        }
-
-        if (sizeof($movRow->lotRows) > 0) {
-          $lSegRows = array();
-          foreach ($movRow->lotRows as $lotRow) {
-            $oSegRow = new SSegregationRow();
-
-            $oSegRow->quantity = $lotRow->quantity;
-            $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-            $oSegRow->segregation_event_id = $iQltyEvent;
-            $oSegRow->branch_id = $oMovement->branch_id;
-            $oSegRow->whs_id = $oMovement->whs_id;
-            $oSegRow->pallet_id = $movRow->pallet_id;
-            $oSegRow->lot_id = $lotRow->lot_id;
-            $oSegRow->year_id = session('work_year');
-            $oSegRow->item_id = $movRow->item_id;
-            $oSegRow->unit_id = $movRow->unit_id;
-            $oSegRow->created_by_id = \Auth::user()->id;
-            $oSegRow->updated_by_id = \Auth::user()->id;
-
-            array_push($lSegRows, $oSegRow);
-          }
-
-          $oSegregation->rows()->saveMany($lSegRows);
-        }
-        else {
-          $oSegRow = new SSegregationRow();
-
-          $oSegRow->quantity = $movRow->quantity;
-          $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-          $oSegRow->segregation_event_id = $iQltyEvent;
-          $oSegRow->branch_id = $oMovement->branch_id;
-          $oSegRow->whs_id = $oMovement->whs_id;
-          $oSegRow->pallet_id = $movRow->pallet_id;
-          $oSegRow->lot_id = 1;
-          $oSegRow->year_id = session('work_year');
-          $oSegRow->item_id = $movRow->item_id;
-          $oSegRow->unit_id = $movRow->unit_id;
-          $oSegRow->created_by_id = \Auth::user()->id;
-          $oSegRow->updated_by_id = \Auth::user()->id;
-
-          $oSegregation->rows()->save($oSegRow);
-        }
-
-      }
+      $oSegRow->quantity = 1;
+      $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+      $oSegRow->segregation_event_id = 3;
+      $oSegRow->branch_id = $oMovement->branch_id;
+      $oSegRow->whs_id = $oMovement->whs_id;
+      $oSegRow->pallet_id = $movRow->pallet_id;
+      $oSegRow->lot_id = $lotRow->lot_id;
+      $oSegRow->year_id = session('work_year');
+      $oSegRow->item_id = $movRow->item_id;
+      $oSegRow->unit_id = $movRow->unit_id;
+      $oSegRow->created_by_id = \Auth::user()->id;
+      $oSegRow->updated_by_id = \Auth::user()->id;
+      
     });
   }
 
+  public function processSegregationPallet($data)
+  {
+    \DB::connection('company')->transaction(function() use ($data) {
+      $oSegregation = new SSegregation();
+
+      $oSegregation->dt_date = session('work_date')->toDateString();
+      $oSegregation->is_deleted = false;
+      $oSegregation->segregation_type_id = 3; // Pendiente constantes
+      $iReference = 0;
+
+      $oSegregation->reference_id = $data->id_pallet;
+      $oSegregation->created_by_id = \Auth::user()->id;
+      $oSegregation->updated_by_id = \Auth::user()->id;
+      $oSegregation->save();
+      $oSegRow = new SSegregationRow();
+
+      $oSegRow->quantity = 1;
+      $oSegRow->segregation_mvt_type_id = 1;
+
+      $whs=SStockUtils::getPalletLocation($data->id_pallet);
+      $oSegRow->segregation_event_id = 3;
+      $oSegRow->branch_id = session('branch')->id_branch;
+      $oSegRow->whs_id = $whs->whs_id;
+      $oSegRow->pallet_id = $data->id_pallet;
+      $oSegRow->lot_id = 1;
+      $oSegRow->year_id = session('work_year');
+      $oSegRow->item_id = $data->item_id;
+      $oSegRow->unit_id = $data->unit_id;
+      $oSegRow->created_by_id = \Auth::user()->id;
+      $oSegRow->updated_by_id = \Auth::user()->id;
+
+      $oSegregation->rows()->save($oSegRow);
+    });
+  }
+
+  public function getInfoPallet(){}
   /**
    * get the query of segregated with data of items, units, pallets,
    * warehouses, lots, status and documents
@@ -708,6 +711,7 @@ class SSegregationCore
                   ei.id_item,
                   eu.id_unit,
                   wl.id_lot,
+                  wl.dt_expiry,
                   wp.id_pallet,
                   ww.id_whs,
                   ww.branch_id,

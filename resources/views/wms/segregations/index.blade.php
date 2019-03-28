@@ -61,7 +61,7 @@
 		            <td>{{ $row->item }}</td>
 		            <td>{{ $row->unit }}</td>
 								@if ($typeView == 0 || $typeView == 2)
-		            	<td>{{ $row->lot_name }}</td>
+		            	<td>{{ $row->lot_name }} / {{$row->dt_expiry}}</td>
 							  @else
 									<td> -- </td>
 								@endif
@@ -70,7 +70,7 @@
 							  @else
 									<td>{{ $row->pallet }}</td>
 								@endif
-								@if ($typeView == 0)
+								@if ($typeView == 0 || $typeView == 2)
 									<td>{{ $row->segregated }}</td>
 								@else
 									<td> -- </td>

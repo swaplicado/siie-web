@@ -66,7 +66,7 @@ class SStockUtils
                             ->groupBy('lot_id')
                             ->groupBy('pallet_id')
                             ->groupBy('location_id');
-                            
+
         $lStock = $loStock->get();
 
         $lStockC = $lStock;
@@ -551,7 +551,7 @@ class SStockUtils
         $select = 'ws.location_id,
                       sum(ws.input) as inputs,
                       sum(ws.output) as outputs,
-                      sum(ws.input - ws.output) as stock,';
+                      sum(ws.input - ws.output) as stock';
 
         try {
           $stock = \DB::connection(session('db_configuration')->getConnCompany())

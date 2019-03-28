@@ -379,6 +379,10 @@ Route::group(['prefix' => 'qms'], function () {
         'as' => 'qms.segregations.consult'
       ]);
 
+      Route::get('/segregation/segregatePalletsIndex',[
+        'uses' =>  'QMS\SSegregationsController@segregatePalletsIndex',
+        'as' => 'qms.segregations.segregatePalletsIndex'
+      ]);
 
       Route::post('segregations/{title}/{segType}/{viewType}/{typeView}/index/process',[
         'uses' => 'QMS\SSegregationsController@Process',
@@ -698,6 +702,11 @@ Route::group(['prefix' => 'qms'], function () {
       Route::post('/codes/decodewith', [
         'uses' => 'WMS\SCodesController@decodeWith',
         'as' => 'wms.codes.decodewith'
+      ]);
+
+      Route::post('/codes/decodePallet', [
+        'uses' => 'WMS\SCodesController@decodePallet',
+        'as' => 'wms.codes.decodePallet'
       ]);
 
       /*
