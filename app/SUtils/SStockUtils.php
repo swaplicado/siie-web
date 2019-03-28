@@ -4,7 +4,9 @@ use App\WMS\SWmsLot;
 use App\WMS\SPallet;
 use App\WMS\SLocation;
 use App\WMS\SLimit;
+use App\WMS\SMovement;
 use App\ERP\SYear;
+use App\SUtils\SMovsUtils;
 
 use Carbon\Carbon;
 
@@ -66,7 +68,7 @@ class SStockUtils
                             ->groupBy('lot_id')
                             ->groupBy('pallet_id')
                             ->groupBy('location_id');
-                            
+
         $lStock = $loStock->get();
 
         $lStockC = $lStock;
@@ -107,7 +109,7 @@ class SStockUtils
                                 $lSegStock = $lSegStock->get();
 
                                 $dSegregated = 0;
-                                if (sizeof($lSegStock) > 0) {
+                                if (sizeof($lSegStock) > 0 && ! SMovsUtils::canSkipSegregation($oMovement->mvt_whs_type_id)) {
                                   $dSegregated = $lSegStock[0]->segregated;
                                 }
                                  if (bccomp($oLotRow->quantity, ($oStock->stock - $dSegregated), session('decimals_qty')) == 1) {
@@ -156,7 +158,7 @@ class SStockUtils
                                             ->get();
 
                          $dSegregated = 0;
-                         if (sizeof($lSegStock) > 0) {
+                         if (sizeof($lSegStock) > 0 && ! SMovsUtils::canSkipSegregation($oMovement->mvt_whs_type_id)) {
                            $dSegregated = $lSegStock[0]->segregated;
                          }
 
@@ -224,7 +226,14 @@ class SStockUtils
        $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = $oRow->item_id;
 
        if ($iMovement > 0) {
-         $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMovement;
+         $mvts = SMovement::where('src_mvt_id', $iMovement)->where('is_deleted', false)->lists('id_mvt');
+         if (sizeof($mvts) > 0) {
+          $mvts->push($iMovement);
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $mvts->toArray();
+         }
+         else {
+          $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMovement;
+         }
        }
 
        $lStockGral = session('stock')->getStockResult($aParameters);
@@ -263,7 +272,7 @@ class SStockUtils
 
       $dQuantity = 0;
       foreach ($lPalletStock as $oPalletStock) {
-        if ($oPalletStock->segregated > 0) {
+        if ($oPalletStock->segregated > 0 && ! SMovsUtils::canSkipSegregation($iMovementType)) {
           array_push($aErrors, 'La tarima tiene unidades segregadas.');
           return $aErrors;
         }
@@ -551,7 +560,7 @@ class SStockUtils
         $select = 'ws.location_id,
                       sum(ws.input) as inputs,
                       sum(ws.output) as outputs,
-                      sum(ws.input - ws.output) as stock,';
+                      sum(ws.input - ws.output) as stock';
 
         try {
           $stock = \DB::connection(session('db_configuration')->getConnCompany())

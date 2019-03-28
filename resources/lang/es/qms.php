@@ -29,6 +29,7 @@ return [
       'VIEW_REL' => 'Liberar codigo de barras',
       'VIEW_REF' => 'Rechazar codigo de barras',
       'BINNACLE' => 'Bitácora de calidad',
+      'VIEW_SEGREGATE_PALLET' =>'Segregar Tarima', 
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
       'SEGREGATED_LOTS' => 'Lotes segregados',

@@ -152,12 +152,22 @@ class SPalletCore {
       });
 
       if (bHaveSegregated) {
-        swal("Error", "La tarima tiene unidades segregadas y no se "+
-                      "pueden hacer operaciones con ella.", "error");
-        return false;
+        if (! validation.canSkipSegregation(oMovement.iMvtType)) {
+          swal("Error", "La tarima tiene unidades segregadas y no se "+
+                        "pueden hacer operaciones con ella.", "error");
+          return false;
+        }
+
+        if (! palletCore.validateSegregation()) {
+          return false;
+        }
       }
 
       return true;
+  }
+
+  validateSegregation() {
+    return confirm("La tarima tiene unidades segregadas, ¿Desea moverla?");
   }
 
   validatePalletsString(sPallets) {

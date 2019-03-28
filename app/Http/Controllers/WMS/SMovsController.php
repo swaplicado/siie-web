@@ -991,8 +991,17 @@ class SMovsController extends Controller
 
        $iPallet = $oMovementJs->iAuxPallet;
        $iPalletLocation = $oMovementJs->iAuxPalletLocation;
-
-       if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
+       // the transfer implies two warehouses
+       if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_TP_OUT_TRA')
+            || SGuiUtils::isProductionTransfer($oMovement->mvt_whs_type_id ))
+        {
+            $iWhsSrc = $oMovement->whs_id;
+            $oMovRef = SMovement::where('src_mvt_id', $id)->where('is_deleted', false)->first();
+            $iWhsDes = $oMovRef->whs_id;
+            $iWhsId = $iWhsSrc;
+        }
+        // if the movement is output implies that the warehouse is of source
+        else if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_OUT')) {
           $iWhsSrc = $oMovement->whs_id;
           $iWhsDes = 0;
        }

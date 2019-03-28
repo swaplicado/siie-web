@@ -19,6 +19,7 @@ use App\SUtils\SStockUtils;
 use App\SUtils\SGuiUtils;
 use App\SCore\SMovsCore;
 use App\SCore\SProductionCore;
+use App\SCore\SMovSegregation;
 
 /**
  * this class manages the movement process
@@ -260,12 +261,18 @@ class SMovsManagment {
               foreach ($mov->aAuxRows as $movRow) {
                 if (! $movRow->is_deleted) {
                   $row = clone $movRow;
-                  $row->mvt_id = $movement->id_mvt;
+                  if (! $row->mvt_id > 0) {
+                    $row->mvt_id = $movement->id_mvt;
+                  }
+
                   $row->save();
 
                   foreach ($movRow->getAuxLots() as $lotRow) {
                       $lRow = clone $lotRow;
-                      $lRow->mvt_row_id = $row->id_mvt_row;
+                      if (! $lRow->mvt_row_id > 0) {
+                        $lRow->mvt_row_id = $row->id_mvt_row;
+                      }
+                      
                       $lRow->save();
                   }
                 }
@@ -296,6 +303,7 @@ class SMovsManagment {
           }
 
           $this->createExternalTransfer($lSavedMovements, $iOperation, $movements[0]->iAuxBranchDes);
+          SMovSegregation::processSegregationMove($lSavedMovements, $iOperation);
         });
       }
       catch (\Exception $e)
@@ -696,7 +704,7 @@ class SMovsManagment {
         $iWhsSrcDefLocation = 0;
         $iWhsDesDefLocation = 0;
 
-        if (! session('location_enabled')) {
+        if (! session('location_enabled') || !isset($row->iAuxLocationDesId) || $row->iAuxLocationDesId == 0) {
            $oSrcLocation = SWarehouse::find($iWhsSrc)->getDefaultLocation();
            $oDesLocation = SWarehouse::find($iWhsDes)->getDefaultLocation();
 
@@ -710,7 +718,7 @@ class SMovsManagment {
             $movRow = clone $row;
             $movRowM = clone $row;
 
-            if (! session('location_enabled')) {
+            if (! session('location_enabled') || !isset($row->iAuxLocationDesId) || $row->iAuxLocationDesId == 0) {
                 $movRow->location_id = $iWhsSrcDefLocation;
                 $movRowM->location_id = $iWhsDesDefLocation;
             }

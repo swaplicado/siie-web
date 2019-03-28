@@ -95,6 +95,7 @@ class SQmsMenu {
         )
         ->route('qms.results.index', trans('qms.RESULTS'))
         ->route('qms.segregations.binnacle', trans('qms.BINNACLE'))
+        ->route('qms.segregations.segregatePalletsIndex', trans('qms.VIEW_SEGREGATE_PALLET'))
         ->wrap('div.collapse.navbar-collapse')
         ->setActiveFromRequest();
     });
