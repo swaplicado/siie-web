@@ -644,21 +644,51 @@ class SSegregationCore
       $oSegregation->created_by_id = \Auth::user()->id;
       $oSegregation->updated_by_id = \Auth::user()->id;
       $oSegregation->save();
-      $oSegRow = new SSegregationRow();
 
-      $oSegRow->quantity = 1;
-      $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
-      $oSegRow->segregation_event_id = 3;
-      $oSegRow->branch_id = $oMovement->branch_id;
-      $oSegRow->whs_id = $oMovement->whs_id;
-      $oSegRow->pallet_id = $movRow->pallet_id;
-      $oSegRow->lot_id = $lotRow->lot_id;
-      $oSegRow->year_id = session('work_year');
-      $oSegRow->item_id = $movRow->item_id;
-      $oSegRow->unit_id = $movRow->unit_id;
-      $oSegRow->created_by_id = \Auth::user()->id;
-      $oSegRow->updated_by_id = \Auth::user()->id;
-      
+      foreach ($oMovement->rows as $movRow) {
+        if (sizeof($movRow->lotRows) > 0) {
+          $lSegRows = array();
+          foreach ($movRow->lotRows as $lotRow) {
+            $oSegRow = new SSegregationRow();
+
+            $oSegRow->quantity = $lotRow->quantity;
+            $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+            $oSegRow->segregation_event_id = $iQltyEvent;
+            $oSegRow->branch_id = $oMovement->branch_id;
+            $oSegRow->whs_id = $oMovement->whs_id;
+            $oSegRow->pallet_id = $movRow->pallet_id;
+            $oSegRow->lot_id = $lotRow->lot_id;
+            $oSegRow->year_id = session('work_year');
+            $oSegRow->item_id = $movRow->item_id;
+            $oSegRow->unit_id = $movRow->unit_id;
+            $oSegRow->created_by_id = \Auth::user()->id;
+            $oSegRow->updated_by_id = \Auth::user()->id;
+
+            array_push($lSegRows, $oSegRow);
+          }
+
+          $oSegregation->rows()->saveMany($lSegRows);
+        }
+        else {
+          $oSegRow = new SSegregationRow();
+
+          $oSegRow->quantity = $movRow->quantity;
+          $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
+          $oSegRow->segregation_event_id = $iQltyEvent;
+          $oSegRow->branch_id = $oMovement->branch_id;
+          $oSegRow->whs_id = $oMovement->whs_id;
+          $oSegRow->pallet_id = $movRow->pallet_id;
+          $oSegRow->lot_id = 1;
+          $oSegRow->year_id = session('work_year');
+          $oSegRow->item_id = $movRow->item_id;
+          $oSegRow->unit_id = $movRow->unit_id;
+          $oSegRow->created_by_id = \Auth::user()->id;
+          $oSegRow->updated_by_id = \Auth::user()->id;
+
+          $oSegregation->rows()->save($oSegRow);
+        }
+
+      }
     });
   }
 
@@ -711,7 +741,6 @@ class SSegregationCore
                   ei.id_item,
                   eu.id_unit,
                   wl.id_lot,
-                  wl.dt_expiry,
                   wp.id_pallet,
                   ww.id_whs,
                   ww.branch_id,
