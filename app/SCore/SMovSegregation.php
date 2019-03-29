@@ -3,6 +3,7 @@
 use App\WMS\Segregation\SSegregation;
 use App\WMS\Segregation\SSegregationRow;
 use App\WMS\Segregation\SSegregationLotRow;
+use App\WMS\SWarehouse;
 
 class SMovSegregation
 {
@@ -10,16 +11,16 @@ class SMovSegregation
     {
         // if the movement is a transfer
         if (sizeof($lSavedMovements) != 2) {
-            
+            return;
         }
         // the movement is a transfer
         if ($lSavedMovements[0]->mvt_whs_type_id != \Config::get('scwms.MVT_TP_IN_TRA') &&
                 $lSavedMovements[1]->mvt_whs_type_id != \Config::get('scwms.MVT_TP_IN_TRA')) {
-            
+            return;
         }
         // if the movement is not a external movement of input or output
         if ($lSavedMovements[0]->whs_id != session('transit_whs')->id_whs && $lSavedMovements[1]->whs_id != session('transit_whs')->id_whs) {
-
+            return;
         }
 
         if ($lSavedMovements[0]->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
@@ -145,6 +146,12 @@ class SMovSegregation
         $oReleaseRow->created_by_id = \Auth::user()->id;
         $oReleaseRow->updated_by_id = \Auth::user()->id;
         $oReleaseRow->notes = "";
+
+        $oWhs = SWarehouse::find($iDesWhs);
+
+        if ($oWhs->is_quality) {
+            return [$oReleaseRow];
+        }
 
         $oSegRow = clone $oReleaseRow;
         $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
