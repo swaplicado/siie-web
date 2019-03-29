@@ -661,7 +661,7 @@ class SMovsManagment {
         $aMovements = array();
 
         if ($iOperation == \Config::get('scwms.OPERATION_TYPE.EDITION')) {
-            $oMirrorMovement = SMovement::find($oMovement->src_mvt_id);
+            $oMirrorMovement = SMovement::where('src_mvt_id', $oMovement->id_mvt)->where('is_deleted', false)->first();
         }
         else {
             $oMirrorMovement = clone $oMovement;
