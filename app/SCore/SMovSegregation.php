@@ -3,6 +3,7 @@
 use App\WMS\Segregation\SSegregation;
 use App\WMS\Segregation\SSegregationRow;
 use App\WMS\Segregation\SSegregationLotRow;
+use App\WMS\SWarehouse;
 
 class SMovSegregation
 {
@@ -145,6 +146,12 @@ class SMovSegregation
         $oReleaseRow->created_by_id = \Auth::user()->id;
         $oReleaseRow->updated_by_id = \Auth::user()->id;
         $oReleaseRow->notes = "";
+
+        $oWhs = SWarehouse::find($iDesWhs);
+
+        if ($oWhs->is_quality) {
+            return [$oReleaseRow];
+        }
 
         $oSegRow = clone $oReleaseRow;
         $oSegRow->segregation_mvt_type_id = \Config::get('scqms.SEGREGATION.INCREMENT');
