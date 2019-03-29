@@ -727,7 +727,6 @@ class SSegregationCore
     });
   }
 
-  public function getInfoPallet(){}
   /**
    * get the query of segregated with data of items, units, pallets,
    * warehouses, lots, status and documents
@@ -741,6 +740,7 @@ class SSegregationCore
                   ei.id_item,
                   eu.id_unit,
                   wl.id_lot,
+                  wl.dt_expiry,
                   wp.id_pallet,
                   ww.id_whs,
                   ww.branch_id,
