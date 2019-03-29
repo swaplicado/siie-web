@@ -77,6 +77,10 @@ class QmsAddAnalisis extends Migration
                 ['id_analysis' => '14','code' => 'DENSI','name' => 'DENSIDAD (KG/L)','standard' => 'NMX-F-075-SCFI-2012','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '1','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '14'],
                 ['id_analysis' => '15','code' => 'AGLIB','name' => 'ÁCIDOS GRASOS LIBRES','standard' => 'NMX-F-101-SCFI-2006','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '1','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '15'],
                 ['id_analysis' => '16','code' => 'PEROX','name' => 'INDICE DE PERÓXIDOS','standard' => 'AOCS CD 8-53','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '1','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '16'],
+                ['id_analysis' => '17','code' => 'SABOR','name' => 'SABOR','standard' => '','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '3','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '17'],
+                ['id_analysis' => '18','code' => 'OLOR','name' => 'OLOR','standard' => '','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '3','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '18'],
+                ['id_analysis' => '19','code' => 'TXRA','name' => 'TEXTURA','standard' => '','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '3','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '19'],
+                ['id_analysis' => '20','code' => 'COLAP','name' => 'COLOR/APARIENCIA','standard' => '','min_value' => '0','result_unit' => '','max_value' => '0','is_deleted' => '0','type_id' => '3','created_by_id' => '1','updated_by_id' => '1','specification' => '','order_num' => '20'],
             ]);
         }
     }

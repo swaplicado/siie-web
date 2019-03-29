@@ -4,13 +4,13 @@
   @include('templates.head.shead')
 @endsection
 
-@section('title', trans('qms.ANALYSIS_VS_ITEMS'))
+@section('title', trans('qms.ORG_VS_ITEMS'))
 
 @section('menu')
 	@include('templates.menu.menumodules')
 @endsection
 
-@section('titlepanel', trans('qms.ANALYSIS_VS_ITEMS'))
+@section('titlepanel', trans('qms.ORG_VS_ITEMS'))
 
 @section('content')
 
@@ -33,7 +33,7 @@
     @endsection
 
   @section('create')
-    <a href={{  route($sRoute.'.create', 0) }} class="btn btn-success btn-min"
+    <a href={{  route($sRoute.'.create', \Config::get('scqms.ANALYSIS_TYPE.OL')) }} class="btn btn-success btn-min"
       style="visibility: {{ App\SUtils\SValidation::isRendered(\Config::get('scsys.OPERATION.CREATE'), $actualUserPermission, 0) }};">
       {{ trans('actions.CREATE') }}
     </a>
@@ -46,8 +46,8 @@
                 <th data-priority="1">T. A.</th>
                 <th data-priority="1">Tipo Conf.</th>
                 <th data-priority="1">Referencia</th>
-                <th data-priority="1">{{ trans('qms.labels.MIN_VALUE') }}</th>
-                <th data-priority="1">{{ trans('qms.labels.MAX_VALUE') }}</th>
+                <th data-priority="1">Especificación</th>
+                <th data-priority="1">Resultado</th>
                 <th data-priority="1" style="text-align: center;">Estatus</th>
                 <th style="text-align: center;">Opciones</th>
                 <th>Creado</th>
@@ -63,8 +63,8 @@
                 <td>{{ $anaconfig->_ana_type }}</td>
                 <td>{{ $anaconfig->_ntype }}</td>
                 <td>{{ $anaconfig->_nname }}</td>
-                <td>{{  $anaconfig->min_value }}</td>
-                <td>{{ $anaconfig->max_value }}</td>
+                <td>{{ $anaconfig->specification }}</td>
+                <td>{{ $anaconfig->result }}</td>
                 <td style="text-align: center;">
                     @if (! $anaconfig->is_deleted)
                         <span class="label label-success">{{ trans('userinterface.labels.ACTIVE') }}</span>

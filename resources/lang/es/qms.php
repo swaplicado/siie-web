@@ -30,6 +30,7 @@ return [
       'VIEW_REF' => 'Rechazar codigo de barras',
       'BINNACLE' => 'Bitácora de calidad',
       'VIEW_SEGREGATE_PALLET' =>'Segregar Tarima', 
+      'ORG_VS_ITEMS' =>'Configuración Organolépticos', 
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
       'SEGREGATED_LOTS' => 'Lotes segregados',

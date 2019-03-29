@@ -426,9 +426,17 @@ Route::group(['prefix' => 'qms'], function () {
       * Configurations Analysis vs Items
       **/
       Route::resource('anaconfigs','QMS\AnaConfigsController');
+      Route::get('anaconfigs/index/{at?}',[
+        'uses' => 'QMS\AnaConfigsController@index',
+        'as'   => 'qms.anaconfigs.index'
+      ]);
       Route::get('anaconfigs/{id}/destroy',[
         'uses' => 'QMS\AnaConfigsController@Destroy',
         'as'   => 'qms.anaconfigs.destroy'
+      ]);
+      Route::get('anaconfigs/create/{at?}',[
+        'uses' => 'QMS\AnaConfigsController@create',
+        'as'   => 'qms.anaconfigs.create'
       ]);
       Route::get('anaconfigs/{id}/active',[
         'uses' => 'QMS\AnaConfigsController@Activate',

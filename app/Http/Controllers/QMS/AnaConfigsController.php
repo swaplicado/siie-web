@@ -29,6 +29,7 @@ class AnaConfigsController extends Controller
 {
     private $oCurrentUserPermission;
     private $iFilter;
+    private $iAnaType;
     private $sClassNav;
 
     public function __construct()
@@ -36,6 +37,7 @@ class AnaConfigsController extends Controller
         $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION'), \Config::get('scsys.MODULES.QMS'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
+        $this->iAnaType = 0;
     }
 
     /**
@@ -43,15 +45,14 @@ class AnaConfigsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $iAnaType = 0)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+        $this->iAnaType = $iAnaType;
 
         $sSelect = 'qac.id_config,
                     CONCAT(qa.code, "-", qa.name) AS _analysis,
                     qat.code AS _ana_type,
-                    qac.min_value,
-                    qac.max_value,
                     qac.created_by_id,
                     qac.updated_by_id,
                     qac.created_at,
@@ -98,12 +99,29 @@ class AnaConfigsController extends Controller
             default:
         }
 
+        if ($iAnaType == 0) {
+            $sSel = "qac.min_value,
+                        qac.max_value,";
+            $sView = "qms.anaconfigs.index";
+        }
+        else {
+            $sSel = "qac.result,
+                    qac.specification,
+                    qac.group_number,";
+
+            $lConfigs = $lConfigs->where('qa.type_id', \Config::get('scqms.ANALYSIS_TYPE.OL'));
+            $sView = "qms.anaconfigs.indexorg";
+        }
+
+        $sSelect = $sSel.$sSelect;
+
         $lConfigs = $lConfigs->select(\DB::raw($sSelect))->get();
 
-        return view('qms.anaconfigs.index')
-                    ->with('lConfigs', $lConfigs)
-                    ->with('actualUserPermission', $this->oCurrentUserPermission)
-                    ->with('iFilter', $this->iFilter);
+        return view($sView)
+                ->with('lConfigs', $lConfigs)
+                ->with('iAnaType', $iAnaType)
+                ->with('actualUserPermission', $this->oCurrentUserPermission)
+                ->with('iFilter', $this->iFilter);
     }
 
     /**
@@ -111,7 +129,7 @@ class AnaConfigsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($iAnaType)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id))
         {
@@ -128,15 +146,25 @@ class AnaConfigsController extends Controller
         $lItemClass = SItemClass::where('is_deleted', false)->orderBy('name', 'ASC')->get();
 
         $lTypes = SAnalysisType::where('is_deleted', false)
-                                ->orderBy('order', 'ASC')
-                                ->get();
+                                ->orderBy('order', 'ASC');
 
         $lAnalysis = SAnalysis::where('is_deleted', false)
-                                ->select('id_analysis', \DB::raw("CONCAT(code, ' - ', name) as ana_name"), 'type_id')
-                                ->orderBy('name', 'ASC')
-                                ->get();
+                                ->select('id_analysis', \DB::raw("CONCAT(code, ' - ', name) as ana_name"), 'type_id', 'name')
+                                ->orderBy('id_analysis', 'ASC');
 
-        return view('qms.anaconfigs.createEdit')
+        if ($iAnaType == \Config::get('scqms.ANALYSIS_TYPE.OL')) {
+            $sView = "qms.anaconfigs.createEditorg";
+            $lTypes = $lTypes->where('id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.OL'));
+            $lAnalysis = $lAnalysis->where('type_id', \Config::get('scqms.ANALYSIS_TYPE.OL'));
+        }
+        else {
+            $sView = "qms.anaconfigs.createEdit";
+        }
+        
+        $lTypes = $lTypes->get();
+        $lAnalysis = $lAnalysis->get();
+
+        return view($sView)
                     ->with('lTypes', $lTypes)
                     ->with('lAnalysis', $lAnalysis)
                     ->with('links', $lLinkTypes)

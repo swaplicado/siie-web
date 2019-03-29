@@ -43,6 +43,7 @@ return [
     'ANALYSIS_TYPE' => [
                       'FQ'=>'1',
                       'MB'=>'2',
+                      'OL'=>'3',
                   ],
 
 ];
