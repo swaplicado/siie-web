@@ -19,7 +19,7 @@ class SMovSegregation
             return;
         }
         // if the movement is not a external movement of input or output
-        if ($lSavedMovements[0]->whs_id != session('transit_whs')->id_whs && $lSavedMovements[1]->whs_id != session('transit_whs')->id_whs) {
+        if ($lSavedMovements[0]->whs_id == session('transit_whs')->id_whs || $lSavedMovements[1]->whs_id == session('transit_whs')->id_whs) {
             return;
         }
 
