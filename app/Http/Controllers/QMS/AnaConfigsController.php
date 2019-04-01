@@ -234,7 +234,72 @@ class AnaConfigsController extends Controller
 
         Flash::success(trans('messages.REG_CREATED'))->important();
 
-        return redirect()->route('qms.anaconfigs.index');
+        return redirect()->route('qms.anaconfigs.index', 0);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function storeOrg(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'item_link_type_id' => 'required',
+            'item_link_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('qms.anaconfigs.create', \Config::get('scqms.ANALYSIS_TYPE.OL'))
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        $params = $request->all();
+        $aAnalysis = array();
+
+        foreach ($params as $key => $value) {
+            if (! strpos($key, '+')) {
+                continue;
+            }
+            
+            $vals = explode("+", $key);
+            if (sizeof($vals) > 1 && $vals[1] == 'anaid') {
+                $aAnalysis[$vals[0]] = $value;
+            }
+        }
+
+        $iMaxGroup = SAnaConfig::max('group_number');
+        $iGroup = $iMaxGroup + 1;
+
+        \DB::connection(session('db_configuration')->getConnCompany())
+                        ->transaction(function () use ($aAnalysis, $iGroup, $request) {
+
+            foreach ($aAnalysis as $key => $value) {
+                $oConfiguration =  new SAnaConfig();
+
+                $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+                $oConfiguration->is_text = true;
+                $oConfiguration->result = "CUMPLE";
+                $oConfiguration->specification = $value;
+                $oConfiguration->group_number = $iGroup;
+                $oConfiguration->analysis_id = $key;
+                $oConfiguration->item_link_type_id = $request->item_link_type_id;
+                $oConfiguration->item_link_id = $request->item_link_id;
+                $oConfiguration->min_value = 0;
+                $oConfiguration->max_value = 0;
+                $oConfiguration->updated_by_id = \Auth::user()->id;
+                $oConfiguration->created_by_id = \Auth::user()->id;
+
+                $oConfiguration->save();
+            }
+
+        });
+
+        Flash::success(trans('messages.REG_CREATED'))->important();
+
+        return redirect()->route('qms.anaconfigs.index', \Config::get('scqms.ANALYSIS_TYPE.OL'));
     }
 
     /**
@@ -390,7 +455,7 @@ class AnaConfigsController extends Controller
 
         Flash::success(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('qms.anaconfigs.index');
+        return redirect()->route('qms.anaconfigs.index', 0);
     }
 
     /**
@@ -417,7 +482,7 @@ class AnaConfigsController extends Controller
 
         Flash::success(trans('messages.REG_DELETED'))->important();
 
-        return redirect()->route('qms.anaconfigs.index');
+        return redirect()->route('qms.anaconfigs.index', 0);
     }
 
     /**
@@ -445,6 +510,6 @@ class AnaConfigsController extends Controller
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
 
-        return redirect()->route('qms.anaconfigs.index');
+        return redirect()->route('qms.anaconfigs.index', 0);
     }
 }

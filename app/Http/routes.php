@@ -442,6 +442,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\AnaConfigsController@Activate',
         'as'   => 'qms.anaconfigs.activate'
       ]);
+      Route::post('anaconfigs/storeorg/{at?}', [
+        'uses' => 'QMS\AnaConfigsController@storeOrg',
+        'as' => 'qms.anaconfigs.storeorg'
+      ]);
 
        /*
       * Results of lots analysis

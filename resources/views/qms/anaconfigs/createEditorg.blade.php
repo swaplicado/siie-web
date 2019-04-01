@@ -19,7 +19,7 @@
 	@section('title', trans('userinterface.titles.EDIT_ITEM_CONTAINER'))
 @else
 	<?php
-		$sRoute='qms.anaconfigs.store';
+		$sRoute='qms.anaconfigs.storeorg';
 	?>
 	@section('title', trans('userinterface.titles.CREATE_ITEM_CONTAINER'))
 @endif
@@ -46,7 +46,7 @@
 			<div class="form-group">
 				{!! Form::label($oAnalysis->id_analysis, $oAnalysis->name.'*') !!}
 				<div >
-					{!! Form::text($oAnalysis->id_analysis, null,
+					{!! Form::text($oAnalysis->id_analysis.'+anaid', null,
 										['class'=>'form-control', 'required', 'placeholder' => $oAnalysis->name]) !!}
 				</div>
 			</div>
