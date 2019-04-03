@@ -50,7 +50,8 @@ class QmsAddAnaTypes extends Migration
                 
             DB::connection($this->sConnection)->table('qmss_analysis_types')->insert([	
                 ['id_analysis_type' => '1','code' => 'FQ','name' => 'FISICO QUÍMICO', 'is_deleted' => '0','order'=>'1'],
-                ['id_analysis_type' => '2','code' => 'MB','name' => 'MICROBIOLÓGICO', 'is_deleted' => '0','order'=>'2'],
+                ['id_analysis_type' => '2','code' => 'MB','name' => 'MICROBIOLÓGICO', 'is_deleted' => '0','order'=>'3'],
+                ['id_analysis_type' => '3','code' => 'OL','name' => 'ORGANOLÉPTICO', 'is_deleted' => '0','order'=>'2'],
             ]);
            
         }

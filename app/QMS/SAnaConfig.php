@@ -10,6 +10,11 @@ class SAnaConfig extends SModel {
 
     protected $fillable = [
                             'id_config',
+                            'is_text',
+                            'is_deleted',
+                            'result',
+                            'specification',
+                            'group_number',
                             'analysis_id',
                             'item_link_type_id',
                             'item_link_id',
@@ -18,6 +23,16 @@ class SAnaConfig extends SModel {
                             'created_by_id',
                             'updated_by_id',
                           ];
+
+    /**
+     * [analysis description]
+     * Return object SAnalysis
+     * @return SAnalysis
+    */
+    public function analysis()
+    {
+        return $this->belongsTo('App\QMS\SAnalysis', 'analysis_id');
+    }
 
     /**
      * [userCreation description]

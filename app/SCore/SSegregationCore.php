@@ -772,6 +772,7 @@ class SSegregationCore
 
     $query = $query->where('ei.is_deleted', false)
                   ->where('ws.is_deleted', false)
+                  ->where('wsr.is_deleted', false)
                   ->select(\DB::raw($sSelect));
     switch ($typeView){
       case 0:
@@ -973,8 +974,7 @@ class SSegregationCore
   $query = $query->groupBy('id_pallet',
                           'ww.id_whs'
                           )
-                ->having('segregated', '>', 0)
-                ->where('wp.pallet', '!=', 'SIN TARIMA');
+                ->having('segregated', '>', 0);
 
     switch ($iQualityType) {
       case \Config::get('scqms.SEGREGATION_TYPE.SHIPMENT_ORDER'):

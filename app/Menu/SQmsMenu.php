@@ -13,15 +13,25 @@ class SQmsMenu {
         ->link('', '')
         ->route('qms.home', trans('qms.MODULE'))
         ->submenu(
-            Link::to('#', trans('qms.ANALYSIS_CONFIG').'<span class="caret"></span>')
+            Link::to('#', trans('qms.ANALYSIS').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
             ->addClass('dropdown-menu')
-          ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
-                  Link::toRoute('qms.analysis.index', trans('qms.ANALYSIS')))
-          ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
-                  Link::toRoute('qms.anaconfigs.index', trans('qms.ANALYSIS_VS_ITEMS')))
+            ->submenu(
+              Link::to('#', trans('qms.ANALYSIS_CONFIG').'<span class="glyphicon glyphicon-triangle-right btn-xs"></span>')
+                  ->addClass('test'),
+              \Menu::new()
+                  ->addParentClass('dropdown-submenu')
+                  ->addClass('dropdown-menu')
+                  ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
+                          Link::toRoute('qms.analysis.index', trans('qms.ANALYSIS')))
+                  ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
+                          Link::toRoute('qms.anaconfigs.index', trans('qms.ANALYSIS_VS_ITEMS'), [0]))
+                  ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION')),
+                          Link::toRoute('qms.anaconfigs.index', trans('qms.ORG_VS_ITEMS'), [\Config::get('scqms.ANALYSIS_TYPE.OL')]))
+                  )
+                  ->route('qms.results.index', trans('qms.RESULTS'))
         )
         ->submenu(
             Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')
@@ -93,7 +103,6 @@ class SQmsMenu {
                                     '3'
                                   ])
         )
-        ->route('qms.results.index', trans('qms.RESULTS'))
         ->route('qms.segregations.binnacle', trans('qms.BINNACLE'))
         ->route('qms.segregations.segregatePalletsIndex', trans('qms.VIEW_SEGREGATE_PALLET'))
         ->wrap('div.collapse.navbar-collapse')

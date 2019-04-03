@@ -426,23 +426,35 @@ Route::group(['prefix' => 'qms'], function () {
       * Configurations Analysis vs Items
       **/
       Route::resource('anaconfigs','QMS\AnaConfigsController');
+      Route::get('anaconfigs/index/{at?}',[
+        'uses' => 'QMS\AnaConfigsController@index',
+        'as'   => 'qms.anaconfigs.index'
+      ]);
       Route::get('anaconfigs/{id}/destroy',[
         'uses' => 'QMS\AnaConfigsController@Destroy',
         'as'   => 'qms.anaconfigs.destroy'
       ]);
+      Route::get('anaconfigs/create/{at?}',[
+        'uses' => 'QMS\AnaConfigsController@create',
+        'as'   => 'qms.anaconfigs.create'
+      ]);
       Route::get('anaconfigs/{id}/active',[
         'uses' => 'QMS\AnaConfigsController@Activate',
         'as'   => 'qms.anaconfigs.activate'
+      ]);
+      Route::post('anaconfigs/storeorg/{at?}', [
+        'uses' => 'QMS\AnaConfigsController@storeOrg',
+        'as' => 'qms.anaconfigs.storeorg'
+      ]);
+      Route::put('anaconfigs/updorg/', [
+        'uses' => 'QMS\AnaConfigsController@update',
+        'as' => 'qms.anaconfigs.updorg'
       ]);
 
        /*
       * Results of lots analysis
       **/
       Route::resource('results','QMS\SResultsController');
-      // Route::get('results',[
-      //   'uses' => 'QMS\SResultsController@index',
-      //   'as'   => 'qms.results.index'
-      // ]);
       Route::get('results/create/{id_lot}/{id_type}',[
         'uses' => 'QMS\SResultsController@create',
         'as'   => 'qms.results.create'

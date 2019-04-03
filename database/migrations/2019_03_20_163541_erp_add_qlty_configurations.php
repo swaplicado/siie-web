@@ -38,9 +38,15 @@ class ErpAddQltyConfigurations extends Migration
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault, $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
 
-        DB::connection($this->sConnection)->table('erp_configuration', function ($table) {
-            $table->string('val_text', 200)->change();
-        });
+        DB::connection($this->sConnection)->table('erp_configuration')->insert([
+          ['id_configuration' => '16','code' => '016','name' => 'SUPERVISOR MICROB','val_boolean' => '0','val_int' => '0',
+                    'val_text' => 'I.B.Q. Jorge Luis Pérez Arias ## Q.F.B. Mayeli Elideth Rodríguez Casas',
+                    'val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          ['id_configuration' => '17','code' => '017','name' => 'GERENTE CAL','val_boolean' => '0','val_int' => '0',
+                    'val_text' => 'Q.F.B. Francisco Santiago Chima',
+                    'val_decimal' => '0', 'is_deleted' => '0', 'created_by_id' => '1', 'updated_by_id' => '1'],
+          
+        ]);
       }
     }
 
@@ -55,10 +61,10 @@ class ErpAddQltyConfigurations extends Migration
         $this->sDataBase = $base;
         SConnectionUtils::reconnectDataBase($this->sConnection, $this->bDefault,
                   $this->sHost, $this->sDataBase, $this->sUser, $this->sPassword);
-                  
-        DB::connection($this->sConnection)->table('erp_configuration', function ($table) {
-            $table->string('val_text', 50)->change();
-        });
+
+        DB::connection($this->sConnection)->table('erp_configuration')
+                                              ->whereIn('id_configuration', ['16', '17'])
+                                              ->delete();
       }
     }
 }
