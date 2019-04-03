@@ -43,6 +43,17 @@
 		</div>
 
 		<div class="form-group">
+			{!! Form::label('specification', trans('qms.labels.SPECIFICATION').'*') !!}
+			<div class="col-md-12">
+				{!! Form::text('specification', isset($oAnaConfig) ?  $oAnaConfig->specification : '',
+								['class'=>'form-control', 
+								'required', 
+								'value' => "",
+								]) !!}
+			</div>
+		</div>
+
+		<div class="form-group">
 			{!! Form::label('min_value', trans('qms.labels.MIN_VALUE').'*') !!}
 			<div class="col-md-5 col-md-offset-7">
 				{!! Form::number('min_value', isset($oAnaConfig) ?  $oAnaConfig->min_value : 0,

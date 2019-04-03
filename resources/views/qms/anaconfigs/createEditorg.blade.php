@@ -8,12 +8,13 @@
 	<?php
 			if (isset($bIsCopy))
 			{
-				$sRoute = 'qms.anaconfigs.store';
+				$sRoute = 'qms.anaconfigs.storeorg';
 			}
 			else
 			{
-				$sRoute = 'qms.anaconfigs.update';
+				$sRoute = 'qms.anaconfigs.updorg';
 			}
+
 			$aux = $oAnaConfig;
 	?>
 	@section('title', trans('userinterface.titles.EDIT_ITEM_CONTAINER'))
@@ -29,7 +30,7 @@
 
 		<div class="form-group">
 			{!! Form::label('item_link_type_id', trans('wms.labels.LEVEL').'*') !!}
-			{!! Form::select('item_link_type_id', $links, isset($oAnaConfig) ?  $oAnaConfig->item_link_type_id : null,
+			{!! Form::select('item_link_type_id', $links, isset($oAnaConfig) ?  $oAnaConfig->get(0)->item_link_type_id : null,
 								['class'=>'form-control select-one', 'onChange' => 'whenChangeLink("item_link_type_id")',
 								 'placeholder' => trans('wms.placeholders.SELECT_LEVEL'), 'required']) !!}
 		</div>
@@ -37,20 +38,32 @@
 		<div class="form-group">
 			{!! Form::label('item_link_id', trans('wms.labels.REFERENCE').'*') !!}
 			<div class="linid">
-				{!! Form::select('item_link_id', array(), isset($oAnaConfig) ?  $oAnaConfig->item_link_id : null,
+				{!! Form::select('item_link_id', array(), isset($oAnaConfig) ?  $oAnaConfig->get(0)->item_link_id : null,
 									['class'=>'form-control select-one', 'required', 'placeholder' => trans('wms.placeholders.SELECT_REFERENCE')]) !!}
 			</div>
 		</div>
 
-		@foreach ($lAnalysis as $oAnalysis)
-			<div class="form-group">
-				{!! Form::label($oAnalysis->id_analysis, $oAnalysis->name.'*') !!}
-				<div >
-					{!! Form::text($oAnalysis->id_analysis.'+anaid', null,
-										['class'=>'form-control', 'required', 'placeholder' => $oAnalysis->name]) !!}
+		@if (isset($oAnaConfig))
+			@foreach ($oAnaConfig as $oElemConfig)
+				<div class="form-group">
+					{!! Form::label($oElemConfig->id_config, $oElemConfig->analysis->name.'*') !!}
+					<div >
+						{!! Form::text($oElemConfig->id_config.'+anaid', $oElemConfig->specification,
+											['class'=>'form-control', 'required', 'placeholder' => $oElemConfig->result]) !!}
+					</div>
 				</div>
-			</div>
-		@endforeach
+			@endforeach
+		@else
+			@foreach ($lAnalysis as $oAnalysis)
+				<div class="form-group">
+					{!! Form::label($oAnalysis->id_analysis, $oAnalysis->name.'*') !!}
+					<div >
+						{!! Form::text($oAnalysis->id_analysis.'+anaid', null,
+											['class'=>'form-control', 'required', 'placeholder' => $oAnalysis->name]) !!}
+					</div>
+				</div>
+			@endforeach
+		@endif
 
 @endsection
 
@@ -79,9 +92,9 @@
 		<script type="text/javascript" src="{{ asset('js/itemcontainers/itemcontainer.js')}}"></script>
 		<script type="text/javascript">
 				whenChangeLink('item_link_type_id');
-				document.getElementById('item_link_id').value = <?php echo json_encode(isset($oAnaConfig) ? $oAnaConfig->item_link_id : ''); ?>;
+				document.getElementById('item_link_id').value = <?php echo json_encode(isset($oAnaConfig) ? $oAnaConfig[0]->item_link_id : ''); ?>;
 
-				var idAnalysis = <?php echo json_encode(isset($oAnaConfig) ? $oAnaConfig->analysis_id : 0); ?>;
+				var idAnalysis = <?php echo json_encode(isset($oAnaConfig) ? $oAnaConfig[0]->analysis_id : 0); ?>;
 
 				if (idAnalysis > 0) {
 					$('#lanali').val([idAnalysis]).trigger('chosen:updated');

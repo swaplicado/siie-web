@@ -93,44 +93,33 @@
                     <td>{{ $oFQRes->_analysis }}</td>
                     <td>{{ $oFQRes->standard }}</td>
                     {{-- <td>{{ $oFQRes->min_value.'-'.$oFQRes->max_value }}</td> --}}
-                    <td>{{ $oFQRes->specification }}</td>
+                    <td>{{ $oFQRes->_specification == '' ? $oFQRes->_ana_specification : $oFQRes->_specification }}</td>
                     <td class="tc"><b>{{ $oFQRes->result_value.' '.$oFQRes->result_unit }}</b></td>
                   </tr>
               @endforeach
           </table>
         @endif
         <br>
-        <p class="little9"><b>2. ANÁLISIS ORGANOLÉPTICOS</b></p>
-        <table style="width:100%" class="tc">
-            <thead>
-                <tr class="little9" style="background-color:darkgrey">
-                    <th class="tc" width="30%">PARÁMETRO</th>
-                    <th class="tc" width="50%">DESCRIPCIÓN EN ESPECIFICACIÓN</th>
-                    <th class="tc" width="20%">RESULTADO</th>
-                </tr>
-            </thead>          
-                <tr class="little8">
-                  <td>Sabor</td>
-                  <td>Característico, dulce con notas de tomate condimentado</td>
-                  <td><b>CUMPLE</b></td>
-                </tr>
-                <tr class="little8">
-                  <td>Olor</td>
-                  <td>Característico, tomate condimentado con pronunciadas notas de orégano</td>
-                  <td><b>CUMPLE</b></td>
-                </tr>
-                <tr class="little8">
-                  <td>Textura</td>
-                  <td>Líquido espeso fluído</td>
-                  <td><b>CUMPLE</b></td>
-                </tr>
-                <tr class="little8">
-                  <td>Color/Apariencia</td>
-                  <td>Rojo oscuro intenso</td>
-                  <td><b>CUMPLE</b></td>
-                </tr>
-        </table>
-        <br>
+        @if (sizeof($lOLResults) > 0)
+          <p class="little9"><b>2. ANÁLISIS ORGANOLÉPTICOS</b></p>
+          <table style="width:100%" class="tc">
+              <thead>
+                  <tr class="little9" style="background-color:darkgrey">
+                      <th class="tc" width="30%">PARÁMETRO</th>
+                      <th class="tc" width="50%">DESCRIPCIÓN EN ESPECIFICACIÓN</th>
+                      <th class="tc" width="20%">RESULTADO</th>
+                  </tr>
+              </thead>
+              @foreach ($lOLResults as $oOLRes)
+                  <tr class="little8">
+                    <td>{{ $oOLRes->_analysis }}</td>
+                    <td>{{ $oOLRes->_specification }}</td>
+                    <td class="tc"><b>{{ $oOLRes->_result }}</b></td>
+                  </tr>
+              @endforeach
+          </table>
+          <br>
+        @endif
         @if (sizeof($lMBResults) > 0)
           <p class="little9"><b>3. ANÁLISIS MICROBIOLÓGICOS</b></p>
           <table style="width:100%" class="tc">
@@ -146,8 +135,7 @@
                   <tr class="little8">
                     <td>{{ $oMBRes->_analysis }}</td>
                     <td>{{ $oMBRes->standard }}</td>
-                    {{-- <td>{{ $oMBRes->min_value.'-'.$oMBRes->max_value }}</td> --}}
-                    <td>{{ $oMBRes->specification }}</td>
+                    <td>{{ $oMBRes->_specification == '' ? $oMBRes->_ana_specification : $oMBRes->_specification }}</td>
                     <td class="tc"><b>{{ $oMBRes->result_value.' '.$oMBRes->result_unit }}</b></td>
                   </tr>
               @endforeach

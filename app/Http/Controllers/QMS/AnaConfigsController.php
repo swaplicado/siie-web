@@ -212,8 +212,8 @@ class AnaConfigsController extends Controller
         
         if ($validator->fails()) {
             return redirect()->route('qms.anaconfigs.create')
-            ->withErrors($validator)
-            ->withInput();
+                    ->withErrors($validator)
+                    ->withInput();
         }
         
         \DB::connection(session('db_configuration')->getConnCompany())
@@ -223,6 +223,9 @@ class AnaConfigsController extends Controller
                 $oConfiguration =  new SAnaConfig($request->all());
 
                 $oConfiguration->analysis_id = $iAnalysis;
+                $oConfiguration->is_text = false;
+                $oConfiguration->result = '';
+                $oConfiguration->group_number = 1;
                 $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
                 $oConfiguration->updated_by_id = \Auth::user()->id;
                 $oConfiguration->created_by_id = \Auth::user()->id;
@@ -251,7 +254,8 @@ class AnaConfigsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->route('qms.anaconfigs.create', \Config::get('scqms.ANALYSIS_TYPE.OL'))
+            return redirect()
+                        ->route('qms.anaconfigs.create', \Config::get('scqms.ANALYSIS_TYPE.OL'))
                         ->withErrors($validator)
                         ->withInput();
         }
@@ -273,12 +277,12 @@ class AnaConfigsController extends Controller
         $iMaxGroup = SAnaConfig::max('group_number');
         $iGroup = $iMaxGroup + 1;
 
-        \DB::connection(session('db_configuration')->getConnCompany())
-                        ->transaction(function () use ($aAnalysis, $iGroup, $request) {
+        $lConfigs = array();
 
+        $validator->after(function($validator) use ($aAnalysis, $request, $iGroup, &$lConfigs) {
             foreach ($aAnalysis as $key => $value) {
                 $oConfiguration =  new SAnaConfig();
-
+    
                 $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
                 $oConfiguration->is_text = true;
                 $oConfiguration->result = "CUMPLE";
@@ -292,9 +296,27 @@ class AnaConfigsController extends Controller
                 $oConfiguration->updated_by_id = \Auth::user()->id;
                 $oConfiguration->created_by_id = \Auth::user()->id;
 
+                if (! $oConfiguration->isValid()) {
+                    $validator->errors()->add('Error', 'La configuración ya existe.');
+                }
+    
+                array_push($lConfigs, $oConfiguration);
+            }
+        });
+        
+        if ($validator->fails()) {
+            return redirect()
+                    ->route('qms.anaconfigs.create', \Config::get('scqms.ANALYSIS_TYPE.OL'))
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+
+        \DB::connection(session('db_configuration')->getConnCompany())
+                        ->transaction(function () use (&$lConfigs) {
+
+            foreach ($lConfigs as $oConfiguration) {
                 $oConfiguration->save();
             }
-
         });
 
         Flash::success(trans('messages.REG_CREATED'))->important();
@@ -334,34 +356,49 @@ class AnaConfigsController extends Controller
         }
 
         $lLinkTypes = SItemLinkType::where('is_deleted', false)->orderBy('name', 'ASC')->lists('name', 'id_item_link_type');
-
+        
         $lItems = SItem::where('is_deleted', false)->orderBy('code', 'ASC')->get();
         $lGenders = SItemGender::where('is_deleted', false)->orderBy('name', 'ASC')->get();
         $lGroups = SItemGroup::where('is_deleted', false)->orderBy('name', 'ASC')->get();
         $lFamilies = SItemFamily::where('is_deleted', false)->orderBy('name', 'ASC')->get();
         $lItemTypes = SItemType::where('is_deleted', false)->orderBy('name', 'ASC')->get();
         $lItemClass = SItemClass::where('is_deleted', false)->orderBy('name', 'ASC')->get();
-
+        
         $lTypes = SAnalysisType::where('is_deleted', false)
-                                ->orderBy('order', 'ASC')
-                                ->get();
+                                ->orderBy('order', 'ASC');
 
         $lAnalysis = SAnalysis::where('is_deleted', false)
-                                ->select('id_analysis', \DB::raw("CONCAT(code, ' - ', name) as ana_name"), 'type_id')
-                                ->orderBy('name', 'ASC')
-                                ->get();
+                                ->select('id_analysis', \DB::raw("CONCAT(code, ' - ', name) as ana_name"), 'type_id', 'name')
+                                ->orderBy('id_analysis', 'ASC');
 
-        return view('qms.anaconfigs.createEdit')
-                    ->with('oAnaConfig', $oAnaConfig)
-                    ->with('lTypes', $lTypes)
-                    ->with('lAnalysis', $lAnalysis)
-                    ->with('links', $lLinkTypes)
-                    ->with('items', $lItems)
-                    ->with('genders', $lGenders)
-                    ->with('groups', $lGroups)
-                    ->with('families', $lFamilies)
-                    ->with('itemTypes', $lItemTypes)
-                    ->with('itemClasses', $lItemClass);
+        if ($oAnaConfig->analysis->type_id == \Config::get('scqms.ANALYSIS_TYPE.OL')) {
+            $sView = "qms.anaconfigs.createEditorg";
+            $lTypes = $lTypes->where('id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.OL'));
+            $lAnalysis = $lAnalysis->where('type_id', \Config::get('scqms.ANALYSIS_TYPE.OL'));
+
+            $oAnaConfig = SAnaConfig::where('group_number', $oAnaConfig->group_number)
+                                        ->where('is_deleted', false)
+                                        ->orderBy('analysis_id', 'ASC')
+                                        ->get();
+        }
+        else {
+            $sView = "qms.anaconfigs.createEdit";
+        }
+        
+        $lTypes = $lTypes->get();
+        $lAnalysis = $lAnalysis->get();
+
+        return view($sView)
+                ->with('oAnaConfig', $oAnaConfig)
+                ->with('lTypes', $lTypes)
+                ->with('lAnalysis', $lAnalysis)
+                ->with('links', $lLinkTypes)
+                ->with('items', $lItems)
+                ->with('genders', $lGenders)
+                ->with('groups', $lGroups)
+                ->with('families', $lFamilies)
+                ->with('itemTypes', $lItemTypes)
+                ->with('itemClasses', $lItemClass);
     }
 
     /**
@@ -373,11 +410,21 @@ class AnaConfigsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'item_link_type_id' => 'required',
-            'item_link_id' => 'required',
-            'aranalysis' => 'array|required',
-        ]);
+        $isOrganolepctic = $id == 'updorg';
+
+        if ($isOrganolepctic) {
+            $validator = Validator::make($request->all(), [
+                'item_link_type_id' => 'required',
+                'item_link_id' => 'required',
+            ]);
+        }
+        else {
+            $validator = Validator::make($request->all(), [
+                'item_link_type_id' => 'required',
+                'item_link_id' => 'required',
+                'aranalysis' => 'array|required',
+            ]);
+        }
 
         if ($validator->fails()) {
             return redirect()->route('qms.anaconfigs.edit')
@@ -385,77 +432,125 @@ class AnaConfigsController extends Controller
                         ->withInput();
         }
 
-        $aAnalysis = $request->aranalysis;
+        if ($isOrganolepctic) {
+            $params = $request->all();
+            $aConfigs = array();
 
-        $validator->after(function($validator) use ($aAnalysis, $request, $id) {
-            $bFirst = true;
-            foreach ($aAnalysis as $iAnalysis) {
+            foreach ($params as $key => $value) {
+                if (! strpos($key, '+')) {
+                    continue;
+                }
                 
-                if (! $bFirst) {
-                    $oConfiguration =  new SAnaConfig($request->all());
-                    unset($oConfiguration->id_config);
-                    $oConfiguration->analysis_id = $iAnalysis;
+                $vals = explode("+", $key);
+                if (sizeof($vals) > 1 && $vals[1] == 'anaid') {
+                    $aConfigs[$vals[0]] = $value;
                 }
-                else {
-                    $oConfiguration = SAnaConfig::find($id);
+            }
+            $lConfigs = array();
+
+            $validator->after(function($validator) use ($aConfigs, $request, &$lConfigs) {
+                foreach ($aConfigs as $iConfig => $sSpec) {
+                    $oConfiguration = SAnaConfig::find($iConfig);
 
                     $oConfiguration->item_link_type_id = $request->item_link_type_id;
                     $oConfiguration->item_link_id = $request->item_link_id;
-                    $oConfiguration->analysis_id = $iAnalysis;
+                    $oConfiguration->specification = $sSpec;
 
-                    $bFirst = false;
+                    if (! $oConfiguration->isValid()) {
+                        $validator->errors()->add('Error', 'La configuración ya existe.');
+                    }
+
+                    array_push($lConfigs, $oConfiguration);
                 }
+            });
 
-                if (! $oConfiguration->isValid()) {
-                    $validator->errors()->add('Error', 'La configuración ya existe.');
+        }
+        else {
+            $aAnalysis = $request->aranalysis;
+
+            $validator->after(function($validator) use ($aAnalysis, $request, $id) {
+                $bFirst = true;
+                foreach ($aAnalysis as $iAnalysis) {
+                    
+                    if (! $bFirst) {
+                        $oConfiguration =  new SAnaConfig($request->all());
+                        unset($oConfiguration->id_config);
+                        $oConfiguration->analysis_id = $iAnalysis;
+                    }
+                    else {
+                        $oConfiguration = SAnaConfig::find($id);
+
+                        $oConfiguration->item_link_type_id = $request->item_link_type_id;
+                        $oConfiguration->item_link_id = $request->item_link_id;
+                        $oConfiguration->analysis_id = $iAnalysis;
+
+                        $bFirst = false;
+                    }
+
+                    if (! $oConfiguration->isValid()) {
+                        $validator->errors()->add('Error', 'La configuración ya existe.');
+                    }
                 }
-            }
-        });
-
+            });
+        }
+        
         if ($validator->fails()) {
             return redirect()->route('qms.anaconfigs.edit')
                         ->withErrors($validator)
                         ->withInput();
         }
 
-        \DB::connection(session('db_configuration')->getConnCompany())
+        if ($isOrganolepctic) {
+
+            \DB::connection(session('db_configuration')->getConnCompany())
+                ->transaction(function () use (&$lConfigs) {
+                foreach ($lConfigs as $oConfig) {
+                    $oConfig->save();
+                }
+            });
+
+        }
+        else {
+            \DB::connection(session('db_configuration')->getConnCompany())
                 ->transaction(function () use ($aAnalysis, $request, $id) {
-            
-            $bFirst = true;
-            foreach ($aAnalysis as $iAnalysis) {
-                if (! $bFirst) {
-                    $oConfiguration =  new SAnaConfig($request->all());
-                    unset($oConfiguration->id_config);
-                    $oConfiguration->analysis_id = $iAnalysis;
+                
+                $bFirst = true;
+                foreach ($aAnalysis as $iAnalysis) {
+                    if (! $bFirst) {
+                        $oConfiguration =  new SAnaConfig($request->all());
+                        unset($oConfiguration->id_config);
+                        $oConfiguration->analysis_id = $iAnalysis;
+                    }
+                    else {
+                        $oConfiguration = SAnaConfig::find($id);
+
+                        $oConfiguration->item_link_type_id = $request->item_link_type_id;
+                        $oConfiguration->item_link_id = $request->item_link_id;
+                        $oConfiguration->specification = $request->specification;
+                        $oConfiguration->min_value = $request->min_value;
+                        $oConfiguration->max_value = $request->max_value;
+                        $oConfiguration->analysis_id = $iAnalysis;
+
+                        $bFirst = false;
+                    }
+
+                    $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
+                    $oConfiguration->updated_by_id = \Auth::user()->id;
+                    $oConfiguration->created_by_id = \Auth::user()->id;
+
+                    $errors = $oConfiguration->save();
+
+                    if (sizeof($errors) > 0)
+                    {
+                        throw new Exception($errors);
+                    }
                 }
-                else {
-                    $oConfiguration = SAnaConfig::find($id);
-
-                    $oConfiguration->item_link_type_id = $request->item_link_type_id;
-                    $oConfiguration->item_link_id = $request->item_link_id;
-                    $oConfiguration->min_value = $request->min_value;
-                    $oConfiguration->max_value = $request->max_value;
-                    $oConfiguration->analysis_id = $iAnalysis;
-
-                    $bFirst = false;
-                }
-
-                $oConfiguration->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
-                $oConfiguration->updated_by_id = \Auth::user()->id;
-                $oConfiguration->created_by_id = \Auth::user()->id;
-
-                $errors = $oConfiguration->save();
-
-                if (sizeof($errors) > 0)
-                {
-                    throw new Exception($errors);
-                }
-            }
-        });
+            });
+        }
 
         Flash::success(trans('messages.REG_EDITED'))->important();
 
-        return redirect()->route('qms.anaconfigs.index', 0);
+        return redirect()->route('qms.anaconfigs.index', $isOrganolepctic ? \Config::get('scqms.ANALYSIS_TYPE.OL') : 0);
     }
 
     /**

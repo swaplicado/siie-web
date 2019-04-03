@@ -446,15 +446,15 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\AnaConfigsController@storeOrg',
         'as' => 'qms.anaconfigs.storeorg'
       ]);
+      Route::put('anaconfigs/updorg/', [
+        'uses' => 'QMS\AnaConfigsController@update',
+        'as' => 'qms.anaconfigs.updorg'
+      ]);
 
        /*
       * Results of lots analysis
       **/
       Route::resource('results','QMS\SResultsController');
-      // Route::get('results',[
-      //   'uses' => 'QMS\SResultsController@index',
-      //   'as'   => 'qms.results.index'
-      // ]);
       Route::get('results/create/{id_lot}/{id_type}',[
         'uses' => 'QMS\SResultsController@create',
         'as'   => 'qms.results.create'

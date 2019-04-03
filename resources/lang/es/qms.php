@@ -46,6 +46,7 @@ return [
         'ANALYSIS_NAME' => 'Nombre de análisis',
         'ANALYSIS_TYPE' => 'Tipo de análisis',
         'STANDARD' => 'Norma',
+        'SPECIFICATION' => 'Especificación',
         'MIN_VALUE' => 'Valor mínimo',
         'MAX_VALUE' => 'Valor máximo',
         'RESULT_UNIT' => 'Unidad de resultado',

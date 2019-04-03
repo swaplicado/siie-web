@@ -226,6 +226,11 @@ class SResultsController extends Controller
         $oBranch = session('branch');
         $lotid = $request->id_lot;
         $oLot = SWmsLot::find($lotid);
+        $oItem = $oLot->item;
+
+        $lResults = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('qms_results as qr')
+                            ->join('qms_analysis as qa', 'qr.analysis_id', '=', 'qa.id_analysis');      
 
         $sSelect = "
                         qr.id_result,
@@ -236,12 +241,31 @@ class SResultsController extends Controller
                         qa.specification,
                         qa.result_unit,
                         qa.min_value,
-                        qa.max_value
-                    ";
+                        qa.max_value,
+                        COALESCE((SELECT 
+                                specification
+                            FROM
+                                qms_ana_configs AS qac
+                            WHERE
+                                is_deleted = 0 AND
+                                analysis_id = qa.id_analysis
+                                    AND ((item_link_type_id = ".\Config::get('scsiie.ITEM_LINK.ITEM')."
+                                    AND item_link_id = ".$oItem->id_item.")
+                                    OR (item_link_type_id = ".\Config::get('scsiie.ITEM_LINK.GENDER')."
+                                    AND item_link_id = ".$oItem->item_gender_id.")
+                                    OR (item_link_type_id = ".\Config::get('scsiie.ITEM_LINK.GROUP')."
+                                    AND item_link_id = ".$oItem->gender->item_group_id.")
+                                    OR (item_link_type_id = ".\Config::get('scsiie.ITEM_LINK.FAMILY')."
+                                    AND item_link_id = ".$oItem->gender->group->family->id_item_family.")
+                                    OR (item_link_type_id = ".\Config::get('scsiie.ITEM_LINK.TYPE')."
+                                    AND item_link_id = ".$oItem->gender->item_type_id.")
+                                    OR (item_link_type_id = ".\Config::get('scsiie.ITEM_LINK.CLASS')."
+                                    AND item_link_id = ".$oItem->gender->item_class_id."))
+                            ORDER BY item_link_type_id DESC
+                            LIMIT 1), '') as _specification,
+                        qa.specification AS _ana_specification
 
-        $lResults = \DB::connection(session('db_configuration')->getConnCompany())
-                            ->table('qms_results as qr')
-                            ->join('qms_analysis as qa', 'qr.analysis_id', '=', 'qa.id_analysis');
+                        ";
 
         $lResultsGen = $lResults->select(\DB::raw($sSelect))
                                 ->where('qr.is_deleted', false)
@@ -256,6 +280,64 @@ class SResultsController extends Controller
         $lMBResults = $lResultsGenQm->where('qa.type_id', \Config::get('scqms.ANALYSIS_TYPE.MB'))
                                     ->get();
 
+        $sSelectOrg = "
+                        qa.id_analysis,
+                        qa.code,
+                        qa.name as _analysis,
+                        qa.standard,
+                        qa.type_id,
+                        qac.min_value,
+                        qac.max_value,
+                        qac.result AS _result,
+                        qac.specification AS _specification,
+                        qac.group_number,
+                        item_link_type_id,
+                        item_link_id,
+                        qa.order_num,
+                        qac.is_deleted AS qac_is_deleted,
+                        qa.is_deleted AS qa_is_deleted
+                    ";
+
+        $lConfigsSub = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('qms_ana_configs as qac')
+                            ->join('qms_analysis as qa', 'qac.analysis_id', '=', 'qa.id_analysis');
+                            
+        $lConfigsSub = $lConfigsSub->orderBy('qac.item_link_type_id', 'DESC')
+                                    ->select(\DB::raw($sSelectOrg));
+
+        $lOLResults = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table(\DB::raw("({$lConfigsSub->toSql()}) as sub"))
+                            // ->mergeBindings($lConfigsSub->getQuery()->getQuery())
+                            ->where('qac_is_deleted', false)
+                            ->where('qa_is_deleted', false)
+                            ->where('type_id', \Config::get('scqms.ANALYSIS_TYPE.OL'))
+                            ->where(function ($query) use ($oItem) {
+                                $query->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.ITEM'))
+                                            ->where('item_link_id', $oItem->id_item);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.GENDER'))
+                                            ->where('item_link_id', $oItem->item_gender_id);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.GROUP'))
+                                            ->where('item_link_id', $oItem->gender->item_group_id);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.FAMILY'))
+                                            ->where('item_link_id', $oItem->gender->group->family->id_item_family);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.TYPE'))
+                                            ->where('item_link_id', $oItem->gender->item_type_id);
+                                })->orWhere(function ($query) use ($oItem) {
+                                    $query->where('item_link_type_id', \Config::get('scsiie.ITEM_LINK.CLASS'))
+                                            ->where('item_link_id', $oItem->gender->item_class_id);
+                                });
+                            })
+                            ->groupBy('id_analysis')
+                            ->orderBy('type_id', 'DESC')
+                            ->orderBy('order_num', 'ASC');
+
+        $lOLResults = $lOLResults->get();
+
         $oQltySup = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.QLTY_SUPERVISOR'));
         $oQltyMgr = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.QLTY_MANAGER'));
 
@@ -263,6 +345,7 @@ class SResultsController extends Controller
                                                     'oLot' => $oLot,
                                                     'sDate' => $request->cert_date,
                                                     'lFQResults' => $lFQResults,
+                                                    'lOLResults' => $lOLResults,
                                                     'lMBResults' => $lMBResults,
                                                     'sSupervisor' => $oQltySup->val_text,
                                                     'sManager' => $oQltyMgr->val_text
