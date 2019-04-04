@@ -6,7 +6,7 @@ use App\Database\OTF;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 
-class ErpAddQltyConfigurations extends Migration
+class ErpModconfColText extends Migration
 {
     private $lDatabases;
     private $sConnection;
