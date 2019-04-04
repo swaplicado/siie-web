@@ -39,7 +39,7 @@
     </a>
   @endsection
   <div class="row">
-    <table id="anaconfigs_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+    <table id="anaconfigs_org_table" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
         <thead>
             <tr class="titlerow">
                 <th data-priority="1">Análisis</th>

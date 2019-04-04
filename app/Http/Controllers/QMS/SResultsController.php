@@ -41,7 +41,7 @@ class SResultsController extends Controller
     public function index(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getPeriodSinceWorkDate(15) : $request->filterDate;
         
         $sSelect = "
                         wl.id_lot,

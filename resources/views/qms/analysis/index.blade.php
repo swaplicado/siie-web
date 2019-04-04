@@ -42,7 +42,9 @@
                 <th data-priority="1">Código</th>
                 <th data-priority="1">Análisis</th>
                 <th data-priority="1">Un.</th>
-                <th data-priority="1">Tipo de análisis</th>
+                <th data-priority="1">Espec.</th>
+                <th data-priority="1">Or.</th>
+                <th data-priority="1">Ti. An.</th>
                 <th data-priority="1" style="text-align: center;">Estatus</th>
                 <th style="text-align: center;">Opciones</th>
                 <th>Creado</th>
@@ -57,6 +59,8 @@
                 <td>{{ $analysis->code }}</td>
                 <td>{{ $analysis->name }}</td>
                 <td>{{ $analysis->result_unit }}</td>
+                <td>{{ $analysis->specification }}</td>
+                <td>{{ $analysis->order_num }}</td>
                 <td>{{ $analysis->type_code }}</td>
                 <td style="text-align: center;">
                     @if (! $analysis->is_deleted)

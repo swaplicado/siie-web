@@ -46,6 +46,7 @@
                 <th data-priority="1">T. A.</th>
                 <th data-priority="1">Tipo Conf.</th>
                 <th data-priority="1">Referencia</th>
+                <th data-priority="1">Espec</th>
                 <th data-priority="1">{{ trans('qms.labels.MIN_VALUE') }}</th>
                 <th data-priority="1">{{ trans('qms.labels.MAX_VALUE') }}</th>
                 <th data-priority="1" style="text-align: center;">Estatus</th>
@@ -63,6 +64,7 @@
                 <td>{{ $anaconfig->_ana_type }}</td>
                 <td>{{ $anaconfig->_ntype }}</td>
                 <td>{{ $anaconfig->_nname }}</td>
+                <td>{{ $anaconfig->specification }}</td>
                 <td>{{  $anaconfig->min_value }}</td>
                 <td>{{ $anaconfig->max_value }}</td>
                 <td style="text-align: center;">

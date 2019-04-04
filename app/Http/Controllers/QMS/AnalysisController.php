@@ -42,6 +42,8 @@ class AnalysisController extends Controller
                     qa.code,
                     qa.name,
                     qa.result_unit,
+                    qa.specification,
+                    qa.order_num,
                     qa.is_deleted,
                     qa.type_id,
                     qat.code AS type_code,
@@ -73,6 +75,7 @@ class AnalysisController extends Controller
 
         $lAnalysis = $lAnalysis->select(\DB::raw($sSelect))
                      ->where('qa.name', 'LIKE', "%".$request->name."%")
+                     ->orderBy('order_num', 'ASC')
                      ->get();
 
         return view('qms.analysis.index')

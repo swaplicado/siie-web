@@ -16,6 +16,6 @@
 	<div class="form-group" align="right">
 		{!! Form::submit(trans('actions.SAVE'), ['id' => 'submitBtn','class' => 'btn btn-primary']) !!}
 @endif
-	<input type="button" name="{{ trans('actions.CANCEL') }}" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="location.href='{{ route($sRoute2) }}'">
+	<input type="button" value="{{ trans('actions.CANCEL') }}" class="btn btn-danger" onClick="window.history.back();"/>
 	</div>
 	{!! Form::close() !!}

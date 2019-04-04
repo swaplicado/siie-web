@@ -53,6 +53,7 @@ class AnaConfigsController extends Controller
         $sSelect = 'qac.id_config,
                     CONCAT(qa.code, "-", qa.name) AS _analysis,
                     qat.code AS _ana_type,
+                    qac.specification,
                     qac.created_by_id,
                     qac.updated_by_id,
                     qac.created_at,
@@ -102,6 +103,7 @@ class AnaConfigsController extends Controller
         if ($iAnaType == 0) {
             $sSel = "qac.min_value,
                         qac.max_value,";
+            $lConfigs = $lConfigs->where('qa.type_id', '!=', \Config::get('scqms.ANALYSIS_TYPE.OL'));
             $sView = "qms.anaconfigs.index";
         }
         else {
