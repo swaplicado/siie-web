@@ -6,6 +6,7 @@
 @endsection
 
 @section('title', $title)
+@section('titlepanel', $title)
 
 @section('content')
   <div class="row">

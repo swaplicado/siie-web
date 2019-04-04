@@ -35,6 +35,10 @@ return [
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
       'SEGREGATED_LOTS' => 'Lotes segregados',
       'RESULTS' => 'Resultados',
+      'CL_BY_SCANER' => 'Clasificar con escaner',
+      'TO_QUA' => 'A cuarentena',
+      'TO_RELEASE' => 'A liberar',
+      'TO_REFUSE' => 'A rechazar',
 
       'titles'  => [
         'CREATE_ANALYSIS' => 'Crear análisis',

@@ -84,22 +84,22 @@ class SQmsMenu {
 
         )
         ->submenu(
-            Link::to('#', trans('qms.STOCK_QUALITY_CB').'<span class="caret"></span>')
+            Link::to('#', trans('qms.CL_BY_SCANER').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')
                 ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
             \Menu::new()
             ->addClass('dropdown-menu')
 
-            ->route('qms.segregations.consult', trans('qms.VIEW_INS_QUA'),[
-                                    trans('qms.VIEW_INS_QUA'),
+            ->route('qms.segregations.consult', trans('qms.TO_QUA'),[
+                                    trans('qms.TO_QUA'),
                                     '1'
                                   ])
-            ->route('qms.segregations.consult', trans('qms.VIEW_REL'),[
-                                    trans('qms.VIEW_REL'),
+            ->route('qms.segregations.consult', trans('qms.TO_RELEASE'),[
+                                    trans('qms.TO_RELEASE'),
                                     '2'
                                   ])
-            ->route('qms.segregations.consult', trans('qms.VIEW_REF'),[
-                                    trans('qms.VIEW_REF'),
+            ->route('qms.segregations.consult', trans('qms.TO_REFUSE'),[
+                                    trans('qms.TO_REFUSE'),
                                     '3'
                                   ])
         )
