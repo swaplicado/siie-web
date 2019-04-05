@@ -104,7 +104,7 @@ class SMovSegregation
 
         $query = $query->where('ws.is_deleted', false)
                         ->where('wsr.is_deleted', false)
-                        ->where('ws.dt_date', '<=', $sDate)
+                        // ->where('ws.dt_date', '<=', $sDate)
                         ->where('wsr.year_id', $year_id)
                         ->where('wsr.whs_id', $iWhs)
                         ->where('wsr.pallet_id', $iPallet)
