@@ -250,7 +250,7 @@ class SStockUtils
            $location = $oStockGral->location_id;
         }
         else if ($location != $oStockGral->location_id){
-           array_push($aErrors, '¡LA TARIMA TIENE EXISTENCIAS EN DIFERENTES UBICACIONES!');
+           array_push($aErrors, '¡LA TARIMA '.$oRow->pallet_id.' TIENE EXISTENCIAS EN DIFERENTES UBICACIONES!');
            return $aErrors;
         }
       }
@@ -273,7 +273,7 @@ class SStockUtils
       $dQuantity = 0;
       foreach ($lPalletStock as $oPalletStock) {
         if ($oPalletStock->segregated > 0 && ! SMovsUtils::canSkipSegregation($iMovementType)) {
-          array_push($aErrors, 'La tarima tiene unidades segregadas.');
+          array_push($aErrors, 'La tarima '.$oRow->pallet_id.' tiene unidades segregadas.');
           return $aErrors;
         }
         if ($oRow->item->is_lot) {
@@ -284,7 +284,7 @@ class SStockUtils
             }
             if ($oAuxLot->lot_id == $oPalletStock->lot_id) {
                 if ($oAuxLot->quantity != $oPalletStock->stock && $iMovementType != \Config::get('scwms.MVT_TP_OUT_SAL')) {
-                  array_push($aErrors, 'La tarima debe moverse completa.');
+                  array_push($aErrors, 'La tarima '.$oRow->pallet_id.' debe moverse completa.');
                   return $aErrors;
                 }
                 $bCurrentLotFound = true;
@@ -292,13 +292,13 @@ class SStockUtils
           }
 
           if (! $bCurrentLotFound) {
-            array_push($aErrors, 'Los lotes que desea mover no corresponden a los que contiene la tarima.');
+            array_push($aErrors, 'Los lotes que desea mover no corresponden a los que contiene la tarima '.$oRow->pallet_id.'.');
             return $aErrors;
           }
         }
         else {
           if ($oRow->quantity != $oPalletStock->stock) {
-            array_push($aErrors, 'No puede mover más unidades de las que contiene la tarima.');
+            array_push($aErrors, 'No puede mover más unidades de las que contiene la tarima'.$oRow->pallet_id.'.');
             return $aErrors;
           }
         }
@@ -354,7 +354,7 @@ class SStockUtils
         elseif (sizeof($lStockGral) == 1 && $oRow->quantity != $lStockGral[0]->stock
                   && !($iMovementType == \Config::get('scwms.PALLET_RECONFIG_IN')
                         || $iMovementType == \Config::get('scwms.PALLET_RECONFIG_OUT'))) {
-            array_push($aErrors, 'La tarima no está vacía, no puede agregar unidades');
+            array_push($aErrors, 'La tarima '.$oRow->pallet_id.' no está vacía, no puede agregar unidades');
         }
 
         return $aErrors;
