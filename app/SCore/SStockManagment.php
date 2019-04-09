@@ -306,7 +306,7 @@ class SStockManagment
         }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0') {
-            $sub = $sub->whereRaw('wss.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');
+            // $sub = $sub->whereRaw('wss.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');
         }
 
         return $sub;

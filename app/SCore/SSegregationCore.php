@@ -773,6 +773,7 @@ class SSegregationCore
     $query = $query->where('ei.is_deleted', false)
                   ->where('ws.is_deleted', false)
                   ->where('wsr.is_deleted', false)
+                  ->where('wsr.year_id', session('work_year'))
                   ->select(\DB::raw($sSelect));
     switch ($typeView){
       case 0:
@@ -847,6 +848,7 @@ class SSegregationCore
                     ->where('wp.id_pallet','=',$pallet)
                     ->where('ei.id_item','=',$item)
                     ->where('ww.id_whs','=',$warehouse)
+                    ->where('wsr.year_id', session('work_year'))
                     ->groupBy('id_item',
                                      'id_unit',
                                      'id_lot',
@@ -908,6 +910,7 @@ class SSegregationCore
   $query = $query->where('ei.is_deleted', false)
                 ->where('ws.is_deleted', false)
                 ->where('wp.id_pallet','=',$pallet)
+                ->where('wsr.year_id', session('work_year'))
                 ->select(\DB::raw($sSelect));
   $query = $query->groupBy('id_pallet',
                           'ww.id_whs'
@@ -969,6 +972,7 @@ class SSegregationCore
 
   $query = $query->where('ei.is_deleted', false)
                 ->where('ws.is_deleted', false)
+                ->where('wsr.year_id', session('work_year'))
                 ->where('wl.id_lot','=',$Lot)
                 ->select(\DB::raw($sSelect));
   $query = $query->groupBy('id_pallet',
@@ -1193,6 +1197,7 @@ if($user != 0){
   $query = $query->where('ei.is_deleted', false)
                 ->where('ws.is_deleted', false)
                 ->where('wp.id_pallet','=',$pallet)
+                ->where('wsr.year_id', session('work_year'))
                 ->select(\DB::raw($sSelect));
   $query = $query->groupBy('id_pallet',
                           'ww.id_whs'
