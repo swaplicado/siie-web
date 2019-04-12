@@ -646,9 +646,17 @@ class SSegregationCore
       $oSegregation->save();
 
       foreach ($oMovement->rows as $movRow) {
+        if ($movRow->is_deleted) {
+          continue;
+        }
+
         if (sizeof($movRow->lotRows) > 0) {
           $lSegRows = array();
           foreach ($movRow->lotRows as $lotRow) {
+            if ($lotRow->is_deleted) {
+              continue;
+            }
+            
             $oSegRow = new SSegregationRow();
 
             $oSegRow->quantity = $lotRow->quantity;
