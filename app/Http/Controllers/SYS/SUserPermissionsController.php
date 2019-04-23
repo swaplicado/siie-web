@@ -172,21 +172,36 @@ class SUserPermissionsController extends Controller
      */
      public function store(Request $request)
      {
-      $permission_id_array = $request->permission_id;
+        $permission_id_array = $request->permission_id;
 
-         for ($i=0; $i < count($permission_id_array); $i++) {
-           $assignament = new SUserPermission($request->all());
-           $assignament->user_id = $request->selectedUserId;
-           $assignament->module_id = $request->module_id;
-           $assignament->company_id_opt = $request->companies_id;
-           $assignament->permission_type_id = 2;
-           $assignament->permission_id = $permission_id_array[$i];
-           $assignament->save();
-         }
+        $lAssignaments = [];
 
-       Flash::success(trans('messages.REG_CREATED'))->important();
+        for ($i=0; $i < count($permission_id_array); $i++) {
+          $assignament = new SUserPermission($request->all());
 
-       return redirect()->route('admin.userpermissions.index');
+          $assignament->user_id = $request->selectedUserId;
+          $assignament->module_id = $request->module_id;
+          $assignament->company_id_opt = $request->companies_id;
+          $assignament->permission_type_id = 2;
+          $assignament->permission_id = $permission_id_array[$i];
+
+          $exists = SUserPermission::where('user_id', $request->selectedUserId)
+                            ->where('permission_id', $permission_id_array[$i])
+                            ->where('privilege_id', $assignament->privilege_id)
+                            ->first();
+
+          if ($exists == null) {
+             array_push($lAssignaments, $assignament);
+          }
+        }
+
+        foreach ($lAssignaments as $key => $oAssignament) {
+          $oAssignament->save();
+        }
+
+        Flash::success(trans('messages.REG_CREATED'))->important();
+
+        return redirect()->route('admin.userpermissions.index');
      }
 
 
@@ -204,16 +219,23 @@ class SUserPermissionsController extends Controller
                     ->join('syss_permissions','syss_permissions.item_id','=','erpu_items.id_item')
                     ->join('syss_privileges','syss_privileges.item_id','=','erpu_items.id_item')
                     ->get();
+
       return response()->json($data);
     }
 
     /*
      * Function for find permissions
      */
-    public function findPermission(Request $request){
-        $data = SPermission::select('id_permission', 'name')
-                ->WHERE('module_id', $request->id)
-                        ->get();
+    public function findPermission(Request $request) {
+        $data = \DB::table('syss_permissions')
+                      ->select('id_permission', 'name', 'user_id')
+                      ->leftJoin('user_permissions AS up', function($join) use ($request) {
+                          $join->on('id_permission', '=', 'up.permission_id');
+                          $join->where('up.user_id','=', $request->usr);
+                      })
+                      ->where('syss_permissions.module_id', $request->id)
+                      ->get();
+
          return response()->json($data);
     }
     /*

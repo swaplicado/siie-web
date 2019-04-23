@@ -1,6 +1,6 @@
 @extends('templates.list.mainlist')
 @section('menu')
-@include('templates.menu.menumodules')
+@include('templates.menu.menu')
 @endsection
 @section('addfilters')
 @include('templates.list.search')
