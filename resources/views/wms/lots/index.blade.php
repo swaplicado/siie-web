@@ -15,7 +15,7 @@
 	@section('create')
 		@include('templates.form.create')
 	@endsection
-	<table id="cat_lots_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
+	<table id="cat_lots_table_" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
 		<thead>
 			<th>{{ trans('userinterface.labels.NAME') }}</th>
 			<th>{{ trans('userinterface.labels.EXPIRY') }}</th>
@@ -64,6 +64,7 @@
 			@endforeach
 		</tbody>
 	</table>
+	{!! $lots->render() !!}
 @endsection
 @section('js')
 	<script src="{{ asset('js/wms/lots_catalog.js')}}"></script>
