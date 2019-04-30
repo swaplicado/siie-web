@@ -386,12 +386,15 @@ class SStockManagment
                                               AND wmr.is_deleted = FALSE),
                                               wmr.quantity, 0)), 0) AS qty_sur'),
                                   \DB::raw('COALESCE(SUM(wisl.quantity), 0) AS qty_sur_ind'),
-                                  \DB::raw('(SUM(edr.quantity) - ( COALESCE(SUM(
-                                              IF (wm.is_deleted IS NULL
-                                              OR (wm.is_deleted IS NOT NULL
-                                              AND wm.is_deleted = FALSE
-                                              AND wmr.is_deleted = FALSE),
-                                              wmr.quantity, 0)), 0) + COALESCE(SUM(wisl.quantity), 0)))  AS pending')
+                                  \DB::raw('(SELECT 
+                                                SUM(quantity)
+                                            FROM
+                                                erpu_document_rows
+                                            WHERE
+                                                document_id = ed.id_document) - (IF(wm.is_deleted = FALSE
+                                                AND wmr.is_deleted = FALSE,
+                                            SUM(wmr.quantity),
+                                            0) + COALESCE(SUM(wisl.quantity), 0)) AS pending')
                           )
                           ->where('edr.is_deleted', false)
                           ->groupBy('edr.document_id')
