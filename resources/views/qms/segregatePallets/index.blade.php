@@ -24,7 +24,7 @@
 
           {!! Form::open(['route' => 'wms.codes.decodePallet', 'method' => 'POST']) !!}
 
-          {!! Form::label('codigo', trans('Codigo de Barras:'),['class'=>'col-md-2 control-label']) !!}
+          {!! Form::label('codigo', trans('Codigo de Barras o "t" seguido del número de tarima. Ej. t948:'),['class'=>'col-md-2 control-label']) !!}
 
           <div class="col-md-3">
 

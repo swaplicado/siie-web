@@ -190,11 +190,11 @@ class SCodesController extends Controller
       $data->unit;
       $type = substr($request->codigo, 0 , 1 );
 
-      if($type == 1){
+      if($type == 1 || !$data instanceof SPallet){
         Flash::error('No es una tarima');
         return redirect()->route('qms.segregations.segregatePalletsIndex');
       }else
-        if($type == 2){
+        if($type == 2 || $data instanceof SPallet){
           $a=array('',$data->item->id_item,$data->unit->id_unit,0,$data->id_pallet,0,0,session('branch')->id_branch,session('work_year'));
           $stock=SStockManagment::getStock($a);
           if($stock[2] > 0){
@@ -205,7 +205,7 @@ class SCodesController extends Controller
             return redirect()->route('qms.segregations.segregatePalletsIndex');
           }
           session('segregation')->processSegregationPallet($data);
-          Flash::success('Se a segregado la tarima');
+          Flash::success('Se ha segregado la tarima');
           return redirect()->route('qms.segregations.segregatePalletsIndex');
         }else{
           Flash::error('No es un codigo de barras');

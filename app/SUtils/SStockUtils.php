@@ -592,4 +592,44 @@ class SStockUtils
 
     }
 
+    public static function getPalletStock($iPalletId = 0)
+    {
+        $select = 'ws.location_id,
+                      sum(ws.input) as inputs,
+                      sum(ws.output) as outputs,
+                      sum(ws.input - ws.output) as stock';
+
+        try {
+          $stock = \DB::connection(session('db_configuration')->getConnCompany())
+                        ->table('wms_stock as ws')
+                        ->join('erpu_items as ei', 'ws.item_id', '=', 'ei.id_item')
+                        ->join('erpu_units as eu', 'ei.unit_id', '=', 'eu.id_unit')
+                        ->join('wms_pallets as wp', 'ws.pallet_id', '=', 'wp.id_pallet')
+                        ->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
+                        ->join('wmsu_whs_locations as wwl', 'ws.location_id', '=', 'wwl.id_whs_location')
+                        ->join('wmsu_whs as ww', 'ws.whs_id', '=', 'ww.id_whs')
+                        ->select(\DB::raw($select))
+                        ->groupBy(['ws.location_id','ws.pallet_id', 'ws.item_id', 'ws.unit_id'])
+                        ->orderBy('ws.location_id')
+                        ->where('ws.is_deleted', false)
+                        ->where('ws.pallet_id', $iPalletId)
+                        ->take(1)
+                        ->having('stock', '>', '0')
+                        ->get();
+        }
+        catch (Exception $e) {
+          \Debugbar::error($e);
+        }
+
+        if (sizeof($stock) == 1) {
+            return $stock[0]->stock;
+        }
+        else if(sizeof($stock) == 0) {
+           return 0;
+        }
+        else {
+          return null;
+        }
+    }
+
 }

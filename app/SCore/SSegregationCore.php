@@ -716,7 +716,8 @@ class SSegregationCore
       $oSegregation->save();
       $oSegRow = new SSegregationRow();
 
-      $oSegRow->quantity = 1;
+      $dStock = SStockUtils::getPalletStock($data->id_pallet);
+      $oSegRow->quantity = $dStock;
       $oSegRow->segregation_mvt_type_id = 1;
 
       $whs=SStockUtils::getPalletLocation($data->id_pallet);
