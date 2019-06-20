@@ -34,7 +34,7 @@
 
           <div class="col-md-3">
 
-            {!! Form::submit('Consultar', ['class' => 'btn btn-primary']) !!}
+            {!! Form::submit('Segregar', ['class' => 'btn btn-primary']) !!}
 
           </div>
 
