@@ -714,25 +714,30 @@ class SSegregationCore
       $oSegregation->created_by_id = \Auth::user()->id;
       $oSegregation->updated_by_id = \Auth::user()->id;
       $oSegregation->save();
-      $oSegRow = new SSegregationRow();
 
-      $dStock = SStockUtils::getPalletStock($data->id_pallet);
-      $oSegRow->quantity = $dStock;
-      $oSegRow->segregation_mvt_type_id = 1;
+      $lots = SStockManagment::getLotsOfPallet($data->id_pallet);
 
-      $whs=SStockUtils::getPalletLocation($data->id_pallet);
-      $oSegRow->segregation_event_id = 3;
-      $oSegRow->branch_id = session('branch')->id_branch;
-      $oSegRow->whs_id = $whs->whs_id;
-      $oSegRow->pallet_id = $data->id_pallet;
-      $oSegRow->lot_id = 1;
-      $oSegRow->year_id = session('work_year');
-      $oSegRow->item_id = $data->item_id;
-      $oSegRow->unit_id = $data->unit_id;
-      $oSegRow->created_by_id = \Auth::user()->id;
-      $oSegRow->updated_by_id = \Auth::user()->id;
+      foreach ($lots as $lot) {
+        $oSegRow = new SSegregationRow();
 
-      $oSegregation->rows()->save($oSegRow);
+        $dStock = SStockUtils::getPalletStock($data->id_pallet);
+        $oSegRow->quantity = $lot->stock;
+        $oSegRow->segregation_mvt_type_id = 1;
+
+        $whs=SStockUtils::getPalletLocation($data->id_pallet);
+        $oSegRow->segregation_event_id = 3;
+        $oSegRow->branch_id = session('branch')->id_branch;
+        $oSegRow->whs_id = $whs->whs_id;
+        $oSegRow->pallet_id = $data->id_pallet;
+        $oSegRow->lot_id = $lot->lot_id;
+        $oSegRow->year_id = session('work_year');
+        $oSegRow->item_id = $data->item_id;
+        $oSegRow->unit_id = $data->unit_id;
+        $oSegRow->created_by_id = \Auth::user()->id;
+        $oSegRow->updated_by_id = \Auth::user()->id;
+
+        $oSegregation->rows()->save($oSegRow);
+      }
     });
   }
 
