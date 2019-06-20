@@ -408,6 +408,11 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SSegregationsController@prepareData',
         'as'   => 'qms.segregations.prepareData'
       ]);
+
+      Route::post('/segregation/segregatePallet', [
+        'uses' => 'QMS\SSegregationsController@segregatePallet',
+        'as' => 'qms.segregation.segregatePallet'
+      ]);
   });
 
 //****************************************/ Warehouses Module/*************************
@@ -704,10 +709,6 @@ Route::group(['prefix' => 'qms'], function () {
         'as' => 'wms.codes.decodewith'
       ]);
 
-      Route::post('/codes/decodePallet', [
-        'uses' => 'WMS\SCodesController@decodePallet',
-        'as' => 'wms.codes.decodePallet'
-      ]);
 
       /*
       * Lots
