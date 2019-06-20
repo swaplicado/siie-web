@@ -22,7 +22,7 @@
 
         <div class="form-group row">
 
-          {!! Form::open(['route' => 'wms.codes.decodePallet', 'method' => 'POST']) !!}
+          {!! Form::open(['route' => 'qms.segregation.segregatePallet', 'method' => 'POST']) !!}
 
           {!! Form::label('codigo', trans('Codigo de Barras o "t" seguido del número de tarima. Ej. t948:'),['class'=>'col-md-2 control-label']) !!}
 
