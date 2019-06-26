@@ -96,6 +96,7 @@
                          <button id="resetbtn" class="btn btn-warning btn-reset" onclick="resetFile()" type="button">Reset</button>
                     </span>
                 </div>
+                <small class="text-info">Archivo csv (separado por comas), con dos columnas: código de producto, cantidad a producir</small>
                 {!! Form::hidden('csv_file', null, ['id' => 'csv_file']) !!}
               </div>
             </div>

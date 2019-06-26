@@ -15,8 +15,14 @@ class SProductionOrderCore {
             return ['No hay un estatus posterior para la orden de producción'];
         }
 
+        $oPo = SProductionOrder::find($iProductionOrder);
+
         $iNewStatus = $iCurrentStatus + 1;
         $bValid = false;
+
+        if (! $oPo->folio > 0) {
+          return ['La orden de producción no ha sido programada'];
+        }
 
         switch ($iNewStatus) {
           case \Config::get('scmms.PO_STATUS.ST_NEW'):
@@ -132,5 +138,10 @@ class SProductionOrderCore {
 
             break;
         }
+    }
+
+    public static function scheduleProductionOrder($iProductionOrder = 0)
+    {
+      $oPo = SProductionOrder::find($iProductionOrder);
     }
 }
