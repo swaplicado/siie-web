@@ -501,7 +501,8 @@ class SMovsUtils {
 
   public static function canSkipSegregation($iMvtType = 0)
   {
-    return $iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA');
+    return $iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA')
+            || $iMvtType == \Config::get('scwms.MVT_TP_OUT_ADJ');
   }
 
 }
