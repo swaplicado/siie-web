@@ -273,6 +273,7 @@ class SStockManagment
                       ->join('wms_segregation_rows AS wsr', 'wss.id_segregation', '=', 'wsr.segregation_id')
                       ->join('qmss_segregation_events AS qse', 'wsr.segregation_event_id', '=', 'qse.id_segregation_event')
                       ->select(\DB::raw($sSelect))
+                      ->where('wsr.is_deleted', false)
                       ->whereRaw('wsr.year_id = '.$aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')]);
 
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ITEM'), $aParameters) &&
