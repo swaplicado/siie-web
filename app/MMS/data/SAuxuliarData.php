@@ -3,7 +3,7 @@
 /**
  * Auxiliar Data
  */
-class SAuxuliarData
+class SAuxiliarData
 {
 
   public $value = null;

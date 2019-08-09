@@ -9,7 +9,7 @@ use App\ERP\SYear;
 use App\MMS\SProductionPlan;
 use App\MMS\SProductionOrder;
 use App\MMS\Formulas\SFormula;
-use App\MMS\data\SAuxuliarData;
+use App\MMS\data\SAuxiliarData;
 
 /**
  *
@@ -54,7 +54,7 @@ class SExplosionCore {
          }
          break;
        case \Config::get('scmms.EXPLOSION_BY.FILE'):
-         if (is_array($oProduction) && $oProduction[0] instanceof SAuxuliarData) {
+         if (is_array($oProduction) && $oProduction[0] instanceof SAuxiliarData) {
            $lFormulasToExplode = $oProduction;
          }
          else {
@@ -73,7 +73,7 @@ class SExplosionCore {
            continue;
          }
 
-         array_push($lFormulasToExplode, new SAuxuliarData($oPO->formula, $oPO->charges));
+         array_push($lFormulasToExplode, new SAuxiliarData($oPO->formula, $oPO->charges));
        }
      }
 
@@ -159,7 +159,7 @@ class SExplosionCore {
                 && $oFormula->recipe != $oRow->item_recipe_id
                   && $oRow->item_class_id == \Config::get('scsiie.ITEM_CLS.PRODUCT')
                   ) {
-             array_push($lRecipes, new SAuxuliarData($oRow->item_recipe_id, $oRow->quantity));
+             array_push($lRecipes, new SAuxiliarData($oRow->item_recipe_id, $oRow->quantity));
          }
          else {
              $sKey = $oRow->item_id.'-'.$oRow->unit_id.'-'.$oRow->item_recipe_id;
@@ -380,7 +380,7 @@ class SExplosionCore {
         if ($oFormula == null) {
           return ['ERROR. No hay fórmula para: '.$csvRow->sItemKey];
         }
-        array_push($lToExplode, new SAuxuliarData($oFormula, $csvRow->dQuantity));
+        array_push($lToExplode, new SAuxiliarData($oFormula, $csvRow->dQuantity));
       }
 
       return $lToExplode;

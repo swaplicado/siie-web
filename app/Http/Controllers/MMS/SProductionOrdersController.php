@@ -195,15 +195,15 @@ class SProductionOrdersController extends Controller
                               ->orderBy('dt_start', 'DESC')
                               ->lists('plan','id_production_plan');
 
-        $father = SProductionOrder::orderBy('folio', 'DESC')
-                              ->selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
-                                                                    "-", identifier)) as prod_ord,
-                                                                    id_order')
-                              ->where(function ($query) {
-                                  $query->where('is_deleted', false)
-                                        ->orWhere('id_order', 1);
-                              })
-                              ->lists('prod_ord', 'id_order');
+      $father = SProductionOrder::orderBy('folio', 'DESC')
+                            ->selectRaw('(CONCAT(LPAD(folio, '.session('long_folios').', "0"),
+                                                                  "-", identifier)) as prod_ord,
+                                                                  id_order')
+                            ->where(function ($query) {
+                                $query->where('is_deleted', false)
+                                      ->orWhere('id_order', 1);
+                            })
+                            ->lists('prod_ord', 'id_order');
 
       return view('mms.orders.createEdit')
                     ->with('branches', $branch)
@@ -225,7 +225,8 @@ class SProductionOrdersController extends Controller
 
         $iLastFolio = SProductionOrder::max('folio');
 
-        $order->folio = ($iLastFolio + 1);
+        // $order->folio = ($iLastFolio + 1);
+        $order->folio = "--";
 
         $plan = SProductionPlan::find($request->plan_id);
 
@@ -233,6 +234,7 @@ class SProductionOrdersController extends Controller
         if ($order->father_order_id == "") {
           $order->father_order_id = 1;
         }
+
         $order->status_id = 1;
         $order->floor_id = $plan->floor_id;
         $order->branch_id = $plan->floor->branch_id;
