@@ -7,8 +7,6 @@ class SPallet extends SModel {
   protected $connection = 'siie';
   protected $primaryKey = 'id_pallet';
   protected $table = 'wms_pallets';
-  public $timestamps = false;
-
 
   protected $fillable = [
                           'pallet',
