@@ -22,9 +22,11 @@
                                     trans('mms.EXPL_MAT'), "primary3", trans('mms.EXPL_MAT_T'));?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/wms/monta.gif'),
-                        \App\SUtils\SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
-                                      \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS'))
+    <?php echo createBlock(asset('images/mms/production-line.gif'),
+                        \App\SUtils\SValidation::hasPermissionByType(
+                                      \Config::get('scperm.TP_PERMISSION.BRANCH'),
+                                      \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')
+                                      )
                                       ?
                                         route('siie.pos.index') 
                                       : '#',

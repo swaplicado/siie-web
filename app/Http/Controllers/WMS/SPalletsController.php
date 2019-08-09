@@ -55,7 +55,7 @@ class SPalletsController extends Controller
                     ei.code AS item_code,
                     ei.name AS item,
                     eu.code AS unit_code,
-                    eu.code AS unit,
+                    eu.name AS unit,
                     wp.created_by_id,
                     wp.updated_by_id,
                     wp.created_at,
@@ -90,6 +90,7 @@ class SPalletsController extends Controller
                               ->orWhere('ei.name', 'LIKE', "%".$request->name."%");
                     })
                     ->whereBetween('wp.created_at', [$aDates[0]->toDateString(), $aDates[1]->toDateString()])
+                    ->orderBy('id_pallet', 'DESC')
                     ->get();
 
       return view('wms.pallets.index')
