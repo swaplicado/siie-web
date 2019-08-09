@@ -19,6 +19,9 @@ use App\SImportations\SImportAddresses;
 use App\SImportations\SImportDocuments;
 use App\SImportations\SImportDocumentRows;
 use App\SImportations\SImportDocumentTaxRows;
+use App\SImportations\SImportProductionOrders;
+use App\SImportations\SImportFormulas;
+use App\SImportations\SImportFormulaRows;
 
 class SImportationsController extends Controller {
 
@@ -157,6 +160,26 @@ class SImportationsController extends Controller {
 
        return redirect()->route('siie.importation', [1, $items, $partners, $branches, $adds, $docs, $rows1, $rows2]);
     }
+
+    public function importMms() {
+      $oDbImport = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_IMPORT'));
+      $oDbHost = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.DB_HOST'));
+
+      $forms = new SImportFormulas($oDbHost->val_text, $oDbImport->val_text);
+      $nf = $forms->importFormulas();
+      $formrows = new SImportFormulaRows($oDbHost->val_text, $oDbImport->val_text);
+      $nfr = $formrows->importFormulaRows();
+      $pos = new SImportProductionOrders($oDbHost->val_text, $oDbImport->val_text);
+      $npos = $pos->importOrders();
+
+      $imports = [
+                  'formulas' => ($nf + $nfr), 
+                  'prod_orders' => ($npos > 0 ? $npos : 0)
+               ];
+
+      return response()->json($imports);
+    }
+
     // public function importDocumentTaxRows($value='')
     // {
     //   $taxRows = new SImportDocumentTaxRows('erp_universal');

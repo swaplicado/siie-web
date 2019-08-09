@@ -24,14 +24,14 @@
   <div class="row">
     <?php echo createBlock(asset('images/wms/monta.gif'),
                         \App\SUtils\SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
-                                      \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')) ?
-                                    route('wms.movs.create', [\Config::get('scwms.MVT_OUT_DLVRY_RM'),
-                                          trans('mms.ASSIGNAMENT_MATERIALS'),
-                                        0]) : '#',
-                                    trans('mms.ASSIGNAMENT'), "primary3", trans('mms.ASSIGNAMENT_T'));?>
+                                      \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS'))
+                                      ?
+                                        route('siie.pos.index') 
+                                      : '#',
+                                    trans('mms.DELIVERY_FP'), "primary3", trans('mms.DELIVERY_FP_T'));?>
 
 
-    <?php echo createBlock(asset('images/wms/reports.gif'), "#",
+    <?php echo createBlock(asset('images/wms/reports.gif'), route('siie.import.pos'),
                                     trans('wms.REPORTS'), "primary3", trans('wms.REPORTS_T'));?>
   </div>
 

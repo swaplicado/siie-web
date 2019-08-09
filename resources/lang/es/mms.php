@@ -35,8 +35,10 @@ return [
 
       'DELIVERY_PM' => 'Entrega material de empaque',
       'RETURN_PACKING_MATERIAL'  => 'Devolución material empaque',
-
+      
       'DELIVERY_FP' => 'Entrega de PT a almacén',
+      'DELIVERY_FP_T'  => 'En este menú se entrega el producto terminado que se
+                            ha elaborado desde una orden de producción.',
 
       'MVTS_QUERY' => 'Consulta de movimientos',
 

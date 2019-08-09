@@ -21,8 +21,9 @@ class SImportFormulaRows {
    *
    * @param string $sHost
    */
-  function __construct($sHost)
-  {
+  function __construct($sHost, $sDbName)
+    {
+      $this->webdbname = $sDbName;
       $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno()) {
@@ -37,6 +38,8 @@ class SImportFormulaRows {
    */
   public function importFormulaRows()
   {
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.FORMULAS'));
+
       $sql = "SELECT id_bom,
                   ts_start,
                   bom,
@@ -53,6 +56,10 @@ class SImportFormulaRows {
                   WHERE
                   fid_item_n IS NOT NULL
                   AND lev > 0
+                  AND
+                    (ts_new > '".$oImportation->last_importation."' OR
+                    ts_edit > '".$oImportation->last_importation."' OR
+                    ts_del > '".$oImportation->last_importation."')
                   ORDER BY id_bom ASC";
 
       $result = $this->webcon->query($sql);
@@ -98,6 +105,8 @@ class SImportFormulaRows {
        foreach ($lFormulaRowsToWeb as $formulaRow) {
          $formulaRow->save();
        }
+
+       SImportUtils::saveImportation($oImportation);
 
        return sizeof($lFormulaRowsToWeb);
   }

@@ -4,7 +4,6 @@ use App\ERP\SDocument;
 use App\ERP\SPartner;
 use App\ERP\SBranch;
 use App\ERP\SAddress;
-use App\ERP\SCurrency;
 
 /**
  * this class import the data of documents from siie
@@ -119,10 +118,7 @@ class SImportDocuments
 
       foreach ($lWebDocuments as $key => $value) {
           $lDocuments[$value->external_id] = $value;
-      }
-
-      foreach ($lWebDocuments as $key => $value) {
-          $lDocsYear[$value->external_id.$value->year_id] = $value;
+          $lDocsYear[$value->external_id] = $value->id_document;
       }
 
       foreach ($lPartners as $key => $partner) {
@@ -168,7 +164,7 @@ class SImportDocuments
                     $lDocuments[$sKey]->doc_class_id = $row["fid_cl_dps"];
                     $lDocuments[$sKey]->doc_type_id = $row["fid_tp_dps"];
                     try {
-                      $src_id = $lDocuments[$lYears[$row["fid_src_year_n"]].'_'.$row["fid_src_doc_n"]]->id_document;
+                      $src_id = $lDocsYear[$lYears[$row["fid_src_year_n"]].'_'.$row["fid_src_doc_n"]];
                     }
                     catch (\ErrorException $e) {
                       $src_id = 1;
@@ -245,7 +241,7 @@ class SImportDocuments
        $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
        $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
        try {
-         $src_id = $lDocuments[$lYears[$oSiieDocument["fid_src_year_n"]].'_'.$oSiieDocument["fid_src_doc_n"]]->id_document;
+         $src_id = $lDocsYear[$lYears[$oSiieDocument["fid_src_year_n"]].'_'.$oSiieDocument["fid_src_doc_n"]];
        }
        catch (\ErrorException $e) {
          $src_id = 1;

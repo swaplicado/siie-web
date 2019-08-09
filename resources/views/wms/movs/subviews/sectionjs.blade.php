@@ -99,7 +99,7 @@
 
   var iPo = <?php echo json_encode($oMovement->prod_ord_id) ?>;
   if (iPo > 1) {
-      oMovement.iPOSrc = iPo;
+    oMovement.iPOSrc = iPo;
   }
 
   if (localStorage.getItem('movement') !== null) {

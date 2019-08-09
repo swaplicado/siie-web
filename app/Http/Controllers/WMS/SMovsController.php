@@ -227,12 +227,13 @@ class SMovsController extends Controller
      *
      * @param  Request $request [description]
      * @param  integer  $mvtType type of movement
-     * @param  integer $iDocId if is a supply the method receive the id to show
-     *                         this document
+     * @param  integer $iElementId if is a supply the method receive the id to show
+     *                         this document. But if the movement is for production, 
+     *                         this id will be the id of production order
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request, $mvtType, $sTitle = '', $iDocId = 0)
+    public function create(Request $request, $mvtType, $sTitle = '', $iElementId = 0)
     {
         if (! SValidation::canCreate($this->oCurrentUserPermission->privilege_id)) {
           return redirect()->route('notauthorized');
@@ -248,9 +249,9 @@ class SMovsController extends Controller
         $lStock = null;
 
         // get the document if the id != 0
-        if ($iDocId != 0)
+        if ($iElementId != 0 && $mvtType != \Config::get('scwms.MVT_IN_DLVRY_FP'))
         {
-            $oDocument = SDocument::find($iDocId);
+            $oDocument = SDocument::find($iElementId);
             $oDocument->rows;
 
             $FilterDel = \Config::get('scsys.FILTER.ACTIVES');
@@ -261,7 +262,7 @@ class SMovsController extends Controller
             $lDocData = session('stock')::getSuppliedRes($oDocument->doc_category_id,
                                             $oDocument->doc_class_id,
                                             $oDocument->doc_type_id, $FilterDel,
-                                            $sFilterDate, $iViewType, $iDocId,
+                                            $sFilterDate, $iViewType, $iElementId,
                                             $bWithPending)->get();
         }
         else
@@ -445,18 +446,32 @@ class SMovsController extends Controller
                                   ->lists('name', 'id_mvt_mfg_type');
 
             $lSrcPO = SProductionOrder::where('mms_production_orders.is_deleted', false)
-                                ->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
                                 ->join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
                                 ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
                                 ->selectRaw('(CONCAT(LPAD(folio, '.
                                       session('long_folios').', "0"),
                                           "-", identifier)) as prod_ord,
                                           id_order')
-                                ->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'))
+                                ->where('eig.item_type_id', \Config::get('scsiie.ITEM_TYPE.FINISHED_PRODUCT'));
+
+            if ($iElementId > 0) {
+              $lSrcPO = $lSrcPO->where('mms_production_orders.id_order', $iElementId)
                                 ->lists('prod_ord', 'id_order');
+            }
+            else {
+              $lSrcPO = $lSrcPO->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
+                                ->lists('prod_ord', 'id_order');
+            }
+
             $lDesPO = [];
 
-            $iSrcPO = 0;
+            if ($lSrcPO->has($iElementId)) {
+              $iSrcPO = intval($iElementId);
+            }
+            else {
+              $iSrcPO = 0;
+            }
+
             $iDesPO = 0;
 
             $iAssType = \Config::get('scmms.ASSIGN_TYPE.FP');
@@ -1332,6 +1347,7 @@ class SMovsController extends Controller
             $oData->oProductionOrder->type;
             $oData->oProductionOrder->item;
             $oData->oProductionOrder->unit;
+            $oData->oProductionOrder->lot;
 
             $oData->oProductionOrder->dDelivered = SProductionCore::getDeliveredByPO($oData->oProductionOrder);
         }

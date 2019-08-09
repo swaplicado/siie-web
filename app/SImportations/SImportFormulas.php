@@ -20,8 +20,9 @@ class SImportFormulas {
    *
    * @param string $sHost
    */
-  function __construct($sHost)
-  {
+  function __construct($sHost, $sDbName)
+    {
+      $this->webdbname = $sDbName;
       $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno()) {
@@ -36,6 +37,8 @@ class SImportFormulas {
    */
   public function importFormulas()
   {
+      $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.FORMULAS'));
+
       $sql = "SELECT id_bom,
                   ts_start,
                   bom,
@@ -51,6 +54,10 @@ class SImportFormulas {
                   FROM mfg_bom
                   WHERE lev = 0
                   AND fid_item_n IS NULL
+                  AND
+                    (ts_new > '".$oImportation->last_importation."' OR
+                    ts_edit > '".$oImportation->last_importation."' OR
+                    ts_del > '".$oImportation->last_importation."')
                   ORDER BY id_bom ASC";
 
       $result = $this->webcon->query($sql);
@@ -88,6 +95,8 @@ class SImportFormulas {
          $formula->recipe = SFormula::max('recipe') + 1;
          $formula->save();
        }
+
+       SImportUtils::saveImportation($oImportation);
 
        return sizeof($lFormulasToWeb);
   }

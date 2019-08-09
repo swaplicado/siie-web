@@ -8,3 +8,4 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('sweet-alert/sweetalert2.min.css') }}">
 <link rel="stylesheet" type="text/css" href="{{ asset('daterangepicker/daterangepicker.css') }}">
 @include('templates.menu.info')
+@include('templates.menu.syncmms')

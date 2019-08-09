@@ -102,7 +102,7 @@ class SGuiValidations {
             case globalData.scmms.ASSIGN_TYPE.MP:
             case globalData.scmms.ASSIGN_TYPE.PACK:
             case globalData.scmms.ASSIGN_TYPE.FP:
-                  if (oMovement.iPOSrc == 0 || guiFunctions.getSrcItemLabel() == '--') {
+                  if (! oMovement.iPOSrc > 0) {
                     swal("Error", "Debe elegir una orden de producción.", "error");
                     return false;
                   }

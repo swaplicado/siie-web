@@ -11,4 +11,5 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('datatables/datatables.min.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('sweet-alert/sweetalert2.min.css') }}">
 	@include('templates.menu.info')
+	@include('templates.menu.syncmms')
 </head>

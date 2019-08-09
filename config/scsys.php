@@ -79,5 +79,7 @@ return [
                 'ADDRESS' => '8',
                 'DOCUMENTS' => '9',
                 'ROWS' => '10',
+                'FORMULAS' => '12',
+                'PO' => '13',
               ],
 ];

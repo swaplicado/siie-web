@@ -6,6 +6,7 @@
     @yield('head')
   </head>
   <body>
+      @yield('init_body')
       <div class="row">
         <div class="panel panel-default">
         <div class="panel-heading col-md-12">

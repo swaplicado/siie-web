@@ -137,8 +137,6 @@
   <script>
       var isImported = <?php echo json_encode($isImported); ?>;
 
-
-
       if (isImported == 1) {
         swal({
           type: 'success',

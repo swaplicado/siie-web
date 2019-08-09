@@ -9,10 +9,12 @@ use App\Http\Requests;
 use Laracasts\Flash\Flash;
 use PDF;
 use Yajra\Datatables\Datatables;
+use Carbon\Carbon;
 
 use App\SUtils\SUtil;
 use App\SUtils\SMenu;
 use App\SUtils\SValidation;
+use App\SUtils\SGuiUtils;
 use App\ERP\SBranch;
 use App\SUtils\SProcess;
 use App\WMS\SWmsLot;
@@ -44,6 +46,7 @@ class SPalletsController extends Controller
     public function index(Request $request, $iId = 0, $sItem = '')
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+      $sFilterDate = $request->filterDate == null ? SGuiUtils::getRangeFromDate(Carbon::now(), 40) : $request->filterDate;
       // $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->get();
 
       $sSelect = '
@@ -78,19 +81,24 @@ class SPalletsController extends Controller
         default:
       }
 
+      $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+
       $Pallets = $Pallets->select(\DB::raw($sSelect))
                     ->where(function ($query) use ($request) {
                         $query->where('id_pallet', 'LIKE', "%".$request->name."%")
                               ->orWhere('ei.code', 'LIKE', "%".$request->name."%")
                               ->orWhere('ei.name', 'LIKE', "%".$request->name."%");
                     })
+                    ->whereBetween('wp.created_at', [$aDates[0]->toDateString(), $aDates[1]->toDateString()])
                     ->get();
 
       return view('wms.pallets.index')
+              ->with('sTitle', 'Tarimas')
               ->with('pallets', $Pallets)
               ->with('iId', $iId)
               ->with('sItem', str_replace("/", "_", $sItem))
               ->with('actualUserPermission', $this->oCurrentUserPermission)
+              ->with('sFilterDate', $sFilterDate)
               ->with('iFilter', $this->iFilter);
     }
 
