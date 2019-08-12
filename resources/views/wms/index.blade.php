@@ -32,7 +32,7 @@
             \App\SUtils\SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
                           \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS'))
                           ?
-                            route('siie.pos.index') 
+                            route('siie.pos.index', 1) 
                           : '#',
                         trans('mms.DELIVERY_FP'), "primary3", trans('mms.DELIVERY_FP_T'));?>
     <?php echo createBlock(asset('images/wms/reports.gif'), "#", trans('wms.REPORTS'), "success3", trans('wms.REPORTS_T'));?>

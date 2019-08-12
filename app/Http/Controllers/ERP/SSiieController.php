@@ -39,9 +39,10 @@ class SSiieController extends Controller
      * Undocumented function
      *
      * @param Request $request
-     * @return void
+     * @param integer $iFrom
+     * @return view 'siie.pos.vpos'
      */
-    public function posIndex(Request $request)
+    public function posIndex(Request $request, $iFrom = 0)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
         $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
@@ -88,6 +89,10 @@ class SSiieController extends Controller
               break;
    
             default:
+        }
+
+        if ($iFrom == \Config::get('scsiie.OP_FROM.PRODUCTION')) {
+            $lProductionOrders = $lProductionOrders->where('mpo.father_order_id', '>', '1');
         }
 
         $lProductionOrders = $lProductionOrders->get();

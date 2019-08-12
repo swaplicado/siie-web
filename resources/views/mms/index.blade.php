@@ -28,7 +28,7 @@
                                       \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')
                                       )
                                       ?
-                                        route('siie.pos.index') 
+                                        route('siie.pos.index', 1) 
                                       : '#',
                                     trans('mms.DELIVERY_FP'), "primary3", trans('mms.DELIVERY_FP_T'));?>
 

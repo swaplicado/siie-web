@@ -130,4 +130,9 @@ return [
                     'CLOSE' => '0',
                     'OPEN' => '1',
                   ],
+
+  'OP_FROM' =>   [
+                    'PRODUCTION' => '1',
+                    'QUALITY' => '2',
+                  ],
 ];

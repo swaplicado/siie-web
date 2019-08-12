@@ -821,7 +821,7 @@ Route::group(['prefix' => 'qms'], function () {
       * production orders for quality and production
       **/
 
-      Route::get('pos',[
+      Route::get('pos/{ifrom}',[
         'uses' => 'ERP\SSiieController@posIndex',
         'as' => 'siie.pos.index'
       ]);

@@ -28,7 +28,7 @@
     
     <div class="row">
         <div class="col-md-12">
-            <table class="table" id="poss_table">
+            <table class="table table-striped table-hover table-condensed" id="poss_table">
                 <thead>
                     <tr>
                         <th>Folio Padre</th>

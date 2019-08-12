@@ -9,7 +9,7 @@ var app = new Vue({
         syncMms: function() {
             showLoading();
 
-            axios.get('../siie/import/mms')
+            axios.get('../import/mms')
                 .then(res => {
                     console.log("respuesta");
                     console.log(res);
