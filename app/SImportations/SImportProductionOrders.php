@@ -179,13 +179,6 @@ class SImportProductionOrders
                             ->first();         
         }
 
-        $oSiieWebPO->lot_id = SImportProductionOrders::getLotID($oSiiePO["_lot"], 
-                                                                    $oSiiePO["fid_lot_item_nr"], 
-                                                                    $oSiiePO["fid_lot_unit_nr"],
-                                                                    $lWebItems,
-                                                                    $lWebUnits
-                                                                );
-
         $oSiieWebPO->folio = $oSiiePO["num"];
         $oSiieWebPO->identifier = $oSiiePO["ref"];
         $oSiieWebPO->date = $oSiiePO["dt"];
@@ -201,6 +194,13 @@ class SImportProductionOrders
         $oSiieWebPO->unit_id = $lWebUnits[$oSiiePO["fid_unit_r"]];
 
         if ($oSiiePO["fid_ord_year_n"] != null) {
+            $oSiieWebPO->lot_id = SImportProductionOrders::getLotID($oSiiePO["_lot"], 
+                                                                    $oSiiePO["fid_lot_item_nr"], 
+                                                                    $oSiiePO["fid_lot_unit_nr"],
+                                                                    $lWebItems,
+                                                                    $lWebUnits
+                                                                );
+
             $f_id = SProductionOrder::select('id_order')
                                         ->where('external_id', $oSiiePO["fid_ord_year_n"].$oSiiePO["fid_ord_n"])
                                         ->first();
@@ -208,6 +208,7 @@ class SImportProductionOrders
             $oSiieWebPO->father_order_id = $f_id['id_order'];
         }
         else {
+            $oSiieWebPO->lot_id = 1;
             $oSiieWebPO->father_order_id = 1;
         }
 
