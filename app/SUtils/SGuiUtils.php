@@ -295,6 +295,31 @@ class SGuiUtils {
     }
 
     /**
+     * Undocumented function
+     *
+     * @param Carbon or String 'YYYY-mm-dd' $oDate
+     * @param int $nDays number of days to add and substract from date
+     * 
+     * @return string dd/mm/yyyy - dd/mm/yyyy
+     */
+    public static function getRangeFromDate($oDate, $nDays) {
+        $oDateStart = null;
+        if ($oDate instanceof Carbon) {
+          $oDateStart = clone $oDate;
+        }
+        else if (is_string($oDate)) {
+          $oDateStart = Carbon::parse($oDate);
+        }
+
+        $oAux = clone $oDateStart;
+
+        $sInitialDate = $oAux->subDays($nDays)->format('d/m/Y');
+        $sEndDate = $oDateStart->addDays($nDays)->format('d/m/Y');
+
+        return $sInitialDate.' - '.$sEndDate;
+    }
+
+    /**
      * get the current month in range format string
      * get the work date in session
      *

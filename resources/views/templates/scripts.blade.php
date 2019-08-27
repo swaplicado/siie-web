@@ -12,3 +12,7 @@
 <script src="{{asset('datePicker/locales/bootstrap-datepicker.es.min.js')}}"></script>
 <script src="{{ asset('sweet-alert/sweetalert2.min.js') }}"></script>
 <script src="{{ asset('bootstrap/js/bootstrap.min.js')}}"></script>
+<script src="{{ asset('vue/vue.min.js') }}"></script>
+<script src="{{ asset('vue/axios.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/siie/VueDataTable.js')}}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset('js/siie/SSync.js')}}" charset="utf-8"></script>

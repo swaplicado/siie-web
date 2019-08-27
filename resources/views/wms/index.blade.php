@@ -28,7 +28,13 @@
                                                     trans('wms.DOC_RETURNS'), "success3", trans('wms.DOC_RETURNS_T'));?>
   </div>
   <div class="row">
-    <?php echo createBlock(asset('images/wms/barcode.gif'), "codes/start", trans('wms.LBL_GENERATION'), "success3", trans('wms.LBL_GENERATION_T'));?>
+      <?php echo createBlock(asset('images/mms/production-line.gif'),
+            \App\SUtils\SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'),
+                          \Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS'))
+                          ?
+                            route('siie.pos.index', 1) 
+                          : '#',
+                        trans('mms.DELIVERY_FP'), "primary3", trans('mms.DELIVERY_FP_T'));?>
     <?php echo createBlock(asset('images/wms/reports.gif'), "#", trans('wms.REPORTS'), "success3", trans('wms.REPORTS_T'));?>
   </div>
 

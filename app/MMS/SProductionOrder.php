@@ -12,6 +12,10 @@ class SProductionOrder extends SModel {
                             'id_order',
                             'folio',
                             'identifier',
+                            'date',
+                            'charges',
+                            'is_deleted',
+                            'external_id',
                             'plan_id',
                             'branch_id',
                             'floor_id',
@@ -19,11 +23,9 @@ class SProductionOrder extends SModel {
                             'status_id',
                             'item_id',
                             'unit_id',
-                            'formula_id',
-                            'date',
-                            'charges',
                             'father_order_id',
-                            'is_deleted',
+                            'formula_id',
+                            'lot_id',
                             'created_by_id',
                             'updated_by_id',
                           ];
@@ -50,6 +52,10 @@ class SProductionOrder extends SModel {
   public function formula()
   {
     return $this->belongsTo('App\MMS\Formulas\SFormula');
+  }
+  public function lot()
+  {
+    return $this->belongsTo('App\WMS\SWmsLot');
   }
 
   public function type()

@@ -339,6 +339,11 @@ function initializePanel(serverData) {
     if (utilFunctions.isProductionMovement(oMovement.iMvtType)) {
         guiProduction.setProductionOrder(serverData.oProductionOrder);
         guiValidations.showPOBtn();
+
+        if (utilFunctions.isProductionDelivery(oMovement.iMvtType)) {
+            guiFunctions.setSearchCode(serverData.oProductionOrder.lot.lot);
+            itemSelection.searchElement();
+        }
     }
 
     $('#item').focus();

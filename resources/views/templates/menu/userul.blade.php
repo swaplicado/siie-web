@@ -15,6 +15,7 @@
       <li><a href="{{ route('start.selectwhs') }}">{{"Almacen :"}}<?php echo session()->has('whs') ? session('whs')->name : '' ?></a></li>
       <li><a href="{{ route('manage.users.changepass', [\Auth::user()->id]) }}"><i class="glyphicon glyphicon-user"></i>  Cambiar contraseña</a></li>
       <li><a type='button' data-toggle='modal' data-target='#myModal' href="#"><i class="glyphicon glyphicon-info-sign"></i>  Info</a></li>
+      <li><a type='button' data-toggle='modal' data-target='#syncMms' href="#"><i class="glyphicon glyphicon-refresh"></i>  Sincronizar</a></li>
       <li><a href="{{ route('auth.logout') }}">{{ trans('userinterface.EXIT') }}</a></li>
 
     </ul>

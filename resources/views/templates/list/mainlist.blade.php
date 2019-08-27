@@ -27,12 +27,15 @@
 			<div class="row">
 				<div class="col-md-12">
 					@include('flash::message')
-				@if(isset($iId))
-						@if($iId>0)
-							<label>Imprimir etiquetas de tarima <?php echo $iId ?> : </label>
-							<a href="{{ route('wms.pallets.print', $iId) }}" target="_blank" class="btn btn-success btn-xs">	<span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
-						@endif
-				@endif
+					@if(isset($iId))
+							@if($iId>0)
+								<label>Imprimir etiquetas de tarima <?php echo $iId ?> : </label>
+								<a href="{{ route('wms.pallets.print', $iId) }}" 
+										target="_blank" class="btn btn-success btn-xs">	
+									<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+								</a>
+							@endif
+					@endif
 					@include('templates.error')
 				</div>
 

@@ -217,6 +217,15 @@ Route::post('manage/changedate',[
       ]);
 
       /*
+      * Importation
+      **/
+
+      Route::get('import/pos',[
+        'uses' => 'ERP\SImportationsController@importProductionOrders',
+        'as' => 'siie.import.pos'
+      ]);
+
+      /*
       * Formulas
       **/
       Route::get('/formulas/viewdetail', [
@@ -809,6 +818,15 @@ Route::group(['prefix' => 'qms'], function () {
       Route::resource('central','ERP\SSiieController');
 
       /*
+      * production orders for quality and production
+      **/
+
+      Route::get('pos/{ifrom}',[
+        'uses' => 'ERP\SSiieController@posIndex',
+        'as' => 'siie.pos.index'
+      ]);
+
+      /*
       * Importation
       **/
 
@@ -819,6 +837,11 @@ Route::group(['prefix' => 'qms'], function () {
       Route::post('import/docs',[
         'uses' => 'ERP\SImportationsController@importationDocuments',
         'as' => 'siie.import.docs'
+      ]);
+
+      Route::get('import/mms',[
+        'uses' => 'ERP\SImportationsController@importMms',
+        'as' => 'siie.import.mms'
       ]);
 
       /*
