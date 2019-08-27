@@ -42,7 +42,7 @@ class ErpsAddImportRows extends Migration
 
         DB::connection($this->sConnection)->table('erps_importations')->insert([
             ['id_importation' => '12','code' => '012','name' => 'FÓRMULAS','last_importation' => '2019-02-18','updated_by_id' => '1'],
-            ['id_importation' => '13','code' => '013','name' => 'ÓRDENES DE PRODUCCIÓN','last_importation' => '2019-07-01','updated_by_id' => '1'],
+            ['id_importation' => '13','code' => '013','name' => 'ÓRDENES DE PRODUCCIÓN','last_importation' => '2019-08-15','updated_by_id' => '1'],
         ]);
       }
     }
