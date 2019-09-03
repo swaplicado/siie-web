@@ -18,6 +18,7 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         'f18cc91337d49233e5754e93f3ed9ec3' => __DIR__ . '/..' . '/laravelcollective/html/src/helpers.php',
+        '3a37ebac017bc098e9a86b35401e7a68' => __DIR__ . '/..' . '/mongodb/mongodb/src/functions.php',
         'e23faeee409e941dc9b4c80386209c39' => __DIR__ . '/..' . '/laracasts/flash/src/Laracasts/Flash/functions.php',
         '229f88ef45cd176e7c17c2fe35042836' => __DIR__ . '/..' . '/styde/html/src/helpers.php',
         '4a1f389d6ce373bda9e57857d3b61c84' => __DIR__ . '/..' . '/barryvdh/laravel-debugbar/src/helpers.php',
@@ -80,6 +81,7 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'M' => 
         array (
             'Monolog\\' => 8,
+            'MongoDB\\' => 8,
         ),
         'L' => 
         array (
@@ -257,6 +259,10 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'MongoDB\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mongodb/mongodb/src',
+        ),
         'League\\Fractal\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/fractal/src',
@@ -382,6 +388,14 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         ),
         'J' => 
         array (
+            'Jenssegers\\Mongodb' => 
+            array (
+                0 => __DIR__ . '/..' . '/jenssegers/mongodb/src',
+            ),
+            'Jenssegers\\Eloquent' => 
+            array (
+                0 => __DIR__ . '/..' . '/jenssegers/mongodb/src',
+            ),
             'JakubOnderka\\PhpConsoleHighlighter' => 
             array (
                 0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
@@ -981,6 +995,10 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'PHP_Token_YIELD' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PHP_Token_YIELD_FROM' => __DIR__ . '/..' . '/phpunit/php-token-stream/src/Token.php',
         'PartnerSeeder' => __DIR__ . '/../..' . '/database/seeds/PartnerSeeder.php',
+        'QmsAddAnalysisTables' => __DIR__ . '/../..' . '/database/migrations/2019_08_16_090000_qms_add_analysis_tables.php',
+        'QmsAddConfigsTable' => __DIR__ . '/../..' . '/database/migrations/2019_08_16_120520_qms_add_configs_table.php',
+        'QmsAddDocumentsTables' => __DIR__ . '/../..' . '/database/migrations/2019_08_16_095339_qms_add_documents_tables.php',
+        'QmsAddFieldsTable' => __DIR__ . '/../..' . '/database/migrations/2019_08_29_161252_qms_add_fields_table.php',
         'QmsAddQualityTables' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000146_qms_add_quality_tables.php',
         'QmsAddSegregationTables' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000147_qms_add_segregation_tables.php',
         'QmssAddSegregationTables' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000145_qmss_add_segregation_tables.php',

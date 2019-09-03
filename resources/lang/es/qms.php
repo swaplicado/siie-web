@@ -5,6 +5,8 @@
 return [
       'MODULE'  => 'Módulo Calidad',
 
+      'CFG' => 'Configuración',
+      'CFG_DOCS' => 'Configuración de papeletas',
       'QRY_BY_STATUS' => 'Productos por estatus',
       'QRY_BY_STATUS_T' => 'Consulta de  unidades retenidas en calidad por estatus.',
       'IN_INSPECTION' => 'En Inspección',

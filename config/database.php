@@ -100,6 +100,18 @@ return [
             'strict'    => false,
         ],
 
+        'mongodbcom' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST_MDB', 'localhost'),
+            'port'     => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE_MDB'),
+            'username' => env('DB_USERNAME_MDB'),
+            'password' => env('DB_PASSWORD_MDB'),
+            'options'  => [
+                'database' => 'siie_sap' // sets the authentication database required by mongo 3
+            ]
+        ],
+
         'pgsql' => [
             'driver'   => 'pgsql',
             'host'     => env('DB_HOST', 'localhost'),

@@ -5,6 +5,7 @@ use App\ERP\SUnit;
 use App\MMS\Formulas\SFormula;
 use App\MMS\SProductionOrder;
 use App\WMS\SWmsLot;
+use App\QMS\SQDocument;
 use phpDocumentor\Reflection\Types\Integer;
 
 /**
@@ -41,6 +42,27 @@ class SImportProductionOrders
      */
     public function importOrders()
     {
+        $json = '{
+            "name" : { "first" : "John", "last" : "Backus" },
+            "contribs" : [ "Fortran", "ALGOL", "Backus-Naur Form", "FP" ],
+            "awards" : [
+              {
+                "award" : "W.W. McDowell Award",
+                "year" : 1967,
+                "by" : "IEEE Computer Society"
+              }, {
+                "award" : "Draper Prize",
+                "year" : 1993,
+                "by" : "National Academy of Engineering"
+              }
+            ]
+          }';
+        $bson = \MongoDB\BSON\fromJSON($json);
+        $value = \MongoDB\BSON\toPHP($bson);
+
+        $qDocument = SQDocument::create(json_decode($json, true));
+        $qDocument->save();
+
         $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.PO'));
         $ids = array();
 

@@ -9,10 +9,10 @@ class SStatus extends SModel {
     protected $table = 'qmss_segregation_events';
 
     protected $fillable = [
-                             'id_segregation_event',
-                              'code',
-                              'name',
-                              'is_deleted',
+                            'id_segregation_event',
+                            'code',
+                            'name',
+                            'is_deleted',
                           ];
 
 }

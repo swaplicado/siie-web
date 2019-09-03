@@ -422,6 +422,23 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SSegregationsController@segregatePallet',
         'as' => 'qms.segregation.segregatePallet'
       ]);
+
+      /**
+       * Quality Documents (Papeletas)
+       */
+
+      Route::get('/configdocs/getsectionsdata',[
+        'uses' =>  'QMS\SQDocConfigurationsController@getSectionsData',
+        'as' => 'qms.configdocs.getsectionsdata'
+      ]);
+      Route::get('/configdocs/getfields',[
+        'uses' =>  'QMS\SQDocConfigurationsController@getFields',
+        'as' => 'qms.configdocs.getfields'
+      ]);
+
+      Route::resource('configdocs','QMS\SQDocConfigurationsController');
+      Route::resource('sections','QMS\SDocSectionsController');
+      Route::resource('elements','QMS\SDocElementsController');
   });
 
 //****************************************/ Warehouses Module/*************************

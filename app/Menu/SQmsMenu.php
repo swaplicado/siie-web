@@ -1,6 +1,7 @@
 <?php namespace App\Menu;
 
 use Spatie\Menu\Laravel\Link;
+use App\SUtils\SValidation;
 
 class SQmsMenu {
 
@@ -11,6 +12,15 @@ class SQmsMenu {
         ->addClass('nav navbar-nav')
         ->link('', '')
         ->route('qms.home', trans('qms.MODULE'))
+        ->submenu(
+          Link::to('#', trans('qms.CFG').'<span class="caret"></span>')
+              ->addClass('dropdown-toggle')
+              ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
+          \Menu::new()
+              ->addClass('dropdown-menu')
+              ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CONFIG_DOCS')),
+                        Link::toRoute('qms.configdocs.index', trans('qms.CFG_DOCS')))
+          )
         ->submenu(
             Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')
                 ->addClass('dropdown-toggle')

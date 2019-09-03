@@ -15,6 +15,8 @@ return array(
     'Milon\\Barcode' => array($vendorDir . '/milon/barcode/src'),
     'Maatwebsite\\Excel\\' => array($vendorDir . '/maatwebsite/excel/src'),
     'Laracasts\\Flash' => array($vendorDir . '/laracasts/flash/src'),
+    'Jenssegers\\Mongodb' => array($vendorDir . '/jenssegers/mongodb/src'),
+    'Jenssegers\\Eloquent' => array($vendorDir . '/jenssegers/mongodb/src'),
     'JakubOnderka\\PhpConsoleHighlighter' => array($vendorDir . '/jakub-onderka/php-console-highlighter/src'),
     'JakubOnderka\\PhpConsoleColor' => array($vendorDir . '/jakub-onderka/php-console-color/src'),
     'Felixkiss\\UniqueWithValidator\\' => array($vendorDir . '/felixkiss/uniquewith-validator/src'),
