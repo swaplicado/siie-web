@@ -40,4 +40,14 @@ return [
                       'BY_ONLY_LOT'=>'2',
                   ],
 
+    'ELEM_TYPE' => [
+        'TEXT'=>1,
+        'DECIMAL'=>2,
+        'INT'=>3,
+        'DATE'=>4,
+        'USER'=>5,
+        'ANALYSIS'=>6,
+        'BOOL'=>7,
+                  ],
+
 ];

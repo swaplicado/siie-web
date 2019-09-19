@@ -439,6 +439,11 @@ Route::group(['prefix' => 'qms'], function () {
       Route::resource('configdocs','QMS\SQDocConfigurationsController');
       Route::resource('sections','QMS\SDocSectionsController');
       Route::resource('elements','QMS\SDocElementsController');
+      Route::resource('qdocs','QMS\SQDocumentsController');
+      Route::get('/qdocs/index/{fathero}/{sono}/{folio}', [
+        'uses' => 'QMS\SQDocumentsController@index',
+        'as' => 'qms.qdocs.index'
+      ]);
   });
 
 //****************************************/ Warehouses Module/*************************

@@ -13,6 +13,7 @@ class SQDocSection extends SModel {
                             'title',
                             'dt_section',
                             'comments',
+                            'order',
                             'is_deleted',
                             'created_by_id',
                             'updated_by_id',

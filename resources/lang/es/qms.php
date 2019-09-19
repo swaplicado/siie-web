@@ -7,6 +7,8 @@ return [
 
       'CFG' => 'Configuración',
       'CFG_DOCS' => 'Configuración de papeletas',
+      'QLTY_DOCS' => 'Papeletas',
+      'QLTY_DOC' => 'Papeleta',
       'QRY_BY_STATUS' => 'Productos por estatus',
       'QRY_BY_STATUS_T' => 'Consulta de  unidades retenidas en calidad por estatus.',
       'IN_INSPECTION' => 'En Inspección',
@@ -15,6 +17,7 @@ return [
       'CLASSIFICATION_T' => 'Aquí se pueden clasificar los ítems que se encuentran en almacén de calidad.',
       'LOTS' => 'Generación de lotes',
       'LOTS_T' => 'Apartado en el que se realiza la generación de lotes para la clasificación por este rubro.',
+      'LOTS_AND_POS' => 'Lotes y órdenes de producción',
       'STK_SEG_QLTY' => 'Existencias en calidad',
       'VIEW_QUARENTINE' => 'Cuarentena piezas sueltas',
       'VIEW_INSPECTION' => 'Por inspeccionar piezas sueltas',

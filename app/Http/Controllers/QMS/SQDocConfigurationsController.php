@@ -12,6 +12,7 @@ use App\QMS\SQDocElement;
 use App\QMS\SElementField;
 use App\QMS\SElementType;
 use App\QMS\SQDocConfiguration;
+use App\QMS\SQDocConfigRow;
 use App\QMS\SAnalysis;
 use App\QMS\data\SData;
 use App\SUtils\SConnectionUtils;
@@ -144,6 +145,7 @@ class SQDocConfigurationsController extends Controller
                                     ->join('qmss_element_types as qet', 'qde.element_type_id', '=', 'qet.id_element_type')
                                     ->where('item_link_type_id', $iLinkType)
                                     ->where('item_link_id', $iLinkId)
+                                    ->where('qdc.is_deleted', false)
                                     ->select(
                                         'qdc.id_configuration',
                                         'qde.id_element',
@@ -159,7 +161,8 @@ class SQDocConfigurationsController extends Controller
                                         'qds.dt_section',
                                         'qds.comments'
                                     )
-                                    ->orderBy('section_id', 'ASC');
+                                    ->orderBy('section_id', 'ASC')
+                                    ->orderBy('element', 'ASC');
 
         $lConfigurations1 = $lConfigurations->lists('id_section');
         $lConfigurations1 = array_values(array_unique($lConfigurations1));
@@ -171,6 +174,7 @@ class SQDocConfigurationsController extends Controller
                                             'dt_section',
                                             'comments',
                                             'is_deleted')
+                                    ->orderBy('order', 'ASC')
                                     ->get();
 
         $lAllSections = SQDocSection::whereNotIn('id_section', $lConfigurations1)
@@ -179,6 +183,7 @@ class SQDocConfigurationsController extends Controller
                                             'dt_section',
                                             'comments',
                                             'is_deleted')
+                                    ->orderBy('order', 'ASC')
                                     ->get();
 
         $lAllElements = SQDocElement::select('id_element',
@@ -187,6 +192,7 @@ class SQDocConfigurationsController extends Controller
                                                 'is_deleted',
                                                 'element_type_id')
                                     ->where('is_deleted', false)
+                                    ->orderBy('element', 'ASC')
                                     ->get();
 
         $lElementTypes = SElementType::where('is_deleted', false)

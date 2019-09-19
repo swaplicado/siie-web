@@ -66,17 +66,8 @@ class SImportFormulas {
       $lWebFormulas = SFormula::orderBy('external_id', 'ASC')->get();
       $lFormulas = array();
       $lFormulasToWeb = array();
-      $lWebItems = SItem::get();
-      $lWebUnits = SUnit::get();
-      $lUnits = array();
-      $lItems = array();
-
-      foreach ($lWebItems as $value) {
-          $lItems[$value->external_id] = $value;
-      }
-      foreach ($lWebUnits as $value) {
-          $lUnits[$value->external_id] = $value;
-      }
+      $lItems = SItem::lists('id_item', 'external_id');
+      $lWebUnits = SUnit::lists('id_unit', 'external_id');
 
       foreach ($lWebFormulas as $key => $value) {
           $lFormulas[$value->external_id] = $value;

@@ -21,8 +21,8 @@
         <label for="element">Nombre de elemento</label>
         <input class="form-control input-sm" type="text" id="element" v-model="oElement.element">
         <br/>
-        <label for="dt_section">Fecha</label>
-        <select v-model="oElement.element_type_id" class="form-control" id="id_section" :required="true">
+        <label for="elem_type">Tipo</label>
+        <select v-model="oElement.element_type_id" class="form-control" id="elem_type" :required="true">
             <option v-for="oEType in lElementTypes"
                     v-bind:value="oEType.id_element_type"
                     :selected="oElement.element_type_id == oEType.id_element_type"
@@ -45,7 +45,7 @@
             </select>
         </div>
         <label for="comments"># Valores</label>
-        <input class="form-control input-sm" type="text" id="n_values" v-model="oElement.n_values">
+        <input class="form-control input-sm" type="number" id="n_values" step="1" v-model="oElement.n_values">
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="processElement()">Agregar</button>

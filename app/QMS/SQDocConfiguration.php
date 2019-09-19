@@ -24,19 +24,4 @@ class SQDocConfiguration extends SModel {
       return $this->table;
     }
 
-    public function lot()
-    {
-        return $this->belongsTo('App\WMS\SWmsLot');
-    }
-
-    public function fatherPO()
-    {
-        return $this->belongsTo('App\MMS\SProductionOrder', 'father_po_id');
-    }
-
-    public function sonPO()
-    {
-        return $this->belongsTo('App\MMS\SProductionOrder', 'son_po_id');
-    }
-
 }

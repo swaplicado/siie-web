@@ -74,6 +74,7 @@ class QmsAddDocumentsTables extends Migration
             $table->char('title', 200);
             $table->date('dt_section');
             $table->char('comments', 250);
+            $table->integer('order');
             $table->boolean('is_deleted');
             $table->integer('created_by_id')->unsigned();
             $table->integer('updated_by_id')->unsigned();

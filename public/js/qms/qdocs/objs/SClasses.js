@@ -26,3 +26,15 @@ class SField {
     is_deleted = false;
     element_id = 0;
 }
+
+class SResult {
+    id_configuration = 0;
+    id_field = 0;
+    result = null;
+
+    constructor(conf, field, res) {
+        this.id_configuration = conf;
+        this.id_field = field;
+        this.result = res;
+    }
+}

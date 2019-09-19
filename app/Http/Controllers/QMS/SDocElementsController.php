@@ -50,6 +50,15 @@ class SDocElementsController extends Controller
             $oElement->updated_by_id = \Auth::user()->id;
     
             $oElement->save();
+
+            if ($oElement->n_values == 1) {
+                $oField = new SElementField();
+
+                $oField->is_deleted = false;
+                $oField->field_name = "";
+
+                $oElement->fields()->save($oField);
+            }
         }
         else {
             $fields = json_decode($request->fields);

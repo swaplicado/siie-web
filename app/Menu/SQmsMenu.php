@@ -13,13 +13,15 @@ class SQmsMenu {
         ->link('', '')
         ->route('qms.home', trans('qms.MODULE'))
         ->submenu(
-          Link::to('#', trans('qms.CFG').'<span class="caret"></span>')
+          Link::to('#', trans('qms.QLTY_DOCS').'<span class="caret"></span>')
               ->addClass('dropdown-toggle')
               ->setAttributes(['data-toggle' => 'dropdown', 'role' => 'button']),
           \Menu::new()
               ->addClass('dropdown-menu')
               ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CONFIG_DOCS')),
                         Link::toRoute('qms.configdocs.index', trans('qms.CFG_DOCS')))
+              ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_DOCUMENTS')),
+                        Link::toRoute('siie.pos.index', trans('qms.LOTS_AND_POS'), [\Config::get('scsiie.OP_FROM.QUALITY')]))
           )
         ->submenu(
             Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')

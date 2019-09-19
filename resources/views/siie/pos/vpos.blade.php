@@ -54,7 +54,8 @@
                                 <td>{{ $oPO->lot }}</td>
                                 <td>
                                     @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QUALITY')))
-                                        <a class="btn btn-warning btn-xs" title="Papeleta calidad">
+                                        <a class="btn btn-warning btn-xs" title="Papeleta calidad"
+                                            href="{{ route('qms.qdocs.index', [$oPO->father_order_id, $oPO->id_order, $oPO->lot_id]) }}">
                                             <span class="glyphicon glyphicon-file" aria-hidden = "true"/>
                                         </a>
                                     @endif
@@ -77,7 +78,8 @@
                                 <td></td>
                                 <td>
                                     @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QUALITY')))
-                                        <a class="btn btn-warning btn-xs" title="Papeleta calidad">
+                                        <a class="btn btn-warning btn-xs" title="Papeleta calidad"
+                                            href="{{ route('qms.qdocs.index', [$oPO->id_order, 0, 0]) }}">
                                             <span class="glyphicon glyphicon-file" aria-hidden = "true"/>
                                         </a>
                                     @endif
