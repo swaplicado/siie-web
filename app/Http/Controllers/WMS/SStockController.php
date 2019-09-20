@@ -72,6 +72,7 @@ class SStockController extends Controller
             $groupBy = 'ws.item_id';
             $orderBy1 = 'ws.item_id';
             $orderBy2 = 'ws.item_id';
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ww.id_whs';
 
             // $iFilterWhs = \Config::get('scwms.FILTER_ALL_WHS');
             break;
