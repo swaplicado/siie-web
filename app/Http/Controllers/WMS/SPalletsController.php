@@ -46,7 +46,7 @@ class SPalletsController extends Controller
     public function index(Request $request, $iId = 0, $sItem = '')
     {
       $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
-      $sFilterDate = $request->filterDate == null ? SGuiUtils::getRangeFromDate(Carbon::now(), 40) : $request->filterDate;
+      $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
       // $Pallets = SPallet::Search($request->pallet, $this->iFilter)->orderBy('id_pallet', 'ASC')->get();
 
       $sSelect = '
@@ -59,7 +59,8 @@ class SPalletsController extends Controller
                     wp.created_by_id,
                     wp.updated_by_id,
                     wp.created_at,
-                    wp.updated_at
+                    wp.updated_at,
+                    uc.username AS usr_creation
                   ';
 
       $Pallets = \DB::connection(session('db_configuration')->getConnCompany())

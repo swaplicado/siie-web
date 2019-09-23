@@ -48,7 +48,7 @@
 			@endif
 	@endif
 
-	<table data-toggle="table" id="catalog_table" class="table table-striped no-wrap table-condensed" cellspacing="0" width="100%">
+	<table data-toggle="table" id="catalog_table" class="table table-striped display nowrap" style="width:100%">
 		<thead>
 			<th>ID</th>
 			{{-- <th>{{ trans('wms.labels.PALLET') }}</th> --}}
@@ -57,11 +57,13 @@
 			<th>{{ trans('userinterface.labels.STATUS') }}</th>
 			<th>{{ trans('userinterface.labels.ACTION') }}</th>
 			<th>{{'Etiqueta'}}</th>
+			<th>Creación</th>
+			<th>Usr Creación</th>
 		</thead>
 		<tbody>
 			@foreach($pallets as $pallet)
 				<tr>
-					<td>{{ $pallet->id_pallet }}</td>
+					<td>{{ session('utils')->formatPallet($pallet->id_pallet) }}</td>
 					{{-- <td>{{ $pallet->pallet }}</td> --}}
 					<td>{{ $pallet->item_code.'-'.$pallet->item }}</td>
 					<td>{{ $pallet->unit_code.'-'.$pallet->unit }}</td>
@@ -89,6 +91,8 @@
 							<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
 						</a>
 					</td>
+					<td>{{ $pallet->created_at }}</td>
+					<td>{{ $pallet->usr_creation }}</td>
 				</tr>
 			@endforeach
 		</tbody>

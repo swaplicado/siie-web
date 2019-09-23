@@ -198,7 +198,8 @@ class SImportProductionOrders
                                                                     $oSiiePO["fid_lot_item_nr"], 
                                                                     $oSiiePO["fid_lot_unit_nr"],
                                                                     $lWebItems,
-                                                                    $lWebUnits
+                                                                    $lWebUnits,
+                                                                    $oSiiePO["fid_ord_n"]
                                                                 );
 
             $f_id = SProductionOrder::select('id_order')
@@ -219,13 +220,13 @@ class SImportProductionOrders
         return $oSiieWebPO;
     }
 
-    private static function getLotID(String $lot = "", $siieItem = 0, $siieUnit = 0, $lWebItems = [], $lWebUnits = [])
+    private static function getLotID(String $lot = "", $siieItem = 0, $siieUnit = 0, $lWebItems = [], $lWebUnits = [], $iFOrderId = 0)
     {
         if (strlen($lot) == 0) {
             return 1;
         }
 
-        if (!$siieItem > 0 || !$siieUnit > 0) {
+        if (!$siieItem > 0 || !$siieUnit > 0 || !$iFOrderId > 0) {
             return 1;
         }
 
