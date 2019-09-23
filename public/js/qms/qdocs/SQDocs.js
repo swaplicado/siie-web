@@ -39,11 +39,14 @@ var docsApp = new Vue({
         })
         .then(res => {
             console.log(res);
-            this.vDocument = res.data;
+
+            oGui.showOk();
         })
         .catch(function (error) {
             console.log(error);
         });
+
+        location.reload();
       }
     },
     mounted: function () {

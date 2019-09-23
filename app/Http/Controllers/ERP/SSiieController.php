@@ -91,7 +91,7 @@ class SSiieController extends Controller
             default:
         }
 
-        if ($iFrom == \Config::get('scsiie.OP_FROM.PRODUCTION')) {
+        if ($iFrom == \Config::get('scsiie.OP_FROM.PRODUCTION') || $iFrom == \Config::get('scsiie.OP_FROM.QUALITY')) {
             $lProductionOrders = $lProductionOrders->where('mpo.father_order_id', '>', '1');
         }
 

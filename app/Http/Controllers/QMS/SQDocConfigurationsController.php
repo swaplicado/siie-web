@@ -130,7 +130,13 @@ class SQDocConfigurationsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $oConfiguration = SQDocConfiguration::find($id);
+
+        $oConfiguration->is_deleted = true;
+        $oConfiguration->updated_by_id = \Auth::user()->id;
+        $oConfiguration->save();
+
+        return $oConfiguration;
     }
 
     public function getSectionsData(Request $request)
@@ -190,6 +196,7 @@ class SQDocConfigurationsController extends Controller
                                                 'element',
                                                 'n_values',
                                                 'is_deleted',
+                                                'analysis_id',
                                                 'element_type_id')
                                     ->where('is_deleted', false)
                                     ->orderBy('element', 'ASC')

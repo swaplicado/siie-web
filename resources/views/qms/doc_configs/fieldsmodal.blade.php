@@ -12,7 +12,20 @@
           <div class="row" v-for="oField in lFields">
             <div class="col-md-9 col-md-offset-1">
               <input class="form-control input-sm" type="text" v-model="oField.field_name">
-              <br/>
+            </div>
+            <div class="col-md-1">
+              <button type="button" class="btn btn-danger btn-sm" aria-label="Borrar" v-on:click="removeField(oField.id_field, oField.field_name)">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              </button>
+            </div>
+            <br/>
+            <br/>
+          </div>
+          <div class="row">
+            <div class="col-md-1 col-md-offset-10">
+              <button type="button" class="btn btn-success btn-sm" aria-label="Agregar" v-on:click="addField()">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              </button>
             </div>
           </div>
       </div>

@@ -327,6 +327,23 @@ class SSessionUtils {
   }
 
   /**
+   * format the folio number or text to longitude configured
+   * and fill with zeros to left
+   *
+   * @param  string $oFolio
+   *
+   * @return string
+   */
+  public function formatQltyDocFolio($oFolio = '')
+  {
+      if ($oFolio == null) {
+        $oFolio = '';
+      }
+
+      return str_pad($oFolio, session('qltydocs_folios'), "0", STR_PAD_LEFT);
+  }
+
+  /**
    * format the pallet number or text to longitude configured
    * and fill with zeros to left
    *

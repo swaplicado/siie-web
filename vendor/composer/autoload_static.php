@@ -448,6 +448,7 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'ErpAddAuthStatusTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000035_erp_add_auth_status_table.php',
         'ErpAddBpbAddTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000062_erp_add_bpb_add_table.php',
         'ErpAddBranchesTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000061_erp_add_branches_table.php',
+        'ErpAddConfQltyfolios' => __DIR__ . '/../..' . '/database/migrations/2019_09_23_124832_erp_add_conf_qltyfolios.php',
         'ErpAddConfigurations' => __DIR__ . '/../..' . '/database/migrations/2018_06_01_000000_erp_add_configurations.php',
         'ErpAddCountriesStatesTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000041_erp_add_countries_states_table.php',
         'ErpAddCurrenciesTable' => __DIR__ . '/../..' . '/database/migrations/2017_08_01_000040_erp_add_currencies_table.php',

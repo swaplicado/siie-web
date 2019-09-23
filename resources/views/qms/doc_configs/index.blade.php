@@ -53,7 +53,7 @@
                 <ul class="list-group">
                     <li class="list-group-item" v-for="config in lConfigurations" v-if="config.id_section == section.id_section">
                         <div class="row">
-                            <div class="col-md-4" style="text-align: center;">
+                            <div class="col-md-3" style="text-align: center;">
                                 @{{ config.element }}
                             </div>
                             <div class="col-md-2" style="text-align: center;">
@@ -62,9 +62,12 @@
                             <div class="col-md-4" style="text-align: center;">
                                 @{{ config.analysis_id > 0 ? getAnalysisById(config.analysis_id).name : 'NA' }}
                             </div>
-                            <div class="col-md-1" style="text-align: center;">
+                            <div class="col-md-2" style="text-align: center;">
                                 <button type="button" class="btn btn-primary" v-on:click="setConfiguration(config)">
                                     @{{ config.n_values }}
+                                </button>
+                                <button type="button" class="btn btn-danger" aria-label="Borrar" v-on:click="removeConfiguration(config.id_configuration)">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                                 </button>
                             </div>
                         </div>

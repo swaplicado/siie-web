@@ -38,6 +38,16 @@ class SQDocsCore {
         if ($son != null) {
             $itemSon = $lItemDataf->where('ei.id_item', $son->item_id)
                                     ->first();
+
+            $item = $itemSon->id_item;
+            $gender = $itemSon->id_item_gender;
+            $group = $itemSon->item_group_id;
+            $family = $itemSon->item_family_id;
+            $class = $itemSon->item_class_id;
+            $type = $itemSon->item_type_id;
+        }
+        else {
+            $itemSon = null;
         }
 
         $itemF = $itemFather->id_item;
@@ -46,13 +56,6 @@ class SQDocsCore {
         $familyF = $itemFather->item_family_id;
         $classF = $itemFather->item_class_id;
         $typeF = $itemFather->item_type_id;
-
-        $item = $itemSon->id_item;
-        $gender = $itemSon->id_item_gender;
-        $group = $itemSon->item_group_id;
-        $family = $itemSon->item_family_id;
-        $class = $itemSon->item_class_id;
-        $type = $itemSon->item_type_id;
 
         $lConfigs = \DB::connection(session('db_configuration')->getConnCompany())
                             ->table('qms_doc_configurations as qdc')

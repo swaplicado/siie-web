@@ -31,7 +31,7 @@
             </option>
         </select>
         <br/>
-        <input type="checkbox" v-model="isAnalysis">
+        <input type="checkbox" v-model="isAnalysis" :checked="oElement.analysis_id > 1">
         <label for="checkbox">Es análisis</label>
         <br/>
         <div v-if="isAnalysis">

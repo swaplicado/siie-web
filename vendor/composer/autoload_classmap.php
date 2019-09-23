@@ -28,6 +28,7 @@ return array(
     'ErpAddAuthStatusTable' => $baseDir . '/database/migrations/2017_08_01_000035_erp_add_auth_status_table.php',
     'ErpAddBpbAddTable' => $baseDir . '/database/migrations/2017_08_01_000062_erp_add_bpb_add_table.php',
     'ErpAddBranchesTable' => $baseDir . '/database/migrations/2017_08_01_000061_erp_add_branches_table.php',
+    'ErpAddConfQltyfolios' => $baseDir . '/database/migrations/2019_09_23_124832_erp_add_conf_qltyfolios.php',
     'ErpAddConfigurations' => $baseDir . '/database/migrations/2018_06_01_000000_erp_add_configurations.php',
     'ErpAddCountriesStatesTable' => $baseDir . '/database/migrations/2017_08_01_000041_erp_add_countries_states_table.php',
     'ErpAddCurrenciesTable' => $baseDir . '/database/migrations/2017_08_01_000040_erp_add_currencies_table.php',

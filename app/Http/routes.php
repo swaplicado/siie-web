@@ -435,10 +435,19 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' =>  'QMS\SQDocConfigurationsController@getFields',
         'as' => 'qms.configdocs.getfields'
       ]);
-
       Route::resource('configdocs','QMS\SQDocConfigurationsController');
+
       Route::resource('sections','QMS\SDocSectionsController');
+
       Route::resource('elements','QMS\SDocElementsController');
+      Route::delete('/elementfield/{id}', [
+        'uses' => 'QMS\SDocElementsController@destroyField'
+      ]);
+
+      Route::get('/qdocs/docs', [
+        'uses' => 'QMS\SQDocumentsController@docs',
+        'as' => 'qms.qdocs.docs'
+      ]);
       Route::resource('qdocs','QMS\SQDocumentsController');
       Route::get('/qdocs/index/{fathero}/{sono}/{folio}', [
         'uses' => 'QMS\SQDocumentsController@index',

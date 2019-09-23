@@ -14,6 +14,7 @@ use App\QMS\SQMongoDoc;
 use App\MMS\SProductionOrder;
 use App\User;
 use App\QMS\core\SQDocsCore;
+use App\SUtils\SGuiUtils;
 
 class SQDocumentsController extends Controller
 {
@@ -187,6 +188,31 @@ class SQDocumentsController extends Controller
                     ->with('lConfigurations', $aResult[1])
                     ->with('lUsers', $lUsers)
                     ->with('aData', $lData);
+    }
+
+    public function docs(Request $request)
+    {
+        $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
+        $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
+
+        $lQltyDocs = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('qms_quality_documents as qqd')
+                            ->join('wms_lots as wl', 'qqd.lot_id', '=', 'wl.id_lot')
+                            ->select('qqd.id_document',
+                                        'qqd.lot_id',
+                                        'qqd.dt_document',
+                                        'qqd.title',
+                                        'wl.lot',
+                                        'wl.dt_expiry'
+                                    );
+
+        $lQltyDocs = $lQltyDocs->get();
+
+        return view('qms.docs.indexdocs')
+                ->with('lQltyDocs', $lQltyDocs)
+                ->with('actualUserPermission', $this->oCurrentUserPermission)
+                ->with('sFilterDate', $sFilterDate)
+                ->with('iFilter', $this->iFilter);
     }
 
     /**

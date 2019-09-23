@@ -33,7 +33,13 @@
 
                             <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
                                     class="form-control input-sm" 
+                                    step="0.1"
                                     v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DECIMAL">
+
+                            <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
+                                    class="form-control input-sm" 
+                                    step="1"
+                                    v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.INT">
 
                             <input type="date" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
                                     class="form-control input-sm" 

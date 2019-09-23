@@ -22,6 +22,8 @@ class SQmsMenu {
                         Link::toRoute('qms.configdocs.index', trans('qms.CFG_DOCS')))
               ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_DOCUMENTS')),
                         Link::toRoute('siie.pos.index', trans('qms.LOTS_AND_POS'), [\Config::get('scsiie.OP_FROM.QUALITY')]))
+              ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_DOCUMENTS')),
+                        Link::toRoute('qms.qdocs.docs', trans('qms.QLTY_DOCS')))
           )
         ->submenu(
             Link::to('#', trans('qms.STOCK_QUALITY').'<span class="caret"></span>')

@@ -11,4 +11,13 @@ class SGui {
             }
         });
     }
+
+    showOk() {
+        swal({
+            type: 'success',
+            title: 'Realizado',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
 }

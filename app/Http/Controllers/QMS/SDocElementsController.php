@@ -51,14 +51,17 @@ class SDocElementsController extends Controller
     
             $oElement->save();
 
-            if ($oElement->n_values == 1) {
+            $aFields = array();
+            for ($i=0; $i < $oElement->n_values; $i++) { 
                 $oField = new SElementField();
 
                 $oField->is_deleted = false;
                 $oField->field_name = "";
 
-                $oElement->fields()->save($oField);
+                $aFields[] = $oField;
             }
+
+            $oElement->fields()->saveMany($aFields);
         }
         else {
             $fields = json_decode($request->fields);
@@ -80,6 +83,13 @@ class SDocElementsController extends Controller
             }
 
             $oElement->fields()->saveMany($lFields);
+
+            $n_values = SElementField::where('element_id', $oElement->id_element)
+                                        ->where('is_deleted', false)
+                                        ->count();
+
+            $oElement->n_values = $n_values;
+            $oElement->save();
 
             $oElement->fields;
         }
@@ -130,5 +140,33 @@ class SDocElementsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroyField($id)
+    {
+        SConnectionUtils::reconnectCompany();
+
+        $oField = SElementField::find($id);
+        $oField->is_deleted = true;
+        $oField->save();
+        
+        $oElement = $oField->element;
+
+        $n_values = SElementField::where('element_id', $oField->element_id)
+                        ->where('is_deleted', false)
+                        ->count();
+
+        $oElement->n_values = $n_values;
+        $oElement->updated_by_id = \Auth::user()->id;
+
+        $oElement->save();
+
+        return $oElement;
     }
 }

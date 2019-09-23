@@ -19,6 +19,7 @@ return [
                   'DECIMALS_PERC' => '13',
                   'FOLIOS_LONG' => '14',
                   'PALLETS' => '15',
+                  'QLTY_DOCS_FOLIOS_LONG' => '16',
                 ],
 
   'ATT' => [

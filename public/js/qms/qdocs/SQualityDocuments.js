@@ -71,7 +71,12 @@ var app = new Vue({
         lFields: []
     },
     methods: {
-        
+        /**
+         * get the configurations and set values to Vue
+         * 
+         * @param {int} iLinkType 
+         * @param {int} iLink 
+         */
         toConfiguration(iLinkType, iLink) {
             this.iMode = 2;
             this.aCurConfig = [iLinkType, iLink];
@@ -97,6 +102,11 @@ var app = new Vue({
             })
             
         },
+        /**
+         * return a SAnalysis object based on id received
+         * 
+         * @param {int} iAnalysis 
+         */
         getAnalysisById(iAnalysis) {
             if (iAnalysis <= 0) {
                 return 'NA';
@@ -108,6 +118,11 @@ var app = new Vue({
                         
             return result;
         },
+        /**
+         * get the object SElementType based on id_element_type received
+         * 
+         * @param {int} iType 
+         */
         getElementType(iType) {
             let result = this.lElementTypes.find(obj => {
                             return obj.id_element_type === iType
@@ -115,11 +130,17 @@ var app = new Vue({
                         
             return result;
         },
+        /**
+         * get the fields of element and show the fields modal
+         * 
+         * @param {SConfiguration} oCfg 
+         */
         setConfiguration(oCfg) {
             this.oConfiguration = oCfg;
             this.lFields = [];
 
             oGui.showLoading(5000);
+
             axios.get('../qms/configdocs/getfields', {
                 params: {
                     ielement: this.oConfiguration.id_element
@@ -148,6 +169,9 @@ var app = new Vue({
                 console.log(err);
             })
         },
+        /**
+         * Create a new section and save it in the database
+         */
         newSection() {
             oGui.showLoading(5000);
 
@@ -164,6 +188,9 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        /**
+         * Add the selected section to the sections array
+         */
         addSection() {
             if (this.aCurConfig.length == 0 || this.aCurConfig[0] == 0 || this.aCurConfig[1] == 0) {
                 alert('Error!');
@@ -173,11 +200,19 @@ var app = new Vue({
             console.log(this.oSelectedSection);
             this.lSections.push(this.oSelectedSection);
         },
+        /**
+         * set the current section and initialize the element obj
+         * 
+         * @param {int} idSection 
+         */
         addElement(idSection) {
             this.iCurSection = idSection;
 
             this.oElement = new SElement();
         },
+        /**
+         * determine if the configuration will create a new Element or just a configuration
+         */
         processElement() {
             if (this.oElement.id_element > 0) {
                 this.newConfiguration();
@@ -186,13 +221,17 @@ var app = new Vue({
                 this.newElement();
             }
         },
+        /**
+         * Create a new element and save it in the database
+         */
         newElement() {
             oGui.showLoading(5000);
 
             axios.post('../qms/elements', {
                 element: this.oElement.element,
                 n_values: this.oElement.n_values,
-                element_type_id: this.oElement.element_type_id
+                element_type_id: this.oElement.element_type_id,
+                analysis_id: this.oElement.analysis_id,
             })
             .then(res => {
                 let obj = res.data;
@@ -203,6 +242,9 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        /**
+         * create a new configuration and save it in the database
+         */
         newConfiguration() {
             oGui.showLoading(5000);
 
@@ -214,22 +256,56 @@ var app = new Vue({
             })
             .then(res => {
                 let obj = res.data;
-                let sec = this.lSections.splice((this.lSections.length - 1), 1);
 
-                let section = new SSection();
-                section.id_section = sec[0].id_section;
-                section.title = sec[0].title;
-                section.dt_section = sec[0].dt_section;
-                section.comments = sec[0].comments;
-                section.is_deleted = sec[0].is_deleted;
-
-                this.lConfigurations.push(obj);
-                this.lSections.push(section);
+                oGui.showOk();
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+            location.reload();
         },
+        /**
+         * remove the configuration, set is_deleted = true
+         * 
+         * @param {int} idConfiguration 
+         */
+        removeConfiguration(idConfiguration) {
+            oGui.showLoading(5000);
+
+            axios.delete('../qms/configdocs/' + idConfiguration)
+            .then(res => {
+                let obj = res.data;
+
+                // let pos = -1;
+                // for (let index = 0; index < this.lConfigurations.length; index++) {
+                //     const conf = this.lConfiguration[index];
+                //     if (obj.id_configuration == conf.id_configuration) {
+                //         pos = index;
+                //     }
+                // }
+
+                // if (pos > -1) {
+                //     this.lConfigurations.splice(pos, 1);
+                // }
+
+                oGui.showOk();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+            location.reload();
+        },
+        /**
+         * Add a new SField object to Array
+         */
+        addField() {
+            this.lFields.push(new SField());
+        },
+        /**
+         * Update the fields of current element
+         */
         updateFields() {
             oGui.showLoading(5000);
 
@@ -245,6 +321,53 @@ var app = new Vue({
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        /**
+         * Set the flag is_deleted to true and remove the field of fields array
+         * 
+         * @param {int} idField 
+         * @param {String} sText 
+         */
+        removeField(idField, sText) {
+            var txt;
+            var r = confirm("Esta acción removerá el campo en todas las configuraciones. \n ¿Deseas continuar?");
+
+            if (r == true) {
+                oGui.showLoading(5000);
+
+                if (idField == 0) {
+                    let pos = -1;
+                    for (let index = 0; index < this.lFields.length; index++) {
+                        const f = this.lFields[index];
+
+                        if (f.id_field == idField && f.field_name == sText) {
+                            pos = index;
+                        }
+                    }
+
+                    if (pos > -1) {
+                        this.lFields.splice(pos, 1);
+                    }
+
+                    oGui.showOk();
+                    return;
+                }
+
+                axios.delete('../qms/elementfield/' + idField)
+                .then(res => {
+                    let obj = res.data;
+
+                    oGui.showOk();
+
+                    location.reload();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
+            else {
+                console.log("You pressed Cancel!");
+            }
         }
     }
   })
