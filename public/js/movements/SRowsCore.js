@@ -61,34 +61,41 @@ class SRowsCore {
   }
 
   deleteMovRow(tRow, index) {
-    if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
-        || utilFunctions.isProductionTransfer(globalData.iMvtType)) {
-      oTransfersMovsTable.row('.selected').remove().draw( false );
+    var oRow = oMovement.getRow(tRow[0]);
+    // oRow.iAuxIndex = index;
+    let bCont = true;
+    
+    if (! oRow.bAuxToStock) {
+      oMovement.removeRow(tRow[0]);
+    }
+    else if (headerCore.validateAndUdpateStock(oRow, globalData.lOperation.OUTPUT, false)) {
+      oMovement.removeRow(tRow[0]);
     }
     else {
+      bCont = false;
+    }
+
+    if (globalData.iMvtType == globalData.scwms.MVT_TP_OUT_TRA
+        || utilFunctions.isProductionTransfer(globalData.iMvtType) && bCont) {
+      oTransfersMovsTable.row('.selected').remove().draw( false );
+    }
+    else if(bCont) {
       oMovsTable.row('.selected').remove().draw( false );
     }
 
-    var oRow = oMovement.getRow(tRow[0]);
-    // oRow.iAuxIndex = index;
-
-    if (! oRow.bAuxToStock) {
-        oMovement.removeRow(tRow[0]);
-    }
-    else if (headerCore.validateAndUdpateStock(oRow, globalData.lOperation.OUTPUT)) {
-        oMovement.removeRow(tRow[0]);
-    }
-
-    if (globalData.iMvtType == globalData.MVT_TP_IN_PUR
+    if ((globalData.iMvtType == globalData.MVT_TP_IN_PUR
         || globalData.iMvtType == globalData.MVT_TP_IN_SAL
-          || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {
+          || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) && bCont) {
         supplyCore.updateRow(oRow, supplyCore.CLEAN);
     }
 
-    guiFunctions.updateAmtQtyLabels();
-    if (globalData.isPalletReconfiguration) {
-        guiReconfig.updatePallet(oMovement);
+    if (bCont) {
+      guiFunctions.updateAmtQtyLabels();
+      if (globalData.isPalletReconfiguration) {
+          guiReconfig.updatePallet(oMovement);
+      }
     }
+
     cleanPanel();
   }
 
@@ -225,7 +232,7 @@ class SRowsCore {
             lElems.push(elementToAdd);
 
             for (var index = 0; index < lElems.length; index++) {
-              if (headerCore.validateAndUdpateStock(lElems[index], globalData.lOperation.INPUT)) {
+              if (headerCore.validateAndUdpateStock(lElems[index], globalData.lOperation.INPUT, false)) {
                   if (globalData.iMvtType == globalData.MVT_TP_IN_PUR
                         || globalData.iMvtType == globalData.MVT_TP_IN_SAL
                           || globalData.iMvtType == globalData.MVT_TP_OUT_SAL) {

@@ -433,31 +433,27 @@ class SMovsUtils {
       $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
       $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWhs;
 
-      if ($iMvt != 0) {
-        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMvt;
-      }
-
       $aParameters[\Config::get('scwms.STOCK_PARAMS.SSELECT')] =  'ws.whs_id,
-                                     ws.location_id,
-                                     ws.pallet_id,
-                                     ws.lot_id,
-                                     ws.item_id,
-                                     ws.unit_id,
-                                     wwl.code as location,
-                                     IF (wp.id_pallet = 1, \'SIN TARIMA\', wp.id_pallet) as pallet,
-                                     wl.lot,
-                                     wl.dt_expiry,
-                                     ei.code as item_code,
-                                     ei.name as item,
-                                     eu.code as unit,
-                                     ei.is_lot,
-                                     ei.is_bulk,
-                                     ei.without_rotation,
-                                     \'0\' as available_stock,
-                                     sum(ws.input) as inputs,
-                                     sum(ws.output) as outputs,
-                                     (sum(ws.input) - sum(ws.output)) as stock';
-
+      ws.location_id,
+      ws.pallet_id,
+      ws.lot_id,
+      ws.item_id,
+      ws.unit_id,
+      wwl.code as location,
+      IF (wp.id_pallet = 1, \'SIN TARIMA\', wp.id_pallet) as pallet,
+      wl.lot,
+      wl.dt_expiry,
+      ei.code as item_code,
+      ei.name as item,
+      eu.code as unit,
+      ei.is_lot,
+      ei.is_bulk,
+      ei.without_rotation,
+      \'0\' as available_stock,
+      sum(ws.input) as inputs,
+      sum(ws.output) as outputs,
+      (sum(ws.input) - sum(ws.output)) as stock';
+      
       $aSegParameters = array();
       $aSegParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
       $aSegParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 'ws.item_id';
@@ -466,6 +462,11 @@ class SMovsUtils {
       $aSegParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'ws.pallet_id';
       $aSegParameters[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 'ws.location_id';
       $aSegParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ws.whs_id';
+
+      if ($iMvt != 0) {
+        $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMvt;
+        $aSegParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] = $iMvt;
+      }
 
       $oStock = session('stock')->getStockResult($aParameters, $aSegParameters);
 
@@ -502,7 +503,8 @@ class SMovsUtils {
   public static function canSkipSegregation($iMvtType = 0)
   {
     return $iMvtType == \Config::get('scwms.MVT_TP_OUT_TRA')
-            || $iMvtType == \Config::get('scwms.MVT_TP_OUT_ADJ');
+            || $iMvtType == \Config::get('scwms.MVT_TP_OUT_ADJ')
+              || $iMvtType == \Config::get('scwms.MVT_TP_IN_ADJ');
   }
 
 }
