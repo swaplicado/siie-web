@@ -305,6 +305,10 @@ class SStockManagment
               $aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')] <> '0') {
             $sub = $sub->whereRaw('wsr.lot_id ='.$aParameters[\Config::get('scwms.STOCK_PARAMS.LOT')]);
         }
+        if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.ID_MVT'), $aParameters) &&
+              $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')] <> '0') {
+            $sub = $sub->whereRaw('wss.reference_id <>'.$aParameters[\Config::get('scwms.STOCK_PARAMS.ID_MVT')]);
+        }
         if (array_key_exists(\Config::get('scwms.STOCK_PARAMS.DATE'), $aParameters) &&
               $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] <> '0') {
             // $sub = $sub->whereRaw('wss.dt_date <= \''.$aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')].'\'');

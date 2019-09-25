@@ -17,7 +17,7 @@ class SStockUtils
 {
 
     /**
-     * [validate the stock before the movement is made]
+     * [validate the stock before the movement has been made]
      *
      * @param  SMovement $oMovement
      * @return [array]  [returns an array with the erros description,

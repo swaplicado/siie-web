@@ -63,7 +63,8 @@ class SHeaderCore {
      */
     getValuesFromServer(movement, globalData) {
       //ajax
-      var idMov = (globalData.iOperation == globalData.lOperationType.EDITION ? globalData.iMvtId : 0);
+    //   let idMov = (globalData.iOperation == globalData.lOperationType.EDITION ? globalData.iMovId : 0);
+      let idMov = 0;
 
       showLoading(5000);
       $.get('./' + (globalData.sRoute) +
@@ -94,7 +95,7 @@ class SHeaderCore {
     transformServerToClientRows(lRows) {
       lRows.forEach(function(oRow) {
           var jsRow = rowsCore.rowtoJsRow(oRow);
-          if (headerCore.validateAndUdpateStock(jsRow, globalData.lOperation.INPUT)) {
+          if (headerCore.validateAndUdpateStock(jsRow, globalData.lOperation.INPUT, true)) {
               oMovement.addRow(jsRow);
           }
       });
@@ -135,19 +136,31 @@ class SHeaderCore {
      * @param  {Integer} iOperType can be:
      *                                     globalData.lOperation.INPUT
      *                                     globalData.lOperation.OUTPUT
+     * @param  {boolean} bStart can be:
+     *                                     true when is initialization
+     *                                     false when is row validation
      * @return {boolean} if the row can not be added to movement show a message
      *                       and return false
      *                   if there is no problem, return true
      */
-    validateAndUdpateStock(oMovRow, iOperType) {
+    validateAndUdpateStock(oMovRow, iOperType, bStart) {
       var bFound = false;
       var bValid = false;
       var BreakException = {};
 
-      if (globalData.bIsInputMov
-            || oMovRow.bIsDeleted
-              || utilFunctions.isProductionDelivery(globalData.iMvtType)) {
-        return true;
+      if (bStart) {
+          if (globalData.bIsInputMov
+                || oMovRow.bIsDeleted
+                  || utilFunctions.isProductionDelivery(globalData.iMvtType)) {
+            return true;
+          }
+      }
+      else {
+          if ((globalData.bIsInputMov && !oMovRow.bIsDeleted && iOperType == globalData.lOperation.INPUT)
+                || (!globalData.bIsInputMov && !oMovRow.bIsDeleted && iOperType == globalData.lOperation.OUTPUT)
+                || utilFunctions.isProductionDelivery(globalData.iMvtType)) {
+            return true;
+          }
       }
 
       try {
@@ -166,7 +179,8 @@ class SHeaderCore {
                         oMovRow.lotRows.forEach(function(oLotRow) {
                            if (stockRow.lot_id == oLotRow.iLotId) {
                                 bFound = true;
-                               if (globalData.lOperation.INPUT == iOperType) {
+                               if (globalData.lOperation.INPUT == iOperType || 
+                                    (globalData.lOperation.OUTPUT == iOperType && globalData.bIsInputMov)) {
                                  if ((stockRow.available_stock
                                      + stockRow.dInput
                                      - stockRow.dOutput) >= parseFloat(oLotRow.dQuantity, 10))
@@ -241,6 +255,11 @@ class SHeaderCore {
         swal("Error", "El material/producto " +  oMovRow.sItemCode +
                        "-" + oMovRow.sItem + " no tiene existencias en " +
                       "la tarima, lote, ubicación y almacén seleccionados.", "error");
+        return false;
+      }
+      else if (!bFound && globalData.lOperation.OUTPUT == iOperType && globalData.bIsInputMov) {
+        swal("Error", "No puede eliminar este renglón, el material/producto " +  oMovRow.sItemCode +
+                       "-" + oMovRow.sItem + " ya fue utilizado en movimientos posteriores.", "error");
         return false;
       }
 
