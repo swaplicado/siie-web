@@ -157,6 +157,7 @@ class SHeaderCore {
       }
       else {
           if ((globalData.bIsInputMov && !oMovRow.bIsDeleted && iOperType == globalData.lOperation.INPUT)
+                || (globalData.bIsInputMov && !oMovRow.bIsDeleted && iOperType == globalData.lOperation.OUTPUT && oMovRow.iIdMovRow == 0)
                 || (!globalData.bIsInputMov && !oMovRow.bIsDeleted && iOperType == globalData.lOperation.OUTPUT)
                 || utilFunctions.isProductionDelivery(globalData.iMvtType)) {
             return true;
