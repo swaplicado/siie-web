@@ -33,6 +33,8 @@
                         <th>Lote</th>
                         <th>Caducidad</th>
                         <th>Firmas</th>
+                        <th>Firmas I</th>
+                        <th>Firmas II</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,6 +51,8 @@
                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                 </button>
                             </td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     @endforeach
                 </tbody>

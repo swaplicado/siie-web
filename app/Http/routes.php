@@ -51,13 +51,11 @@ Route::post('/start/in',[
   'as' => 'start.getIn',
   'uses' => 'SYS\SStartController@GetIn'
 ]);
-Route::post('/start/branch',[
-  'as' => 'start.branch',
-  'uses' => 'SYS\SStartController@branch'
+Route::get('/start/changecompany/{id}',[
+  'uses' => 'SYS\SStartController@changeCompany'
 ]);
-Route::post('/start/whs',[
-  'as' => 'start.whs',
-  'uses' => 'SYS\SStartController@whs'
+Route::get('/start/changebranch/{id}/{bra}',[
+  'uses' => 'SYS\SStartController@changeBranch'
 ]);
 Route::get('manage/{id}/changepass',[
   'uses' => 'SPassController@ChangePass',

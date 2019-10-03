@@ -97,19 +97,17 @@ class SUtil {
 
       if (session('utils')->isSuperUser(\Auth::user()))
       {
-        $lCompanies = SCompany::where('is_deleted', 0)->paginate(10);
+        $lCompanies = SCompany::where('is_deleted', 0)->get();
 
-        $i = 0;
         foreach ($lCompanies as $oCompany) {
           $oUserCompany = new SUserCompany();
           $oUserCompany->company_id = $oCompany->id_company;
-          $lUserCompany[$i] = $oUserCompany;
-          $i++;
+          $lUserCompany[] = $oUserCompany;
         }
       }
       else
       {
-        $lUserCompany = SUserCompany::where('user_id', '=', $oUser->id)->paginate(10);
+        $lUserCompany = SUserCompany::where('user_id', '=', $oUser->id)->get();
       }
 
       foreach($lUserCompany as $UC) {

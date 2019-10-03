@@ -143,6 +143,7 @@
 											'SELECT_PERMISSIONS' => 'Seleccione permiso',
 											'SELECT_MODULE' => 'Seleccione Módulo',
 											'SELECT_BRANCH' => 'Seleccione Sucursal',
+											'SELECT_WHS' => 'Seleccione Almacén',
 											'WHS_MOVS' => 'Movimientos de almacén',
 											'WHS_STOCK' => 'Existencias',
 											'WHS_MOVEMENTS' => 'Movimientos de almacén',

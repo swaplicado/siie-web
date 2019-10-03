@@ -52,6 +52,7 @@ class SConnectionUtils {
     public static function reconnectCompany($sDataBase = '')
     {
         $connection = session()->has('db_configuration') ? session('db_configuration')->getConnCompany() : '';
+        
         \Config::set('database.connections.'.$connection.'.database', session()->has('company') ? session('company')->database_name : $sDataBase);
     }
 

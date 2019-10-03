@@ -3,10 +3,15 @@
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\SUtils\SConnectionUtils;
+use App\ERP\SErpConfiguration;
+
 use App\User;
 use App\ERP\SYear;
 use App\ERP\SBranch;
 use App\WMS\SWarehouse;
+use App\SYS\SCompany;
+use App\ERP\SPartner;
 
 class SSessionUtils {
 
@@ -357,7 +362,9 @@ class SSessionUtils {
         $sPallet = '';
       }
 
-      return str_pad($sPallet, 6, "0", STR_PAD_LEFT);
+      $log_folios = session('qltydocs_folios') > 0 ? session('qltydocs_folios') : 6;
+
+      return str_pad($oFolio, $log_folios, "0", STR_PAD_LEFT);
   }
 
   /**
@@ -408,6 +415,30 @@ class SSessionUtils {
     }
 
     session(['usr_permissions' => $UsrPerm]);
+  }
+
+  /**
+   * Undocumented function
+   *
+   * @param integer $idCompany
+   * @return void
+   */
+  public function getPartnerByCompany($idCompany)
+  {
+    $oCompany = SCompany::find($idCompany);
+
+    $sConnection = 'siie';
+    $bDefault = true;
+    $sHost = $oCompany->host;
+    $sDataBase = $oCompany->database_name;
+    $sUser = $oCompany->database_user;
+    $sPassword = $oCompany->password;
+
+    SConnectionUtils::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
+
+    $oErpConfigurationPartner = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PARTNER_ID'));
+
+    return SPartner::find($oErpConfigurationPartner->val_int);;
   }
 
 }

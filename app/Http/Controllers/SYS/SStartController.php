@@ -51,139 +51,84 @@ class SStartController extends Controller
         $lUserCompany = SUtil::getUserCompany(\Auth::user());
 
         if (sizeof($lUserCompany) < 1 && ! session('utils')->isSuperUser(\Auth::user())) {
-         return redirect()->route('notauthorizedsys');
+          return redirect()->route('notauthorizedsys');
+        }
+
+        $oPartner = $this->getPartnerByCompany($lUserCompany[0]->company_id);
+
+        $lBranches= $this->getBranches($oPartner->id_partner);
+
+        $iCompany = $lUserCompany[0]->company_id;
+        $iBranch = 0;
+        $iWarehouse = 0;
+
+        if (sizeof($lBranches) > 0) {
+          $oBranch = $lBranches[0];
+          $lWhs = $this->getWarehouses($oBranch->id_branch);
+
+          $iBranch = $oBranch->id_branch;
+          $iWarehouse = sizeof($lWhs) > 0 ? $lWhs[0]->id_whs : 0;
+        }
+        else {
+          $lBranches = array();
+          $lWhs = array();
         }
 
         return view('start.select')
-                            ->with('lUserCompany', $lUserCompany);
+                  ->with('iCompany', session()->has('company') ? session('company')->id_company : $iCompany)
+                  ->with('iBranch', session()->has('branch') ? session('branch')->id_branch : $iBranch)
+                  ->with('iWarehouse', session()->has('whs') ? session('whs')->id_whs : $iWarehouse)
+                  ->with('lWhs', $lWhs)
+                  ->with('lBranches', $lBranches)
+                  ->with('lUserCompany', $lUserCompany);
     }
 
-    public function branchwhs(){
-      SConnectionUtils::reconnectCompany();
-
-      $lUserBranch = array();
-
-      if (session('utils')->isSuperUser(\Auth::user()))
-      {
-        $lBranch = SBranch::where('is_deleted', 0)
-                          ->where('partner_id', '=', session('partner')->id_partner )
-                          ->orderBy('erpu_branches.name')
-                          ->paginate(10);
-
-        $i = 0;
-        foreach ($lBranch as $oBranch) {
-          $oUserBranch = new SUserBranch();
-          $oUserBranch->branch_id = $oBranch->id_branch;
-          $lUserBranch[$i] = $oUserBranch;
-          $i++;
-        }
-
-        foreach($lUserBranch as $UB) {
-          $UB->branch;
-        }
-
-        return view('start.branchwhs')
-                  ->with('branch', $lUserBranch)
-                  ->with('flag',0);
-      }
-      else
-      {
-        // $lUserBranch = SUserBranch::where('user_id', '=', (\Auth::user()))
-        //                             ->paginate(10);
-        $lUserBranch = \DB::connection(session('db_configuration')->getConnCompany())
-                            ->table('erpu_access_branch')
-                            ->join('erpu_branches', 'branch_id', '=', 'erpu_branches.id_branch')
-                            ->where('erpu_branches.partner_id', session('partner')->id_partner)
-                            ->where('user_id', \Auth::user()->id)
-                            ->orderBy('erpu_branches.name')
-                            ->get();
-
-        return view('start.branchwhs')
-                  ->with('branch',$lUserBranch)
-                  ->with('flag',1);
-        //dd($lUserBranch);
-      }
-
-
-      //dd($lUserBranch);
-      // return view('start.branchwhs')
-      //           ->with('branch',$lUserBranch);
-      // return SStartController::selectModule();
-    }
-
-    public function branch(Request $request)
+    public function changeCompany($idCompany)
     {
+      $branches = $this->getBranches($this->getPartnerByCompany($idCompany)->id_partner);
 
+      return $branches;
+    }
+    public function changeBranch($iCompany, $idBranch)
+    {
+      $oCompany = SCompany::find($iCompany);
+      SConnectionUtils::reconnectCompany($oCompany->database_name);
 
-        SConnectionUtils::reconnectCompany();
-        $BranchId =  $_COOKIE['BranchId'];
-        $oBranch = SBranch::find($BranchId);
-
-        // $oConfiguration = SConfiguration::find(1);
-
-        session(['branch' => $oBranch]);
-        // session(['configuration' => $oConfiguration]);
-
-        return SStartController::selectwhs();
+      return $this->getWarehouses($idBranch);
     }
 
-    public function selectwhs(){
+    private function getBranches($idPartner)
+    {
+      $lUserBranch = \DB::connection(session('db_configuration')->getConnCompany())
+                          ->table('erpu_branches AS eb')
+                          ->where('partner_id', '=', $idPartner);
 
-        SConnectionUtils::reconnectCompany();
+      if (! session('utils')->isSuperUser(\Auth::user()))
+      {
+        $lUserBranch = $lUserBranch->join('erpu_access_branch eab', 'eab.branch_id', '=', 'eb.id_branch')
+                                    ->where('user_id', \Auth::user()->id);
+      }
 
+      $lBranches = $lUserBranch->where('eb.is_deleted', false)
+                                ->select('eb.name', 'eb.id_branch')
+                                ->orderBy('eb.name')
+                                ->get();
 
-                $lUserWhs = array();
-
-                if (session('utils')->isSuperUser(\Auth::user()))
-                {
-                  $lWhs = SWarehouse::where('is_deleted', 0)
-                                      ->where('branch_id', '=', session('branch')->id_branch)
-                                      ->orderBy('code', 'ASC')
-                                      ->paginate(10);
-
-                  $i = 0;
-                  foreach ($lWhs as $oWhs) {
-                    $oUserWhs = new SUserWhs();
-                    $oUserWhs->whs_id = $oWhs->id_whs;
-                    $lUserWhs[$i] = $oUserWhs;
-                    $i++;
-                  }
-
-                  foreach($lUserWhs as $UB) {
-                    $UB->warehouses;
-                  }
-
-                  return view('start.whs')
-                            ->with('whs',$lUserWhs)
-                            ->with('flag',0);
-                }
-                else
-                {
-
-                  $lUserWhs = SUserWhs::join('wmsu_whs', 'whs_id', '=', 'wmsu_whs.id_whs')
-                                      ->where('wmsu_whs.branch_id', session('branch')->id_branch)
-                                      ->whereIn('whs_id', session('utils')->getUserWarehousesArray())
-                                      ->where('user_id', \Auth::user()->id)
-                                      ->orderBy('wmsu_whs.code', 'ASC')
-                                      ->get();
-
-                  return view('start.whs')
-                            ->with('whs',$lUserWhs)
-                            ->with('flag',1);
+      return $lBranches;
     }
-  }
-    public function whs(){
 
-      SConnectionUtils::reconnectCompany();
-      $WarehouseId =  $_COOKIE['WarehouseId'];
-      $oWarehouse = SWarehouse::find($WarehouseId);
+    private function getWarehouses(int $idBranch)
+    {
+      $lWhs = SWarehouse::where('is_deleted', false)
+                      ->where('branch_id', $idBranch)
+                      ->get();
 
-      // $oConfiguration = SConfiguration::find(1);
+      return $lWhs;
+    }
 
-      session(['whs' => $oWarehouse]);
-      // session(['configuration' => $oConfiguration]);
-
-      return SStartController::selectModule();
+    private function getPartnerByCompany(int $idCompany)
+    {
+       return session('utils')->getPartnerByCompany($idCompany);
     }
 
     /**
@@ -191,21 +136,13 @@ class SStartController extends Controller
      */
     public function getIn(Request $request)
     {
-        $iCompanyId =  $_COOKIE['iCompanyId'];
-        $oCompany = SCompany::find($iCompanyId);
-        // $oConfiguration = SConfiguration::find(1);
-
+        $oCompany = SCompany::find($request->company);
         session(['company' => $oCompany]);
-        // session(['configuration' => $oConfiguration]);
+        
+        SConnectionUtils::reconnectCompany($oCompany->database_name);
 
-        $sConnection = 'siie';
-        $bDefault = true;
-        $sHost = $oCompany->host;
-        $sDataBase = $oCompany->database_name;
-        $sUser = $oCompany->database_user;
-        $sPassword = $oCompany->password;
-
-        SConnectionUtils::reconnectDataBase($sConnection, $bDefault, $sHost, $sDataBase, $sUser, $sPassword);
+        session(['branch' => SBranch::find($request->branch)]);
+        session(['whs' => SWarehouse::find($request->whs)]);
 
         $oErpConfigurationPartner = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.PARTNER_ID'));
         $oErpConfLocCur = SErpConfiguration::find(\Config::get('scsiie.CONFIGURATION.LOCAL_CURRENCY'));
@@ -252,7 +189,7 @@ class SStartController extends Controller
 
         session('utils')->setUserPermissions();
 
-        return SStartController::branchwhs();
+        return SStartController::selectModule();
     }
 
     /**
