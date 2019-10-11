@@ -48,6 +48,7 @@ return [
         'USER'=>5,
         'ANALYSIS'=>6,
         'BOOL'=>7,
+        'FILE'=>8,
                   ],
 
 ];

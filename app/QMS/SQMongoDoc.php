@@ -11,6 +11,12 @@ class SQMongoDoc extends Eloquent {
     // configurations es una lista de objetos o arreglos de tipo SQDocConfiguration
     // results es una lista de objetos o arreglos de tipo asociativo id_configuration-id_field => resultado
 
-    protected $fillable = ['qlty_document', 'configurations', 'results'];
+    protected $fillable = [
+                            'lot_id', 
+                            'qlty_doc_id', 
+                            'item_id',
+                            'unit_id',
+                            'results'
+                        ];
 
 }

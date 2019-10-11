@@ -34,7 +34,7 @@
         <select class="form-control input-lg" id="whs" name="whs" 
                 v-model="iWarehouse"
                 style="background-color: linen">
-          <option v-for="whs in vlWhs" :value="whs.id_whs">@{{ whs.name }}</option>
+          <option v-for="whs in vlWhs" :value="whs.id_whs">@{{ whs.whs_name }}</option>
         </select>
     </div>
     <div class="form-group">

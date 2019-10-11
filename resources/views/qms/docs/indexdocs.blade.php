@@ -1,8 +1,9 @@
 @extends('templates.home.modules')
 
-@section('title', 'Órdenes de Producción')
+@section('title', 'Papeletas')
 
 @section('content')
+<div id="the_index">
     <div class="row">
         {!! Form::open(['route' => 'qms.qdocs.docs',
             'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
@@ -24,48 +25,77 @@
         
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped table-hover table-condensed" id="qdocs_table">
+            <table class="table table-striped table-condensed" id="qdocs_table">
                 <thead>
                     <tr>
                         <th>Folio</th>
                         <th>Fecha Papeleta</th>
                         <th>Nombre</th>
+                        <th>Producto</th>
                         <th>Lote</th>
                         <th>Caducidad</th>
                         <th>Firmas</th>
                         <th>Firmas I</th>
                         <th>Firmas II</th>
+                        <th>Ver</th>
+                        <th>Certificado</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($lQltyDocs as $oQDoc)
-                        <tr>
-                            <td>{{ session('utils')->formatQltyDocFolio($oQDoc->id_document) }}</td>
-                            <td>{{ $oQDoc->dt_document }}</td>
-                            <td>{{ $oQDoc->title }}</td>
-                            <td>{{ $oQDoc->lot }}</td>
-                            <td>{{ $oQDoc->dt_expiry }}</td>
-                            <td>
-                                <button type="button" class="btn btn-default btn-sm" aria-label="Firmas" 
-                                        data-toggle="modal" data-target="#sigModal">
-                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                </button>
-                            </td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    @endforeach
+                    <tr v-for="papeleta in vlPapeletas">
+                        <td>@{{ papeleta.id_document }}</td>
+                        <td>@{{ papeleta.dt_document }}</td>
+                        <td>@{{ papeleta.title }}</td>
+                        <td>@{{ papeleta.item_name }}</td>
+                        <td>@{{ papeleta.lot }}</td>
+                        <td>@{{ papeleta.dt_expiry }}</td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-sm" aria-label="Firmas" 
+                                    data-toggle="modal" data-target="#sigModal">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                        <td>
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </td>
+                        <td>
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
+                            </button>
+                        </td>
+                        <td>
+                            <a  v-if="(papeleta.body_id.length > 0)"
+                                 type="button" class="btn btn-warning" :href="'../certificates/print/' + papeleta.id_document">
+                                <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Imprimir
+                            </a>
+                            <label v-else>-</label>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </div>
     @include('qms.docs.signatures')
+</div>
 @endsection
     
 @section('js')
+    {{-- <script src="{{ asset('js/qms/qdocs/objs/SGui.js') }}"></script> --}}
     <script src="{{ asset('moment/moment.js') }}"></script>
     <script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
-    
+    <script>
+        function GlobalData () {
+            this.scqms = <?php echo json_encode(\Config::get('scqms')) ?>;
+            this.lPapeletas = <?php echo json_encode($lQltyDocs) ?>;
+        }
+
+        var oData = new GlobalData();
+    </script>
+
+    <script src="{{ asset('js/qms/qdocs/SIndex.js') }}"></script>
     <script>
         // new Vue({ el: '#vue-table' }) 
 
@@ -97,6 +127,7 @@
                 "sUrl":            "",
                 "sInfoThousands":  ",",
                 "sLoadingRecords": "Cargando...",
+                "scrollX": true,
                 "oPaginate": {
                     "sFirst":    "Primero",
                     "sLast":     "Último",
@@ -110,6 +141,4 @@
             }
         });
     </script>
-
-    {{-- <script src="{{ asset('qms/qdocs/tables.js') }}"></script> --}}
 @endsection

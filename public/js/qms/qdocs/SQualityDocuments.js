@@ -54,6 +54,12 @@ var app = new Vue({
                             'id_link': 3,
                             'name': 'Salsas',
                             'b_class': 'btn btn-default btn-lg btn-block'
+                        },
+                        {
+                            'id_link_type': 1,
+                            'id_link': 1,
+                            'name': 'TODOS',
+                            'b_class': 'btn btn-success btn-lg btn-block'
                         }
                     ],
         lSections: [],

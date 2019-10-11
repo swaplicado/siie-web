@@ -451,6 +451,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SQDocumentsController@index',
         'as' => 'qms.qdocs.index'
       ]);
+      Route::get('/certificates/print/{id}', [
+        'uses' => 'QMS\SCertificatesController@print',
+        'as' => 'qms.certificates.print'
+      ]);
   });
 
 //****************************************/ Warehouses Module/*************************

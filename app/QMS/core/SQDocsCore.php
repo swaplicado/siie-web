@@ -88,6 +88,10 @@ class SQDocsCore {
                                         $query->where('item_link_type_id', '=', \Config::get('scsiie.ITEM_LINK.ITEM'))
                                             ->where('item_link_id', '=', $itemFather->id_item);
                                     })
+                                    ->orWhere(function ($query) use ($itemFather) {
+                                        $query->where('item_link_type_id', '=', \Config::get('scsiie.ITEM_LINK.ALL'))
+                                            ->where('item_link_id', '=', 1);
+                                    })
                                     ->orWhere(function ($query) use ($itemSon) {
                                         if ($itemSon != null) {
                                             $query->where('item_link_type_id', '=', \Config::get('scsiie.ITEM_LINK.ITEM'))

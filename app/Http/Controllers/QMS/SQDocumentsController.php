@@ -198,12 +198,15 @@ class SQDocumentsController extends Controller
         $lQltyDocs = \DB::connection(session('db_configuration')->getConnCompany())
                             ->table('qms_quality_documents as qqd')
                             ->join('wms_lots as wl', 'qqd.lot_id', '=', 'wl.id_lot')
+                            ->join('erpu_items as ei', 'qqd.item_id', '=', 'ei.id_item')
                             ->select('qqd.id_document',
                                         'qqd.lot_id',
                                         'qqd.dt_document',
                                         'qqd.title',
+                                        'qqd.body_id',
                                         'wl.lot',
-                                        'wl.dt_expiry'
+                                        'wl.dt_expiry',
+                                        'ei.name AS item_name'
                                     );
 
         $lQltyDocs = $lQltyDocs->get();
@@ -247,8 +250,10 @@ class SQDocumentsController extends Controller
         if (strlen($oDoc->body_id) > 0) {
             $oMongoDoc = SQMongoDoc::find($oDoc->body_id);
 
-            $oMongoDoc->qlty_document = $oDoc->toArray();
-            $oMongoDoc->configurations = $lConfigs;
+            $oMongoDoc->lot_id = $oDoc->lot_id;
+            $oMongoDoc->item_id = $oDoc->item_id;
+            $oMongoDoc->unit_id = $oDoc->unit_id;
+            $oMongoDoc->qlty_doc_id = $oDoc->id_document;
             $oMongoDoc->results = $lResults;
 
             $oMongoDoc->save();
@@ -256,8 +261,10 @@ class SQDocumentsController extends Controller
         else {
             $oMongoDoc = new SQMongoDoc();
 
-            $oMongoDoc->qlty_document = $oDoc->toArray();
-            $oMongoDoc->configurations = $lConfigs;
+            $oMongoDoc->lot_id = $oDoc->lot_id;
+            $oMongoDoc->item_id = $oDoc->item_id;
+            $oMongoDoc->unit_id = $oDoc->unit_id;
+            $oMongoDoc->qlty_doc_id = $oDoc->id_document;
             $oMongoDoc->results = $lResults;
 
             $oMongoDoc->save();

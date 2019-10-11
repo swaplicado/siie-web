@@ -27,14 +27,28 @@ class SField {
     element_id = 0;
 }
 
+/***
+ * Objeto base para MongoDB
+ */
 class SResult {
     id_configuration = 0;
     id_field = 0;
     result = null;
+    data = null;
 
     constructor(conf, field, res) {
         this.id_configuration = conf;
         this.id_field = field;
         this.result = res;
     }
+
+    field_name = '';
+    element_id = 0;
+    element_type_id = 0;
+    item_link_type_id = 0;
+    item_link_id = 0;
+    analysis_id = 0;
+    is_table = false;
+    table_name = '';
+    dt_date = null;
 }

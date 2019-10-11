@@ -120,6 +120,7 @@ class SStartController extends Controller
     private function getWarehouses(int $idBranch)
     {
       $lWhs = SWarehouse::where('is_deleted', false)
+                      ->select('code AS whs_code', 'name AS whs_name', 'id_whs')
                       ->where('branch_id', $idBranch)
                       ->get();
 

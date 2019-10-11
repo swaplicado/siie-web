@@ -6,46 +6,62 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-2">
+
+                        </div>
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div :class="getDivClass(vConfig.n_values, vConfig.element_type_id)" v-for="field in vConfig.lFields">
+                                    @{{ field.field_name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
                             <b>@{{ vConfig.element }}</b>
                         </div>
                         <div class="col-md-10">
                             <div class="row">
-                                <div :class="getDivClass(vConfig.n_values)" v-for="field in vConfig.lFields">
-                                    @{{ field.field_name }}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div :class="getDivClass(vConfig.n_values)" v-for="field in vConfig.lFields">
-                                    <input type="text" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
+                                <div :class="getDivClass(vConfig.n_values, vConfig.element_type_id)" v-for="field in vConfig.lFields">
+                                    <input type="text" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
                                             v-if="vConfig.element_type_id == vScqms.ELEM_TYPE.TEXT">
         
                                     <div v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.USER">
-                                        <select class="form-control input-sm" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]">
+                                        <select class="form-control input-sm" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result">
                                             <option v-for="usr in lUsers"
-                                                :selected="lResults[vConfig.id_configuration+'_'+field.id_field] == usr.id"
+                                                :selected="lResults[vConfig.id_configuration+'_'+field.id_field].result == usr.id"
                                                 :value="usr.id">
                                                 @{{ usr.username }}
                                             </option>
                                         </select>
                                     </div>
         
-                                    <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
+                                    <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
+                                            style="text-align: right;"
                                             step="0.1"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DECIMAL">
         
-                                    <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
+                                    <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
+                                            style="text-align: right;"
                                             step="1"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.INT">
         
-                                    <input type="date" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
+                                    <input type="date" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DATE">
         
-                                    <input type="checkbox" v-model="lResults[vConfig.id_configuration+'_'+field.id_field]"
+                                    <input type="checkbox" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.BOOL">
+                                    <div v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.FILE">
+                                        <input type="file" v-on:change="readFile(event, vConfig.id_configuration, field.id_field)" 
+                                            {{-- v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result" --}}
+                                            class="form-control input-sm">
+                                        <label>@{{ lResults[vConfig.id_configuration+'_'+field.id_field].result }}</label>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>

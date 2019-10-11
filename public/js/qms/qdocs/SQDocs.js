@@ -1,7 +1,6 @@
 var docsApp = new Vue({
     el: '#docsApp',
     data: {
-      message: 'Hello Vue!',
       vScqms: oData.scqms,
       vData: oData.data,
       vDocument: oData.oQDocument,
@@ -12,11 +11,17 @@ var docsApp = new Vue({
       lResults: []
     },
     methods: {
-      getDivClass(nValues) {
-        if (nValues >= 6) {
-          return 'col-md-1';
+      getDivClass(nValues, elemTypeId) {
+        if (nValues > 6) {
+          if (elemTypeId != this.vScqms.ELEM_TYPE.DECIMAL) {
+            return 'col-md-1';
+          }
         }
         else if (nValues == 1) {
+          if (elemTypeId == this.vScqms.ELEM_TYPE.FILE) {
+            return 'col-md-6';
+          }
+
           return 'col-md-4';
         }
 
@@ -27,9 +32,9 @@ var docsApp = new Vue({
 
         let aResults = [];
         for (const key in this.lResults) {
-          let k = key.split('_');
-          let obj = new SResult(k[0], k[1], this.lResults[key]);
-          aResults.push(obj);
+          let res = this.lResults[key];
+
+          aResults.push(res);
         }
 
         axios.post('../../../../qdocs', {
@@ -41,12 +46,16 @@ var docsApp = new Vue({
             console.log(res);
 
             oGui.showOk();
+
+            location.reload();
         })
         .catch(function (error) {
             console.log(error);
         });
-
-        location.reload();
+      },
+      readFile(file, idConf, idField) {
+        this.lResults[idConf + "_" + idField].data = file.target.files[0];
+        this.lResults[idConf + "_" + idField].result = file.target.files[0].name;
       }
     },
     mounted: function () {
@@ -87,13 +96,29 @@ var docsApp = new Vue({
               case this.vScqms.ELEM_TYPE.USER:
                 val = 1;
                 break;
+
+              case this.vScqms.ELEM_TYPE.FILE:
+                val = null;
+                break;
             
               default:
                 val = 0;
                 break;
             }
 
-            results['' + config.id_configuration + '_' + field.id_field] = val;
+            let oResult = new SResult(config.id_configuration, field.id_field, val);
+
+            oResult.field_name = field.field_name;
+            oResult.element_id = config.element_id;
+            oResult.element_type_id = config.element_type_id;
+            oResult.item_link_type_id = config.item_link_type_id;
+            oResult.item_link_id = config.item_link_id;
+            oResult.analysis_id = config.analysis_id;
+            oResult.is_table = config.is_table;
+            oResult.table_name = config.table_name;
+            oResult.dt_date = new Date();
+
+            results['' + config.id_configuration + '_' + field.id_field] = oResult;
           }
         }
 
@@ -104,7 +129,7 @@ var docsApp = new Vue({
         let results = this.vMongoDocument.results;
         let aResults = [];
         for (const res of results) {
-          aResults['' + res.id_configuration + '_' + res.id_field] = res.result;
+          aResults['' + res.id_configuration + '_' + res.id_field] = res;
         }
 
         this.lResults = aResults;
