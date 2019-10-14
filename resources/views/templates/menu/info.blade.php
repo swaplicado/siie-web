@@ -29,13 +29,19 @@
          <p>{{ trans('userinterface.labels.USER') }}</p>
          <div class="well well-sm"><b>{{ Auth::check() ? Auth::user()->username : '' }}</b></div>
          <div class="well well-sm">
-           <a href="https://docs.google.com/document/d/1tYdh6WbB724pQdGyTVSIK-j6LUMaLXKuQtvA_E_BuzU/edit?usp=sharing"
+           <a href="{{ asset('guides/mexaju.pdf') }}"
             target="_blank">
              Manual Almacenes y Calidad
            </a>
          </div>
          <div class="well well-sm">
-           <a href="https://docs.google.com/document/d/1qmXq66fVFhPqCCGWHEbmMIevZmFtdWZzxWGpuDjz6c0/edit?usp=sharing"
+           <a href="{{ asset('guides/meaordprod.pdf') }}"
+            target="_blank">
+             Manual Entradas por orden de producción
+           </a>
+         </div>
+         <div class="well well-sm">
+           <a href="{{ asset('guides/mumodprod.pdf') }}"
             target="_blank">
              Manual Producción
            </a>
