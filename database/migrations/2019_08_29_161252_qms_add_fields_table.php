@@ -42,6 +42,7 @@ class QmsAddFieldsTable extends Migration
         Schema::connection($this->sConnection)->create('qms_element_fields', function (blueprint $table) {	
             $table->increments('id_field');
             $table->char('field_name', 150);
+            $table->char('field_default_value', 150);
             $table->boolean('is_deleted');
             $table->integer('element_id')->unsigned();
             $table->timestamps();

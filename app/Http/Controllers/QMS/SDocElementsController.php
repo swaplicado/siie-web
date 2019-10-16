@@ -57,6 +57,7 @@ class SDocElementsController extends Controller
 
                 $oField->is_deleted = false;
                 $oField->field_name = "";
+                $oField->field_default_value = "";
 
                 $aFields[] = $oField;
             }
@@ -78,6 +79,7 @@ class SDocElementsController extends Controller
                 }
 
                 $oField->field_name = $field->field_name;
+                $oField->field_default_value = "";
 
                 $lFields[] = $oField;
             }

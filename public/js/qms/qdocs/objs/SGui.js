@@ -20,4 +20,13 @@ class SGui {
             timer: 1500
         });
     }
+
+    showError(sMessage) {
+        swal({
+            type: 'error',
+            title: sMessage,
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
 }

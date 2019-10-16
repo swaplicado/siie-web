@@ -67,7 +67,7 @@ class SImportFormulas {
       $lFormulas = array();
       $lFormulasToWeb = array();
       $lItems = SItem::lists('id_item', 'external_id');
-      $lWebUnits = SUnit::lists('id_unit', 'external_id');
+      $lUnits = SUnit::lists('id_unit', 'external_id');
 
       foreach ($lWebFormulas as $key => $value) {
           $lFormulas[$value->external_id] = $value;
@@ -109,8 +109,8 @@ class SImportFormulas {
      $oFormula->quantity = $oSiieFormula["qty"] <= '0' ? 1 : $oSiieFormula["qty"];
      $oFormula->is_deleted = $oSiieFormula["b_del"];
      $oFormula->external_id = $oSiieFormula["id_bom"];
-     $oFormula->item_id = $lWebItems[$oSiieFormula["fid_item"]]->id_item;
-     $oFormula->unit_id = $lWebUnits[$oSiieFormula["fid_unit"]]->id_unit;
+     $oFormula->item_id = $lWebItems[$oSiieFormula["fid_item"]];
+     $oFormula->unit_id = $lWebUnits[$oSiieFormula["fid_unit"]];
      $oFormula->created_by_id = 1;
      $oFormula->updated_by_id = 1;
      $oFormula->created_at = $oSiieFormula["ts_new"];

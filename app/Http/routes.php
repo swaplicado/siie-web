@@ -446,6 +446,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SQDocumentsController@docs',
         'as' => 'qms.qdocs.docs'
       ]);
+      Route::post('/qdocs/image', [
+        'uses' => 'QMS\SQDocumentsController@image',
+        'as' => 'qms.qdocs.image'
+      ]);
       Route::resource('qdocs','QMS\SQDocumentsController');
       Route::get('/qdocs/index/{fathero}/{sono}/{folio}', [
         'uses' => 'QMS\SQDocumentsController@index',

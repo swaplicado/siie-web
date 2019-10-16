@@ -23,6 +23,7 @@ class SElement {
 class SField {
     id_field = 0;
     field_name = '';
+    field_default_value = '';
     is_deleted = false;
     element_id = 0;
 }
@@ -42,6 +43,7 @@ class SResult {
         this.result = res;
     }
 
+    id_tag = '';
     field_name = '';
     element_id = 0;
     element_type_id = 0;

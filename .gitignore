@@ -1,7 +1,7 @@
 /node_modules
 Homestead.yaml
 Homestead.json
-.env
+/.env
 config/debugbar.php
 app/Database/Config.php
 public/images/companies/siie_gs.jpg
@@ -9,4 +9,5 @@ public/images/companies/siie_gsc.jpg
 public/images/companies/siie_saporis.png
 public/images/companies/siie_saporis.jpg
 public/images/companies/siie_sap.jpg
+public/uploads/
 public/myfile.pdf

@@ -8,6 +8,7 @@ use App\MMS\SProductionOrder;
 use App\QMS\SQDocConfiguration;
 use App\QMS\SQDocSection;
 use App\QMS\SElementField;
+use App\WMS\SWmsLot;
 
 /**
  *
@@ -162,5 +163,29 @@ class SQDocsCore {
         $result = [$lSections, $lConfigurations];
 
         return $result;
+    }
+
+    /**
+     * return date based on lot string
+     * 
+     * example:
+     * Lot: K18091902
+     * return "2019-09-18"
+     *
+     * @param int $lot
+     * @return Carbon date
+     */
+    public static function getLotDate(string $lot = "") {
+        if (strlen($lot) != 9) {
+            return null;
+        }
+
+        $year = substr($lot, -4, 2);
+        $month = substr($lot, 3, 2);
+        $day = substr($lot, 1, 2);
+
+        $carbonDate = Carbon::createFromDate('20'.$year, $month, $day);
+
+        return $carbonDate;
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use Carbon\Carbon;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
 use App\SUtils\SProcess;
@@ -250,6 +251,10 @@ class SQDocumentsController extends Controller
         if (strlen($oDoc->body_id) > 0) {
             $oMongoDoc = SQMongoDoc::find($oDoc->body_id);
 
+            $oLot = $oDoc->lot;
+            
+            $oMongoDoc->lot_date = SQDocsCore::getLotDate($oLot->lot)->format('Y-m-d');
+            $oMongoDoc->lot = $oLot->lot;
             $oMongoDoc->lot_id = $oDoc->lot_id;
             $oMongoDoc->item_id = $oDoc->item_id;
             $oMongoDoc->unit_id = $oDoc->unit_id;
@@ -261,6 +266,10 @@ class SQDocumentsController extends Controller
         else {
             $oMongoDoc = new SQMongoDoc();
 
+            $oLot = $oDoc->lot;
+
+            $oMongoDoc->lot_date = SQDocsCore::getLotDate($oLot->lot)->format('Y-m-d');
+            $oMongoDoc->lot = $oLot->lot;
             $oMongoDoc->lot_id = $oDoc->lot_id;
             $oMongoDoc->item_id = $oDoc->item_id;
             $oMongoDoc->unit_id = $oDoc->unit_id;
@@ -275,6 +284,21 @@ class SQDocumentsController extends Controller
         $oDoc->save();
 
         return json_encode($oDoc);
+    }
+
+    public function image(Request $request)
+    {
+        $file = $request->file('image');
+        $destinationPath = 'uploads/qms';
+        $dt = Carbon::now();
+        $name = $dt->format('Y_m_d_h_m_s') . '.' . $file->getClientOriginalExtension();
+        try {
+            $file->move($destinationPath, $name);
+        } catch (\Throwable $th) {
+            return "Error";
+        }
+
+        return $name;
     }
 
     /**

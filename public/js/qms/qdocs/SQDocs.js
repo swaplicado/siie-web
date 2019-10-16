@@ -53,60 +53,121 @@ var docsApp = new Vue({
             console.log(error);
         });
       },
-      readFile(file, idConf, idField) {
-        this.lResults[idConf + "_" + idField].data = file.target.files[0];
-        this.lResults[idConf + "_" + idField].result = file.target.files[0].name;
+      /**
+       * load the image to img tag when the file is selected
+       * 
+       * @param {Event} evt 
+       * @param {int} idConf 
+       * @param {int} idField 
+       */
+      readFile(evt, idConf, idField) {
+        let tgt = evt.target;
+        let files = tgt.files;
+        let index = idConf + "_" + idField;
+        let tag = this.lResults[index].id_tag;
+        let fileImg = files[0];
+
+        this.lResults[index].result = fileImg.name;
+
+        // FileReader support
+        if (FileReader && files && files.length) {
+          var fr = new FileReader();
+          fr.onload = function () {
+            document.getElementById(tag).src = fr.result;
+          }
+          fr.readAsDataURL(fileImg);
+        }
+      },
+      /**
+       * load the file with the name assigned in server
+       * @param {*} idConf 
+       * @param {*} idField 
+       */
+      viewFile(idConf, idField) {
+        var _img = document.getElementById(this.lResults[idConf + "_" + idField].id_tag);
+        if (this.lResults[idConf + "_" + idField].data == null || this.lResults[idConf + "_" + idField].data.length == 0) {
+          oGui.showError('No se ha seleccionado ninguna imágen...');
+          return;
+        }
+        var newImg = new Image;
+        newImg.onload = function() {
+            _img.src = this.src;
+        }
+        newImg.src = '../../../../../uploads/qms/' + this.lResults[idConf + "_" + idField].data;
+      },
+      /**
+       * save the image to server and return the name assigned to image
+       * 
+       * @param {int} idConf 
+       * @param {int} idField 
+       */
+      guardar(idConf, idField) {
+        var formData = new FormData();
+        let imagefile = document.getElementById(this.lResults[idConf + "_" + idField].id_tag + '1');
+        if (imagefile.files.length == 0) {
+          oGui.showError('No se ha seleccionado ninguna imágen...');
+          return;
+        }
+        formData.append("image", imagefile.files[0]);
+        axios.post('../../../../qdocs/image', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then(res => {
+            this.lResults[idConf + "_" + idField].data = res.data;
+            oGui.showOk();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
       }
     },
     mounted: function () {
-      console.log(this.vDocument);
-      console.log(this.vMongoDocument);
-
       let results = [];
       if (this.vMongoDocument == null) {
         for (const config of this.vlConfigurations) {
           for (const field of config.lFields) {
-            let val = null;
+            let oResult = new SResult(config.id_configuration, field.id_field, null);
 
             switch (config.element_type_id) {
               case this.vScqms.ELEM_TYPE.TEXT:
-                val = "";
+                oResult.result = "";
                 break;
 
               case this.vScqms.ELEM_TYPE.DECIMAL:
-                val = 0.0;
+                oResult.result = 0.0;
                 break;
 
               case this.vScqms.ELEM_TYPE.INT:
-                val = 0;
+                oResult.result = 0;
                 break;
 
               case this.vScqms.ELEM_TYPE.DATE:
-                val = '2019-01-01';
+                oResult.result = '2019-01-01';
                 break;
 
               case this.vScqms.ELEM_TYPE.ANALYSIS:
-                val = 0;
+                oResult.result = 0;
                 break;
 
               case this.vScqms.ELEM_TYPE.BOOL:
-                val = false;
+                oResult.result = false;
                 break;
 
               case this.vScqms.ELEM_TYPE.USER:
-                val = 1;
+                oResult.result = 1;
                 break;
 
               case this.vScqms.ELEM_TYPE.FILE:
-                val = null;
+                oResult.result = null;
+                oResult.id_tag = config.element.trim().replace(" ", "");
                 break;
             
               default:
-                val = 0;
+                oResult.result = 0;
                 break;
             }
-
-            let oResult = new SResult(config.id_configuration, field.id_field, val);
 
             oResult.field_name = field.field_name;
             oResult.element_id = config.element_id;

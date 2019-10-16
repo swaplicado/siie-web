@@ -12,7 +12,9 @@ class SQMongoDoc extends Eloquent {
     // results es una lista de objetos o arreglos de tipo asociativo id_configuration-id_field => resultado
 
     protected $fillable = [
-                            'lot_id', 
+                            'lot_id',
+                            'lot',
+                            'lot_date',
                             'qlty_doc_id', 
                             'item_id',
                             'unit_id',
