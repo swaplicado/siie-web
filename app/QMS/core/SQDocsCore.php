@@ -177,7 +177,7 @@ class SQDocsCore {
      */
     public static function getLotDate(string $lot = "") {
         if (strlen($lot) != 9) {
-            return null;
+            return Carbon::createFromDate(2017, 01, 01);
         }
 
         $year = substr($lot, -4, 2);

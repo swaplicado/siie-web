@@ -105,6 +105,14 @@ class SQDocumentsController extends Controller
         }
         else {
             $bFlag = false;
+
+            if (strlen($oDoc->body_id) > 0) {
+                $oMongoDocument = SQMongoDoc::find($oDoc->body_id);
+            }
+            else {
+                $oMongoDocument = null;
+            }
+
             if ($oDoc->son_po_id == 1 && $sono > 1) {
                 $oDoc = clone $oDoc;
 
@@ -112,6 +120,13 @@ class SQDocumentsController extends Controller
                 $oDoc->son_po_id = $oSonPo->id_order;
                 $oDoc->item_id = $oSonPo->item_id;
                 $oDoc->unit_id = $oSonPo->unit_id;
+                $oDoc->body_id = '';
+
+                if ($oMongoDocument != null) {
+                    $oMongoDocument->id = '';
+                    $oMongoDocument->save();
+                    $oDoc->body_id = $oMongoDocument->id;
+                }
 
                 $bFlag = true;
             }
@@ -123,11 +138,6 @@ class SQDocumentsController extends Controller
             if ($bFlag) {
                 $oDoc->save();
             }
-
-            if (strlen($oDoc->body_id) > 0) {
-                $oMongoDocument = SQMongoDoc::find($oDoc->body_id);
-            }
-
         }
 
         $lData = \DB::connection(session('db_configuration')->getConnCompany())

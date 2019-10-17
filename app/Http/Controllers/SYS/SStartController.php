@@ -54,33 +54,45 @@ class SStartController extends Controller
           return redirect()->route('notauthorizedsys');
         }
 
-        $oPartner = $this->getPartnerByCompany($lUserCompany[0]->company_id);
+        $lCompanies = array();
 
-        $lBranches= $this->getBranches($oPartner->id_partner);
+        foreach ($lUserCompany as $usrCompany) {
+          $oCompany = $usrCompany->company;
+          $oCompany->oPartner = $this->getPartnerByCompany($oCompany->id_company);
+          $oCompany->oPartner->lBranches = collect($this->getBranches($oCompany->oPartner->id_partner))->keyBy('id_branch')->sortBy('name');
 
-        $iCompany = $lUserCompany[0]->company_id;
+          if (sizeof($oCompany->oPartner->lBranches) > 0) {
+            foreach ($oCompany->oPartner->lBranches as $branch) {
+              $branch->lWhs = collect($this->getWarehouses($branch->id_branch))->keyBy('id_whs')->sortBy('whs_code');
+            }
+          }
+
+          $lCompanies[$oCompany->id_company] = $oCompany;
+        }
+
+        $iCompany = 0;
         $iBranch = 0;
         $iWarehouse = 0;
 
-        if (sizeof($lBranches) > 0) {
-          $oBranch = $lBranches[0];
-          $lWhs = $this->getWarehouses($oBranch->id_branch);
+        if (sizeof($lCompanies) > 0) {
+          $iCompany = $lUserCompany[0]->company_id;
 
-          $iBranch = $oBranch->id_branch;
-          $iWarehouse = sizeof($lWhs) > 0 ? $lWhs[0]->id_whs : 0;
-        }
-        else {
-          $lBranches = array();
-          $lWhs = array();
+          if (sizeof($lCompanies[$iCompany]->oPartner->lBranches) > 0) {
+            $first_value = reset($lCompanies[$iCompany]->oPartner->lBranches);
+            $iBranch = key($first_value);
+
+            if (sizeof($lCompanies[$iCompany]->oPartner->lBranches[$iBranch]->lWhs) > 0) {
+              $first_valueb = reset($lCompanies[$iCompany]->oPartner->lBranches[$iBranch]->lWhs);
+              $iWarehouse = key($first_valueb);
+            }
+          }
         }
 
         return view('start.select')
                   ->with('iCompany', session()->has('company') ? session('company')->id_company : $iCompany)
                   ->with('iBranch', session()->has('branch') ? session('branch')->id_branch : $iBranch)
                   ->with('iWarehouse', session()->has('whs') ? session('whs')->id_whs : $iWarehouse)
-                  ->with('lWhs', $lWhs)
-                  ->with('lBranches', $lBranches)
-                  ->with('lUserCompany', $lUserCompany);
+                  ->with('lCompanies', $lCompanies);
     }
 
     public function changeCompany($idCompany)
@@ -111,7 +123,7 @@ class SStartController extends Controller
 
       $lBranches = $lUserBranch->where('eb.is_deleted', false)
                                 ->select('eb.name', 'eb.id_branch')
-                                ->orderBy('eb.name')
+                                ->orderBy('eb.name', 'ASC')
                                 ->get();
 
       return $lBranches;
@@ -122,6 +134,7 @@ class SStartController extends Controller
       $lWhs = SWarehouse::where('is_deleted', false)
                       ->select('code AS whs_code', 'name AS whs_name', 'id_whs')
                       ->where('branch_id', $idBranch)
+                      ->orderBy('whs_code', 'ASC')
                       ->get();
 
       return $lWhs;

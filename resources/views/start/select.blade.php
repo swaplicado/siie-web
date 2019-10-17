@@ -14,10 +14,10 @@
         <select class="form-control input-lg" id="company" name="company" 
                 v-on:change="companyChanged()"
                 v-model="iCompany"
-                style="background-color: aliceblue">
-          <option v-for="company in vlUserCompanies" 
-                  :value="company.company.id_company"
-                  >@{{ company.company.name }}</option>
+                style="background-color: lightsteelblue">
+          <option v-for="company in vlCompanies" 
+                  :value="company.id_company"
+                  >@{{ company.name }}</option>
         </select>
     </div>
     <div class="form-group">
@@ -25,7 +25,7 @@
           <select class="form-control input-lg" id="branch" name="branch" 
                   v-on:change="branchChanged()"
                   v-model="iBranch"
-                  style="background-color: lightgoldenrodyellow">
+                  style="background-color: aliceblue">
             <option v-for="branch in vlBranches" :value="branch.id_branch">@{{ branch.name }}</option>
           </select>
     </div>
@@ -33,8 +33,8 @@
         {!! Form::label('whs', trans('userinterface.titles.SELECT_WHS').'*') !!}
         <select class="form-control input-lg" id="whs" name="whs" 
                 v-model="iWarehouse"
-                style="background-color: linen">
-          <option v-for="whs in vlWhs" :value="whs.id_whs">@{{ whs.whs_name }}</option>
+                style="background-color: azure">
+          <option v-for="whs in vlWarehouses" :value="whs.id_whs">@{{ whs.whs_code + '-' + whs.whs_name }}</option>
         </select>
     </div>
     <div class="form-group">
@@ -47,9 +47,7 @@
 
   <script>
     function GlobalData () {
-      this.lUserCompanies = <?php echo json_encode($lUserCompany); ?>;
-      this.lBranches = <?php echo json_encode($lBranches); ?>;
-      this.lWhs = <?php echo json_encode($lWhs); ?>;
+      this.lCompanies = <?php echo json_encode($lCompanies); ?>;
       this.iCompany = <?php echo json_encode($iCompany); ?>;
       this.iBranch = <?php echo json_encode($iBranch); ?>;
       this.iWarehouse = <?php echo json_encode($iWarehouse); ?>;
@@ -61,22 +59,3 @@
   </script>
   <script src="{{ asset('js/siie/SStart.js') }}"></script>
 @endsection
-<script>
-  /*
-
-    var iAccessId = 0;
-
-    function cli(accessId) {
-      iAccessId = accessId;
-      document.cookie = "iAccessId=" + iAccessId + "";
-    }
-  */
-    // Obtains the value of the selected item and saves it in a cookie
-    function getValue() {
-      var items = document.getElementsByClassName("list-group-item active");
-      var date = document.getElementById("work_date");
-      document.cookie = "iCompanyId=" + items[0].id;
-      document.cookie = "tWorkDate=" + date.value;
-    }
-
-</script>
