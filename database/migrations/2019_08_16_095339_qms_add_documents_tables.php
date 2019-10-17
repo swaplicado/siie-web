@@ -98,12 +98,15 @@ class QmsAddDocumentsTables extends Migration
             $table->foreign('updated_by_id')->references('id')->on(DB::connection(Config::getConnSys())->getDatabaseName().'.'.'users')->onDelete('cascade');
         });
 
-        DB::connection($this->sConnection)->table('qmss_element_types')->insert([ 
+        DB::connection($this->sConnection)->table('qmss_element_types')->insert([	
           ['id_element_type' => '1','element_type' => 'texto','table_name'=>'','is_table'=>'0','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
           ['id_element_type' => '2','element_type' => 'decimal','table_name'=>'','is_table'=>'0','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
           ['id_element_type' => '3','element_type' => 'entero','table_name'=>'','is_table'=>'0','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
           ['id_element_type' => '4','element_type' => 'fecha','table_name'=>'','is_table'=>'0','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
           ['id_element_type' => '5','element_type' => 'usuario','table_name'=>'users','is_table'=>'1','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
+          ['id_element_type' => '6','element_type' => 'análisis','table_name'=>'qms_analysis','is_table'=>'1','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
+          ['id_element_type' => '7','element_type' => 'booleano','table_name'=>'','is_table'=>'0','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
+          ['id_element_type' => '8','element_type' => 'archivo','table_name'=>'','is_table'=>'0','is_deleted' => '0','created_by_id' => '1','updated_by_id' => '1'],
         ]);
 
         Schema::connection($this->sConnection)->create('qms_doc_elements', function (blueprint $table) {	
