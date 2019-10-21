@@ -68,7 +68,9 @@
                         </td>
                         <td>
                             <a  v-if="(papeleta.body_id.length > 0)"
-                                 type="button" class="btn btn-warning" :href="'../certificates/print/' + papeleta.id_document">
+                                 type="button" class="btn btn-warning" 
+                                 {{-- :href="'../certificates/print/' + papeleta.id_document" --}}
+                                 >
                                 <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Imprimir
                             </a>
                             <label v-else>-</label>
