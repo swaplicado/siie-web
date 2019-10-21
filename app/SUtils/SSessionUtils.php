@@ -364,7 +364,7 @@ class SSessionUtils {
 
       $log_folios = session('qltydocs_folios') > 0 ? session('qltydocs_folios') : 6;
 
-      return str_pad($oFolio, $log_folios, "0", STR_PAD_LEFT);
+      return str_pad($sPallet, $log_folios, "0", STR_PAD_LEFT);
   }
 
   /**
