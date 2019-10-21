@@ -117,7 +117,7 @@ class SStartController extends Controller
 
       if (! session('utils')->isSuperUser(\Auth::user()))
       {
-        $lUserBranch = $lUserBranch->join('erpu_access_branch eab', 'eab.branch_id', '=', 'eb.id_branch')
+        $lUserBranch = $lUserBranch->join('erpu_access_branch AS eab', 'eab.branch_id', '=', 'eb.id_branch')
                                     ->where('user_id', \Auth::user()->id);
       }
 
