@@ -290,9 +290,15 @@ class SQDocumentsController extends Controller
             $oMongoDoc->usr_creation = \Auth::user()->username;
             $oMongoDoc->usr_upd = \Auth::user()->username;
 
-            $oMongoDoc->save();
+            try {
+                $oMongoDoc->save();
+                
+                $oDoc->body_id = $oMongoDoc->id;
+            }
+            catch (\Throwable $th) {
+                \Log::info($th);
+            }
 
-            $oDoc->body_id = $oMongoDoc->id;
         }
 
         $oDoc->save();
