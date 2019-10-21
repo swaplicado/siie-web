@@ -14,11 +14,14 @@ class SQMongoDoc extends Eloquent {
     protected $fillable = [
                             'lot_id',
                             'lot',
+                            'dt_expiry',
                             'lot_date',
                             'qlty_doc_id', 
                             'item_id',
                             'unit_id',
-                            'results'
+                            'results',
+                            'usr_creation',
+                            'usr,upd'
                         ];
 
 }

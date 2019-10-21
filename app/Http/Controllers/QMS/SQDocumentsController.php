@@ -217,7 +217,8 @@ class SQDocumentsController extends Controller
                                         'qqd.body_id',
                                         'wl.lot',
                                         'wl.dt_expiry',
-                                        'ei.name AS item_name'
+                                        'ei.name AS item_name',
+                                        'ei.code AS item_code'
                                     );
 
         $lQltyDocs = $lQltyDocs->get();
@@ -257,34 +258,37 @@ class SQDocumentsController extends Controller
         $oDoc->sup_process_id = $vDoc->sup_process_id;
         $oDoc->sup_production_id = $vDoc->sup_production_id;
         $oDoc->updated_by_id = \Auth::user()->id;
+        
+        $oLot = $oDoc->lot;
 
         if (strlen($oDoc->body_id) > 0) {
             $oMongoDoc = SQMongoDoc::find($oDoc->body_id);
-
-            $oLot = $oDoc->lot;
             
             $oMongoDoc->lot_date = SQDocsCore::getLotDate($oLot->lot)->format('Y-m-d');
             $oMongoDoc->lot = $oLot->lot;
+            $oMongoDoc->dt_expiry = $oLot->dt_expiry;
             $oMongoDoc->lot_id = $oDoc->lot_id;
             $oMongoDoc->item_id = $oDoc->item_id;
             $oMongoDoc->unit_id = $oDoc->unit_id;
             $oMongoDoc->qlty_doc_id = $oDoc->id_document;
             $oMongoDoc->results = $lResults;
+            $oMongoDoc->usr_upd = \Auth::user()->username;
 
             $oMongoDoc->save();
         }
         else {
             $oMongoDoc = new SQMongoDoc();
 
-            $oLot = $oDoc->lot;
-
             $oMongoDoc->lot_date = SQDocsCore::getLotDate($oLot->lot)->format('Y-m-d');
             $oMongoDoc->lot = $oLot->lot;
+            $oMongoDoc->dt_expiry = $oLot->dt_expiry;
             $oMongoDoc->lot_id = $oDoc->lot_id;
             $oMongoDoc->item_id = $oDoc->item_id;
             $oMongoDoc->unit_id = $oDoc->unit_id;
             $oMongoDoc->qlty_doc_id = $oDoc->id_document;
             $oMongoDoc->results = $lResults;
+            $oMongoDoc->usr_creation = \Auth::user()->username;
+            $oMongoDoc->usr_upd = \Auth::user()->username;
 
             $oMongoDoc->save();
 

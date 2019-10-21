@@ -46,7 +46,7 @@
     <?php echo createBlock(asset('images/wms/barcode.gif'), "codes/start",
                 trans('wms.LBL_GENERATION'), "warning3",
                 trans('wms.LBL_GENERATION_T'));?>
-    <?php echo createBlock(asset('images/wms/reports.gif'), "#",
+    <?php echo createBlock(asset('images/wms/reports.gif'), route('qms.reports.index'),
           trans('wms.REPORTS'), "warning3",
           trans('wms.REPORTS_T'));?>
   </div>

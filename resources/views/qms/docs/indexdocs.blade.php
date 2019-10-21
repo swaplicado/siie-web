@@ -46,7 +46,7 @@
                         <td>@{{ papeleta.id_document }}</td>
                         <td>@{{ papeleta.dt_document }}</td>
                         <td>@{{ papeleta.title }}</td>
-                        <td>@{{ papeleta.item_name }}</td>
+                        <td>@{{ papeleta.item_code + '-' + papeleta.item_name  }}</td>
                         <td>@{{ papeleta.lot }}</td>
                         <td>@{{ papeleta.dt_expiry }}</td>
                         <td>

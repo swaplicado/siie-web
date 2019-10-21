@@ -30,6 +30,7 @@ return [
       'VIEW_REF' => 'Rechazar codigo de barras',
       'BINNACLE' => 'Bitácora de calidad',
       'VIEW_SEGREGATE_PALLET' =>'Segregar Tarima', 
+      'REPORT_PH' =>'Reporte de PH por lote por rango de fechas', 
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
 

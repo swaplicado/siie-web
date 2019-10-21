@@ -459,6 +459,20 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SCertificatesController@print',
         'as' => 'qms.certificates.print'
       ]);
+
+      
+      /**
+       * Quality Reports
+       */
+
+      Route::get('/reports', [
+        'uses' => 'QMS\SReportsController@index',
+        'as' => 'qms.reports.index'
+      ]);
+      Route::get('/reports/ph', [
+        'uses' => 'QMS\SReportsController@lotsPh',
+        'as' => 'qms.reports.ph'
+      ]);
   });
 
 //****************************************/ Warehouses Module/*************************
