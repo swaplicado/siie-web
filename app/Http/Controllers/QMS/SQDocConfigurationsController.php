@@ -23,7 +23,7 @@ class SQDocConfigurationsController extends Controller
 
     public function __construct()
     {
-       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QUALITY'), \Config::get('scsys.MODULES.QMS'));
+       $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_CONFIG_DOCS'), \Config::get('scsys.MODULES.QMS'));
     }
 
     /**
