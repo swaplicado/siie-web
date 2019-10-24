@@ -421,6 +421,21 @@ Route::group(['prefix' => 'qms'], function () {
         'as' => 'qms.segregation.segregatePallet'
       ]);
 
+      
+      /*
+      * Analysis
+      **/
+      Route::resource('analysis','QMS\AnalysisController');
+      Route::get('analysis/{id}/destroy',[
+        'uses' => 'QMS\AnalysisController@Destroy',
+        'as'   => 'qms.analysis.destroy'
+      ]);
+      Route::get('analysis/{id}/active',[
+        'uses' => 'QMS\AnalysisController@Activate',
+        'as'   => 'qms.analysis.activate'
+      ]);
+
+
       /**
        * Quality Documents (Papeletas)
        */
@@ -455,9 +470,60 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SQDocumentsController@index',
         'as' => 'qms.qdocs.index'
       ]);
+
+      /*
+      * Configurations Analysis vs Items
+      **/
+      Route::resource('certconfigs','QMS\CertConfigsController');
+      Route::get('certconfigs/index/{at?}',[
+        'uses' => 'QMS\CertConfigsController@index',
+        'as'   => 'qms.certconfigs.index'
+      ]);
+      Route::get('certconfigs/{id}/destroy',[
+        'uses' => 'QMS\CertConfigsController@Destroy',
+        'as'   => 'qms.certconfigs.destroy'
+      ]);
+      Route::get('certconfigs/create/{at?}',[
+        'uses' => 'QMS\CertConfigsController@create',
+        'as'   => 'qms.certconfigs.create'
+      ]);
+      Route::get('certconfigs/{id}/active',[
+        'uses' => 'QMS\CertConfigsController@Activate',
+        'as'   => 'qms.certconfigs.activate'
+      ]);
+      Route::post('certconfigs/storeorg/{at?}', [
+        'uses' => 'QMS\CertConfigsController@storeOrg',
+        'as' => 'qms.certconfigs.storeorg'
+      ]);
+      Route::put('certconfigs/updorg/', [
+        'uses' => 'QMS\CertConfigsController@update',
+        'as' => 'qms.certconfigs.updorg'
+      ]);
+
+
+      /**
+       * Quality Certificates
+       */
       Route::get('/certificates/print/{id}', [
         'uses' => 'QMS\SCertificatesController@print',
         'as' => 'qms.certificates.print'
+      ]);
+      Route::get('/certificates/config', [
+        'uses' => 'QMS\SCertificatesController@config',
+        'as' => 'qms.certificates.config'
+      ]);
+
+      /*
+      * Results of lots analysis
+      **/
+      Route::resource('results','QMS\SResultsController');
+      Route::get('results/create/{id_lot}/{id_type}',[
+        'uses' => 'QMS\SResultsController@create',
+        'as'   => 'qms.results.create'
+      ]);
+      Route::get('/results/print/{id_lot}', [
+      	'uses' => 'QMS\SResultsController@Print',
+      	'as' => 'qms.results.print'
       ]);
 
       

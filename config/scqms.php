@@ -40,15 +40,21 @@ return [
                       'BY_ONLY_LOT'=>'2',
                   ],
 
+    'ANALYSIS_TYPE' => [
+                        'FQ'=>'1',
+                        'MB'=>'2',
+                        'OL'=>'3',
+                    ],
+
     'ELEM_TYPE' => [
-        'TEXT'=>1,
-        'DECIMAL'=>2,
-        'INT'=>3,
-        'DATE'=>4,
-        'USER'=>5,
-        'ANALYSIS'=>6,
-        'BOOL'=>7,
-        'FILE'=>8,
-                  ],
+                        'TEXT'=>1,
+                        'DECIMAL'=>2,
+                        'INT'=>3,
+                        'DATE'=>4,
+                        'USER'=>5,
+                        'ANALYSIS'=>6,
+                        'BOOL'=>7,
+                        'FILE'=>8,
+                    ],
 
 ];

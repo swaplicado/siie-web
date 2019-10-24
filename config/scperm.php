@@ -63,6 +63,7 @@ return [
                   'QUALITY' => '050',
                   'QMS_CONFIG_DOCS' => '051',
                   'QMS_DOCUMENTS' => '052',
+                  'QMS_CERTIFICATES' => '053',
                   'QMS_REPORTS' => '070',
                   'MMS_FORMULAS' => '120',
                   'MMS_PRODUCTION_PLANES' => '121',

@@ -340,6 +340,28 @@ class SGuiUtils {
     }
 
     /**
+     * get the date period based in parameter range format string
+     * get the work date in session and add and sustract number of days of parameter
+     * work date: 03-04-2019 returns 19/03/2019 - 18/04/2019
+     *
+     * @return string [dd/mm/yyyy - dd/mm/yyyy]
+     */
+    public static function getPeriodSinceWorkDate($iDays)
+    {
+       if (! is_int($iDays)) {
+          return SGuiUtils::getCurrentMonth();
+       }
+
+       $tWDs = clone session('work_date');
+       $tWDe = clone session('work_date');
+
+       $sStartDate = $tWDs->subDays($iDays)->format('d/m/Y');
+       $sEndDate = $tWDe->addDays($iDays)->format('d/m/Y');
+
+       return $sStartDate.' - '.$sEndDate;
+    }
+
+    /**
      * gets the date of the last day of month and year received
      *
      * @param  integer $iMonth

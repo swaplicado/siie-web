@@ -5,8 +5,15 @@
 return [
       'MODULE'  => 'Módulo Calidad',
 
+      'ANALYSIS' => 'Análisis',
+      'ANALYSIS_BY_LOT' => 'Análisis por lote',
+      'ANALYSIS_CONFIG' => 'Configuración',
+      'ANALYSIS_TYPE' => 'Tipo de análisis',
+      'ANALYSIS_VS_ITEMS' => 'Análisis vs Ítems',
       'CFG' => 'Configuración',
       'CFG_DOCS' => 'Configuración de papeletas',
+      'CFG_CERTIFICATES' => 'Configuración de certificados',
+      'ORG_VS_ITEMS' =>'Configuración Organolépticos', 
       'QLTY_DOCS' => 'Papeletas',
       'QLTY_DOC' => 'Papeleta',
       'QRY_BY_STATUS' => 'Productos por estatus',
@@ -31,10 +38,32 @@ return [
       'BINNACLE' => 'Bitácora de calidad',
       'VIEW_SEGREGATE_PALLET' =>'Segregar Tarima', 
       'REPORT_PH' =>'Reporte de PH por lote por rango de fechas', 
+      'RESULTS' => 'Resultados',
       'STOCK_QUALITY' => 'Existencias en Calidad',
       'STOCK_QUALITY_CB' => 'Existencias con codigo de barras',
 
       'placeholders'  =>  [
                             'SELECT_STATUS' => 'Seleccione status',
                           ],
+
+      'titles'  => [
+            'CREATE_ANALYSIS' => 'Crear análisis',
+            'EDIT_ANALYSIS' => 'Editar análisis',
+            'CAPTURE_RESULTS' => 'Captura de Resultados',
+          ],
+
+      'labels'  => [
+            'ANALYSIS_NAME' => 'Nombre de análisis',
+            'ANALYSIS_TYPE' => 'Tipo de análisis',
+            'STANDARD' => 'Norma',
+            'SPECIFICATION' => 'Especificación',
+            'MIN_VALUE' => 'Valor mínimo',
+            'MAX_VALUE' => 'Valor máximo',
+            'RESULT_UNIT' => 'Unidad de resultado',
+            'PHYSIOCHEMICAL' => 'Fisicoquímico',
+            'PHYSIOCHEMICALS' => 'FISICOQUÍMICOS',
+            'MICROBIOLOGICAL' => 'Microbiológico',
+            'MICROBIOLOGICALS' => 'MICROBIOLÓGICOS',
+            'QLTY_CERTIFICATE' => 'Certificado de Calidad',
+      ],
 ];

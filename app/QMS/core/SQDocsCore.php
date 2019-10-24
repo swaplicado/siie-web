@@ -17,28 +17,10 @@ class SQDocsCore {
 
     public static function getConfigurations(SProductionOrder $father = null, SProductionOrder $son = null)
     {
-        $lItemData = \DB::connection(session('db_configuration')->getConnCompany())
-                            ->table('erpu_items as ei')
-                            ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
-                            ->join('erpu_item_groups as eigr', 'eig.item_group_id', '=', 'eigr.id_item_group')
-                            // ->join('erps_item_types as eit', 'eig.item_type_id', '=', 'eit.id_item_type')
-                            // ->join('erps_item_classes as eic', 'eig.item_class_id', '=', 'eic.id_item_class');
-                            ->select('id_item',
-                                    'id_item_gender',
-                                    'item_group_id',
-                                    'item_class_id',
-                                    'item_family_id',
-                                    'item_type_id'
-                                    );
-
-        $lItemDataf = clone $lItemData;
-                                    
-        $itemFather = $lItemData->where('ei.id_item', $father->item_id)
-                                ->first();
+        $itemFather = SQDocsCore::getItemData($father->item_id);
         
         if ($son != null) {
-            $itemSon = $lItemDataf->where('ei.id_item', $son->item_id)
-                                    ->first();
+            $itemSon = SQDocsCore::getItemData($son->item_id);
 
             $item = $itemSon->id_item;
             $gender = $itemSon->id_item_gender;
@@ -187,5 +169,27 @@ class SQDocsCore {
         $carbonDate = Carbon::createFromDate('20'.$year, $month, $day);
 
         return $carbonDate;
+    }
+
+    public static function getItemData(int $itemId = 0)
+    {
+        $lItemData = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('erpu_items as ei')
+                            ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
+                            ->join('erpu_item_groups as eigr', 'eig.item_group_id', '=', 'eigr.id_item_group')
+                            // ->join('erps_item_types as eit', 'eig.item_type_id', '=', 'eit.id_item_type')
+                            // ->join('erps_item_classes as eic', 'eig.item_class_id', '=', 'eic.id_item_class');
+                            ->select('id_item',
+                                    'id_item_gender',
+                                    'item_group_id',
+                                    'item_class_id',
+                                    'item_family_id',
+                                    'item_type_id'
+                                    );
+                                    
+        $lItemData = $lItemData->where('ei.id_item', $itemId)
+                                ->first();
+
+        return $lItemData;
     }
 }
