@@ -115,8 +115,13 @@ var docsApp = new Vue({
           }
         })
         .then(res => {
-            this.lResults[idConf + "_" + idField].data = res.data;
-            oGui.showOk();
+            if (res.data == 'Error') {
+              oGui.showError('Verifique que sea un formato de imagen válido y que el tamaño del archivo no sea mayor a 2048 KB');
+            }
+            else {
+              this.lResults[idConf + "_" + idField].data = res.data;
+              oGui.showOk();
+            }
         })
         .catch(function (error) {
             console.log(error);

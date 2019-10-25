@@ -62,9 +62,11 @@
                             <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-default">
+                            <a type="button" class="btn btn-default"
+                                :href="'../qdocs/show/' + papeleta.id_document"
+                            >
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
-                            </button>
+                            </a>
                         </td>
                         <td>
                             <a target="_blank" v-if="(papeleta.body_id.length > 0)"

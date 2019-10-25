@@ -34,7 +34,7 @@ class CertConfigsController extends Controller
 
     public function __construct()
     {
-        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_CERTIFICATES'), \Config::get('scsys.MODULES.QMS'));
+        $this->oCurrentUserPermission = SProcess::constructor($this, \Config::get('scperm.PERMISSION.QMS_ANALYSIS_CONFIGURATION'), \Config::get('scsys.MODULES.QMS'));
 
         $this->iFilter = \Config::get('scsys.FILTER.ACTIVES');
         $this->iAnaType = 0;

@@ -49,7 +49,9 @@ class SCertificatesController extends Controller
 
         $aItemData = SQDocsCore::getItemData($oDoc->item_id);
 
-        $lConfigs = SCertConfig::where('is_deleted', false)
+        $lConfigs = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('qms_cert_configurations as qcc')
+                            ->where('qcc.is_deleted', false)
                             ->where(function ($query) use ($aItemData) {
 
                                 $query->where(function ($query) use ($aItemData) {
@@ -83,9 +85,25 @@ class SCertificatesController extends Controller
 
                                 });
 
-        $lConfigsAnalysis = $lConfigs->select('analysis_id')->get()->toArray();
+        $lConfigsAnalysis = $lConfigs->lists('qcc.analysis_id');
 
-        $oMongoDoc = SQMongoDoc::where('lot_id', $oDoc->lot_id)->first();
+        $lData = $lConfigs->join('qms_analysis as qa', 'qcc.analysis_id', '=', 'qa.id_analysis')
+                            ->join('qmss_analysis_types as qat', 'qa.type_id', '=', 'qat.id_analysis_type')
+                            ->where('qa.is_deleted', false)
+                            ->where('qat.is_deleted', false);
+
+        $lFQResults = $lData->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.FQ'))
+                        ->get();
+
+        $lMBResults = $lData->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.MB'))
+                        ->get();
+
+        $lOLResults = $lData->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.OL'))
+                        ->get();
+
+        $oMongoDoc = SQMongoDoc::where('lot_id', $oDoc->lot_id)
+                                    ->orderBy('updated_at', 'DESC')
+                                    ->first();
 
         $lResults = array();
         foreach ($oMongoDoc->results as $result) {

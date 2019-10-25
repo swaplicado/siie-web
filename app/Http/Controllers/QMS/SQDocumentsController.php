@@ -201,6 +201,12 @@ class SQDocumentsController extends Controller
                     ->with('aData', $lData);
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param Request $request
+     * @return void
+     */
     public function docs(Request $request)
     {
         $this->iFilter = $request->filter == null ? \Config::get('scsys.FILTER.ACTIVES') : $request->filter;
@@ -324,12 +330,81 @@ class SQDocumentsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $idQltyDoc
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($idQltyDoc)
     {
-        //
+        $oQualityDocument = SQDocument::find($idQltyDoc);
+        
+        $lData = \DB::connection(session('db_configuration')->getConnCompany())
+                            ->table('qms_quality_documents as qqd')
+                            ->join('wms_lots as wl', 'qqd.lot_id', '=', 'wl.id_lot')
+                            ->join('mms_production_orders as mpof', 'qqd.father_po_id', '=', 'mpof.id_order')
+                            ->join('mms_production_orders as mpos', 'qqd.son_po_id', '=', 'mpos.id_order')
+                            ->join('erpu_items as ei', 'qqd.item_id', '=', 'ei.id_item')
+                            ->join('erpu_units as eu', 'qqd.unit_id', '=', 'eu.id_unit')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as sq', 'qqd.sup_quality_id', '=', 'sq.id')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as sp', 'qqd.sup_process_id', '=', 'sp.id')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as supp', 'qqd.sup_production_id', '=', 'supp.id')
+                            ->select(
+                                    'qqd.id_document',
+                                    'qqd.dt_document',
+                                    'qqd.body_id',
+                                    'qqd.title',
+                                    'wl.lot',
+                                    'wl.dt_expiry',
+                                    'mpof.folio AS father_folio',
+                                    'mpof.identifier AS father_idr',
+                                    'mpof.date AS father_date',
+                                    'mpos.folio AS son_folio',
+                                    'mpos.identifier AS son_idr',
+                                    'mpos.date AS son_date',
+                                    'ei.name AS item',
+                                    'ei.code AS item_code',
+                                    'eu.name AS unit',
+                                    'eu.code AS unit_code',
+                                    'sq.username AS sup_quality',
+                                    'sq.id AS sup_quality_id',
+                                    'sp.username AS sup_process',
+                                    'sp.id AS sup_process_id',
+                                    'supp.username AS sup_production',
+                                    'supp.id AS sup_production_id'
+                            );
+        
+        $lData = $lData->where('qqd.id_document', $idQltyDoc)
+                        ->first();
+
+        $lUsers = User::where('is_deleted', false)
+                            ->select('username', 'id')
+                            ->orderBy('username', 'ASC')
+                            ->whereNotIn('username', ['admin', 'adminswap', 
+                                                        'saporis', 'contraloria',
+                                                        'swap',
+                                                        'consultas', 'manager'])
+                            ->get();
+        $oFatherPo = SProductionOrder::find($oQualityDocument->father_po_id);
+        $oSonPo = SProductionOrder::find($oQualityDocument->son_po_id);
+
+        $aResult = SQDocsCore::getConfigurations($oFatherPo, $oSonPo);
+
+        /**
+         * Creation of MongoDB Document
+         */
+        if (strlen($oQualityDocument->body_id) > 0) {
+            $oMongoDocument = SQMongoDoc::find($oQualityDocument->body_id);
+        }
+        else {
+            $oMongoDocument = null;
+        }
+
+        return view('qms.docs.index')
+                    ->with('oQDocument', $oQualityDocument)
+                    ->with('oMongoDocument', $oMongoDocument)
+                    ->with('lSections', $aResult[0])
+                    ->with('lConfigurations', $aResult[1])
+                    ->with('lUsers', $lUsers)
+                    ->with('aData', $lData);
     }
 
     /**

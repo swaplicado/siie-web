@@ -470,6 +470,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SQDocumentsController@index',
         'as' => 'qms.qdocs.index'
       ]);
+      Route::get('/qdocs/show/{id}', [
+        'uses' => 'QMS\SQDocumentsController@Show',
+        'as' => 'qms.qdocs.show'
+      ]);
 
       /*
       * Configurations Analysis vs Items
