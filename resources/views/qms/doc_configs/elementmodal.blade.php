@@ -10,7 +10,7 @@
       </div>
       <div class="modal-body">
         <label for="title">Seleccione elemento</label>
-        <select v-model="oElement" class="form-control" id="id_section" :required="true">
+        <select v-model="oElement" class="form-control" id="id_section" :required="true" v-on:change="changeElement()">
             <option v-for="oElem in lAllElements"
                     v-bind:value="oElem"
             >
@@ -31,7 +31,7 @@
             </option>
         </select>
         <br/>
-        <input type="checkbox" v-model="isAnalysis" :checked="oElement.analysis_id > 1">
+        <input type="checkbox" v-model="isAnalysis" :checked="oElement.analysis_id > 0">
         <label for="checkbox">Es análisis</label>
         <br/>
         <div v-if="isAnalysis">

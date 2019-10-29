@@ -28,10 +28,12 @@ class SQDocConfigurationsController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    *
+    * @param int $cfgZone
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function index($cfgZone)
     {
         $lElementTypes = SElementType::where('is_deleted', false)
                                         ->select('id_element_type', 'element_type', 'table_name', 'is_table')
@@ -54,6 +56,7 @@ class SQDocConfigurationsController extends Controller
                                     ->get();
 
         return view('qms.doc_configs.index')
+                    ->with('cfgZone', $cfgZone)
                     ->with('lAllAnalysis', $lAllAnalysis)
                     ->with('lElementTypes', $lElementTypes);
     }
@@ -143,6 +146,7 @@ class SQDocConfigurationsController extends Controller
     {
         $iLinkType = $request->linkType;
         $iLinkId = $request->link;
+        $iZone = $request->zone;
 
         $lConfigurations = \DB::connection(session('db_configuration')->getConnCompany())
                                     ->table('qms_doc_configurations as qdc')
@@ -151,6 +155,7 @@ class SQDocConfigurationsController extends Controller
                                     ->join('qmss_element_types as qet', 'qde.element_type_id', '=', 'qet.id_element_type')
                                     ->where('item_link_type_id', $iLinkType)
                                     ->where('item_link_id', $iLinkId)
+                                    ->where('qdc.config_zone_id', $iZone)
                                     ->where('qdc.is_deleted', false)
                                     ->select(
                                         'qdc.id_configuration',

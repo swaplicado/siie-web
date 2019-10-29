@@ -20,6 +20,7 @@ class SQMongoDoc extends Eloquent {
                             'item_id',
                             'unit_id',
                             'results',
+                            'resultsMb',
                             'usr_creation',
                             'usr,upd'
                         ];

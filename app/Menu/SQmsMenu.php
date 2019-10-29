@@ -25,7 +25,9 @@ class SQmsMenu {
                     ->addParentClass('dropdown-submenu')
                     ->addClass('dropdown-menu')
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CONFIG_DOCS')),
-                      Link::toRoute('qms.configdocs.index', trans('qms.CFG_DOCS')))
+                            Link::toRoute('qms.configdocs.indext', trans('qms.CFG_DOCS').' FQ', [\Config::get('scqms.CFG_ZONE.FQ')]))
+                    ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CONFIG_DOCS')),
+                            Link::toRoute('qms.configdocs.indext', trans('qms.CFG_DOCS').' MB', [\Config::get('scqms.CFG_ZONE.MB')]))
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS')),
                             Link::toRoute('qms.analysis.index', trans('qms.ANALYSIS')))
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CERTIFICATES')),

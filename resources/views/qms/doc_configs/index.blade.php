@@ -91,6 +91,7 @@
             this.scwms = <?php echo json_encode(\Config::get('scwms')) ?>;
             this.lElementTypes = <?php echo json_encode($lElementTypes) ?>;
             this.lAllAnalysis = <?php echo json_encode($lAllAnalysis) ?>;
+            this.cfgZone = <?php echo json_encode($cfgZone) ?>;
         }
 
         var oGD = new GlobalData();

@@ -20,15 +20,15 @@ var app = new Vue({
                             'b_class': 'btn btn-danger btn-lg btn-block'
                         },
                         {
-                            'id_link_type': 6,
-                            'id_link': 64,
-                            'name': 'Aerosol',
+                            'id_link_type': 4,
+                            'id_link': 4,
+                            'name': 'Aerosoles',
                             'b_class': 'btn btn-success btn-lg btn-block'
                         },
                         {
-                            'id_link_type': 1,
-                            'id_link': 1,
-                            'name': 'Saborizados',
+                            'id_link_type': 6,
+                            'id_link': 14,
+                            'name': 'Aceites Saborizados',
                             'b_class': 'btn btn-info btn-lg btn-block'
                         },
                         {
@@ -89,10 +89,11 @@ var app = new Vue({
             this.lSections = [];
 
             oGui.showLoading(5000);
-            axios.get('../qms/configdocs/getsectionsdata', {
+            axios.get('../configdocs/getsectionsdata', {
                     params: {
                         linkType: iLinkType,
-                        link: iLink
+                        link: iLink,
+                        zone: oGD.cfgZone
                     }
                 })
                 .then(res => {
@@ -147,7 +148,7 @@ var app = new Vue({
 
             oGui.showLoading(5000);
 
-            axios.get('../qms/configdocs/getfields', {
+            axios.get('../configdocs/getfields', {
                 params: {
                     ielement: this.oConfiguration.id_element
                 }
@@ -181,7 +182,7 @@ var app = new Vue({
         newSection() {
             oGui.showLoading(5000);
 
-            axios.post('../qms/sections', {
+            axios.post('../sections', {
                 title: this.oSection.title,
                 dt_section: this.oSection.dt_section,
                 comments: this.oSection.comments
@@ -233,7 +234,7 @@ var app = new Vue({
         newElement() {
             oGui.showLoading(5000);
 
-            axios.post('../qms/elements', {
+            axios.post('../elements', {
                 element: this.oElement.element,
                 n_values: this.oElement.n_values,
                 element_type_id: this.oElement.element_type_id,
@@ -248,17 +249,21 @@ var app = new Vue({
                 console.log(error);
             });
         },
+        changeElement() {
+            this.isAnalysis = this.oElement.analysis_id > 0;
+        },
         /**
          * create a new configuration and save it in the database
          */
         newConfiguration() {
             oGui.showLoading(5000);
 
-            axios.post('../qms/configdocs', {
+            axios.post('../configdocs', {
                 item_link_type_id: this.aCurConfig[0],
                 item_link_id: this.aCurConfig[1],
                 section_id: this.iCurSection,
-                element_id: this.oElement.id_element
+                element_id: this.oElement.id_element,
+                config_zone_id: oGD.cfgZone
             })
             .then(res => {
                 let obj = res.data;
@@ -279,7 +284,7 @@ var app = new Vue({
         removeConfiguration(idConfiguration) {
             oGui.showLoading(5000);
 
-            axios.delete('../qms/configdocs/' + idConfiguration)
+            axios.delete('../configdocs/' + idConfiguration)
             .then(res => {
                 let obj = res.data;
 
@@ -316,7 +321,7 @@ var app = new Vue({
             oGui.showLoading(5000);
 
             let jfields = JSON.stringify(this.lFields);
-            axios.post('../qms/elements', {
+            axios.post('../elements', {
                 fields: jfields,
                 element: this.oConfiguration.id_element
             })
@@ -359,7 +364,7 @@ var app = new Vue({
                     return;
                 }
 
-                axios.delete('../qms/elementfield/' + idField)
+                axios.delete('../elementfield/' + idField)
                 .then(res => {
                     let obj = res.data;
 

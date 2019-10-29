@@ -46,6 +46,12 @@ return [
                         'OL'=>'3',
                     ],
 
+    'CFG_ZONE' => [
+                        'FQ'=>'1',
+                        'MB'=>'2',
+                        'OL'=>'3',
+                    ],
+
     'ELEM_TYPE' => [
                         'TEXT'=>1,
                         'DECIMAL'=>2,

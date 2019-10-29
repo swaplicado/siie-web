@@ -63,7 +63,7 @@
                         </td>
                         <td>
                             <a type="button" class="btn btn-default"
-                                :href="'../qdocs/show/' + papeleta.id_document"
+                                :href="'../qdocs/show/' + papeleta.id_document + '/' + oData.scqms.ANALYSIS_TYPE.FQ"
                             >
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
                             </a>

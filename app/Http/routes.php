@@ -448,6 +448,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' =>  'QMS\SQDocConfigurationsController@getFields',
         'as' => 'qms.configdocs.getfields'
       ]);
+      Route::get('/configdocs/{cfgZone}', [
+        'uses' => 'QMS\SQDocConfigurationsController@index',
+        'as' => 'qms.configdocs.indext'
+      ]);
       Route::resource('configdocs','QMS\SQDocConfigurationsController');
 
       Route::resource('sections','QMS\SDocSectionsController');
@@ -466,11 +470,11 @@ Route::group(['prefix' => 'qms'], function () {
         'as' => 'qms.qdocs.image'
       ]);
       Route::resource('qdocs','QMS\SQDocumentsController');
-      Route::get('/qdocs/index/{fathero}/{sono}/{folio}', [
+      Route::get('/qdocs/index/{fathero}/{sono}/{folio}/{cfgZone}', [
         'uses' => 'QMS\SQDocumentsController@index',
         'as' => 'qms.qdocs.index'
       ]);
-      Route::get('/qdocs/show/{id}', [
+      Route::get('/qdocs/show/{id}/{cfgZone}', [
         'uses' => 'QMS\SQDocumentsController@Show',
         'as' => 'qms.qdocs.show'
       ]);

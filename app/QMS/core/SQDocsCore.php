@@ -15,7 +15,7 @@ use App\WMS\SWmsLot;
  */
 class SQDocsCore {
 
-    public static function getConfigurations(SProductionOrder $father = null, SProductionOrder $son = null)
+    public static function getConfigurations(SProductionOrder $father = null, SProductionOrder $son = null, int $cfgZone = 0)
     {
         $itemFather = SQDocsCore::getItemData($father->item_id);
         
@@ -45,6 +45,7 @@ class SQDocsCore {
                             ->join('qms_doc_elements as qde', 'qdc.element_id', '=', 'qde.id_element')
                             ->join('qmss_element_types as qet', 'qde.element_type_id', '=', 'qet.id_element_type')
                             ->where('qdc.is_deleted', false)
+                            ->where('qdc.config_zone_id', $cfgZone)
                             ->where(function ($query) use ($itemFather, $itemSon) {
 
                                 $query->where(function ($query) use ($itemFather) {

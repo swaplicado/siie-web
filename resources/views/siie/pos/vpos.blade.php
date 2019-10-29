@@ -54,16 +54,20 @@
                                 <td>{{ $oPO->lot }}</td>
                                 <td>
                                     @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QUALITY')))
-                                        <a class="btn btn-warning btn-xs" title="Papeleta calidad"
-                                            href="{{ route('qms.qdocs.index', [$oPO->father_order_id, $oPO->id_order, $oPO->lot_id]) }}">
-                                            <span class="glyphicon glyphicon-file" aria-hidden = "true"/>
+                                        <a class="btn btn-warning btn-xs" title="Papeleta FQ"
+                                            href="{{ route('qms.qdocs.index', [$oPO->father_order_id, $oPO->id_order, $oPO->lot_id, \Config::get('scqms.CFG_ZONE.FQ')]) }}">
+                                            <span class="glyphicon glyphicon-file" aria-hidden = "true"></span>
+                                        </a>
+                                        <a class="btn btn-warning btn-xs" title="Papeleta MB"
+                                            href="{{ route('qms.qdocs.index', [$oPO->father_order_id, $oPO->id_order, $oPO->lot_id, \Config::get('scqms.CFG_ZONE.MB')]) }}">
+                                            <span class="glyphicon glyphicon-check" aria-hidden = "true"></span>
                                         </a>
                                     @endif
                                     @if ($oPO->lot_id > 1)
                                         @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.MMS_PROD_ORDERS_ASSIGNAMENTS')))
                                             <a class="btn btn-primary btn-xs" title="Entrada por producción"
                                                 href="{{ route('wms.movs.create', [\Config::get('scwms.MVT_IN_DLVRY_FP'), trans('mms.DELIVERY_FP'), $oPO->id_order]) }}">
-                                                <span class="glyphicon glyphicon-arrow-right" aria-hidden = "true"/>
+                                                <span class="glyphicon glyphicon-arrow-right" aria-hidden = "true"></span>
                                             </a>
                                         @endif
                                     @endif
@@ -78,9 +82,13 @@
                                 <td></td>
                                 <td>
                                     @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QUALITY')))
-                                        <a class="btn btn-warning btn-xs" title="Papeleta calidad"
-                                            href="{{ route('qms.qdocs.index', [$oPO->id_order, 0, 0]) }}">
-                                            <span class="glyphicon glyphicon-file" aria-hidden = "true"/>
+                                        <a class="btn btn-warning btn-xs" title="Papeleta FQ"
+                                            href="{{ route('qms.qdocs.index', [$oPO->id_order, 0, 0, \Config::get('scqms.CFG_ZONE.FQ')]) }}">
+                                            <span class="glyphicon glyphicon-file" aria-hidden = "true"></span>
+                                        </a>
+                                        <a class="btn btn-warning btn-xs" title="Papeleta MB"
+                                            href="{{ route('qms.qdocs.index', [$oPO->id_order, 0, 0, \Config::get('scqms.CFG_ZONE.MB')]) }}">
+                                            <span class="glyphicon glyphicon-check" aria-hidden = "true"></span>
                                         </a>
                                     @endif
                                 </td>

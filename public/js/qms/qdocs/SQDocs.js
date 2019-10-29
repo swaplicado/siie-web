@@ -37,9 +37,10 @@ var docsApp = new Vue({
           aResults.push(res);
         }
 
-        axios.post('../../../../qdocs', {
+        axios.post('../../../../../qdocs', {
           vdoc: JSON.stringify(this.vDocument),
           configurations: JSON.stringify(this.vlConfigurations),
+          zone: JSON.stringify(oData.cfgZone),
           results: JSON.stringify(aResults)
         })
         .then(res => {
@@ -130,7 +131,7 @@ var docsApp = new Vue({
     },
     mounted: function () {
       let results = [];
-      if (this.vMongoDocument == null) {
+      if (this.vMongoDocument == null || (this.vMongoDocument != null && this.vMongoDocument.results == undefined)) {
         for (const config of this.vlConfigurations) {
           for (const field of config.lFields) {
             let oResult = new SResult(config.id_configuration, field.id_field, null);
@@ -183,6 +184,7 @@ var docsApp = new Vue({
             oResult.is_table = config.is_table;
             oResult.table_name = config.table_name;
             oResult.dt_date = new Date();
+            oResult.config_zone_id = oData.zfgZone;
 
             results['' + config.id_configuration + '_' + field.id_field] = oResult;
           }
@@ -192,7 +194,20 @@ var docsApp = new Vue({
         this.lResults = results;
       }
       else {
-        let results = this.vMongoDocument.results;
+        let results = []
+        switch (oData.cfgZone) {
+          case oData.scqms.CFG_ZONE.FQ:
+            results = this.vMongoDocument.results;
+            break;
+
+          case oData.scqms.CFG_ZONE.MB:
+            results = this.vMongoDocument.resultsMb;
+            break;
+        
+          default:
+            break;
+        }
+
         let aResults = [];
         for (const res of results) {
           aResults['' + res.id_configuration + '_' + res.id_field] = res;

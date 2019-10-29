@@ -15,6 +15,7 @@ class SQDocConfiguration extends SModel {
                             'item_link_id',
                             'section_id',
                             'element_id',
+                            'config_zone_id',
                             'created_by_id',
                             'updated_by_id',
                         ];

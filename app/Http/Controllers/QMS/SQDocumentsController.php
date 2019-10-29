@@ -36,10 +36,15 @@ class SQDocumentsController extends Controller
      * @param [type] $fathero
      * @param [type] $sono
      * @param [type] $lot
+     * @param int $cfgZone {
+    *              \Config::get('scqms.CFG_ZONE.FQ')
+    *              \Config::get('scqms.CFG_ZONE.QB')
+    *              \Config::get('scqms.CFG_ZONE.OL')
+     *          }
      * 
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, $fathero, $sono, $lot)
+    public function index(Request $request, $fathero, $sono, $lot, $cfgZone)
     {
         SConnectionUtils::reconnectCompany();
 
@@ -190,11 +195,12 @@ class SQDocumentsController extends Controller
                                                         'consultas', 'manager'])
                             ->get();
 
-        $aResult = SQDocsCore::getConfigurations($oFatherPo, $oSonPo);
+        $aResult = SQDocsCore::getConfigurations($oFatherPo, $oSonPo, $cfgZone);
 
         return view('qms.docs.index')
                     ->with('oQDocument', $oDoc)
                     ->with('oMongoDocument', $oMongoDocument)
+                    ->with('cfgZone', $cfgZone)
                     ->with('lSections', $aResult[0])
                     ->with('lConfigurations', $aResult[1])
                     ->with('lUsers', $lUsers)
@@ -257,6 +263,7 @@ class SQDocumentsController extends Controller
         $vDoc = json_decode($request->vdoc);
         $lResults = json_decode($request->results);
         $lConfigs = json_decode($request->configurations);
+        $iZone = json_decode($request->zone);
 
         $oDoc = SQDocument::find($vDoc->id_document);
 
@@ -277,7 +284,20 @@ class SQDocumentsController extends Controller
             $oMongoDoc->item_id = $oDoc->item_id;
             $oMongoDoc->unit_id = $oDoc->unit_id;
             $oMongoDoc->qlty_doc_id = $oDoc->id_document;
-            $oMongoDoc->results = $lResults;
+            
+            switch ($iZone) {
+                case \Config::get('scqms.CFG_ZONE.FQ'):
+                    $oMongoDoc->results = $lResults;
+                    break;
+                case \Config::get('scqms.CFG_ZONE.MB'):
+                    $oMongoDoc->resultsMb = $lResults;
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+
             $oMongoDoc->usr_upd = \Auth::user()->username;
 
             $oMongoDoc->save();
@@ -292,7 +312,20 @@ class SQDocumentsController extends Controller
             $oMongoDoc->item_id = $oDoc->item_id;
             $oMongoDoc->unit_id = $oDoc->unit_id;
             $oMongoDoc->qlty_doc_id = $oDoc->id_document;
-            $oMongoDoc->results = $lResults;
+
+            switch ($iZone) {
+                case \Config::get('scqms.CFG_ZONE.FQ'):
+                    $oMongoDoc->results = $lResults;
+                    break;
+                case \Config::get('scqms.CFG_ZONE.MB'):
+                    $oMongoDoc->resultsMb = $lResults;
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+
             $oMongoDoc->usr_creation = \Auth::user()->username;
             $oMongoDoc->usr_upd = \Auth::user()->username;
 
@@ -331,9 +364,15 @@ class SQDocumentsController extends Controller
      * Display the specified resource.
      *
      * @param  int  $idQltyDoc
+     * @param  int  $cfgZone
+     *              {
+     *               \Config::get('scqms.CFG_ZONE.FQ')
+     *               \Config::get('scqms.CFG_ZONE.QB')
+     *               \Config::get('scqms.CFG_ZONE.OL')
+     *              }
      * @return \Illuminate\Http\Response
      */
-    public function show($idQltyDoc)
+    public function show($idQltyDoc, $cfgZone)
     {
         $oQualityDocument = SQDocument::find($idQltyDoc);
         
@@ -401,6 +440,7 @@ class SQDocumentsController extends Controller
         return view('qms.docs.index')
                     ->with('oQDocument', $oQualityDocument)
                     ->with('oMongoDocument', $oMongoDocument)
+                    ->with('cfgZone', $cfgZone)
                     ->with('lSections', $aResult[0])
                     ->with('lConfigurations', $aResult[1])
                     ->with('lUsers', $lUsers)

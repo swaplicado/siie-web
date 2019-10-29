@@ -23,6 +23,7 @@
             this.lConfigurations = <?php echo json_encode($lConfigurations) ?>;
             this.data = <?php echo json_encode($aData) ?>;
             this.lUsers = <?php echo json_encode($lUsers) ?>;
+            this.cfgZone = <?php echo json_encode($cfgZone) ?>;
         }
 
         var oData = new GlobalData();
