@@ -60,6 +60,7 @@ return [
                   'TRANSFERS_EXTERNAL' => '014',
                   'PALLET_RECONFIG' => '015',
                   'INVENTORY_OPERATION' => '016',
+                  'ERP_SIGNATURE_AUTHORIZATION' => '151',
                   'QUALITY' => '050',
                   'QMS_CONFIG_DOCS' => '051',
                   'QMS_DOCUMENTS' => '052',

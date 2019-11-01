@@ -22,6 +22,7 @@ class SQDocument extends SModel {
                             'sup_quality_id',
                             'sup_process_id',
                             'sup_production_id',
+                            'signature_mb_id',
                             'created_by_id',
                             'updated_by_id',
                           ];

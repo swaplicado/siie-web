@@ -30,36 +30,28 @@
                     <tr>
                         <th>Folio</th>
                         <th>Fecha Papeleta</th>
-                        <th>Nombre</th>
+                        {{-- <th>Nombre</th> --}}
                         <th>Producto</th>
                         <th>Lote</th>
                         <th>Caducidad</th>
                         <th>Firmas</th>
-                        <th>Firmas I</th>
-                        <th>Firmas II</th>
                         <th>Ver</th>
                         <th>Certificado</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="papeleta in vlPapeletas">
-                        <td>@{{ papeleta.id_document }}</td>
+                        <td>@{{ oGui.pad(papeleta.id_document, 6) }}</td>
                         <td>@{{ papeleta.dt_document }}</td>
-                        <td>@{{ papeleta.title }}</td>
+                        {{-- <td>@{{ papeleta.title }}</td> --}}
                         <td>@{{ papeleta.item_code + '-' + papeleta.item_name  }}</td>
                         <td>@{{ papeleta.lot }}</td>
                         <td>@{{ papeleta.dt_expiry }}</td>
                         <td>
                             <button type="button" class="btn btn-info btn-sm" aria-label="Firmas" 
-                                    data-toggle="modal" data-target="#sigModal">
+                                v-on:click="showSignatures(papeleta)">
                                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                             </button>
-                        </td>
-                        <td>
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                        </td>
-                        <td>
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                         </td>
                         <td>
                             <a type="button" class="btn btn-default"
@@ -87,16 +79,21 @@
 @endsection
     
 @section('js')
+    <script src="{{ asset('js/qms/qdocs/objs/SGui.js') }}"></script>
+    <script src="{{ asset('js/qms/qdocs/objs/SQDocument.js') }}"></script>
+
     {{-- <script src="{{ asset('js/qms/qdocs/objs/SGui.js') }}"></script> --}}
     <script src="{{ asset('moment/moment.js') }}"></script>
     <script src="{{ asset('daterangepicker/daterangepicker.js') }}"></script>
     <script>
         function GlobalData () {
             this.scqms = <?php echo json_encode(\Config::get('scqms')) ?>;
+            this.scsiie = <?php echo json_encode(\Config::get('scsiie')) ?>;
             this.lPapeletas = <?php echo json_encode($lQltyDocs) ?>;
         }
 
         var oData = new GlobalData();
+        var oGui = new SGui();
     </script>
 
     <script src="{{ asset('js/qms/qdocs/SIndex.js') }}"></script>

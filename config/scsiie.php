@@ -136,4 +136,12 @@ return [
                     'PRODUCTION' => '1',
                     'QUALITY' => '2',
                   ],
+
+  'SIGNATURE' => [
+                  'NOT_SIGNED' => '1',
+                  'ARGOX' => '2',
+                  'CODING' => '3',
+                  'MB' => '4',
+                  'OL' => '5',
+                ],
 ];

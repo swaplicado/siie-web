@@ -1173,6 +1173,16 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'ERP\SItemsController@Copy',
         'as' => 'siie.items.copy'
       ]);
+
+      /**
+       * Signatures
+       */
+      Route::resource('signatures','ERP\SSignaturesController');
+
+      /**
+       * Signatures Authorizations
+       */
+      Route::resource('signauths','ERP\SAuthorizationsController');
     });
 
 	});

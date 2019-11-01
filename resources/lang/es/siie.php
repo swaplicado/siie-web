@@ -19,6 +19,7 @@ return [
       'DOCUMENTS'  => 'Documentos',
       'DOCS_PUR'  => 'Documentos de compra',
       'DOCS_SAL'  => 'Documentos de venta',
+      'SIGNATURE_AUTHORIZATIONS' => 'Autorización de firmas',
 
       'ACCESS' => [
             'PERMITTED' => 'Permitido',

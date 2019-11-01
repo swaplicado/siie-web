@@ -103,6 +103,9 @@ class SQDocumentsController extends Controller
             $oDoc->sup_quality_id = 1;
             $oDoc->sup_process_id = 1;
             $oDoc->sup_production_id = 1;
+            $oDoc->signature_argox_id = 1;
+            $oDoc->signature_coding_id = 1;
+            $oDoc->signature_mb_id = 1;
             $oDoc->created_by_id = \Auth::user()->id;
             $oDoc->updated_by_id = \Auth::user()->id;
 
@@ -147,6 +150,9 @@ class SQDocumentsController extends Controller
 
         $lData = \DB::connection(session('db_configuration')->getConnCompany())
                             ->table('qms_quality_documents as qqd')
+                            ->join('erp_signatures as esa', 'qqd.signature_argox_id', '=', 'esa.id_signature')
+                            ->join('erp_signatures as esc', 'qqd.signature_coding_id', '=', 'esc.id_signature')
+                            ->join('erp_signatures as esm', 'qqd.signature_mb_id', '=', 'esm.id_signature')
                             ->join('wms_lots as wl', 'qqd.lot_id', '=', 'wl.id_lot')
                             ->join('mms_production_orders as mpof', 'qqd.father_po_id', '=', 'mpof.id_order')
                             ->join('mms_production_orders as mpos', 'qqd.son_po_id', '=', 'mpos.id_order')
@@ -160,6 +166,9 @@ class SQDocumentsController extends Controller
                                     'qqd.dt_document',
                                     'qqd.body_id',
                                     'qqd.title',
+                                    'esa.signed AS b_argox',
+                                    'esc.signed AS b_coding',
+                                    'esm.signed AS b_mb',
                                     'wl.lot',
                                     'wl.dt_expiry',
                                     'mpof.folio AS father_folio',
@@ -220,6 +229,12 @@ class SQDocumentsController extends Controller
 
         $lQltyDocs = \DB::connection(session('db_configuration')->getConnCompany())
                             ->table('qms_quality_documents as qqd')
+                            ->join('erp_signatures as esa', 'qqd.signature_argox_id', '=', 'esa.id_signature')
+                            ->join('erp_signatures as esc', 'qqd.signature_coding_id', '=', 'esc.id_signature')
+                            ->join('erp_signatures as esm', 'qqd.signature_mb_id', '=', 'esm.id_signature')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uesa', 'esa.signed_by_id', '=', 'uesa.id')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uesc', 'esc.signed_by_id', '=', 'uesc.id')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uesm', 'esm.signed_by_id', '=', 'uesm.id')
                             ->join('wms_lots as wl', 'qqd.lot_id', '=', 'wl.id_lot')
                             ->join('erpu_items as ei', 'qqd.item_id', '=', 'ei.id_item')
                             ->select('qqd.id_document',
@@ -227,6 +242,15 @@ class SQDocumentsController extends Controller
                                         'qqd.dt_document',
                                         'qqd.title',
                                         'qqd.body_id',
+                                        'esa.signed AS b_argox',
+                                        'esc.signed AS b_coding',
+                                        'esm.signed AS b_mb',
+                                        'esa.created_at AS creation_argox',
+                                        'esc.created_at AS creation_coding',
+                                        'esm.created_at AS creation_mb',
+                                        'uesa.username AS usr_argox',
+                                        'uesc.username AS usr_coding',
+                                        'uesm.username AS usr_mb',
                                         'wl.lot',
                                         'wl.dt_expiry',
                                         'ei.name AS item_name',
@@ -378,11 +402,17 @@ class SQDocumentsController extends Controller
         
         $lData = \DB::connection(session('db_configuration')->getConnCompany())
                             ->table('qms_quality_documents as qqd')
+                            ->join('erp_signatures as esa', 'qqd.signature_argox_id', '=', 'esa.id_signature')
+                            ->join('erp_signatures as esc', 'qqd.signature_coding_id', '=', 'esc.id_signature')
+                            ->join('erp_signatures as esm', 'qqd.signature_mb_id', '=', 'esm.id_signature')
                             ->join('wms_lots as wl', 'qqd.lot_id', '=', 'wl.id_lot')
                             ->join('mms_production_orders as mpof', 'qqd.father_po_id', '=', 'mpof.id_order')
                             ->join('mms_production_orders as mpos', 'qqd.son_po_id', '=', 'mpos.id_order')
                             ->join('erpu_items as ei', 'qqd.item_id', '=', 'ei.id_item')
                             ->join('erpu_units as eu', 'qqd.unit_id', '=', 'eu.id_unit')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uesa', 'esa.signed_by_id', '=', 'uesa.id')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uesc', 'esc.signed_by_id', '=', 'uesc.id')
+                            ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uesm', 'esm.signed_by_id', '=', 'uesm.id')
                             ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as sq', 'qqd.sup_quality_id', '=', 'sq.id')
                             ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as sp', 'qqd.sup_process_id', '=', 'sp.id')
                             ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as supp', 'qqd.sup_production_id', '=', 'supp.id')
@@ -391,6 +421,15 @@ class SQDocumentsController extends Controller
                                     'qqd.dt_document',
                                     'qqd.body_id',
                                     'qqd.title',
+                                    'esa.signed AS b_argox',
+                                    'esc.signed AS b_coding',
+                                    'esm.signed AS b_mb',
+                                    'esa.created_at AS creation_argox',
+                                    'esc.created_at AS creation_coding',
+                                    'esm.created_at AS creation_mb',
+                                    'uesa.username AS usr_argox',
+                                    'uesc.username AS usr_coding',
+                                    'uesm.username AS usr_mb',
                                     'wl.lot',
                                     'wl.dt_expiry',
                                     'mpof.folio AS father_folio',
