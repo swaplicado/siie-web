@@ -53,11 +53,13 @@
                                 <td>{{ $oPO->item_code_.'-'.$oPO->item_.' - '.$oPO->unit_ }}</td>
                                 <td>{{ $oPO->lot }}</td>
                                 <td>
-                                    @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QUALITY')))
+                                    @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QMS_ANALYSIS_FQ')))
                                         <a class="btn btn-warning btn-xs" title="Papeleta FQ"
                                             href="{{ route('qms.qdocs.index', [$oPO->father_order_id, $oPO->id_order, $oPO->lot_id, \Config::get('scqms.CFG_ZONE.FQ')]) }}">
                                             <span class="glyphicon glyphicon-file" aria-hidden = "true"></span>
                                         </a>
+                                    @endif
+                                    @if (App\SUtils\SValidation::hasPermission(\Config::get('scperm.PERMISSION.QMS_ANALYSIS_MB')))
                                         <a class="btn btn-warning btn-xs" title="Papeleta MB"
                                             href="{{ route('qms.qdocs.index', [$oPO->father_order_id, $oPO->id_order, $oPO->lot_id, \Config::get('scqms.CFG_ZONE.MB')]) }}">
                                             <span class="glyphicon glyphicon-check" aria-hidden = "true"></span>
