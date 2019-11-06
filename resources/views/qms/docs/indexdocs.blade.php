@@ -69,9 +69,9 @@
                             </a>
                         </td>
                         <td>
-                            <a target="_blank" v-if="(papeleta.body_id.length > 0)"
+                            <a disabled="true" target="_blank" v-if="(papeleta.body_id.length > 0)"
                                  type="button" class="btn btn-warning" 
-                                 :href="'../certificates/print/' + papeleta.id_document"
+                                 {{-- :href="'../certificates/print/' + papeleta.id_document" --}}
                                  >
                                 <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Imprimir
                             </a>
