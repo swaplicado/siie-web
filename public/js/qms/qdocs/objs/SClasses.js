@@ -24,6 +24,7 @@ class SField {
     id_field = 0;
     field_name = '';
     field_default_value = '';
+    is_reported = false;
     is_deleted = false;
     element_id = 0;
 }
@@ -53,4 +54,6 @@ class SResult {
     is_table = false;
     table_name = '';
     dt_date = null;
+    updated_at = null;
+    usr_upd = 1;
 }

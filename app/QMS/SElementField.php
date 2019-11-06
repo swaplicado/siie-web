@@ -12,6 +12,7 @@ class SElementField extends SModel {
                             'id_field',
                             'field_name',
                             'field_default_value',
+                            'is_reported',
                             'is_deleted',
                             'element_id',
                           ];

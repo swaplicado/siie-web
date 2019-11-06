@@ -35,7 +35,8 @@
                         <th>Lote</th>
                         <th>Caducidad</th>
                         <th>Firmas</th>
-                        <th>Ver</th>
+                        <th>Papeleta</th>
+                        <th>Microb.</th>
                         <th>Certificado</th>
                     </tr>
                 </thead>
@@ -54,8 +55,15 @@
                             </button>
                         </td>
                         <td>
+                            <a type="button" class="btn btn-primary"
+                                :href="'../qdocs/show/' + papeleta.id_document + '/' + oData.scqms.CFG_ZONE.FQ"
+                            >
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
+                            </a>
+                        </td>
+                        <td>
                             <a type="button" class="btn btn-default"
-                                :href="'../qdocs/show/' + papeleta.id_document + '/' + oData.scqms.ANALYSIS_TYPE.FQ"
+                                :href="'../qdocs/show/' + papeleta.id_document + '/' + oData.scqms.CFG_ZONE.MB"
                             >
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
                             </a>

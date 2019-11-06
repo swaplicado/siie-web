@@ -238,6 +238,7 @@ class SQDocConfigurationsController extends Controller
         $lFields = SElementField::where('element_id', $iElement)
                                     ->select('id_field',
                                             'field_name',
+                                            'is_reported',
                                             'is_deleted',
                                             'element_id')
                                     ->get();

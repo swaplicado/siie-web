@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="row">
-        {!! Form::open(['route' => 'siie.pos.index',
+        {!! Form::open(['route' => ['siie.pos.index', $iFrom],
             'method' => 'GET', 'class' => 'navbar-form pull-right']) !!}
             <div class="form-group">
                 <div class="input-group">

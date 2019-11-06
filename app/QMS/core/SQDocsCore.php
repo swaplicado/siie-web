@@ -139,7 +139,7 @@ class SQDocsCore {
         foreach ($lConfigurations as $config) {
             $config->lFields = SElementField::where('element_id', $config->element_id)
                                             ->where('is_deleted', false)
-                                            ->select('id_field', 'field_name', 'element_id')
+                                            ->select('id_field', 'field_name', 'element_id', 'is_reported')
                                             ->get();
         }
 

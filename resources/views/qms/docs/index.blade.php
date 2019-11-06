@@ -24,6 +24,8 @@
             this.data = <?php echo json_encode($aData) ?>;
             this.lUsers = <?php echo json_encode($lUsers) ?>;
             this.cfgZone = <?php echo json_encode($cfgZone) ?>;
+            this.source = <?php echo json_encode($source) ?>;
+            this.usr = <?php echo json_encode($usr) ?>;
         }
 
         var oData = new GlobalData();

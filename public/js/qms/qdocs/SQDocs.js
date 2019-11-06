@@ -37,7 +37,15 @@ var docsApp = new Vue({
           aResults.push(res);
         }
 
-        axios.post('../../../../../qdocs', {
+        let route = '';
+        if (oData.source == 0) {
+          route = '../../../../../qdocs';
+        }
+        else {
+          route = '../../../qdocs';
+        }
+
+        axios.post(route, {
           vdoc: JSON.stringify(this.vDocument),
           configurations: JSON.stringify(this.vlConfigurations),
           zone: JSON.stringify(oData.cfgZone),
@@ -69,6 +77,9 @@ var docsApp = new Vue({
         let fileImg = files[0];
 
         this.lResults[index].result = fileImg.name;
+        this.lResults[index].updated_at = new Date();
+        this.lResults[index].usr_upd = oData.usr;
+        
 
         // FileReader support
         if (FileReader && files && files.length) {
@@ -94,7 +105,16 @@ var docsApp = new Vue({
         newImg.onload = function() {
             _img.src = this.src;
         }
-        newImg.src = '../../../../../uploads/qms/' + this.lResults[idConf + "_" + idField].data;
+
+        let route = '';
+        if (oData.source == 0) {
+          route = '../../../../../uploads/qms/';
+        }
+        else {
+          route = '../../../../uploads/qms/';
+        }
+
+        newImg.src = route + this.lResults[idConf + "_" + idField].data;
       },
       /**
        * save the image to server and return the name assigned to image
@@ -110,7 +130,16 @@ var docsApp = new Vue({
           return;
         }
         formData.append("image", imagefile.files[0]);
-        axios.post('../../../../qdocs/image', formData, {
+        
+        let route = '';
+        if (oData.source == 0) {
+          route = '../../../../qdocs/image';
+        }
+        else {
+          route = '../../../qdocs/image';
+        }
+
+        axios.post(route, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -127,6 +156,10 @@ var docsApp = new Vue({
         .catch(function (error) {
             console.log(error);
         });
+      },
+      setUpdate(idConf, idField) {
+        this.lResults[idConf + "_" + idField].updated_at = new Date();
+        this.lResults[idConf + "_" + idField].usr_upd = oData.usr;
       }
     },
     mounted: function () {
@@ -176,6 +209,7 @@ var docsApp = new Vue({
             }
 
             oResult.field_name = field.field_name;
+            oResult.is_reported = field.is_reported;
             oResult.element_id = config.element_id;
             oResult.element_type_id = config.element_type_id;
             oResult.item_link_type_id = config.item_link_type_id;

@@ -461,7 +461,7 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SDocElementsController@destroyField'
       ]);
 
-      Route::get('/qdocs/docs', [
+      Route::get('qdocs/docs', [
         'uses' => 'QMS\SQDocumentsController@docs',
         'as' => 'qms.qdocs.docs'
       ]);
@@ -520,20 +520,6 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SCertificatesController@config',
         'as' => 'qms.certificates.config'
       ]);
-
-      /*
-      * Results of lots analysis
-      **/
-      Route::resource('results','QMS\SResultsController');
-      Route::get('results/create/{id_lot}/{id_type}',[
-        'uses' => 'QMS\SResultsController@create',
-        'as'   => 'qms.results.create'
-      ]);
-      Route::get('/results/print/{id_lot}', [
-      	'uses' => 'QMS\SResultsController@Print',
-      	'as' => 'qms.results.print'
-      ]);
-
       
       /**
        * Quality Reports

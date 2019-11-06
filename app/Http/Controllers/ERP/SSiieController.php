@@ -102,6 +102,7 @@ class SSiieController extends Controller
                 ->with('lOrderStatus', $this->lOrderStatus)
                 ->with('iOrderStatus', $iOrderStatus)
                 ->with('lProductionOrders', $lProductionOrders)
+                ->with('iFrom', $iFrom)
                 ->with('sFilterDate', $sFilterDate)
                 ->with('iFilter', $this->iFilter);
     }

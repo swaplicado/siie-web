@@ -25,10 +25,12 @@
                                 <div :class="getDivClass(vConfig.n_values, vConfig.element_type_id)" v-for="field in vConfig.lFields">
                                     <input type="text" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
+                                            v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-if="vConfig.element_type_id == vScqms.ELEM_TYPE.TEXT">
         
                                     <div v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.USER">
-                                        <select class="form-control input-sm" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result">
+                                        <select class="form-control input-sm" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
+                                                v-on:click="setUpdate(vConfig.id_configuration, field.id_field)">
                                             <option v-for="usr in lUsers"
                                                 :selected="lResults[vConfig.id_configuration+'_'+field.id_field].result == usr.id"
                                                 :value="usr.id">
@@ -41,20 +43,25 @@
                                             class="form-control input-sm" 
                                             style="text-align: right;"
                                             step="0.1"
+                                            v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DECIMAL">
         
                                     <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
                                             style="text-align: right;"
                                             step="1"
+                                            v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.INT">
         
                                     <input type="date" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
+                                            v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DATE">
         
                                     <input type="checkbox" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
+                                            v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             class="form-control input-sm" v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.BOOL">
+                                            
                                     <div v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.FILE">
                                         {{-- <form action="../../../image" method="POST" enctype="multipart/form-data"> --}}
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">

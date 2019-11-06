@@ -9,9 +9,20 @@
         <h4 class="modal-title">Parámetros</h4>
       </div>
       <div class="modal-body">
+          <div class="row">
+            <div class="col-md-8 col-md-offset-1">
+              <label>Nombre del campo</label>
+            </div>
+            <div class="col-md-1">
+              <label>En reporte</label>
+            </div>
+          </div>
           <div class="row" v-for="oField in lFields">
-            <div class="col-md-9 col-md-offset-1">
+            <div class="col-md-8 col-md-offset-1">
               <input class="form-control input-sm" type="text" v-model="oField.field_name">
+            </div>
+            <div class="col-md-1">
+              <input type="checkbox" class="form-control input-sm" v-model="oField.is_reported">
             </div>
             <div class="col-md-1">
               <button type="button" class="btn btn-danger btn-sm" aria-label="Borrar" v-on:click="removeField(oField.id_field, oField.field_name)">

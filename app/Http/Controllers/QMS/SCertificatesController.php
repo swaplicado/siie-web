@@ -84,10 +84,10 @@ class SCertificatesController extends Controller
                                     });
 
                                 });
-
+        $query = clone $lConfigs;
         $lConfigsAnalysis = $lConfigs->lists('qcc.analysis_id');
 
-        $lData = $lConfigs->join('qms_analysis as qa', 'qcc.analysis_id', '=', 'qa.id_analysis')
+        $lData = $query->join('qms_analysis as qa', 'qcc.analysis_id', '=', 'qa.id_analysis')
                             ->join('qmss_analysis_types as qat', 'qa.type_id', '=', 'qat.id_analysis_type')
                             ->where('qa.is_deleted', false)
                             ->where('qat.is_deleted', false);
@@ -116,19 +116,27 @@ class SCertificatesController extends Controller
             }
         }
 
+        foreach ($lFQResults as $fqResult) {
+            foreach ($lResults as $mongoResult) {
+                if ($mongoResult['analysis_id'] == $fqResult->id_analysis) {
+                    $fqResult->mongoResult = $mongoResult;
+                }
+            }
+        }
+
         $oLot = SWmsLot::find($oDoc->lot_id);
 
         $view = view('qms.certificates.certificatepdf', [
-                'oBranch' => session('branch'),
-                'oLot' => $oLot,
-                'sDate' => '2019-10-25',
-                'lFQResults' => $lFQResults,
-                'lOLResults' => $lOLResults,
-                'lMBResults' => $lMBResults,
-                'sSupervisor' => "Supervisor",
-                'sManager' => "Gerente"
-                ])
-                ->render();
+                        'oBranch' => session('branch'),
+                        'oLot' => $oLot,
+                        'sDate' => '2019-10-25',
+                        'lFQResults' => $lFQResults,
+                        'lOLResults' => $lOLResults,
+                        'lMBResults' => $lMBResults,
+                        'sSupervisor' => "Supervisor",
+                        'sManager' => "Gerente"
+                    ])
+                    ->render();
 
         // set ukuran kertas dan orientasi
         $pdf = \PDF::loadHTML($view)->setPaper('letter', 'potrait')->setWarnings(false);

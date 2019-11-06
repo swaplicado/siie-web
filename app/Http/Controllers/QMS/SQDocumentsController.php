@@ -207,6 +207,8 @@ class SQDocumentsController extends Controller
         $aResult = SQDocsCore::getConfigurations($oFatherPo, $oSonPo, $cfgZone);
 
         return view('qms.docs.index')
+                    ->with('source', 0)
+                    ->with('usr', \Auth::user()->id)
                     ->with('oQDocument', $oDoc)
                     ->with('oMongoDocument', $oMongoDocument)
                     ->with('cfgZone', $cfgZone)
@@ -464,7 +466,7 @@ class SQDocumentsController extends Controller
         $oFatherPo = SProductionOrder::find($oQualityDocument->father_po_id);
         $oSonPo = SProductionOrder::find($oQualityDocument->son_po_id);
 
-        $aResult = SQDocsCore::getConfigurations($oFatherPo, $oSonPo);
+        $aResult = SQDocsCore::getConfigurations($oFatherPo, $oSonPo, $cfgZone);
 
         /**
          * Creation of MongoDB Document
@@ -477,6 +479,8 @@ class SQDocumentsController extends Controller
         }
 
         return view('qms.docs.index')
+                    ->with('source', 1)
+                    ->with('usr', \Auth::user()->id)
                     ->with('oQDocument', $oQualityDocument)
                     ->with('oMongoDocument', $oMongoDocument)
                     ->with('cfgZone', $cfgZone)
