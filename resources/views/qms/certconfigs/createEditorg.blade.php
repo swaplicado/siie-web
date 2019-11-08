@@ -43,8 +43,8 @@
 			</div>
 		</div>
 
-		@if (isset($oAnaConfig))
-			@foreach ($oAnaConfig as $oElemConfig)
+		@if (isset($oCertConfig))
+			@foreach ($oCertConfig as $oElemConfig)
 				<div class="form-group">
 					{!! Form::label($oElemConfig->id_cert_configuration, $oElemConfig->analysis->name.'*') !!}
 					<div >

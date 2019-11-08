@@ -92,14 +92,33 @@ class SCertificatesController extends Controller
                             ->where('qa.is_deleted', false)
                             ->where('qat.is_deleted', false);
 
+        $lData1 = clone $lData;
+        $lData2 = clone $lData;
+
         $lFQResults = $lData->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.FQ'))
-                        ->get();
+                            ->select('qa.name AS _analysis', 
+                                        'qa.id_analysis',
+                                        'qa.standard', 
+                                        'qa.result_unit', 
+                                        'qa.specification AS _specification')
+                            ->get();
 
-        $lMBResults = $lData->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.MB'))
-                        ->get();
+        $lMBResults = $lData1->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.MB'))
+                            ->select('qa.name AS _analysis', 
+                                'qa.id_analysis',
+                                'qa.standard', 
+                                'qa.result_unit', 
+                                'qa.specification AS _specification')
+                            ->get();
 
-        $lOLResults = $lData->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.OL'))
-                        ->get();
+        $lOLResults = $lData2->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.OL'))
+                            ->select('qa.name AS _analysis', 
+                                'qa.id_analysis',
+                                'qa.standard', 
+                                'qa.result_unit', 
+                                'qcc.result AS _result',
+                                'qcc.specification AS _specification')
+                            ->get();
 
         $oMongoDoc = SQMongoDoc::where('lot_id', $oDoc->lot_id)
                                     ->orderBy('updated_at', 'DESC')
@@ -117,13 +136,40 @@ class SCertificatesController extends Controller
         }
 
         foreach ($lFQResults as $fqResult) {
+            $fqResult->mongoResult = null;
+            
             foreach ($lResults as $mongoResult) {
-                if ($mongoResult['analysis_id'] == $fqResult->id_analysis) {
+                if ($mongoResult['analysis_id'] == $fqResult->id_analysis && $mongoResult['is_reported']) {
                     $fqResult->mongoResult = $mongoResult;
+                    break;
                 }
             }
         }
 
+        $lResultsMb = array();
+        if (sizeof($oMongoDoc->resultsMb) > 0) {
+            foreach ($oMongoDoc->resultsMb as $result) {
+                if ($result['analysis_id'] == 0) {
+                    continue;
+                }
+    
+                if (in_array($result['analysis_id'], $lConfigsAnalysis)) {
+                    $lResultsMb[] = $result;
+                }
+            }
+        }
+
+        foreach ($lMBResults as $mbResult) {
+            $mbResult->mongoResult = null;
+
+            foreach ($lResultsMb as $mongoResult) {
+                if ($mongoResult['analysis_id'] == $mbResult->id_analysis && $mongoResult['is_reported']) {
+                    $mbResult->mongoResult = $mongoResult;
+                    break;
+                }
+            }
+        }
+        
         $oLot = SWmsLot::find($oDoc->lot_id);
 
         $view = view('qms.certificates.certificatepdf', [

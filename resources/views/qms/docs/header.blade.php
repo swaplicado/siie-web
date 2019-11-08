@@ -139,7 +139,7 @@
                 {{ trans('actions.CANCEL') }}
             </button>
         </div>
-        <div class="col-md-1">
+        <div v-if="! vDocument.is_closed" class="col-md-1">
             <button class="btn btn-success btn-lg" type="submit" v-on:click="saveDocument()">
                 {{ trans('actions.SAVE') }}
             </button>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\SUtils\SConnectionUtils;
 
 use App\ERP\SSignature;
+use App\ERP\SAuthorization;
 use App\QMS\SQDocument;
 
 class SSignaturesController extends Controller
@@ -50,6 +51,15 @@ class SSignaturesController extends Controller
  
         try {
 
+            $lAuths = SAuthorization::where('user_id', \Auth::user()->id)
+                            ->where('signature_type_id', $oSignature->signature_type_id)
+                            ->where('is_deleted', false)
+                            ->get();
+
+            if (sizeof($lAuths) == 0) {
+                return -1;
+            }
+
             if (password_verify($request->signature, \Auth::user()->password)) {
                 $oSignature->signed_by_id = \Auth::user()->id;
                 $oSignature->signed = true;
@@ -90,10 +100,12 @@ class SSignaturesController extends Controller
         
             \DB::commit();
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             \DB::rollback();
             throw $e;
-        } catch (\Throwable $e) {
+        }
+        catch (\Throwable $e) {
             \DB::rollback();
             throw $e;
         }

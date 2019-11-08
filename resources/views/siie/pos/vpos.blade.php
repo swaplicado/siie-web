@@ -28,7 +28,7 @@
     
     <div class="row">
         <div class="col-md-12">
-            <table class="table table-striped table-hover table-condensed" id="poss_table">
+            <table id="poss_table" class="table table-striped table-condensed table-bordered display responsive no-wrap" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Folio Padre</th>

@@ -13,6 +13,7 @@ class SQDocument extends SModel {
                             'title',
                             'dt_document',
                             'body_id',
+                            'is_closed',
                             'is_deleted',
                             'lot_id',
                             'item_id',
@@ -25,6 +26,7 @@ class SQDocument extends SModel {
                             'signature_mb_id',
                             'created_by_id',
                             'updated_by_id',
+                            'closed_at'
                           ];
   
     public function getTable()

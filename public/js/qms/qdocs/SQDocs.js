@@ -54,12 +54,19 @@ var docsApp = new Vue({
         .then(res => {
             console.log(res);
 
+            if (res.data == -1) {
+              oGui.showError('La papeleta está cerrada');
+              return;
+            }
+
             oGui.showOk();
 
             location.reload();
         })
         .catch(function (error) {
             console.log(error);
+
+            oGui.showError('Ocurrió un error al guardar la papeleta');
         });
       },
       /**
@@ -164,7 +171,9 @@ var docsApp = new Vue({
     },
     mounted: function () {
       let results = [];
-      if (this.vMongoDocument == null || (this.vMongoDocument != null && this.vMongoDocument.results == undefined)) {
+      if (this.vMongoDocument == null || 
+          (this.vMongoDocument != null && oData.scqms.CFG_ZONE.FQ == oData.cfgZone && this.vMongoDocument.results == undefined) ||
+            (this.vMongoDocument != null && oData.scqms.CFG_ZONE.MB == oData.cfgZone && this.vMongoDocument.resultsMb == undefined)) {
         for (const config of this.vlConfigurations) {
           for (const field of config.lFields) {
             let oResult = new SResult(config.id_configuration, field.id_field, null);
@@ -242,12 +251,10 @@ var docsApp = new Vue({
             break;
         }
 
-        let aResults = [];
+        this.lResults = [];
         for (const res of results) {
-          aResults['' + res.id_configuration + '_' + res.id_field] = res;
+          this.lResults['' + res.id_configuration + '_' + res.id_field] = res;
         }
-
-        this.lResults = aResults;
       }
     }
   })

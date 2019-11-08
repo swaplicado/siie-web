@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use App\Database\Config;
 use App\SUtils\SConnectionUtils;
+use App\SUtils\SValidation;
 use App\SUtils\SProcess;
 use App\QMS\SQDocument;
 use App\QMS\SQMongoDoc;
@@ -16,6 +17,7 @@ use App\MMS\SProductionOrder;
 use App\User;
 use App\QMS\core\SQDocsCore;
 use App\SUtils\SGuiUtils;
+use App\ERP\SAuthorization;
 
 class SQDocumentsController extends Controller
 {
@@ -73,6 +75,7 @@ class SQDocumentsController extends Controller
             $oDoc->title = '';
             $oDoc->dt_document = date("y-m-d");
             $oDoc->body_id = '';
+            $oDoc->is_closed = false;
             $oDoc->is_deleted = false;
 
             if ($lot > 1) {
@@ -244,6 +247,7 @@ class SQDocumentsController extends Controller
                                         'qqd.dt_document',
                                         'qqd.title',
                                         'qqd.body_id',
+                                        'qqd.is_closed',
                                         'esa.signed AS b_argox',
                                         'esc.signed AS b_coding',
                                         'esm.signed AS b_mb',
@@ -292,6 +296,10 @@ class SQDocumentsController extends Controller
         $iZone = json_decode($request->zone);
 
         $oDoc = SQDocument::find($vDoc->id_document);
+
+        if ($oDoc->is_closed) {
+            return -1;
+        }
 
         $oDoc->sup_quality_id = $vDoc->sup_quality_id;
         $oDoc->sup_process_id = $vDoc->sup_process_id;
@@ -393,13 +401,18 @@ class SQDocumentsController extends Controller
      * @param  int  $cfgZone
      *              {
      *               \Config::get('scqms.CFG_ZONE.FQ')
-     *               \Config::get('scqms.CFG_ZONE.QB')
+     *               \Config::get('scqms.CFG_ZONE.MB')
      *               \Config::get('scqms.CFG_ZONE.OL')
      *              }
      * @return \Illuminate\Http\Response
      */
     public function show($idQltyDoc, $cfgZone)
     {
+        if ($cfgZone == \Config::get('scqms.CFG_ZONE.FQ') && ! SValidation::hasPermission(\Config::get('scperm.PERMISSION.QMS_ANALYSIS_FQ'))
+            || $cfgZone == \Config::get('scqms.CFG_ZONE.MB') && ! SValidation::hasPermission(\Config::get('scperm.PERMISSION.QMS_ANALYSIS_MB'))) {
+                return redirect()->route('notauthorized');
+        }
+
         $oQualityDocument = SQDocument::find($idQltyDoc);
         
         $lData = \DB::connection(session('db_configuration')->getConnCompany())
@@ -488,6 +501,45 @@ class SQDocumentsController extends Controller
                     ->with('lConfigurations', $aResult[1])
                     ->with('lUsers', $lUsers)
                     ->with('aData', $lData);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $idQltyDoc
+     * @return \Illuminate\Http\Response
+     */
+    public function openClose(Request $request)
+    {
+        $oQualityDocument = SQDocument::find($request->id);
+
+        $lAuths = SAuthorization::where('user_id', \Auth::user()->id)
+                            ->where('signature_type_id', \Config::get('scsiie.SIGNATURE.CLOSE_DOCS'))
+                            ->where('is_deleted', false)
+                            ->get();
+
+        if (sizeof($lAuths) == 0) {
+            return -1;
+        }
+
+        if (password_verify($request->signature, \Auth::user()->password)) {
+            if ($oQualityDocument->is_closed) {
+                $oQualityDocument->is_closed = false;
+                $oQualityDocument->closed_by_id = 1;
+            }
+            else {
+                $oQualityDocument->is_closed = true;
+                $oQualityDocument->closed_by_id = \Auth::user()->id;
+                $oQualityDocument->closed_at = date("Y-m-d H:i:s");
+            }
+
+            $oQualityDocument->save();
+
+            return 2;
+        }
+        else {
+            return 1;
+        }
     }
 
     /**

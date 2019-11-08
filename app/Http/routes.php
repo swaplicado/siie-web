@@ -469,6 +469,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'QMS\SQDocumentsController@image',
         'as' => 'qms.qdocs.image'
       ]);
+      Route::post('/qdocs/openclose', [
+        'uses' => 'QMS\SQDocumentsController@openClose',
+        'as' => 'qms.qdocs.openclose'
+      ]);
       Route::resource('qdocs','QMS\SQDocumentsController');
       Route::get('/qdocs/index/{fathero}/{sono}/{folio}/{cfgZone}', [
         'uses' => 'QMS\SQDocumentsController@index',

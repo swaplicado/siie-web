@@ -26,10 +26,12 @@
                                     <input type="text" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
                                             v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
+                                            :readonly="vDocument.is_closed == 1"
                                             v-if="vConfig.element_type_id == vScqms.ELEM_TYPE.TEXT">
         
                                     <div v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.USER">
                                         <select class="form-control input-sm" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
+                                                :disabled="vDocument.is_closed == 1"
                                                 v-on:click="setUpdate(vConfig.id_configuration, field.id_field)">
                                             <option v-for="usr in lUsers"
                                                 :selected="lResults[vConfig.id_configuration+'_'+field.id_field].result == usr.id"
@@ -42,6 +44,7 @@
                                     <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
                                             style="text-align: right;"
+                                            :readonly="vDocument.is_closed == 1"
                                             step="0.1"
                                             v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DECIMAL">
@@ -49,17 +52,20 @@
                                     <input type="number" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
                                             style="text-align: right;"
+                                            :readonly="vDocument.is_closed == 1"
                                             step="1"
                                             v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.INT">
         
                                     <input type="date" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             class="form-control input-sm" 
+                                            :readonly="vDocument.is_closed == 1"
                                             v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
                                             v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.DATE">
         
                                     <input type="checkbox" v-model="lResults[vConfig.id_configuration+'_'+field.id_field].result"
                                             v-on:click="setUpdate(vConfig.id_configuration, field.id_field)"
+                                            :disabled="vDocument.is_closed == 1"
                                             class="form-control input-sm" v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.BOOL">
                                             
                                     <div v-else-if="vConfig.element_type_id == vScqms.ELEM_TYPE.FILE">
@@ -68,6 +74,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <input type="file" 
+                                                        :disabled="vDocument.is_closed == 1"
                                                         :id="lResults[vConfig.id_configuration+'_'+field.id_field].id_tag + '1'"
                                                         class="form-control input-sm"
                                                         :name="lResults[vConfig.id_configuration+'_'+field.id_field].id_tag + '1'"
@@ -91,7 +98,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     {{-- <input type="submit" value="Upload Image" name="submit"> --}}
-                                                    <button class="btn btn-primary" v-on:click="guardar(vConfig.id_configuration, field.id_field)">Guardar</button>
+                                                    <button :disabled="vDocument.is_closed == 1" class="btn btn-primary" v-on:click="guardar(vConfig.id_configuration, field.id_field)">Guardar</button>
                                                 </div>
                                             </div>
                                         {{-- </form> --}}

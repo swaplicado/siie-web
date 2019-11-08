@@ -37,6 +37,7 @@
                         <th>Firmas</th>
                         <th>Papeleta</th>
                         <th>Microb.</th>
+                        <th>Cerrar/Abrir</th>
                         <th>Certificado</th>
                     </tr>
                 </thead>
@@ -55,23 +56,30 @@
                             </button>
                         </td>
                         <td>
-                            <a type="button" class="btn btn-primary"
+                            <a type="button" class="btn btn-success"
                                 :href="'../qdocs/show/' + papeleta.id_document + '/' + oData.scqms.CFG_ZONE.FQ"
                             >
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
                             </a>
                         </td>
                         <td>
-                            <a type="button" class="btn btn-default"
+                            <a type="button" class="btn btn-primary"
                                 :href="'../qdocs/show/' + papeleta.id_document + '/' + oData.scqms.CFG_ZONE.MB"
                             >
                                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Ver
                             </a>
                         </td>
                         <td>
-                            <a disabled="true" target="_blank" v-if="(papeleta.body_id.length > 0)"
+                            <button class="btn btn-default"
+                                v-on:click="showModalClose(papeleta.id_document, papeleta.is_closed)"
+                            >
+                                <span :class="getIcon(papeleta.is_closed)" aria-hidden="true"></span> @{{ ' ' + getLabel(papeleta.is_closed) }}
+                            </button>
+                        </td>
+                        <td>
+                            <a target="_blank" v-if="(papeleta.body_id.length > 0)"
                                  type="button" class="btn btn-warning" 
-                                 {{-- :href="'../certificates/print/' + papeleta.id_document" --}}
+                                 :href="'../certificates/print/' + papeleta.id_document"
                                  >
                                 <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Imprimir
                             </a>
@@ -83,6 +91,7 @@
         </div>
     </div>
     @include('qms.docs.signatures')
+    @include('qms.docs.openclose')
 </div>
 @endsection
     

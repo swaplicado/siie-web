@@ -142,6 +142,7 @@ return [
                   'ARGOX' => '2',
                   'CODING' => '3',
                   'MB' => '4',
-                  'OL' => '5',
+                  'CLOSE_DOCS' => '5',
+                  'OL' => '6',
                 ],
 ];

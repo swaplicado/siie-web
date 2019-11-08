@@ -95,7 +95,7 @@
                     <td>{{ $oFQRes->standard }}</td>
                     {{-- <td>{{ $oFQRes->min_value.'-'.$oFQRes->max_value }}</td> --}}
                     <td>{{ $oFQRes->_specification == '' ? $oFQRes->_ana_specification : $oFQRes->_specification }}</td>
-                    <td class="tc"><b>{{ $oFQRes->result_value.' '.$oFQRes->result_unit }}</b></td>
+                    <td class="tc"><b>{{ ($oFQRes->mongoResult != null ? $oFQRes->mongoResult['result'] : '').' '.$oFQRes->result_unit }}</b></td>
                   </tr>
               @endforeach
           </table>
@@ -139,7 +139,7 @@
                     <td>{{ $oMBRes->_analysis }}</td>
                     <td>{{ $oMBRes->standard }}</td>
                     <td>{{ $oMBRes->_specification == '' ? $oMBRes->_ana_specification : $oMBRes->_specification }}</td>
-                    <td class="tc"><b>{{ $oMBRes->result_value.' '.$oMBRes->result_unit }}</b></td>
+                    <td class="tc"><b>{{ ($oMBRes->mongoResult != null ? $oMBRes->mongoResult['result'] : '').' '.$oMBRes->result_unit }}</b></td>
                   </tr>
               @endforeach
           </table>
@@ -195,7 +195,7 @@
           <table width="100%">
             <tr>
                 <td class="little tc">
-                  Oriente Cuatro #602 Col. Ciudad Industrial CP 58200 Morelia, México. Tel. 3232300 Ext. 109. www.saporis.mx
+                  Oriente Cuatro #602 Col. Ciudad Industrial CP 58200 Morelia, México. Tel. 4433232300 Ext. 109. www.saporis.mx
                 </td>
             </tr>
             <tr>
