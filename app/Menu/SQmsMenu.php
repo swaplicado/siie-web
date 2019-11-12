@@ -31,7 +31,7 @@ class SQmsMenu {
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_ANALYSIS')),
                             Link::toRoute('qms.analysis.index', trans('qms.ANALYSIS')))
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CERTIFICATES')),
-                            Link::toRoute('qms.certconfigs.index', trans('qms.ANALYSIS_VS_ITEMS'), [0]))
+                            Link::toRoute('qms.certconfigs.index', trans('qms.ANALYSIS_VS_ITEMS').' (Certificados)', [0]))
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.QMS_CERTIFICATES')),
                             Link::toRoute('qms.certconfigs.index', trans('qms.ORG_VS_ITEMS'), [\Config::get('scqms.ANALYSIS_TYPE.OL')]))
                     ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ERP_SIGNATURE_AUTHORIZATION')),
