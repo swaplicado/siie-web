@@ -110,7 +110,7 @@ class SProductionOrdersController extends Controller
                     ->join(\DB::connection(Config::getConnSys())->getDatabaseName().'.users as uu', 'mpo.updated_by_id', '=', 'uu.id');
 
        if (\Config::get('scmms.PO_STATUS.ST_ALL') != $iOrderStatus) {
-           $oOrdersQuery = $oOrdersQuery->where('status_id', $iOrderStatus);
+           $oOrdersQuery = $oOrdersQuery->where('mpo.status_id', $iOrderStatus);
        }
 
        $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);

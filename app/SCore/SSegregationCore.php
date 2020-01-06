@@ -787,7 +787,7 @@ class SSegregationCore
     $query = $query->where('ei.is_deleted', false)
                   ->where('ws.is_deleted', false)
                   ->where('wsr.is_deleted', false)
-                  ->where('wsr.year_id', session('work_year'))
+                  // ->where('wsr.year_id', session('work_year'))
                   ->select(\DB::raw($sSelect));
     switch ($typeView){
       case 0:

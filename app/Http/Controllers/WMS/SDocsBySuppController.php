@@ -54,7 +54,7 @@ class SDocsBySuppController extends Controller {
           $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentMonth() : $request->filterDate;
         }
         else {
-          $sFilterDate = null;
+          $sFilterDate = $request->filterDate == null ? SGuiUtils::getCurrentYear() : $request->filterDate;;
         }
         
         $iDocId = 0;

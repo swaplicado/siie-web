@@ -340,6 +340,25 @@ class SGuiUtils {
     }
 
     /**
+     * get the current year in range format string
+     * get the work date in session
+     *
+     * @return string [dd/mm/yyyy - dd/mm/yyyy]
+     */
+    public static function getCurrentYear()
+    {
+      $year = session('work_date')->format('Y');
+      
+      $first = SGuiUtils::date_first_month_day(1, $year, 'd-m-Y');
+      $last = SGuiUtils::date_last_month_day(12, $year, 'd-m-Y');
+
+      $sStartDate = str_replace('-', '/', $first);
+      $sEndDate = str_replace('-', '/', $last);
+
+      return $sStartDate.' - '.$sEndDate;
+    }
+
+    /**
      * get the date period based in parameter range format string
      * get the work date in session and add and sustract number of days of parameter
      * work date: 03-04-2019 returns 19/03/2019 - 18/04/2019

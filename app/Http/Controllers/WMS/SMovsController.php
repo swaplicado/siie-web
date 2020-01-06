@@ -370,8 +370,7 @@ class SMovsController extends Controller
                         ->where('status_id', '<=', \Config::get('scmms.PO_STATUS.ST_ENDED'))
                         ->join('erpu_items as ei', 'item_id', '=', 'ei.id_item')
                         ->join('erpu_item_genders as eig', 'ei.item_gender_id', '=', 'eig.id_item_gender')
-                        ->selectRaw('(CONCAT(LPAD(folio, '.
-                              session('long_folios').', "0"),
+                        ->selectRaw('(CONCAT(LPAD(folio, 8, "0"),
                                   "-", identifier)) as prod_ord,
                                   id_order')
                         ->orderBy('folio', 'DESC');
