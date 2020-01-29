@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div id="fieldsModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -10,16 +10,22 @@
       </div>
       <div class="modal-body">
           <div class="row">
-            <div class="col-md-8 col-md-offset-1">
+            <div class="col-md-6 col-md-offset-1">
               <label>Nombre del campo</label>
+            </div>
+            <div class="col-md-2">
+              <label>Valor por defecto</label>
             </div>
             <div class="col-md-1">
               <label>En reporte</label>
             </div>
           </div>
           <div class="row" v-for="oField in lFields">
-            <div class="col-md-8 col-md-offset-1">
+            <div class="col-md-6 col-md-offset-1">
               <input class="form-control input-sm" type="text" v-model="oField.field_name">
+            </div>
+            <div class="col-md-2">
+              <input class="form-control input-sm" type="text" v-model="oField.field_default_value">
             </div>
             <div class="col-md-1">
               <input type="checkbox" class="form-control input-sm" v-model="oField.is_reported">

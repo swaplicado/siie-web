@@ -193,33 +193,35 @@ var docsApp = new Vue({
             null
           );
 
+          let hasDefault = field.field_default_value != "";
+
           switch (config.element_type_id) {
             case this.vScqms.ELEM_TYPE.TEXT:
-              oResult.result = "";
+              oResult.result = hasDefault ? field.field_default_value : "";
               break;
 
             case this.vScqms.ELEM_TYPE.DECIMAL:
-              oResult.result = 0.0;
+              oResult.result = hasDefault ? field.field_default_value : 0.0;
               break;
 
             case this.vScqms.ELEM_TYPE.INT:
-              oResult.result = 0;
+              oResult.result = hasDefault ? field.field_default_value : 0;
               break;
 
             case this.vScqms.ELEM_TYPE.DATE:
-              oResult.result = "2019-01-01";
+              oResult.result = hasDefault ? field.field_default_value : "2019-01-01";
               break;
 
             case this.vScqms.ELEM_TYPE.ANALYSIS:
-              oResult.result = 0;
+              oResult.result = hasDefault ? field.field_default_value : 0;
               break;
 
             case this.vScqms.ELEM_TYPE.BOOL:
-              oResult.result = false;
+              oResult.result = hasDefault ? field.field_default_value : false;
               break;
 
             case this.vScqms.ELEM_TYPE.USER:
-              oResult.result = 1;
+              oResult.result = hasDefault ? field.field_default_value : 1;
               break;
 
             case this.vScqms.ELEM_TYPE.FILE:
@@ -228,7 +230,7 @@ var docsApp = new Vue({
               break;
 
             default:
-              oResult.result = 0;
+              oResult.result = hasDefault ? field.field_default_value : 0;
               break;
           }
 

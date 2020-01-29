@@ -581,6 +581,8 @@ return array(
     'QmsAddAnalysisTables' => $baseDir . '/database/migrations/2019_08_16_090000_qms_add_analysis_tables.php',
     'QmsAddCertConfigurationsTable' => $baseDir . '/database/migrations/2019_10_23_083336_qms_add_cert_configurations_table.php',
     'QmsAddConfigsTable' => $baseDir . '/database/migrations/2019_08_16_120520_qms_add_configs_table.php',
+    'QmsAddDefaultConfig' => $baseDir . '/database/migrations/2020_01_29_094004_qms_add_default_config.php',
+    'QmsAddDocsClosedfield' => $baseDir . '/database/migrations/2019_11_08_093603_qms_add_docs_closedfield.php',
     'QmsAddDocumentsTables' => $baseDir . '/database/migrations/2019_08_16_095339_qms_add_documents_tables.php',
     'QmsAddFieldsTable' => $baseDir . '/database/migrations/2019_08_29_161252_qms_add_fields_table.php',
     'QmsAddQualityTables' => $baseDir . '/database/migrations/2017_08_01_000146_qms_add_quality_tables.php',

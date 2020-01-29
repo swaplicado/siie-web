@@ -79,7 +79,7 @@ class SDocElementsController extends Controller
                 }
 
                 $oField->field_name = $field->field_name;
-                $oField->field_default_value = "";
+                $oField->field_default_value = $field->field_default_value;
                 $oField->is_reported = $field->is_reported;
 
                 $lFields[] = $oField;

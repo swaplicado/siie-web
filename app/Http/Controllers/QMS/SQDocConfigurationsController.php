@@ -236,8 +236,10 @@ class SQDocConfigurationsController extends Controller
         $iElement = $request->ielement;
 
         $lFields = SElementField::where('element_id', $iElement)
+                                    ->where('is_deleted', false)
                                     ->select('id_field',
                                             'field_name',
+                                            'field_default_value',
                                             'is_reported',
                                             'is_deleted',
                                             'element_id')
