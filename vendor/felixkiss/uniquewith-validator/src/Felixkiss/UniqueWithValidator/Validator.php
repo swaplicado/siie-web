@@ -14,6 +14,9 @@ class Validator
         // permanent data store like Redis, etc. We will use it to determine
         // uniqueness.
         $presenceVerifier = $validator->getPresenceVerifier();
+        if (method_exists($presenceVerifier, 'setConnection')) {
+            $presenceVerifier->setConnection($ruleParser->getConnection());
+        }
 
         return $presenceVerifier->getCount(
             $ruleParser->getTable(),
@@ -30,7 +33,11 @@ class Validator
         $ruleParser = new RuleParser($attribute, null, $parameters);
         $fields = $ruleParser->getDataFields();
 
-        $customAttributes = $translator->trans('validation.attributes');
+        if (method_exists($translator, 'trans')) {
+            $customAttributes = $translator->trans('validation.attributes');
+        } else {
+            $customAttributes = $translator->get('validation.attributes');
+        }
 
         // Check if translator has custom validation attributes for the fields
         $fields = array_map(function($field) use ($customAttributes) {

@@ -2,6 +2,24 @@
 
 All notable changes to `menu` will be documented in this file.
 
+## 2.8.0 - 2018-11-05
+- Add `exact-active` class to links that exactly match the current URL. This is accompanied by a `setExactActiveClass(string $class)` method to set the class name
+
+## 2.7.0 - 2018-10-23
+- Add `IteratorAggregate` interface to `Menu` class
+
+## 2.6.0 - 2018-09-10
+- Add `beforeRender` and `willRender` hooks that are called when an item is rendered
+
+## 2.5.0 - 2018-03-02
+- This release adds a few methods to create non-`ul` menus, which allows for Bootstrap 4 compatibility
+- Added `Menu::setWrapperTag` and `Menu::withoutWrapperTag` to set a custom wrapper tag name for the menu list. Default: `ul`
+- Added `Menu::setParentTag` & `Menu::withoutParentTag` to determine which tag should be used for the item's parent element. Default: `li`
+- Added `Menu::setActiveClassOnLink` and `Menu::setActiveClassOnParent` to determine where the active class should be applied
+
+## 2.4.1 - 2017-11-13
+- Allow invokable classes as callbacks
+
 ## 2.4.0 - 2017-10-17
 - Added `Menu::empty` and `Html::empty` method for adding empty list items
 
@@ -25,7 +43,7 @@ All notable changes to `menu` will be documented in this file.
 
 ## 2.1.1
 - Added the request root path when setting the active path
- 
+
 ## 2.1.0
 - Added optional third `$initial` parameter in `Menu::build`
 

@@ -3,6 +3,7 @@
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Validation\Factory;
 use Illuminate\Validation\PresenceVerifierInterface;
+use Illuminate\Validation\DatabasePresenceVerifier;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -18,7 +19,7 @@ class ValidatorSpec extends ObjectBehavior
         $this->translator = $translator;
         $this->presenceVerifier = $presenceVerifier;
 
-        $this->translator->trans(Argument::cetera())->willReturnArgument(0);
+        $this->trans(Argument::cetera())->willReturnArgument(0);
         $this->setValidationMessage('This combination of :fields already exists.');
     }
 
@@ -198,7 +199,7 @@ class ValidatorSpec extends ObjectBehavior
     function it_replaces_fields_in_error_message_correctly()
     {
         $this->presenceVerifier->getCount(Argument::cetera())->willReturn(1);
-        $this->translator->trans('validation.attributes')->shouldBeCalled()->willReturn([]);
+        $this->trans('validation.attributes')->shouldBeCalled()->willReturn([]);
 
         $this->validateData(
             ['first_name' => 'unique_with:users,first_name,last_name'],
@@ -217,9 +218,9 @@ class ValidatorSpec extends ObjectBehavior
         $customErrorMessage = 'Error: Found combination of :fields in database.';
 
         $this->presenceVerifier->getCount(Argument::cetera())->willReturn(1);
-        $this->translator->trans('uniquewith-validator::validation.unique_with')->shouldBeCalled()
+        $this->trans('uniquewith-validator::validation.unique_with')->shouldBeCalled()
             ->willReturn($customErrorMessage);
-        $this->translator->trans('validation.attributes')->shouldBeCalled()->willReturn([]);
+        $this->trans('validation.attributes')->shouldBeCalled()->willReturn([]);
 
         $this->validateData(
             ['first_name' => 'unique_with:users,first_name,middle_name,last_name'],
@@ -237,7 +238,8 @@ class ValidatorSpec extends ObjectBehavior
     function it_uses_custom_attribute_names_coming_from_translator()
     {
         $this->presenceVerifier->getCount(Argument::cetera())->willReturn(1);
-        $this->translator->trans('validation.attributes')->shouldBeCalled()->willReturn([
+
+        $this->trans('validation.attributes')->shouldBeCalled()->willReturn([
             'first_name' => 'Vorname',
             'last_name' => 'Nachname',
         ]);
@@ -313,11 +315,39 @@ class ValidatorSpec extends ObjectBehavior
         )->shouldHaveBeenCalled();
     }
 
+    function it_uses_connection_if_specified(DatabasePresenceVerifier $dbVerifier)
+    {
+        $this->presenceVerifier = $dbVerifier;
+
+        $this->validateData(
+            ['first_name' => 'unique_with:db.users,middle_name,last_name'],
+            [
+                'first_name' => 'Foo',
+                'middle_name' => 'Bar',
+                'last_name' => 'Baz',
+            ]
+        );
+
+        $this->presenceVerifier->setConnection('db')->shouldHaveBeenCalled();
+        $this->presenceVerifier->getCount(
+            'users',
+            'first_name',
+            'Foo',
+            null,
+            null,
+            ['middle_name' => 'Bar', 'last_name' => 'Baz']
+        )->shouldHaveBeenCalled();
+    }
+
     protected function validateData(array $rules = [], array $data = [])
     {
         $result = null;
 
-        $message = $this->translator->getWrappedObject()->trans('uniquewith-validator::validation.unique_with');
+        if (method_exists($this->translator->getWrappedObject(), 'trans')) {
+            $message = $this->translator->getWrappedObject()->trans('uniquewith-validator::validation.unique_with');
+        } else {
+            $message = $this->translator->getWrappedObject()->get('uniquewith-validator::validation.unique_with');
+        }
         $factory = new Factory($this->translator->getWrappedObject());
         $factory->extend('unique_with', function() use (&$result) {
             $result = call_user_func_array([$this, 'validateUniqueWith'], func_get_args());
@@ -346,12 +376,26 @@ class ValidatorSpec extends ObjectBehavior
     protected function setValidationMessage($message)
     {
         $this->validationMessage = $message;
-        $this->translator->trans('uniquewith-validator::validation.unique_with')
-            ->willReturn($message);
+        $this->trans('uniquewith-validator::validation.unique_with')->willReturn($message);
     }
 
     protected function getValidationMessage()
     {
         return $this->validationMessage;
+    }
+
+    /**
+     * Pass the trans call dynamically to the translator.
+     *
+     * @param  mixed  ...$args
+     * @return mixed
+     */
+    protected function trans(...$args)
+    {
+        if (method_exists($this->translator->getWrappedObject(), 'trans')) {
+            return $this->translator->trans(...$args);
+        } else {
+            return $this->translator->get(...$args);
+        }
     }
 }

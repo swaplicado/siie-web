@@ -3,6 +3,9 @@
 namespace Spatie\Menu;
 
 use Countable;
+use Traversable;
+use ArrayIterator;
+use IteratorAggregate;
 use Spatie\Menu\Html\Tag;
 use Spatie\Menu\Html\Attributes;
 use Spatie\Menu\Helpers\Reflection;
@@ -11,7 +14,7 @@ use Spatie\Menu\Traits\HasTextAttributes as HasAttributesTrait;
 use Spatie\Menu\Traits\HasHtmlAttributes as HasHtmlAttributesTrait;
 use Spatie\Menu\Traits\HasParentAttributes as HasParentAttributesTrait;
 
-class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
+class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes, IteratorAggregate
 {
     use HasHtmlAttributesTrait, HasParentAttributesTrait, ConditionsTrait, HasAttributesTrait;
 
@@ -29,6 +32,21 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
 
     /** @var string */
     protected $activeClass = 'active';
+
+    /** @var string */
+    protected $exactActiveClass = 'exact-active';
+
+    /** @var string */
+    protected $wrapperTagName = 'ul';
+
+    /** @var bool */
+    protected $parentTagName = 'li';
+
+    /** @var bool */
+    protected $activeClassOnParent = true;
+
+    /** @var bool */
+    protected $activeClassOnLink = false;
 
     /** @var \Spatie\Menu\Html\Attributes */
     protected $htmlAttributes, $parentAttributes;
@@ -64,7 +82,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
      *
      * @return static
      */
-    public static function build($items, callable $callback, Menu $initial = null)
+    public static function build($items, callable $callback, self $initial = null)
     {
         return ($initial ?: static::new())->fill($items, $callback);
     }
@@ -112,7 +130,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     /**
      * Add an item to the menu if a (non-strict) condition is met.
      *
-     * @param bool              $condition
+     * @param bool $condition
      * @param \Spatie\Menu\Item $item
      *
      * @return $this
@@ -152,7 +170,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     /**
      * Add a link to the menu if a (non-strict) condition is met.
      *
-     * @param bool   $condition
+     * @param bool $condition
      * @param string $url
      * @param string $text
      *
@@ -171,7 +189,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
      * Shortcut function to add raw html to the menu.
      *
      * @param string $html
-     * @param array  $parentAttributes
+     * @param array $parentAttributes
      *
      * @return $this
      */
@@ -183,9 +201,9 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     /**
      * Add a chunk of html if a (non-strict) condition is met.
      *
-     * @param bool   $condition
+     * @param bool $condition
      * @param string $html
-     * @param array  $parentAttributes
+     * @param array $parentAttributes
      *
      * @return $this
      */
@@ -244,7 +262,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
      *
      * @return \Spatie\Menu\Menu
      */
-    protected function createSubmenuMenu($menu): Menu
+    protected function createSubmenuMenu($menu): self
     {
         if (is_callable($menu)) {
             $transformer = $menu;
@@ -312,7 +330,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     /**
      * Apply a filter to an item. Returns the result of the filter.
      *
-     * @param callable          $filter
+     * @param callable $filter
      * @param \Spatie\Menu\Item $item
      */
     protected function applyFilter(callable $filter, Item $item)
@@ -344,7 +362,8 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     }
 
     /**
-     * Wrap the menu in an html element.
+     * Wrap the entire menu in an html element. This is another level of
+     * wrapping above the `wrapperTag`.
      *
      * @param string $element
      * @param array $attributes
@@ -375,12 +394,22 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     }
 
     /**
+     * A menu can be active but not exact-active.
+     *
+     * @return bool
+     */
+    public function isExactActive(): bool
+    {
+        return false;
+    }
+
+    /**
      * Set multiple items in the menu as active based on a callable that filters
      * through items. If you typehint the item parameter in the callable, it will
      * only be applied to items of that type.
      *
      * @param callable|string $urlOrCallable
-     * @param string          $root
+     * @param string $root
      *
      * @return $this
      */
@@ -395,6 +424,20 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
         }
 
         throw new \InvalidArgumentException('`setActive` requires a pattern or a callable');
+    }
+
+    /**
+     * Set the class name that will be used on exact-active items for this menu.
+     *
+     * @param string $class
+     *
+     * @return $this
+     */
+    public function setExactActiveClass(string $class)
+    {
+        $this->exactActiveClass = $class;
+
+        return $this;
     }
 
     /**
@@ -445,6 +488,7 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
 
             if ($callable($item)) {
                 $item->setActive();
+                $item->setExactActive();
             }
         });
 
@@ -532,6 +576,83 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     }
 
     /**
+     * Set tag for items wrapper.
+     *
+     * @param string|null $wrapperTagName
+     * @return $this
+     */
+    public function setWrapperTag($wrapperTagName = null)
+    {
+        $this->wrapperTagName = $wrapperTagName;
+
+        return $this;
+    }
+
+    /**
+     * Set tag for items wrapper.
+     *
+     * @param string|null $wrapperTagName
+     * @return $this
+     */
+    public function withoutWrapperTag()
+    {
+        $this->wrapperTagName = null;
+
+        return $this;
+    }
+
+    /**
+     * Set the parent tag name.
+     *
+     * @param string|null $parentTagName
+     * @return $this
+     */
+    public function setParentTag($parentTagName = null)
+    {
+        $this->parentTagName = $parentTagName;
+
+        return $this;
+    }
+
+    /**
+     * Render items without a parent tag.
+     *
+     * @return $this
+     */
+    public function withoutParentTag()
+    {
+        $this->parentTagName = null;
+
+        return $this;
+    }
+
+    /**
+     * Set whether active class should (also) be on link.
+     *
+     * @param $activeClassOnLink
+     * @return $this
+     */
+    public function setActiveClassOnLink(bool $activeClassOnLink = true)
+    {
+        $this->activeClassOnLink = $activeClassOnLink;
+
+        return $this;
+    }
+
+    /**
+     * Set whether active class should (also) be on parent.
+     *
+     * @param $activeClassOnParent
+     * @return $this
+     */
+    public function setActiveClassOnParent(bool $activeClassOnParent = true)
+    {
+        $this->activeClassOnParent = $activeClassOnParent;
+
+        return $this;
+    }
+
+    /**
      * @param bool $condition
      * @param callable $callable
      *
@@ -564,11 +685,15 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
      */
     public function render(): string
     {
-        $tag = new Tag('ul', $this->htmlAttributes);
+        $tag = $this->wrapperTagName
+            ? new Tag($this->wrapperTagName, $this->htmlAttributes)
+            : null;
 
         $contents = array_map([$this, 'renderItem'], $this->items);
 
-        $menu = $this->prepend.$tag->withContents($contents).$this->append;
+        $wrappedContents = $tag ? $tag->withContents($contents) : implode('', $contents);
+
+        $menu = $this->prepend.$wrappedContents.$this->append;
 
         if (! empty($this->wrap)) {
             return Tag::make($this->wrap[0], new Attributes($this->wrap[1]))->withContents($menu);
@@ -581,15 +706,41 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     {
         $attributes = new Attributes();
 
+        if (method_exists($item, 'beforeRender')) {
+            $item->beforeRender();
+        }
+
+        if (method_exists($item, 'willRender') && $item->willRender() === false) {
+            return '';
+        }
+
         if ($item->isActive()) {
-            $attributes->addClass($this->activeClass);
+            if ($this->activeClassOnParent) {
+                $attributes->addClass($this->activeClass);
+
+                if ($item->isExactActive()) {
+                    $attributes->addClass($this->exactActiveClass);
+                }
+            }
+
+            if ($this->activeClassOnLink && $item instanceof HasHtmlAttributes) {
+                $item->addClass($this->activeClass);
+
+                if ($item->isExactActive()) {
+                    $item->addClass($this->exactActiveClass);
+                }
+            }
         }
 
         if ($item instanceof HasParentAttributes) {
             $attributes->setAttributes($item->parentAttributes());
         }
 
-        return Tag::make('li', $attributes)->withContents($item->render());
+        if (! $this->parentTagName) {
+            return $item->render();
+        }
+
+        return Tag::make($this->parentTagName, $attributes)->withContents($item->render());
     }
 
     /**
@@ -608,5 +759,10 @@ class Menu implements Item, Countable, HasHtmlAttributes, HasParentAttributes
     public function __toString(): string
     {
         return $this->render();
+    }
+
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->items);
     }
 }

@@ -58,11 +58,11 @@ abstract class Kernel implements KernelInterface, TerminableInterface
     protected $startTime;
     protected $loadClassCache;
 
-    const VERSION = '2.7.35';
-    const VERSION_ID = 20735;
+    const VERSION = '2.7.52';
+    const VERSION_ID = 20752;
     const MAJOR_VERSION = 2;
     const MINOR_VERSION = 7;
-    const RELEASE_VERSION = 35;
+    const RELEASE_VERSION = 52;
     const EXTRA_VERSION = '';
 
     const END_OF_MAINTENANCE = '05/2018';
@@ -87,7 +87,7 @@ abstract class Kernel implements KernelInterface, TerminableInterface
         $defClass = $defClass->getDeclaringClass()->name;
 
         if (__CLASS__ !== $defClass) {
-            @trigger_error(sprintf('Calling the %s::init() method is deprecated since version 2.3 and will be removed in 3.0. Move your logic to the constructor method instead.', $defClass), E_USER_DEPRECATED);
+            @trigger_error(sprintf('Calling the %s::init() method is deprecated since Symfony 2.3 and will be removed in 3.0. Move your logic to the constructor method instead.', $defClass), E_USER_DEPRECATED);
             $this->init();
         }
     }
@@ -97,7 +97,7 @@ abstract class Kernel implements KernelInterface, TerminableInterface
      */
     public function init()
     {
-        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.3 and will be removed in 3.0. Move your logic to the constructor method instead.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.3 and will be removed in 3.0. Move your logic to the constructor method instead.', E_USER_DEPRECATED);
     }
 
     public function __clone()
@@ -207,7 +207,7 @@ abstract class Kernel implements KernelInterface, TerminableInterface
      */
     public function isClassInActiveBundle($class)
     {
-        @trigger_error('The '.__METHOD__.' method is deprecated since version 2.6 and will be removed in version 3.0.', E_USER_DEPRECATED);
+        @trigger_error('The '.__METHOD__.' method is deprecated since Symfony 2.6 and will be removed in version 3.0.', E_USER_DEPRECATED);
 
         foreach ($this->getBundles() as $bundle) {
             if (0 === strpos($class, $bundle->getNamespace())) {
@@ -614,8 +614,6 @@ abstract class Kernel implements KernelInterface, TerminableInterface
 
     /**
      * Prepares the ContainerBuilder before it is compiled.
-     *
-     * @param ContainerBuilder $container A ContainerBuilder instance
      */
     protected function prepareContainer(ContainerBuilder $container)
     {
@@ -678,8 +676,6 @@ abstract class Kernel implements KernelInterface, TerminableInterface
 
     /**
      * Returns a loader for the container.
-     *
-     * @param ContainerInterface $container The service container
      *
      * @return DelegatingLoader The loader
      */

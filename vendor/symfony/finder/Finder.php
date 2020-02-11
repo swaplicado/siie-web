@@ -386,6 +386,10 @@ class Finder implements \IteratorAggregate, \Countable
     /**
      * Excludes directories.
      *
+     * Directories passed as argument must be relative to the ones defined with the `in()` method. For example:
+     *
+     *     $finder->in(__DIR__)->exclude('ruby');
+     *
      * @param string|array $dirs A directory path or an array of directories
      *
      * @return $this
@@ -401,6 +405,8 @@ class Finder implements \IteratorAggregate, \Countable
 
     /**
      * Excludes "hidden" directories and files (starting with a dot).
+     *
+     * This option is enabled by default.
      *
      * @param bool $ignoreDotFiles Whether to exclude "hidden" files or not
      *
@@ -421,6 +427,8 @@ class Finder implements \IteratorAggregate, \Countable
 
     /**
      * Forces the finder to ignore version control directories.
+     *
+     * This option is enabled by default.
      *
      * @param bool $ignoreVCS Whether to exclude VCS files or not
      *
@@ -461,8 +469,6 @@ class Finder implements \IteratorAggregate, \Countable
      * The anonymous function receives two \SplFileInfo instances to compare.
      *
      * This can be slow as all the matching files and directories must be retrieved for comparison.
-     *
-     * @param \Closure $closure An anonymous function
      *
      * @return $this
      *
@@ -569,8 +575,6 @@ class Finder implements \IteratorAggregate, \Countable
      * The anonymous function receives a \SplFileInfo and must return false
      * to remove files.
      *
-     * @param \Closure $closure An anonymous function
-     *
      * @return $this
      *
      * @see CustomFilterIterator
@@ -625,9 +629,9 @@ class Finder implements \IteratorAggregate, \Countable
 
         foreach ((array) $dirs as $dir) {
             if (is_dir($dir)) {
-                $resolvedDirs[] = $dir;
+                $resolvedDirs[] = $this->normalizeDir($dir);
             } elseif ($glob = glob($dir, (defined('GLOB_BRACE') ? GLOB_BRACE : 0) | GLOB_ONLYDIR)) {
-                $resolvedDirs = array_merge($resolvedDirs, $glob);
+                $resolvedDirs = array_merge($resolvedDirs, array_map(array($this, 'normalizeDir'), $glob));
             } else {
                 throw new \InvalidArgumentException(sprintf('The "%s" directory does not exist.', $dir));
             }
@@ -757,8 +761,6 @@ class Finder implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param AdapterInterface $adapter
-     *
      * @return AdapterInterface
      */
     private function buildAdapter(AdapterInterface $adapter)
@@ -791,5 +793,17 @@ class Finder implements \IteratorAggregate, \Countable
 
             return $properties;
         }, $this->adapters);
+    }
+
+    /**
+     * Normalizes given directory names by removing trailing slashes.
+     *
+     * @param string $dir
+     *
+     * @return string
+     */
+    private function normalizeDir($dir)
+    {
+        return rtrim($dir, '/'.\DIRECTORY_SEPARATOR);
     }
 }
