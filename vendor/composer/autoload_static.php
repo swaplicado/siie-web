@@ -1001,7 +1001,6 @@ class ComposerStaticInite62f49184b893a59a38f5474bb974c19
         'QmsAddAnalysisTables' => __DIR__ . '/../..' . '/database/migrations/2019_08_16_090000_qms_add_analysis_tables.php',
         'QmsAddCertConfigurationsTable' => __DIR__ . '/../..' . '/database/migrations/2019_10_23_083336_qms_add_cert_configurations_table.php',
         'QmsAddConfigsTable' => __DIR__ . '/../..' . '/database/migrations/2019_08_16_120520_qms_add_configs_table.php',
-        'QmsAddDefaultConfig' => __DIR__ . '/../..' . '/database/migrations/2020_01_29_094004_qms_add_default_config.php',
         'QmsAddDocsClosedfield' => __DIR__ . '/../..' . '/database/migrations/2019_11_08_093603_qms_add_docs_closedfield.php',
         'QmsAddDocumentsTables' => __DIR__ . '/../..' . '/database/migrations/2019_08_16_095339_qms_add_documents_tables.php',
         'QmsAddFieldsTable' => __DIR__ . '/../..' . '/database/migrations/2019_08_29_161252_qms_add_fields_table.php',
