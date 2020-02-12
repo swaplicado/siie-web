@@ -29,7 +29,7 @@
         font-family:"Arial Black", Gadget, sans-serif;
         }
 
-      .bigger { font-size:70pt; }
+      .bigger { font-size:60pt; }
       .tcode { font-size:20pt; }
       .titem { font-size:15pt; }
     </style>
