@@ -712,6 +712,8 @@ class SMovsManagment {
            $iWhsDesDefLocation = $oDesLocation->id_whs_location;
         }
 
+        $oMirrorMovement->dt_date = $oMovement->dt_date;
+
         $oMovement->aAuxRows = [];
         $oMirrorMovement->aAuxRows = [];
         foreach ($aMovementRows as $row) {
