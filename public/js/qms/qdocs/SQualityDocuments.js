@@ -20,8 +20,8 @@ var app = new Vue({
         b_class: "btn btn-danger btn-lg btn-block"
       },
       {
-        id_link_type: 4,
-        id_link: 4,
+        id_link_type: 6,
+        id_link: 13,
         name: "Aerosoles",
         b_class: "btn btn-success btn-lg btn-block"
       },
@@ -34,7 +34,7 @@ var app = new Vue({
       {
         id_link_type: 4,
         id_link: 10,
-        name: "Vinagre",
+        name: "Vinagres",
         b_class: "btn btn-default btn-lg btn-block"
       },
       {

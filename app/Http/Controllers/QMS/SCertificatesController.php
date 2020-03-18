@@ -100,15 +100,19 @@ class SCertificatesController extends Controller
                                         'qa.id_analysis',
                                         'qa.standard', 
                                         'qa.result_unit', 
-                                        'qa.specification AS _specification')
+                                        'qa.specification AS _ana_specification',
+                                        'qcc.specification AS _specification',
+                                        'qcc.result')
                             ->get();
 
         $lMBResults = $lData1->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.MB'))
                             ->select('qa.name AS _analysis', 
                                 'qa.id_analysis',
+                                'qcc.id_cert_configuration',
                                 'qa.standard', 
                                 'qa.result_unit', 
-                                'qa.specification AS _specification')
+                                'qa.specification AS _ana_specification',
+                                'qcc.specification AS _specification')
                             ->get();
 
         $lOLResults = $lData2->where('qat.id_analysis_type', \Config::get('scqms.ANALYSIS_TYPE.OL'))
