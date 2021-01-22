@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div id="prodOrderModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->
     <div class="modal-content">
@@ -27,21 +27,21 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-5">
+          <div class="col-md-7">
             <div class="form-group">
               {!! Form::label('identifier', trans('mms.labels.PRODUCTION_ORDER')) !!}
               {!! Form::label('identifier', null, ['class'=>'form-control',
                                                               'id' => 'identifier']) !!}
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group">
               {!! Form::label('order_type', trans('mms.labels.PRODUCTION_ORDER_TYPE')) !!}
               {!! Form::label('order_type', null, ['class'=>'form-control',
                                                               'id' => 'order_type']) !!}
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="form-group">
               {!! Form::label('order_date', trans('siie.labels.DATE')) !!}
               {!! Form::label('order_date', null, ['class'=>'form-control',

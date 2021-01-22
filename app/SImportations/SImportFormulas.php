@@ -87,7 +87,7 @@ class SImportFormulas {
          $formula->save();
        }
 
-       SImportUtils::saveImportation($oImportation);
+      //  SImportUtils::saveImportation($oImportation);
 
        return sizeof($lFormulasToWeb);
   }

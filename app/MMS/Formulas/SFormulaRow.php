@@ -29,7 +29,7 @@ class SFormulaRow extends Model {
      */
     public function formula()
     {
-      return $this->belongsTo('App\MMS\Formulas\SFormula');
+      return $this->belongsTo('App\MMS\Formulas\SFormula', 'formula_id');
     }
 
     /**

@@ -44,55 +44,55 @@
 		<table id="query_table" class="table table-striped table-bordered no-wrap table-condensed" cellspacing="0" width="100%">
 		    <thead>
 		        <tr class="titlerow">
-								<th data-priority="1">Folio</th>
-								<th data-priority="1">{{ trans('userinterface.labels.DATE') }}</th>
+					<th data-priority="1">Folio</th>
+					<th data-priority="1">{{ trans('userinterface.labels.DATE') }}</th>
 		            <th data-priority="1">{{ trans('userinterface.labels.CODE') }}</th>
 		            <th data-priority="1">{{ trans('wms.labels.MAT_PROD') }}</th>
-								<th data-priority="1">{{ trans('wms.labels.INPUTS') }}</th>
-								<th data-priority="1">{{ trans('wms.labels.OUTPUTS') }}</th>
-								<th data-priority="1">{{ trans('wms.labels.UN') }}</th>
+					<th data-priority="1">{{ trans('wms.labels.INPUTS') }}</th>
+					<th data-priority="1">{{ trans('wms.labels.OUTPUTS') }}</th>
+					<th data-priority="1">{{ trans('wms.labels.UN') }}</th>
 		            <th>{{ trans('wms.labels.BRANCH') }}</th>
 		            <th>{{ trans('wms.labels.WAREHOUSE') }}</th>
 		            <th>{{ trans('wms.labels.MVT_TYPE') }}</th>
 		            <th>{{ trans('wms.labels.SUBTYPE') }}</th>
 		            <th>{{ trans('mms.labels.PO') }}</th>
-								<th>{{ trans('siie.labels.CREATED') }}</th>
-								<th>{{ trans('siie.labels.CREATED_BY') }}</th>
+					<th>{{ trans('siie.labels.CREATED') }}</th>
+					<th>{{ trans('siie.labels.CREATED_BY') }}</th>
 		        </tr>
 		    </thead>
 		    <tbody>
-					@foreach ($lMovs as $row)
-						<tr>
-								<td>{{ $row->mov_code.'-'.session('utils')->formatFolio($row->mov_folio) }}</td>
-								<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
-								{{-- <td>{{ $row->movement->dt_date }}</td> --}}
-		            <td>{{ $row->item_code }}</td>
-		            <td>{{ $row->item }}</td>
-								@if ($row->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
-									<td align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
-									<td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
-								@else
-									<td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
-									<td align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
-								@endif
-								<td align="right">{{ $row->unit_code }}</td>
-								<td>{{ $row->branch }}</td>
-								<td>{{ $row->warehouse }}</td>
-								<td>{{ $row->movement }}</td>
-								@if($row->mvt_mfg_type_id > 1)
-									<td>{{ $row->mfg_name }}</td>
-								@else
-									<td>N/A</td>
-								@endif
-								@if ($row->prod_ord_id == 1)
-									<td>N/A</td>
-								@else
-									<td>{{ 'OP-'.session('utils')->formatFolio($row->po_folio) }}</td>
-								@endif
-								<td>{{ $row->created_at }}</td>
-								<td>{{ $row->username_creation }}</td>
-		        </tr>
-					@endforeach
+				@foreach ($lMovs as $row)
+					<tr>
+						<td>{{ $row->mov_code.'-'.session('utils')->formatFolio($row->mov_folio) }}</td>
+						<td>{{ \Carbon\Carbon::parse($row->mov_date)->format('Y-m-d') }}</td>
+						{{-- <td>{{ $row->movement->dt_date }}</td> --}}
+						<td>{{ $row->item_code }}</td>
+						<td>{{ $row->item }}</td>
+						@if ($row->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN'))
+							<td align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
+							<td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
+						@else
+							<td align="right">{{ session('utils')->formatNumber(0, \Config::get('scsiie.FRMT.QTY')) }}</td>
+							<td align="right">{{ session('utils')->formatNumber($row->quantity, \Config::get('scsiie.FRMT.QTY')) }}</td>
+						@endif
+						<td align="right">{{ $row->unit_code }}</td>
+						<td>{{ $row->branch }}</td>
+						<td>{{ $row->warehouse }}</td>
+						<td>{{ $row->movement }}</td>
+						@if($row->mvt_mfg_type_id > 1)
+							<td>{{ $row->mfg_name }}</td>
+						@else
+							<td>N/A</td>
+						@endif
+						@if ($row->prod_ord_id == 1)
+							<td>N/A</td>
+						@else
+							<td>{{ 'OP-'.session('utils')->formatFolio($row->po_folio) }}</td>
+						@endif
+						<td>{{ $row->created_at }}</td>
+						<td>{{ $row->username_creation }}</td>
+					</tr>
+				@endforeach
 		    </tbody>
 		</table>
 	</div>
