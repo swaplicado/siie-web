@@ -125,39 +125,39 @@ class SInventoryCore {
          }
        }
 
-       $lStock = $this->getStock(0, $iPastYear, $tEndOfPastYear);
+      //  $lStock = $this->getStock(0, $iPastYear, $tEndOfPastYear);
 
-       if (sizeof($lStock) == 0) {
-          return ['No hay existencias para realizar la generación de inventario'];
-       }
+      //  if (sizeof($lStock) == 0) {
+      //     return ['No hay existencias para realizar la generación de inventario'];
+      //  }
 
-       $oYear = SYear::where('year', $iYear)
-                       ->where('is_deleted', false)
-                       ->first();
+      //  $oYear = SYear::where('year', $iYear)
+      //                  ->where('is_deleted', false)
+      //                  ->first();
 
-       $tMovsDate = Carbon::createFromDate($iYear, 1, 1);
-       $lMovements = $this->stockToMovements($lStock, $oYear->id_year, $tMovsDate->toDateString());
+      //  $tMovsDate = Carbon::createFromDate($iYear, 1, 1);
+      //  $lMovements = $this->stockToMovements($lStock, $oYear->id_year, $tMovsDate->toDateString());
 
-       $oManagment = new SMovsManagment();
+      //  $oManagment = new SMovsManagment();
 
-       foreach ($lMovements as $mov) {
-           $result = $oManagment->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
-                                           $mov,
-                                           $mov->aAuxRows,
-                                           $mov->mvt_whs_class_id,
-                                           $mov->mvt_whs_type_id,
-                                           $mov->whs_id,
-                                           0,
-                                           0,
-                                           0,
-                                           $request);
+      //  foreach ($lMovements as $mov) {
+      //      $result = $oManagment->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
+      //                                      $mov,
+      //                                      $mov->aAuxRows,
+      //                                      $mov->mvt_whs_class_id,
+      //                                      $mov->mvt_whs_type_id,
+      //                                      $mov->whs_id,
+      //                                      0,
+      //                                      0,
+      //                                      0,
+      //                                      $request);
 
-           if (is_array($result)) {
-             if(sizeof($result) > 0) {
-                 array_push($aResult, $result);
-             }
-           }
-       }
+      //      if (is_array($result)) {
+      //        if(sizeof($result) > 0) {
+      //            array_push($aResult, $result);
+      //        }
+      //      }
+      //  }
 
        return $aResult;
     }
