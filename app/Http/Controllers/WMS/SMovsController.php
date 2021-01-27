@@ -1066,13 +1066,13 @@ class SMovsController extends Controller
         $aErrors = $oProcess->canMovBeErasedOrActivated($oMov, \Config::get('scwms.MOV_ACTION.ERASE'));
 
         if (is_array($aErrors) && sizeof($aErrors) > 0) {
-           redirect()->back()->withErrors($aErrors);
+           return redirect()->back()->withErrors($aErrors);
         }
 
         $aErr = $oProcess->eraseMov($oMov, $request);
 
         if (is_array($aErr) && sizeof($aErr) > 0) {
-           redirect()->back()->withErrors($aErr);
+            return redirect()->back()->withErrors($aErr);
         }
 
         Flash::success(trans('messages.REG_DELETED'))->important();

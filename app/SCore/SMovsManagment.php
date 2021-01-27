@@ -938,6 +938,7 @@ class SMovsManagment {
 
         if ($iAction == \Config::get('scwms.MOV_ACTION.ERASE')) {
           if ($oMovement->mvt_whs_class_id == \Config::get('scwms.MVT_CLS_IN')) {
+              $oMovement->rows;
               $oAuxMov = clone $oMovement;
               $oAuxMov->id_mvt = 0;
               $aErrors = SStockUtils::validateStock($oAuxMov);

@@ -75,8 +75,8 @@ class SStockUtils
 
         $bFound = false;
 
-        foreach ($oMovement->aAuxRows as $oRow) {
-          if ($oRow->bIsDeleted) {
+        foreach ($oMovement->rows as $oRow) {
+          if ($oRow->is_deleted) {
               continue;
           }
 
@@ -85,11 +85,11 @@ class SStockUtils
                 if ($oStock->location_id == $oRow->location_id) {
                    if ($oStock->pallet_id == $oRow->pallet_id) {
                       if ($oRow->item->is_lot) {
-                          if (sizeof($oRow->getAuxLots()) == 0) {
+                          if (sizeof($oRow->lotRows) == 0) {
                               array_push($aErrors, "El renglón ".$oRow->item->name." no tiene lotes asignados");
                               return $aErrors;
                           }
-                          foreach ($oRow->getAuxLots() as $oLotRow) {
+                          foreach ($oRow->lotRows as $oLotRow) {
                              if ($oLotRow->lot_id == $oStock->lot_id) {
                                  $bFound = true;
 
