@@ -1386,6 +1386,7 @@ class SMovsController extends Controller
             $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = $oObject->unit_id;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $oObject->id_pallet;
             $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
+            $aParameters[\Config::get('scwms.STOCK_PARAMS.DATE')] = session('work_date')->toDateString();
 
             $oData->dStock = session('stock')->getStock($aParameters)[\Config::get('scwms.STOCK.GROSS')];
 

@@ -28,77 +28,86 @@ class SInventoryCore {
      */
     public function getStock($iWarehouse = 0, $iYear = 0, $sCutoffDate = '')
     {
-        $tCutoffDate = Carbon::parse($sCutoffDate);
-        if ($iYear == 0) {
-          $iYear = $tCutoffDate->year;
-        }
+      $tCutoffDate = Carbon::parse($sCutoffDate);
+      if ($iYear == 0) {
+        $iYear = $tCutoffDate->year;
+      }
 
-        $oYear = SYear::where('year', $iYear)
-                        ->where('is_deleted', false)
-                        ->first();
+      $oYear = SYear::where('year', $iYear)
+                      ->where('is_deleted', false)
+                      ->first();
 
-        $sSelect = "ws.branch_id,
-                    ws.whs_id,
-                    ws.location_id,
-                    ws.pallet_id,
-                    ws.lot_id,
-                    ws.item_id,
-                    ws.unit_id,
-                    ei.code AS item_code,
-                    ei.name AS item,
-                    eu.code AS unit,
-                    CONCAT(wwl.code, '-', wwl.name) AS location,
-                    wp.id_pallet AS pallet,
-                    wl.lot,
-                    wl.dt_expiry,
-                    ei.is_lot,
-                    sum(ws.input) as inputs,
-                    sum(ws.output) as outputs,
-                    (sum(ws.input) - sum(ws.output)) as stock
-                    ";
-        $aParameters = array();
+      $sSelect = "ws.branch_id,
+                  ws.whs_id,
+                  ws.location_id,
+                  ws.pallet_id,
+                  ws.lot_id,
+                  ws.item_id,
+                  ws.unit_id,
+                  ei.code AS item_code,
+                  ei.name AS item,
+                  eu.code AS unit,
+                  CONCAT(wwl.code, '-', wwl.name) AS location,
+                  wp.id_pallet AS pallet,
+                  wl.lot,
+                  wl.dt_expiry,
+                  ei.is_lot,
+                  sum(ws.input) as inputs,
+                  sum(ws.output) as outputs,
+                  (sum(ws.input) - sum(ws.output)) as stock
+                  ";
 
-        $aParameters [\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+      $aParameters = array();
 
-        if ($iWarehouse > 0) {
-          $aParameters [\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouse;
-        }
+      $aParameters [\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
 
-        $aParameters [\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oYear->id_year;
-        $aParameters [\Config::get('scwms.STOCK_PARAMS.DATE')] = $tCutoffDate->toDateString();
+      if ($iWarehouse > 0) {
+        $aParameters [\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouse;
+      }
 
-        $aParametersSeg = array();
+      $aParameters [\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oYear->id_year;
+      $aParameters [\Config::get('scwms.STOCK_PARAMS.DATE')] = $tCutoffDate->toDateString();
 
-        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
-        if ($iWarehouse > 0) {
-          $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouse;
-        }
-        else {
-          $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ws.whs_id';
-        }
+      $aParametersSeg = array();
 
-        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oYear->id_year;
-        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.DATE')] = $tCutoffDate->toDateString();
-        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.LOT')] = 'ws.lot_id';
-        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'ws.pallet_id';
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.SSELECT')] = $sSelect;
+      if ($iWarehouse > 0) {
+        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouse;
+      }
+      else {
+        $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.WHS')] = 'ws.whs_id';
+      }
 
-        $lStock = session('stock')->getStockResult($aParameters, $aParametersSeg);
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = $oYear->id_year;
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.DATE')] = $tCutoffDate->toDateString();
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.LOT')] = 'ws.lot_id';
+      $aParametersSeg [\Config::get('scwms.STOCK_PARAMS.PALLET')] = 'ws.pallet_id';
 
-        $lStock = $lStock->having('stock', '>', 0)
-                            ->groupBy(['ws.branch_id',
-                                      'ws.whs_id',
-                                      'ws.location_id',
-                                      'ws.pallet_id',
-                                      'ws.lot_id',
-                                      'ws.item_id',
-                                      'ws.unit_id'
-                                    ])
-                            ->orderBy('ws.item_id', 'ASC')
-                            ->orderBy('ws.unit_id', 'ASC');
+      $lStock = session('stock')->getStockResult($aParameters, $aParametersSeg);
 
-         $lStock = $lStock->get();
+      $lStock = $lStock->having('stock', '>', 0)
+                          ->groupBy(['ws.branch_id',
+                                    'ws.whs_id',
+                                    'ws.location_id',
+                                    'ws.pallet_id',
+                                    'ws.lot_id',
+                                    'ws.item_id',
+                                    'ws.unit_id'
+                                  ])
+                          ->orderBy('ws.item_id', 'ASC')
+                          ->orderBy('ws.unit_id', 'ASC');
 
-         return $lStock;
+      
+      // \DB::enableQueryLog();
+
+      // $lStock = $lStock->toSql();
+      $lStock = $lStock->get();
+
+      // $query = \DB::getQueryLog();
+      // $query = end($query);
+      // dd($lStock);
+
+      return $lStock;
     }
 
     /**
@@ -111,55 +120,55 @@ class SInventoryCore {
      */
     public function generateInitialInventory($iYear = 0, Request $request)
     {
-       $aResult = array();
+        $aResult = array();
 
-       $iPastYear = $iYear - 1;
-       $tAuxDate = Carbon::createFromDate($iPastYear, 1, 1);
-       $tEndOfPastYear = $tAuxDate->endOfYear();
+        $iPastYear = $iYear - 1;
+        $tAuxDate = Carbon::createFromDate($iPastYear, 1, 1);
+        $tEndOfPastYear = $tAuxDate->endOfYear();
 
-       $result = $this->canBeGenerated($iYear);
+        $result = $this->canBeGenerated($iYear);
 
-       if (is_array($result)) {
-         if(sizeof($result) > 0) {
-             return $result;
-         }
-       }
+        if (is_array($result)) {
+          if(sizeof($result) > 0) {
+              return $result;
+          }
+        }
 
-      //  $lStock = $this->getStock(0, $iPastYear, $tEndOfPastYear);
+        $lStock = $this->getStock(0, $iPastYear, $tEndOfPastYear);
 
-      //  if (sizeof($lStock) == 0) {
-      //     return ['No hay existencias para realizar la generación de inventario'];
-      //  }
+        if (sizeof($lStock) == 0) {
+          return ['No hay existencias para realizar la generación de inventario'];
+        }
 
-      //  $oYear = SYear::where('year', $iYear)
-      //                  ->where('is_deleted', false)
-      //                  ->first();
+        $oYear = SYear::where('year', $iYear)
+                        ->where('is_deleted', false)
+                        ->first();
 
-      //  $tMovsDate = Carbon::createFromDate($iYear, 1, 1);
-      //  $lMovements = $this->stockToMovements($lStock, $oYear->id_year, $tMovsDate->toDateString());
+        $tMovsDate = Carbon::createFromDate($iYear, 1, 1);
+        $lMovements = $this->stockToMovements($lStock, $oYear->id_year, $tMovsDate->toDateString());
 
-      //  $oManagment = new SMovsManagment();
+        $oManagment = new SMovsManagment();
 
-      //  foreach ($lMovements as $mov) {
-      //      $result = $oManagment->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
-      //                                      $mov,
-      //                                      $mov->aAuxRows,
-      //                                      $mov->mvt_whs_class_id,
-      //                                      $mov->mvt_whs_type_id,
-      //                                      $mov->whs_id,
-      //                                      0,
-      //                                      0,
-      //                                      0,
-      //                                      $request);
+        foreach ($lMovements as $mov) {
+            $result = $oManagment->processTheMovement(\Config::get('scwms.OPERATION_TYPE.CREATION'),
+                                            $mov,
+                                            $mov->aAuxRows,
+                                            $mov->mvt_whs_class_id,
+                                            $mov->mvt_whs_type_id,
+                                            $mov->whs_id,
+                                            0,
+                                            0,
+                                            0,
+                                            $request);
 
-      //      if (is_array($result)) {
-      //        if(sizeof($result) > 0) {
-      //            array_push($aResult, $result);
-      //        }
-      //      }
-      //  }
+            if (is_array($result)) {
+              if(sizeof($result) > 0) {
+                  array_push($aResult, $result);
+              }
+            }
+        }
 
-       return $aResult;
+        return $aResult;
     }
 
     /**
@@ -178,6 +187,8 @@ class SInventoryCore {
                                     ->where('dt_date', $iYear.'-01-01')
                                     ->where('mvt_whs_type_id', \Config::get('scwms.MVT_TP_IN_ADJ'))
                                     ->get();
+
+        $aResult = [];
 
         if (sizeof($lMovementsGenerated) > 0) {
            $oMovsMng = new SMovsManagment();
