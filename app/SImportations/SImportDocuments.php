@@ -107,10 +107,10 @@ class SImportDocuments
             trn_dps
         WHERE
             id_year = ".$iYearId." AND
+            ts_new <= '2021-01-02' AND
             (ts_new > '".$oImportation->last_importation."' OR
             ts_edit > '".$oImportation->last_importation."' OR
             ts_del > '".$oImportation->last_importation."')
-            AND ts_new <= '2021-01-02'
             ";
 
       $result = $this->webcon->query($sql);
