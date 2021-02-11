@@ -47,13 +47,7 @@ class SImportDocumentRows {
   {
       $oImportation = SImportUtils::getImportationObject(\Config::get('scsys.IMPORTATIONS.ROWS'));
 
-      $sql = "SELECT * FROM trn_dps_ety WHERE
-          id_year = ".$iYearId." AND
-            ts_new <= '2021-01-02' AND
-          (ts_new > '".$oImportation->last_importation."' OR
-          ts_edit > '".$oImportation->last_importation."' OR
-          ts_del > '".$oImportation->last_importation."')
-          ";
+      $sql = "SELECT * FROM trn_dps_ety WHERE id_year = 2021 AND id_doc = 100";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
