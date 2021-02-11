@@ -106,8 +106,10 @@ class SImportDocuments
         FROM
             trn_dps
         WHERE
-            id_year = 2021 AND
-            id_doc = 100";
+             id_year = ".$iYearId." AND
+            (ts_new > '".$oImportation->last_importation."' OR
+            ts_edit > '".$oImportation->last_importation."' OR
+            ts_del > '".$oImportation->last_importation."')";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
