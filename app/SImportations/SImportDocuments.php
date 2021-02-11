@@ -110,6 +110,7 @@ class SImportDocuments
             (ts_new > '".$oImportation->last_importation."' OR
             ts_edit > '".$oImportation->last_importation."' OR
             ts_del > '".$oImportation->last_importation."')
+             AND ts_new <= '2021-01-05'
             ";
 
       $result = $this->webcon->query($sql);
