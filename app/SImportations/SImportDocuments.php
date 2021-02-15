@@ -209,7 +209,7 @@ class SImportDocuments
          $document->save();
        }
 
-       SImportUtils::saveImportation($oImportation);
+       SImportUtils::saveImportation($oImportation, $iYearId);
 
        return sizeof($lDocumentsToWeb);
   }

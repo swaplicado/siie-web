@@ -182,7 +182,7 @@ class SImportDocumentRows {
          $oRow->taxRows()->saveMany($oRowCopy->taxRowsAux);
       }
 
-      SImportUtils::saveImportation($oImportation);
+      SImportUtils::saveImportation($oImportation, $iYearId);
 
       return sizeof($lRowsToWeb);
   }
