@@ -109,7 +109,8 @@ class SImportDocuments
              id_year = ".$iYearId." AND
             (ts_new > '".$oImportation->last_importation."' OR
             ts_edit > '".$oImportation->last_importation."' OR
-            ts_del > '".$oImportation->last_importation."')";
+            ts_del > '".$oImportation->last_importation."') 
+            ORDER BY id_doc ASC";
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
