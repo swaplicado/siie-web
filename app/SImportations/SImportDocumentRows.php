@@ -57,7 +57,6 @@ class SImportDocumentRows {
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
-      $lSiieRows = array();
       $lWebRows = SDocumentRow::get();
       $lDocuments = SDocument::get();
       $lItems = SItem::get();

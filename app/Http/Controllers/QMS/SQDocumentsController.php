@@ -263,6 +263,9 @@ class SQDocumentsController extends Controller
                                         'ei.code AS item_code'
                                     );
 
+        $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+        $lQltyDocs = $lQltyDocs->whereBetween('qqd.dt_document', [$aDates[0]->toDateString(), $aDates[1]->toDateString()]);
+
         $lQltyDocs = $lQltyDocs->get();
 
         return view('qms.docs.indexdocs')
