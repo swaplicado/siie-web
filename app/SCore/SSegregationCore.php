@@ -193,6 +193,7 @@ class SSegregationCore
                 case 9:
                 case 10:
                       $oMovement = new SMovement();
+                      $oMovement->dt_date = session('work_date')->toDateString();
                       $oMovement->mvt_whs_class_id = 2;
                       $oMovement->mvt_whs_type_id = 11;
                       $oMovement->mvt_trn_type_id = 1;
@@ -542,6 +543,9 @@ class SSegregationCore
             case 9:
             case 10:
                   $oMovement = new SMovement();
+                  $oMovement->dt_date = session('work_date')->toDateString();
+                  $oMovement->is_system = true;
+                  $oMovement->is_deleted = false;
                   $oMovement->mvt_whs_class_id = 2;
                   $oMovement->mvt_whs_type_id = 11;
                   $oMovement->mvt_trn_type_id = 1;

@@ -584,7 +584,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button id="closeClassRf" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+        <button id="closeClassRfP" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
       </div>
     </div>
 
@@ -808,7 +808,7 @@
         <div class="row">
           <div class="col-md-6">
             {!! Form::select('statusRfL', $lStatusLib, null,
-                            ['class'=>'form-control statusRFP', 'id' => 'statusRfL',
+                            ['class'=>'form-control statusRFL', 'id' => 'statusRfL',
 														'placeholder' => trans('qms.placeholders.SELECT_STATUS'),
                             'required', ]) !!}
           </div>
@@ -842,7 +842,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button id="closeClassRL" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+        <button id="closeClassRfL" type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
       </div>
     </div>
 

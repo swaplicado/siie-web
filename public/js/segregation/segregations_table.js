@@ -38,4 +38,4 @@ var oSegTable = $('#table_seg').DataTable({
   oSegTable.column( 6 ).visible( false );
   oSegTable.column( 7 ).visible( false );
   oSegTable.column( 21 ).visible(false );
-  oSegTable.column( 22 ).visible(false );
+  //oSegTable.column( 22 ).visible(false );

@@ -250,7 +250,7 @@
 				data:{'id':eti_id},
 
 					success:function(data){
-						opt+='<select class="form-control almacenP" id="almacenL"  name="almacenL" required>';
+						opt+='<select class="form-control almacenL" id="almacenL"  name="almacenL" required>';
 						opt+='<option value=0>Seleccione un almacen</option>';
 							for(var i=0;i<data.length;i++){
 								opt+='<option value="'+data[i].id_whs+'">'+data[i].name+'</option>';
