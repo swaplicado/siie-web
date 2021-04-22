@@ -204,6 +204,7 @@ class SImportProductionOrders
         $oSiieWebPO->folio = $oSiiePO["num"];
         $oSiieWebPO->identifier = $oSiiePO["ref"];
         $oSiieWebPO->date = $oSiiePO["dt"];
+        $oSiieWebPO->quantity = $oSiiePO["qty"];
         $oSiieWebPO->charges = $oSiiePO["chgs"];
         $oSiieWebPO->external_id = $oSiiePO["id_year"].$oSiiePO["id_ord"];
         $oSiieWebPO->is_deleted = $oSiiePO["b_del"];

@@ -1,7 +1,5 @@
 <?php namespace App\SCore;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\WMS\SStockController;
 use Carbon\Carbon;
 
 use App\SCore\SStockManagment;
@@ -73,7 +71,7 @@ class SExplosionCore {
            continue;
          }
 
-         array_push($lFormulasToExplode, new SAuxiliarData($oPO->formula, $oPO->charges));
+         $lFormulasToExplode[] = new SAuxiliarData($oPO->formula, $oPO->quantity);
        }
      }
 
@@ -135,13 +133,13 @@ class SExplosionCore {
    *
    * @param  array   $lFormulaRows Result of method of this class (from query)
    * @param  array   $lIngredients list of ingredient objects
-   * @param  double $dCharges     charges of production order
+   * @param  double $dQuantity     quantity of production order
    * @param  boolean $bExplodeSubs the sub formules will be exploded or not
    *
    * @return array
    */
   private function formulaRowsToIngredients($lFormulaRows = [], $lIngredients = [],
-                                                $dCharges = 0, $bExplodeSubs = false)
+                                                $dQuantity = 0, $bExplodeSubs = false)
   {
       $lRecipes = array();
       $oFormula = null;
@@ -164,17 +162,17 @@ class SExplosionCore {
          else {
              $sKey = $oRow->item_id.'-'.$oRow->unit_id.'-'.$oRow->item_recipe_id;
              if (array_key_exists($sKey, $lIngredients)) {
-               $lIngredients[$sKey]->dRequiredQuantity = $lIngredients[$sKey]->dRequiredQuantity + ($oRow->quantity * $dCharges);
+               $lIngredients[$sKey]->dRequiredQuantity = $lIngredients[$sKey]->dRequiredQuantity + ($oRow->quantity * $dQuantity);
              }
              else {
-               $oRow->dRequiredQuantity = ($oRow->quantity * $dCharges);
+               $oRow->dRequiredQuantity = ($oRow->quantity * $dQuantity);
                $lIngredients[$sKey] = $oRow;
              }
          }
       }
 
       if (sizeof($lRecipes) > 0) {
-        $lIngredients = $this->explodeRecipes($lRecipes, $lIngredients, $dCharges);
+        $lIngredients = $this->explodeRecipes($lRecipes, $lIngredients, $dQuantity);
       }
 
       return $lIngredients;
@@ -185,11 +183,11 @@ class SExplosionCore {
    *
    * @param  array   $aRecipes     array of recipes contained in production order
    * @param  array   $lIngredients list of ingredients
-   * @param  double $dCharges     charges on production order
+   * @param  double $dQuantity     quantity on production order
    *
    * @return array  the same received array with the added ingredients of subformulas
    */
-  private function explodeRecipes($aRecipes = [], $lIngredients = [], $dCharges = 1)
+  private function explodeRecipes($aRecipes = [], $lIngredients = [], $dQuantity = 1)
   {
       foreach ($aRecipes as $oData) {
          $oFormula = SFormula::whereRaw('version = (SELECT MAX(version)
@@ -200,7 +198,7 @@ class SExplosionCore {
                               ->first();
 
          $lIngredients = $this->formulaRowsToIngredients($this->getRowsFromFormula($oFormula->id_formula), $lIngredients,
-                                                          ($dCharges * $oData->dQuantity), true);
+                                                          ($dQuantity * $oData->dQuantity), true);
       }
 
       return $lIngredients;

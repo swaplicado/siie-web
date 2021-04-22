@@ -14,6 +14,7 @@ class SProductionOrder extends SModel {
                             'identifier',
                             'date',
                             'charges',
+                            'quantity',
                             'is_deleted',
                             'external_id',
                             'plan_id',

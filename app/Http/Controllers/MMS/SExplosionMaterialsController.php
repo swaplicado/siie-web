@@ -2,17 +2,9 @@
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use Laracasts\Flash\Flash;
-use App\SUtils\SMenu;
-use App\Database\Config;
-use App\SUtils\SUtil;
 use App\SCore\SExplosionCore;
 use Carbon\Carbon;
-
-use App\SUtils\SValidation;
-use App\ERP\SBranch;
 use App\SUtils\SProcess;
 
 use App\MMS\SProductionPlan;
@@ -23,7 +15,6 @@ class SExplosionMaterialsController extends Controller {
 
     private $oCurrentUserPermission;
     private $iFilter;
-    private $sClassNav;
 
     public function __construct()
     {
