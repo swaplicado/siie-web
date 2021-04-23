@@ -62,7 +62,7 @@
         <div class="row">
           <div class="col-md-5">
             <div class="form-group">
-              {!! Form::label('charges', trans('mms.labels.CHARGES')) !!}
+              {!! Form::label('charges', trans('wms.labels.QTY')) !!}
               {!! Form::number('charges', null, ['class'=>'form-control',
                                                   'style' => 'text-align: right;',
                                                   'readonly',

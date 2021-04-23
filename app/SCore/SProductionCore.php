@@ -130,8 +130,8 @@ class SProductionCore {
             $oRow['is_lot'] = $oItem->is_lot;
             $oRow['is_bulk'] = $oItem->is_bulk;
             $oRow['without_rotation'] = $oItem->without_rotation;
-            $oRow['available_stock'] = $oSrcPO->charges * $oFormula->quantity;
-            $oRow['stock'] = $oSrcPO->charges * $oFormula->quantity;
+            $oRow['available_stock'] = $oSrcPO->quantity * $oFormula->quantity;
+            $oRow['stock'] = $oSrcPO->quantity * $oFormula->quantity;
             $oRow['segregated'] = 0;
 
             switch ($iElementType) {

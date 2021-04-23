@@ -61,7 +61,7 @@ class SProductionOrdersController extends Controller
                      mpo.folio,
                      mpo.identifier,
                      mpo.date,
-                     mpo.charges,
+                     mpo.quantity,
                      mpo.is_deleted,
                      mpo.plan_id,
                      mpo.branch_id,
@@ -152,7 +152,7 @@ class SProductionOrdersController extends Controller
        $lRows = $oExplosion->getRowsFromFormula($oProductionOrder->formula_id);
 
        foreach ($lRows as $oRow) {
-         $oRow->dRequired = $oRow->quantity * $oProductionOrder->charges;
+         $oRow->dRequired = $oRow->quantity * $oProductionOrder->quantity;
          $oConsumption = SProductionCore::getConsumption($iPO, $oRow->item_id, $oRow->unit_id, true);
          $oRow->oConsumtion = $oConsumption;
        }
@@ -404,7 +404,7 @@ class SProductionOrdersController extends Controller
         $errors = $oProductionOrder->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->back()->withInput($request->input())->withErrors($error);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
@@ -436,7 +436,7 @@ class SProductionOrdersController extends Controller
         $lRows = $oExplosion->getRowsFromFormula($oProductionOrder->formula_id);
 
         foreach ($lRows as $oRow) {
-          $oRow->dRequired = $oRow->quantity * $oProductionOrder->charges;
+          $oRow->dRequired = $oRow->quantity * $oProductionOrder->quantity;
 
           $oConsumption = SProductionCore::getConsumption($iPO, $oRow->item_id, $oRow->unit_id);
           $dCharged = 0;

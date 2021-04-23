@@ -50,7 +50,7 @@ class SGuiProduction {
      guiProduction.setOrderItem(oProductionOrder.item.code + '-' +
                                     oProductionOrder.item.name + '-' +
                                     oProductionOrder.unit.code);
-     guiProduction.setCharges(oProductionOrder.charges);
+     guiProduction.setCharges(oProductionOrder.quantity);
      guiProduction.setDelivered(oProductionOrder.dDelivered);
      guiProduction.setPOUnit(oProductionOrder.unit.code);
 

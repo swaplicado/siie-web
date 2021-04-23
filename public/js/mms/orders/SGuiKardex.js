@@ -47,7 +47,7 @@ class SGuiKardex {
     guiKardex.setItem(oServerData.oProductionOrder.item.code
                                   + '-' + oServerData.oProductionOrder.item.name);
     guiKardex.setUnit(oServerData.oProductionOrder.unit.code);
-    guiKardex.setPOQuantity(oServerData.oProductionOrder.charges
+    guiKardex.setPOQuantity(oServerData.oProductionOrder.quantity
                               * oServerData.oProductionOrder.formula.quantity);
 
     oKardexTable.clear().draw();

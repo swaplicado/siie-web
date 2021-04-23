@@ -418,7 +418,7 @@ class SMovsController extends Controller
             $lSrcPO = SProductionOrder::where('is_deleted', false)
                                   ->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
                                   ->selectRaw('(CONCAT(LPAD(folio, '.
-                                        session('long_folios').', "0"),
+                                        '8'.', "0"),
                                             "-", identifier)) as prod_ord,
                                             id_order')
                                   // ->whereRaw('id_order IN (SELECT father_order_id

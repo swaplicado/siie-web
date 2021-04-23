@@ -186,7 +186,7 @@ class SMovsQuerysController extends Controller
         $oQuery = $oQuery->where('wm.is_deleted', false)
           ->where('wm.branch_id', session('branch')->id_branch)
           ->select(\DB::raw($sSelect))
-          ->groupBy('id_mvt')
+          ->groupBy('id_mvt_row')
           ->get();
 
         return view('mms.movs.query')

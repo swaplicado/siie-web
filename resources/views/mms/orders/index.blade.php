@@ -120,7 +120,7 @@
               <td>{{ $order->item }}</td>
               <td>{{ $order->unit_code }}</td>
               <td>{{ $order->form_identifier.'-V'.$order->form_version }}</td>
-              <td style="text-align: right;">{{ $order->charges }}</td>
+              <td style="text-align: right;">{{ $order->quantity }}</td>
               <td>{{ $order->branch_name }}</td>
               @if ($order->father_order_id == '1')
                 <td>{{ 'NA' }}</td>

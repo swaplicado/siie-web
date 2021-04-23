@@ -8,7 +8,7 @@ class SChargesCore {
       oGuiCharges.setPODate(oProductionOrder.date);
       oGuiCharges.setPOType(oProductionOrder.type_name);
       oGuiCharges.setItem(oProductionOrder.item_code + '-' +oProductionOrder.item);
-      oGuiCharges.setPOQuantity(oProductionOrder.charges);
+      oGuiCharges.setPOQuantity(oProductionOrder.quantity);
       oGuiCharges.setUnit(oProductionOrder.unit_code);
       oGuiCharges.setFolio(oProductionOrder.folio);
       oGuiCharges.setIdentifier(oProductionOrder.identifier);
