@@ -145,6 +145,11 @@ class SPalletCore {
          }
       }
 
+      if (! globalData.bIsInputMov && lPalletStock.length == 0) {
+        swal("Error", "La tarima no existe en el almacén y ubicación actuales.", "error");
+          return false;
+      }
+
       lPalletStock.forEach(function (oStock) {
           if (parseFloat(oStock.segregated, 10) > 0) {
               bHaveSegregated = true;
