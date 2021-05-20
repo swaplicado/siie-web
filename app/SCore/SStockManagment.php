@@ -169,6 +169,8 @@ class SStockManagment
                       ->orderBy('ws.item_id')
                       ->where('ws.is_deleted', false)
                       ->where('ws.pallet_id', $iPalletId)
+                      ->where('ws.year_id', session('work_year'))
+                      ->where('ws.dt_date', '<=', session('work_date')->toDateString())
                       ->having('stock', '>', '0');
 
         if ($iWhsId != 0) {
