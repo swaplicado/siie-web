@@ -82,24 +82,17 @@ class SPalletsController extends Controller
         default:
       }
 
-      
-      if ($request->name != null && $request->name != "") {
-        $Pallets = $Pallets->select(\DB::raw($sSelect))
-        ->where(function ($query) use ($request) {
-          $query->where('id_pallet', 'LIKE', "%".$request->name."%")
-          ->orWhere('ei.code', 'LIKE', "%".$request->name."%")
-          ->orWhere('ei.name', 'LIKE', "%".$request->name."%");
-        });
-      }
-      
-      if ($request->name == null || $request->name == "") {
-          $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
+      $aDates = SGuiUtils::getDatesOfFilter($sFilterDate);
 
-          $Pallets = $Pallets->whereBetween('wp.created_at', [$aDates[0]->toDateString(), $aDates[1]->toDateString()])
-                      ->orderBy('id_pallet', 'DESC');
-      }
-      
-      $Pallets = $Pallets->get();
+      $Pallets = $Pallets->select(\DB::raw($sSelect))
+                    ->where(function ($query) use ($request) {
+                        $query->where('id_pallet', 'LIKE', "%".$request->name."%")
+                              ->orWhere('ei.code', 'LIKE', "%".$request->name."%")
+                              ->orWhere('ei.name', 'LIKE', "%".$request->name."%");
+                    })
+                    ->whereBetween('wp.created_at', [$aDates[0]->toDateString(), $aDates[1]->toDateString()])
+                    ->orderBy('id_pallet', 'DESC')
+                    ->get();
 
       return view('wms.pallets.index')
               ->with('sTitle', 'Tarimas')
