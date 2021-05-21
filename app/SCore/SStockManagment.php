@@ -164,7 +164,13 @@ class SStockManagment
                            eu.code as unit';
 
         $stock = SStockManagment::getStockBaseQuery($select)
-                      ->groupBy(['wp.id_pallet','ws.lot_id', 'ws.item_id', 'ws.unit_id'])
+                      ->groupBy('ws.branch_id')
+                      ->groupBy('ws.whs_id')
+                      ->groupBy('ws.location_id')
+                      ->groupBy('ws.pallet_id')
+                      ->groupBy('ws.lot_id')
+                      ->groupBy('ws.item_id')
+                      ->groupBy('ws.unit_id')
                       ->orderBy('ws.lot_id')
                       ->orderBy('ws.item_id')
                       ->where('ws.is_deleted', false)

@@ -147,40 +147,52 @@ class SCodesController extends Controller
         $data->unit;
         $type = substr($request->codigo, 0, 1);
 
+        $prms = [];
+        $prms[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = 'ws.lot_id, wl.lot,
+                                                              sum(ws.input) as inputs,
+                                                              sum(ws.output) as outputs,
+                                                              sum(ws.input - ws.output) as stock,
+                                                              AVG(ws.cost_unit) as cost_unit,
+                                                              ei.code as item_code,
+                                                              ei.name as item,
+                                                              eu.code as unit_code,
+                                                              ws.pallet_id,
+                                                              ws.location_id,
+                                                              ws.whs_id,
+                                                              ws.branch_id,
+                                                              wwl.name AS location,
+                                                              ww.name AS warehouse,
+                                                              eb.name AS branch
+                                                            ';
+        // $prms[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 
+        // $prms[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 
+        // $prms[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 
+        // $prms[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 
+        // $prms[\Config::get('scwms.STOCK_PARAMS.WHS')] = session('whs')->id_whs;
+        // $prms[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = session('branch')->id_branch;
+        $prms[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
+        $prms[\Config::get('scwms.STOCK_PARAMS.DATE')] = session('work_date')->toDateString();
+
         if ($type == 1) {
             $string = ' ';
-            $prms = [];
-            // $prms[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 
-            // $prms[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 
             $prms[\Config::get('scwms.STOCK_PARAMS.LOT')] = $data->id_lot;
-            // $prms[\Config::get('scwms.STOCK_PARAMS.PALLET')] = 
-            // $prms[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 
-            $prms[\Config::get('scwms.STOCK_PARAMS.WHS')] = session('whs')->id_whs;
-            $prms[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = session('branch')->id_branch;
-            $prms[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
-            $prms[\Config::get('scwms.STOCK_PARAMS.DATE')] = session('work_date')->toDateString();
-            // $prms[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = 
-
-            $stock = SStockManagment::getStock($prms);
             $lotStock = null;
         }
 
         if ($type == 2) {
-            $prms = [];
-            // $prms[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 
-            // $prms[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 
-            // $prms[\Config::get('scwms.STOCK_PARAMS.LOT')] = 
             $prms[\Config::get('scwms.STOCK_PARAMS.PALLET')] = $data->id_pallet;
-            // $prms[\Config::get('scwms.STOCK_PARAMS.LOCATION')] = 
-            $prms[\Config::get('scwms.STOCK_PARAMS.WHS')] = session('whs')->id_whs;
-            $prms[\Config::get('scwms.STOCK_PARAMS.BRANCH')] = session('branch')->id_branch;
-            $prms[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
-            $prms[\Config::get('scwms.STOCK_PARAMS.DATE')] = session('work_date')->toDateString();
-            // $prms[\Config::get('scwms.STOCK_PARAMS.SSELECT')] = 
-
-            $stock = SStockManagment::getStock($prms);
-            $lotStock = SStockManagment::getLotsOfPallet($data->id_pallet, session('whs')->id_whs);
+            $lotStock = SStockManagment::getLotsOfPallet($data->id_pallet);
         }
+        
+        $stock = SStockManagment::getStockResult($prms)->groupBy('ws.branch_id')
+                                                            ->groupBy('ws.whs_id')
+                                                            ->groupBy('ws.location_id')
+                                                            ->groupBy('ws.pallet_id')
+                                                            ->groupBy('ws.lot_id')
+                                                            ->groupBy('ws.item_id')
+                                                            ->groupBy('ws.unit_id')
+                                                            ->having('stock', '>', '0')
+                                                            ->get();
 
         return view('wms.codes.info')
             ->with('info', $data)

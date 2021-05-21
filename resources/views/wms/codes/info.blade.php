@@ -17,6 +17,9 @@
 			-ms-transform: translateY(-50%);
 			transform: translateY(-50%);
 		}
+		.txt-center {
+			text-align: center;
+		}
 		.labelName {
 			font: 30px sans-serif;
 			padding: 5px;
@@ -40,6 +43,10 @@
 		.right {
 			text-align: right;
 		}
+		.center-div {
+			padding: 5px 0;
+			text-align: center;
+		}
 	</style>
 @endsection
 
@@ -48,65 +55,72 @@
 @if ($type == 1)
 	<div class="row">
 		<div class="row">
-			<div class="col-md-offset-3 col-md-3">
+			<div class="col-md-12 center-div">
 				<label class="labelName vertical-center">LOTE:</label>
 			</div>
-			<div class="col-md-4">
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-div">
 				<label class="textContent vertical-center">{{ $info->lot }}</label>
 			</div>
 		</div>
 		<br>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
+			<div class="col-md-12 center-div">
 				<label class="label-others vertical-center">Caducidad:</label>
 			</div>
-			<div class="col-md-9">
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-div">
 				<label class="text-content-others vertical-center">{{ $info->dt_expiry }}</label>
 			</div>
 		</div>
 		<br>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
+			<div class="col-md-12 center-div">
 				<label class="label-others vertical-center">ítem:</label>
 			</div>
-			<div class="col-md-9">
+			<div class="col-md-12 center-div">
 				<label class="text-content-others vertical-center">{{ $info->item->code.' - '.$info->item->name }}</label>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
+			<div class="col-md-12 center-div">
 				<label class="label-others vertical-center">Unidad:</label>
 			</div>
-			<div class="col-md-7">
+			<div class="col-md-12 center-div">
 				<label class="text-content-others vertical-center">{{ $info->unit->code.' - '.$info->unit->name }}</label>
 			</div>
 		</div>
-		<br>
+		<hr>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Existencias:</label>
-			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center right">{{ session('utils')->formatNumber($stock[\Config::get('scwms.STOCK.GROSS')], \Config::get('scsiie.FRMT.QTY')) }}</label>
+			<div class="col-md-12">
+				<table id="stockTable" class="table table-striped table-bordered display no-wrap" cellspacing="0" style="width:100%">
+					<thead>
+						<th>Sucursal</th>
+						<th>Almacén</th>
+						<th>Tarima</th>
+						<th>Existencias</th>
+						<th>Segregado</th>
+						<th>Disponible</th>
+						<th>Unidad</th>
+					</thead>
+					<tbody>
+						@foreach ($stock as $stk)
+							<tr>
+								<td>{{ $stk->branch }}</td>
+								<td>{{ $stk->warehouse }}</td>
+								<td>{{ $stk->pallet_id }}</td>
+								<td>{{ session('utils')->formatNumber($stk->stock, \Config::get('scsiie.FRMT.QTY')) }}</td>
+								<td>{{ session('utils')->formatNumber($stk->segregated, \Config::get('scsiie.FRMT.QTY')) }}</td>
+								<td>{{ session('utils')->formatNumber(($stk->stock - $stk->segregated), \Config::get('scsiie.FRMT.QTY')) }}</td>
+								<td>{{ $stk->unit_code }}</td>
+							</tr>
+						@endforeach
+					</tbody>
+				</table>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Segregado:</label>
-			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center right">{{ session('utils')->formatNumber($stock[\Config::get('scwms.STOCK.SEGREGATED')], \Config::get('scsiie.FRMT.QTY')) }}</label>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Disponible:</label>
-			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center right">{{ session('utils')->formatNumber($stock[\Config::get('scwms.STOCK.AVAILABLE')], \Config::get('scsiie.FRMT.QTY')) }}</label>
-			</div>
-		</div>
-		<br>
 		<div class="form-group">
 			<div class="form-group row"></div>
 			<div class="col-md-12">
@@ -123,72 +137,75 @@
 @if ($type == 2)
 	<div class="row">
 		<div class="row">
-			<div class="col-md-offset-3 col-md-3">
-				<label class="labelName vertical-center">ID TARIMA:</label>
-			</div>
-			<div class="col-md-4">
-				<label class="textContent vertical-center">{{ $info->pallet }}</label>
-			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">ítem:</label>
-			</div>
-			<div class="col-md-9">
-				<label class="text-content-others vertical-center">{{ $info->item->code.' - '.$info->item->name }}</label>
+			<div class="col-md-12 center-div">
+				<label class="labelName vertical-center txt-center">ID TARIMA:</label>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Unidad:</label>
-			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center">{{ $info->unit->code.' - '.$info->unit->name }}</label>
-			</div>
-		</div>
-		<br>
-		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Existencias:</label>
-			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center right">{{ session('utils')->formatNumber($stock[0], \Config::get('scsiie.FRMT.QTY')) }}</label>
+			<div class="col-md-12 center-div">
+				<label class="textContent vertical-center txt-center">{{ $info->pallet }}</label>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Segregado:</label>
-			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center right">{{ session('utils')->formatNumber($stock[\Config::get('scwms.STOCK.SEGREGATED')], \Config::get('scsiie.FRMT.QTY')) }}</label>
+			<div class="col-md-12 center-div">
+				<label class="label-others vertical-center txt-center">ítem:</label>
+			</div>	
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-div">
+				<label class="text-content-others vertical-center txt-center">{{ $info->item->code.' - '.$info->item->name }}</label>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-2">
-				<label class="label-others vertical-center">Disponible:</label>
+			<div class="col-md-12 center-div">
+				<label class="label-others vertical-center txt-center">Unidad:</label>
 			</div>
-			<div class="col-md-7">
-				<label class="text-content-others vertical-center right">{{ session('utils')->formatNumber($stock[\Config::get('scwms.STOCK.AVAILABLE')], \Config::get('scsiie.FRMT.QTY')) }}</label>
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-div">
+				<label class="text-content-others vertical-center txt-center">{{ $info->unit->code.' - '.$info->unit->name }}</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-div">
+				<label class="label-others vertical-center txt-center">Sucursal:</label>
+			</div>
+			<div class="col-md-12 center-div">
+				<label class="text-content-others vertical-center txt-center">{{ $stock[0]->branch }}</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 center-div">
+				<label class="label-others vertical-center txt-center">Almacén:</label>
+			</div>
+			<div class="col-md-12 center-div">
+				<label class="text-content-others vertical-center txt-center">{{ $stock[0]->warehouse }}</label>
 			</div>
 		</div>
 		<hr>
 		<div class="row">
-			<div class="row">
-				{!! Form::label('unit_id', 'Lotes:',['class'=>'col-md-offset-1 col-md-2 control-label label-others']) !!}
+			<div class="col-md-12">
+				<table id="stockTable" class="table table-striped table-bordered display responsive no-wrap" cellspacing="0" width="100%">
+					<thead>
+						<th>Lote</th>
+						<th>Existencias</th>
+						<th>Segregado</th>
+						<th>Disponible</th>
+						<th>Unidad</th>
+					</thead>
+					<tbody>
+						@foreach ($stock as $stk)
+							<tr>
+								<td>{{ $stk->lot }}</td>
+								<td>{{ session('utils')->formatNumber($stk->stock, \Config::get('scsiie.FRMT.QTY')) }}</td>
+								<td>{{ session('utils')->formatNumber($stk->segregated, \Config::get('scsiie.FRMT.QTY')) }}</td>
+								<td>{{ session('utils')->formatNumber(($stk->stock - $stk->segregated), \Config::get('scsiie.FRMT.QTY')) }}</td>
+								<td>{{ $stk->unit_code }}</td>
+							</tr>
+						@endforeach
+					</tbody>
+				</table>
 			</div>
-			<br>
-			<br>
-			@foreach ($lotStock as $stk)
-				<div class="row">
-					<div class="col-md-offset-1 col-md-3">						
-						<label class="label-others vertical-center">{{ $stk->lot }}</label>
-					</div>
-					<div class="col-md-4">						
-						<label class="text-content-others vertical-center right">{{ $stk->stock }}</label>
-					</div>
-				</div>
-			@endforeach
 		</div>
 		<br>
 		<div class="form-group">
@@ -264,13 +281,9 @@
 @section('js')
 
 	<script type="text/javascript">
-
-
+		$(document).ready( function () {
+			$('#stockTable').DataTable();
+		} );
 	</script>
-
-  <script type="text/javascript">
-
-
-  </script>
 
 	@endsection
