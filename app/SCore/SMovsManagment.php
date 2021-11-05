@@ -916,10 +916,11 @@ class SMovsManagment {
                                       ->where('is_deleted', $iAction == \Config::get('scwms.MOV_ACTION.ACTIVATE'))
                                       ->get();
 
-        $aMovsIds = SSuppDivision::where('mvt_reference_id', $oMovement->id_mvt)
-                                  ->where('is_deleted', false)
-                                  ->select('in_division_id')
-                                  ->get();
+        $aMovsIds = [];
+        // $aMovsIds = SSuppDivision::where('mvt_reference_id', $oMovement->id_mvt)
+        //                           ->where('is_deleted', false)
+        //                           ->select('in_division_id')
+        //                           ->get();
 
         if (sizeof($aMovsIds) > 0) {
           foreach ($aMovsIds as $iId) {
