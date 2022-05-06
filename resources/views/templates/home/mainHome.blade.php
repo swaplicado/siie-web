@@ -48,6 +48,7 @@
 
 		@include('templates.scripts')
 		@yield('js')
+		@yield('js_sync')
 
 		</div>
 

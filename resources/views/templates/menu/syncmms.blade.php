@@ -1,7 +1,7 @@
 <!-- Modal -->
 <div id="syncMms" class="modal fade" role="dialog">
   <div class="modal-dialog">
-    <div id="app">
+    <div id="appSyncMms">
         <!-- Modal content-->
         <div class="modal-content">
         <div class="modal-header">
@@ -31,39 +31,38 @@
 
     {{-- Este modal funciona con Vue y el archivo js/siie/SSync.js  --}}
   </div>
-
-    @section('js_sync')
-        <script>
-            var routed = <?php echo json_encode(route('siie.import.mms')); ?>;
-
-            var app = new Vue({
-                el: '#app',
-                data: {
-                message: 'Hello Vue!',
-                nFormulas: 0,
-                nPOs: 0
-                },
-                methods: {
-                    syncMms: function() {
-                        showLoading();
-
-                        axios.get(routed)
-                            .then(res => {
-                                console.log("respuesta");
-                                console.log(res);
-                                let oData = res.data;
-                                this.nFormulas = oData.formulas;
-                                this.nPOs = oData.prod_orders;
-
-                                location.reload();
-                            })
-                            .catch(err => {
-                            console.log(err);
-                        })
-                    }
-                },
-            })
-        </script>
-    @endsection
-
 </div>
+
+@section('js_sync')
+    <script>
+        var routed = <?php echo json_encode(route('siie.import.mms')); ?>;
+
+        var appSyncMms = new Vue({
+            el: '#appSyncMms',
+            data: {
+            nFormulas: 0,
+            nPOs: 0
+            },
+            methods: {
+                syncMms: function() {
+                    showLoading();
+
+                    axios.get(routed)
+                        .then(res => {
+                            console.log("respuesta");
+                            console.log(res);
+                            let oData = res.data;
+                            this.nFormulas = oData.formulas;
+                            this.nPOs = oData.prod_orders;
+
+                            location.reload();
+                        })
+                        .catch(err => {
+                        console.log(err);
+                    })
+                }
+            },
+        })
+    </script>
+@endsection
+

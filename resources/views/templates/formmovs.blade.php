@@ -45,6 +45,7 @@
 
     </div>
     @yield('js')
+    @yield('js_sync')
   </body>
   <footer>
     @yield('footer')
