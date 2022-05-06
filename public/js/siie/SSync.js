@@ -1,31 +1,3 @@
-var app = new Vue({
-    el: '#app',
-    data: {
-      message: 'Hello Vue!',
-      nFormulas: 0,
-      nPOs: 0
-    },
-    methods: {
-        syncMms: function() {
-            showLoading();
-
-            axios.get('../import/mms')
-                .then(res => {
-                    console.log("respuesta");
-                    console.log(res);
-                    let oData = res.data;
-                    this.nFormulas = oData.formulas;
-                    this.nPOs = oData.prod_orders;
-
-                    location.reload();
-                })
-                .catch(err => {
-                console.log(err);
-            })
-        }
-    },
-})
-
 function showLoading() {
     swal({
         title: 'Espere',
@@ -35,7 +7,6 @@ function showLoading() {
             swal.showLoading()
         }
     }).then((result) => {
-        if (result.dismiss === 'timer') {
-        }
+        if (result.dismiss === 'timer') {}
     });
 }
