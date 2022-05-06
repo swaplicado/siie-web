@@ -69,17 +69,18 @@ class SImportFormulas {
       $lItems = SItem::lists('id_item', 'external_id');
       $lUnits = SUnit::lists('id_unit', 'external_id');
 
-      foreach ($lWebFormulas as $key => $value) {
-          $lFormulas[$value->external_id] = $value;
-      }
-
+      
       if ($result->num_rows > 0) {
-         // output data of each row
-         while($row = $result->fetch_assoc()) {
-           if (! array_key_exists($row["id_bom"], $lFormulas)) {
-              array_push($lFormulasToWeb, SImportFormulas::siieToSiieWeb($row, $lItems, $lUnits));
-            }
-         }
+        foreach ($lWebFormulas as $key => $value) {
+            $lFormulas[$value->external_id] = $value;
+        }
+
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+          if (! array_key_exists($row["id_bom"], $lFormulas)) {
+            array_push($lFormulasToWeb, SImportFormulas::siieToSiieWeb($row, $lItems, $lUnits));
+          }
+        }
       }
 
        foreach ($lFormulasToWeb as $formula) {

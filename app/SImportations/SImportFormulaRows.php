@@ -65,50 +65,50 @@ class SImportFormulaRows {
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
-      $lWebFormulaRows = SFormulaRow::orderBy('external_id', 'ASC')->get();
       $lFormulaRowsToWeb = array();
-
-      $lWebFormulas = SFormula::orderBy('external_id', 'ASC')->get();
-      $lWebItems = SItem::get();
-      $lWebUnits = SUnit::get();
-
-      $lFormulasByItem = array();
-      $lUnits = array();
-      $lItems = array();
-
-      foreach ($lWebItems as $value) {
-          $lItems[$value->external_id] = $value;
-      }
-
-      foreach ($lWebUnits as $value) {
-          $lUnits[$value->external_id] = $value;
-      }
-
-      foreach ($lWebFormulaRows as $value) {
-          $lFormulaRows[$value->external_id] = $value;
-      }
-
-      foreach ($lWebFormulas as $key => $value) {
-          $lFormulasByItem[$value->item_id] = $value;
-      }
-
+      
+      
       if (is_object($result) && $result->num_rows > 0) {
+        $lWebFormulaRows = SFormulaRow::orderBy('external_id', 'ASC')->get();
+        $lWebFormulas = SFormula::orderBy('external_id', 'ASC')->get();
+        $lWebItems = SItem::get();
+        $lWebUnits = SUnit::get();
+  
+        $lFormulasByItem = array();
+        $lUnits = array();
+        $lItems = array();
+  
+        foreach ($lWebItems as $value) {
+            $lItems[$value->external_id] = $value;
+        }
+  
+        foreach ($lWebUnits as $value) {
+            $lUnits[$value->external_id] = $value;
+        }
+  
+        foreach ($lWebFormulaRows as $value) {
+            $lFormulaRows[$value->external_id] = $value;
+        }
+  
+        foreach ($lWebFormulas as $key => $value) {
+            $lFormulasByItem[$value->item_id] = $value;
+        }
 
-         // output data of each row
-         while($row = $result->fetch_assoc()) {
-           if (! array_key_exists($row["id_bom"], $lFormulaRows)) {
-              array_push($lFormulaRowsToWeb, SImportFormulaRows::siieToSiieWeb($row, $lFormulasByItem, $lItems, $lUnits));
-           }
-         }
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+          if (! array_key_exists($row["id_bom"], $lFormulaRows)) {
+            array_push($lFormulaRowsToWeb, SImportFormulaRows::siieToSiieWeb($row, $lFormulasByItem, $lItems, $lUnits));
+          }
+        }
       }
 
-       foreach ($lFormulaRowsToWeb as $formulaRow) {
-         $formulaRow->save();
-       }
+      foreach ($lFormulaRowsToWeb as $formulaRow) {
+        $formulaRow->save();
+      }
 
-       SImportUtils::saveImportation($oImportation);
+      SImportUtils::saveImportation($oImportation);
 
-       return sizeof($lFormulaRowsToWeb);
+      return sizeof($lFormulaRowsToWeb);
   }
 
   /**

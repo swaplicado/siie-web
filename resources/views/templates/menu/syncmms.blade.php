@@ -31,4 +31,39 @@
 
     {{-- Este modal funciona con Vue y el archivo js/siie/SSync.js  --}}
   </div>
+
+    @section('js')
+        <script>
+            var routed = <?php echo json_encode(route('siie.import.mms')); ?>;
+
+            var app = new Vue({
+                el: '#app',
+                data: {
+                message: 'Hello Vue!',
+                nFormulas: 0,
+                nPOs: 0
+                },
+                methods: {
+                    syncMms: function() {
+                        showLoading();
+
+                        axios.get(routed)
+                            .then(res => {
+                                console.log("respuesta");
+                                console.log(res);
+                                let oData = res.data;
+                                this.nFormulas = oData.formulas;
+                                this.nPOs = oData.prod_orders;
+
+                                location.reload();
+                            })
+                            .catch(err => {
+                            console.log(err);
+                        })
+                    }
+                },
+            })
+        </script>
+    @endsection
+
 </div>

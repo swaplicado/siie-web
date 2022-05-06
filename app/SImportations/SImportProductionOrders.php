@@ -161,13 +161,11 @@ class SImportProductionOrders
                     $key = $row["id_year"].$row["id_ord"];
 
                     if (! array_key_exists($key, $lPOs)) {
-                        $oNewPO = SImportProductionOrders::siieToSiieWeb(0, $row, $lWebFormulas, $lWebItems, $lWebUnits);
-                        $oNewPO->save();
+                        SImportProductionOrders::siieToSiieWeb(0, $row, $lWebFormulas, $lWebItems, $lWebUnits);
                         
                     }
                     else {
-                        $oUpdPO = SImportProductionOrders::siieToSiieWeb($key, $row, $lWebFormulas, $lWebItems, $lWebUnits);
-                        $oUpdPO->save();
+                        SImportProductionOrders::siieToSiieWeb($key, $row, $lWebFormulas, $lWebItems, $lWebUnits);
                     }
 
                     $counter++;
@@ -240,7 +238,7 @@ class SImportProductionOrders
         $oSiieWebPO->updated_by_id = 1;
         $oSiieWebPO->updated_at = $oSiiePO["ts_edit"];
 
-        return $oSiieWebPO;
+        $oSiieWebPO->save();
     }
 
     private static function getLotID(String $lot = "", $siieItem = 0, $siieUnit = 0, $lWebItems = [], $lWebUnits = [], $iFOrderId = 0)
