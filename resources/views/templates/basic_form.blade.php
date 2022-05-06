@@ -42,6 +42,7 @@
     @include('templates.basic_scripts')
 
   	@yield('js')
+  	@yield('js_sync')
 
   </body>
   <br>

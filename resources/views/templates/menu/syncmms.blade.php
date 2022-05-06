@@ -32,7 +32,7 @@
     {{-- Este modal funciona con Vue y el archivo js/siie/SSync.js  --}}
   </div>
 
-    @section('js')
+    @section('js_sync')
         <script>
             var routed = <?php echo json_encode(route('siie.import.mms')); ?>;
 
