@@ -10,6 +10,14 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+
+//**Rutas re Sync Init*/
+Route::get('/reOrder', 'reSyncController@reOrder');
+Route::get('/reSync', 'reSyncController@reSync');
+Route::get('/reMap', 'reSyncController@reMap');
+Route::get('/getHash', 'reSyncController@getHash');
+
+//**Rutas re Sync Fin */
 Route::get('/', function () {
     \Debugbar::disable();
     return view('welcome');

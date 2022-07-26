@@ -64,6 +64,39 @@ return [
             'strict'    => false,
         ],
 
+        'siie_sap_mysql' => [
+            'driver' => 'mysql',
+            'host' => env('SIIE_SAP_DB_HOST', 'localhost'),
+            'port' => env('SIIE_SAP_DB_PORT', '3306'),
+            'database' => env('SIIE_SAP_DB_DATABASE', 'erp'),
+            'username' => env('SIIE_SAP_DB_USERNAME', 'root'),
+            'password' => env('SIIE_SAP_DB_PASSWORD', 'Adrian2021DB'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+        ],
+
+        'erp_mysql' => [
+            'driver' => 'mysql',
+            'host' => env('ERP_DB_HOST', 'localhost'),
+            'port' => env('ERP_DB_PORT', '3306'),
+            'database' => env('ERP_DB_DATABASE', 'erp'),
+            'username' => env('ERP_DB_USERNAME', 'root'),
+            'password' => env('ERP_DB_PASSWORD', 'Adrian2021DB'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+        ],
+
+        'erp_sc_mysql' => [
+            'driver' => 'mysql',
+            'host' => env('ERP_SC_DB_HOST', 'localhost'),
+            'port' => env('ERP_SC_DB_PORT', '3306'),
+            'database' => env('ERP_SC_DB_DATABASE', 'erp'),
+            'username' => env('ERP_SC_DB_USERNAME', 'root'),
+            'password' => env('ERP_SC_DB_PASSWORD', 'Adrian2021DB'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+        ],
+
         'ssystem' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
