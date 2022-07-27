@@ -15,7 +15,6 @@
 Route::get('/reOrder', 'reSyncController@reOrder');
 Route::get('/reSync', 'reSyncController@reSync');
 Route::get('/reMap', 'reSyncController@reMap');
-Route::get('/getHash', 'reSyncController@getHash');
 
 //**Rutas re Sync Fin */
 Route::get('/', function () {

@@ -121,8 +121,4 @@ class reSyncController extends Controller
         dd("fin reMap");
 
     }
-
-    public function getHash(){
-        return \Hash::make(1234);
-    }
 }
