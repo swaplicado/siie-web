@@ -268,7 +268,7 @@ class SMovsUtils {
   {
     $aParameters = array();
     $aParameters[\Config::get('scwms.STOCK_PARAMS.ITEM')] = 'ei.id_item';
-    $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 'ei.unit_id';
+    $aParameters[\Config::get('scwms.STOCK_PARAMS.UNIT')] = 'ws.unit_id';
     $aParameters[\Config::get('scwms.STOCK_PARAMS.WHS')] = $iWarehouseSrc;
     $aParameters[\Config::get('scwms.STOCK_PARAMS.ID_YEAR')] = session('work_year');
 
@@ -332,19 +332,19 @@ class SMovsUtils {
         case \Config::get('scwms.ELEMENTS_TYPE.LOTS'):
               $lElements = $lElements->whereRaw('ws.lot_id = wl.id_lot')
                                       ->groupBy('ei.id_item')
-                                      ->groupBy('ei.unit_id')
+                                      ->groupBy('ws.unit_id')
                                       ->groupBy('wl.id_lot');
               break;
         case \Config::get('scwms.ELEMENTS_TYPE.PALLETS'):
               $lElements = $lElements->join('wms_lots as wl', 'ws.lot_id', '=', 'wl.id_lot')
                                       ->whereRaw('ws.pallet_id = wp.id_pallet')
                                       ->groupBy('ei.id_item')
-                                      ->groupBy('ei.unit_id')
+                                      ->groupBy('ws.unit_id')
                                       ->groupBy('wp.id_pallet');
               break;
         default:
               $lElements =  $lElements->groupBy('ei.id_item')
-                                      ->groupBy('ei.unit_id');
+                                      ->groupBy('ws.unit_id');
           break;
       }
 
