@@ -89,7 +89,7 @@ class SImportAddresses {
       $lAddressesToWeb = array();
 
       foreach ($lWebAddresses as $key => $value) {
-          $lAddresses[$value->external_id] = $value;
+          $lAddresses[($value->external_id).'_'.($value->external_ad_id)] = $value;
       }
 
       foreach ($lBranches as $key => $branch) {
@@ -107,7 +107,7 @@ class SImportAddresses {
       if ($result->num_rows > 0) {
          // output data of each row
          while($row = $result->fetch_assoc()) {
-           $rowId = $row["id_bpb"];
+           $rowId = $row["id_bpb"].'_'.$row["id_add"];
              if (array_key_exists($rowId, $lAddresses)) {
                 if ($row["ts_edit"] > $oImportation->last_importation ||
                       $row["ts_del"] > $oImportation->last_importation) {
