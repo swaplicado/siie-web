@@ -122,10 +122,10 @@ class SImportAddresses {
                     $lAddresses[$rowId]->county = $row["county"];
                     $lAddresses[$rowId]->state_name = $row["state"];
                     $lAddresses[$rowId]->zip_code = $row["zip_code"];
-                    $lAddresses[$rowId]->external_id = $rowId;
+                    $lAddresses[$rowId]->external_id = $row["id_bpb"];
                     $lAddresses[$rowId]->external_ad_id = $row["id_add"];
                     $lAddresses[$rowId]->is_main = $row["b_def"];
-                    $lAddresses[$rowId]->branch_id = $lWebBranches[$rowId];
+                    $lAddresses[$rowId]->branch_id = $lWebBranches[$row["id_bpb"]];
                     $lAddresses[$rowId]->country_id = $lWebCountries[$row["cty_key"]];
                     $lAddresses[$rowId]->state_id = $lWebStates[$row["sta_code"]];
                     $lAddresses[$rowId]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
