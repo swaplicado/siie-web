@@ -1,20 +1,12 @@
 <?php namespace App\Http\Controllers\MMS;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Laracasts\Flash\Flash;
-use App\SUtils\SMenu;
 use App\Database\Config;
-use App\SUtils\SUtil;
-use App\SCore\SFormulasProcess;
-
-use App\SUtils\SValidation;
-use App\ERP\SBranch;
-use App\SUtils\SProcess;
-
+use App\Http\Controllers\Controller;
 use App\MMS\SProductionPlan;
+use App\SUtils\SProcess;
+use App\SUtils\SValidation;
+use Illuminate\Http\Request;
+use Laracasts\Flash\Flash;
 
 class SProductionPlanesController extends Controller {
 
@@ -34,7 +26,7 @@ class SProductionPlanesController extends Controller {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index(Request $request, $iFolio = 0)
     {
@@ -144,7 +136,8 @@ class SProductionPlanesController extends Controller {
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * 
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function edit($id)
     {
@@ -242,7 +235,7 @@ class SProductionPlanesController extends Controller {
         $errors = $oProductionPlan->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->back()->withInput($request->input())->withErrors($error);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
