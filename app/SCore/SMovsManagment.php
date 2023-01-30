@@ -370,7 +370,7 @@ class SMovsManagment {
        $lFolios = SFolio::where('is_deleted', false)->get();
 
        // look for a configuration to warehouse
-       $oRequiredFolio = SMovsManagment::existsFolioConfiguration($lFolios,
+       $oRequiredFolio = $this->existsFolioConfiguration($lFolios,
                                                  \Config::get('scwms.CONTAINERS.WAREHOUSE'),
                                                  $iWhsId,
                                                  $iClassId,
@@ -704,19 +704,21 @@ class SMovsManagment {
         $iWhsSrcDefLocation = 0;
         $iWhsDesDefLocation = 0;
 
-        if (! session('location_enabled') || !isset($row->iAuxLocationDesId) || $row->iAuxLocationDesId == 0) {
-           $oSrcLocation = SWarehouse::find($iWhsSrc)->getDefaultLocation();
-           $oDesLocation = SWarehouse::find($iWhsDes)->getDefaultLocation();
-
-           $iWhsSrcDefLocation = $oSrcLocation->id_whs_location;
-           $iWhsDesDefLocation = $oDesLocation->id_whs_location;
-        }
+        
 
         $oMirrorMovement->dt_date = $oMovement->dt_date;
 
         $oMovement->aAuxRows = [];
         $oMirrorMovement->aAuxRows = [];
         foreach ($aMovementRows as $row) {
+            if (! session('location_enabled') || !isset($row->iAuxLocationDesId) || $row->iAuxLocationDesId == 0) {
+              $oSrcLocation = SWarehouse::find($iWhsSrc)->getDefaultLocation();
+              $oDesLocation = SWarehouse::find($iWhsDes)->getDefaultLocation();
+  
+              $iWhsSrcDefLocation = $oSrcLocation->id_whs_location;
+              $iWhsDesDefLocation = $oDesLocation->id_whs_location;
+            }
+
             $movRow = clone $row;
             $movRowM = clone $row;
 

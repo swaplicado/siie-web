@@ -388,7 +388,7 @@ class SProductionCore {
                         ->get();
 
                if (sizeof($oStockQueryAux) > 0) {
-                  if ($oStockQueryAux[0]->stock >= $dToConsume) {
+                  if ($oStockQueryAux[0]->stock >= $oConsumRow->to_consume) {
                     $oConsumRow->pallet_id = 1;
                   }
                   else {

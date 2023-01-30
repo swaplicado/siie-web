@@ -1,14 +1,9 @@
 <?php namespace App\SUtils;
 
-use App\WMS\SWmsLot;
-use App\WMS\SPallet;
-use App\WMS\SLocation;
-use App\WMS\SLimit;
-use App\WMS\SMovement;
-use App\ERP\SYear;
 use App\SUtils\SMovsUtils;
-
-use Carbon\Carbon;
+use App\WMS\SLimit;
+use App\WMS\SLocation;
+use App\WMS\SMovement;
 
 /**
  * this class manages the stock of company
@@ -163,17 +158,17 @@ class SStockUtils
                          }
 
                         if (bccomp($oRow->quantity, ($oStock->stock - $dSegregated), session('decimals_qty')) == 1) {
-                            if ($movRow->pallet_id == 1) {
+                            if ($oRow->pallet_id == 1) {
                               array_push($aErrors, "No hay suficientes existencias SIN TARIMA del
-                                                      material/producto ".$movRow->item->name.
+                                                      material/producto ".$oRow->item->name.
                                                       " en la ubicación: ".$oRow->location->name."\n
                                                       Total:".$oStock->stock."\n
                                                       Segregadas:".$dSegregated."\n
                                                       Disponibles:".($oStock->stock - $dSegregated));
                             }
                             else {
-                              array_push($aErrors, "No hay suficientes existencias del material/producto ".$movRow->item->name.
-                                                      " en la tarima ".$movRow->pallet_id."
+                              array_push($aErrors, "No hay suficientes existencias del material/producto ".$oRow->item->name.
+                                                      " en la tarima ".$oRow->pallet_id."
                                                         en la ubicación: ".$oRow->location->name."\n
                                                         Total:".$oStock->stock."\n
                                                         Segregadas:".$dSegregated."\n

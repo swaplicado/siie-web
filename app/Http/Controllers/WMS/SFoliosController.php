@@ -36,7 +36,7 @@ class SFoliosController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -55,7 +55,7 @@ class SFoliosController extends Controller
     /**
      * Show the form for creating a new folio.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function create()
     {
@@ -135,7 +135,7 @@ class SFoliosController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function edit($id)
     {
@@ -263,7 +263,7 @@ class SFoliosController extends Controller
         $errors = $folio->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->back()->withInput($request->input())->withErrors($error);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();

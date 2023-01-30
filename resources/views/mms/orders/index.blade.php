@@ -27,7 +27,7 @@
 															['class'=>'form-control']) !!}
 					</span>
           <span class="input-group-btn">
-            {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
+            {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']) !!}
           </span>
           <span class="input-group-btn">
             <button id="searchbtn" type="submit" class="form-control">

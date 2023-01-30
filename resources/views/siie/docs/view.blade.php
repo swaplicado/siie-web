@@ -16,19 +16,19 @@
 	<div class="row">
 		<div class="col-md-6">
 				<div class="form-group">
-					{!! Form::label('email', trans('siie.labels.PARTNER')); !!}
+					{!! Form::label('email', trans('siie.labels.PARTNER')) !!}
 					{!! Form::text('name', $document->partner->name, ['class'=>'form-control input-sm', 'required', 'readonly']) !!}
 				</div>
 				<div class="form-group">
-					{!! Form::label('email', trans('siie.labels.DATE')); !!}
+					{!! Form::label('email', trans('siie.labels.DATE')) !!}
 					{!! Form::date('name', $document->dt_date, ['class'=>'form-control input-sm', 'required', 'readonly']) !!}
 				</div>
 				<div class="form-group">
-					{!! Form::label('email', trans('siie.labels.CURRENCY')); !!}
+					{!! Form::label('email', trans('siie.labels.CURRENCY')) !!}
 					{!! Form::text('name', $document->currency->name, ['class'=>'form-control input-sm', 'required', 'readonly']) !!}
 				</div>
 				<div class="form-group">
-					{!! Form::label('email', trans('siie.labels.EXCHANGE_RATE')); !!}
+					{!! Form::label('email', trans('siie.labels.EXCHANGE_RATE')) !!}
 					{!! Form::text('name', session('utils')->formatNumber($document->exchange_rate, \Config::get('scsiie.FRMT.QTY')),
 						['class'=>'form-control input-sm','readonly', 'style' => 'text-align: right;']) !!}
 				</div>
@@ -37,45 +37,45 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.SUB_TOTAL_M')); !!}
+						{!! Form::label('email', trans('siie.labels.SUB_TOTAL_M')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->subtotal, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.TRA_TAXES')); !!}
+						{!! Form::label('email', trans('siie.labels.TRA_TAXES')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->tax_charged, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.RET_TAXES')); !!}
+						{!! Form::label('email', trans('siie.labels.RET_TAXES')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->tax_retained, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.TOTAL_M')); !!}
+						{!! Form::label('email', trans('siie.labels.TOTAL_M')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->total, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.SUB_TOTAL_D')); !!}
+						{!! Form::label('email', trans('siie.labels.SUB_TOTAL_D')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->subtotal_cur, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm',
 														'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.TRA_TAXES_D')); !!}
+						{!! Form::label('email', trans('siie.labels.TRA_TAXES_D')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->tax_charged_cur, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.RET_TAXES_D')); !!}
+						{!! Form::label('email', trans('siie.labels.RET_TAXES_D')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->tax_retained_cur, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>
 					<div class="form-group">
-						{!! Form::label('email', trans('siie.labels.TOTAL_D')); !!}
+						{!! Form::label('email', trans('siie.labels.TOTAL_D')) !!}
 						{!! Form::text('name', session('utils')->formatNumber($document->total_cur, \Config::get('scsiie.FRMT.AMT')),
 														['class'=>'form-control input-sm', 'readonly', 'style' => 'text-align: right;']) !!}
 					</div>

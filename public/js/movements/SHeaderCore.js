@@ -362,7 +362,9 @@ function initializePanel(serverData) {
 
         if (utilFunctions.isProductionDelivery(oMovement.iMvtType)) {
             guiFunctions.setSearchCode(serverData.oProductionOrder.lot.lot);
-            itemSelection.searchElement();
+            // itemSelection.searchElement();
+            document.getElementById("print_lot").href = serverData.sLotPrintRoute;
+            document.getElementById('lot_label').innerHTML = serverData.oProductionOrder.lot.lot;
         }
     }
 

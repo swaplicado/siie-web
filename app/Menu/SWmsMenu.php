@@ -52,6 +52,10 @@ class SWmsMenu {
                                                                                         trans('wms.MOV_STK_IN_ADJ'),
                                                                                         0]))
                 ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
+                        Link::toRoute('wms.movs.create', trans('wms.MOV_STK_IN_ADJ_LOT'), [\Config::get('scwms.MVT_IN_DLVRY_FP'),
+                                                                                        trans('wms.MOV_STK_IN_ADJ_LOT'),
+                                                                                        "IN_ADJ_OP"]))
+                ->addIf(SValidation::hasPermissionByType(\Config::get('scperm.TP_PERMISSION.BRANCH'), \Config::get('scperm.PERMISSION.ADJUSTS')),
                         Link::toRoute('wms.movs.create', trans('wms.MOV_STK_OUT_ADJ'), [\Config::get('scwms.MVT_TP_OUT_ADJ'),
                                                                                         trans('wms.MOV_STK_OUT_ADJ'),
                                                                                         0]))

@@ -55,7 +55,7 @@
             </select>
           </span>
           <span class="input-group-btn">
-						{!! Form::text('filterDate', $oFilterDate == 0 ? null : $oFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
+						{!! Form::text('filterDate', $oFilterDate == 0 ? null : $oFilterDate, ['class' => 'form-control', 'id' => 'filterDate']) !!}
 					</span>
           <span class="input-group-btn">
             <select style="font-size:8pt ; width:170px" class="form-control" id="filterEvent" name="filterEvent">

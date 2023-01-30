@@ -11,7 +11,7 @@
                     <div class="input-group">
                         @include('templates.list.search')
                         <span class="input-group-btn">
-                            {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']); !!}
+                            {!! Form::text('filterDate', $sFilterDate, ['class' => 'form-control', 'id' => 'filterDate']) !!}
                             <input type="hidden" id="max_ph" name="max_ph" value="{{ $max_ph }}">
                             <input type="hidden" id="item_id" name="item_id" value="{{ $item_id }}">
                         </span>

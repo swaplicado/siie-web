@@ -2,28 +2,20 @@
 
 namespace App\Http\Controllers\WMS;
 
-use Illuminate\Http\Request;
 use App\Database\Config;
+use App\ERP\SItem;
+use App\ERP\SUnit;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
+use App\SBarcode\SBarcode;
+use App\SUtils\SGuiUtils;
+use App\SUtils\SProcess;
+use App\SUtils\SValidation;
+use App\WMS\SComponetBarcode;
+use App\WMS\SPallet;
+use Illuminate\Http\Request;
 use Laracasts\Flash\Flash;
 use PDF;
 use Yajra\Datatables\Datatables;
-use Carbon\Carbon;
-
-use App\SUtils\SUtil;
-use App\SUtils\SMenu;
-use App\SUtils\SValidation;
-use App\SUtils\SGuiUtils;
-use App\ERP\SBranch;
-use App\SUtils\SProcess;
-use App\WMS\SWmsLot;
-use App\WMS\SPallet;
-use App\WMS\SLocation;
-use App\ERP\SItem;
-use App\ERP\SUnit;
-use App\SBarcode\SBarcode;
-use App\WMS\SComponetBarcode;
 
 class SPalletsController extends Controller
 {
@@ -41,7 +33,7 @@ class SPalletsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index(Request $request, $iId = 0, $sItem = '')
     {
@@ -262,7 +254,7 @@ class SPalletsController extends Controller
     {
       $pallet = SPallet::find($id);
       $pallet->fill($request->all());
-      $pallets->unit_id = $pallets->item->unit_id;
+      $pallet->unit_id = $pallet->item->unit_id;
       $pallet->updated_by_id = \Auth::user()->id;
       $pallet->created_by_id = \Auth::user()->id;
 
@@ -292,7 +284,7 @@ class SPalletsController extends Controller
         $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
         return view('wms.pallets.createEdit')
-                      ->with('pallets',$pallets)
+                      ->with('pallets',$pallet)
                       ->with('items', $items)
                       ->with('units', $units)
                       ->with('bIsCopy', true);
@@ -323,7 +315,7 @@ class SPalletsController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, $id)
     {

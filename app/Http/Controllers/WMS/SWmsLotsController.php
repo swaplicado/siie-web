@@ -232,7 +232,7 @@ class SWmsLotsController extends Controller
          $units = SUnit::orderBy('name', 'ASC')->lists('name', 'id_unit');
 
          return view('wms.lots.createEdit')
-                       ->with('lots',$lots)
+                       ->with('lots', [])
                        ->with('items', $items)
                        ->with('units', $units)
                        ->with('bIsCopy', true);
@@ -242,7 +242,7 @@ class SWmsLotsController extends Controller
      {
          $lot = SWmsLot::find($id);
 
-         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $folio);
+         session('utils')->validateEdition($this->oCurrentUserPermission->privilege_id, $lot);
 
          $lot->fill($request->all());
          $lot->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
@@ -251,7 +251,7 @@ class SWmsLotsController extends Controller
          $errors = $lot->save();
          if (sizeof($errors) > 0)
          {
-            return redirect()->back()->withErrors($error);
+            return redirect()->back()->withErrors($errors);
          }
 
          Flash::success(trans('messages.REG_ACTIVATED'))->important();
@@ -277,7 +277,7 @@ class SWmsLotsController extends Controller
          $errors = $lot->save();
          if (sizeof($errors) > 0)
          {
-            return redirect()->back()->withErrors($error);
+            return redirect()->back()->withErrors($errors);
          }
          #$user->delete();
 

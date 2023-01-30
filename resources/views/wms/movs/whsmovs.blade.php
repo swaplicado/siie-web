@@ -27,6 +27,9 @@
 	@if (App\SUtils\SGuiUtils::showPallet($oMovement->mvt_whs_type_id))
 		@include('wms.movs.pallet')
 	@endif
+	@if (App\SUtils\SGuiUtils::isProductionMovement($oMovement->mvt_whs_type_id))
+		@include('wms.movs.subviews.printlot')
+	@endif
 {{-- AQUI VA EL DIV DE BÚSQUEDA --}}
  @include('wms.movs.subviews.searchpanel')
  @include('wms.movs.subviews.datapanel')

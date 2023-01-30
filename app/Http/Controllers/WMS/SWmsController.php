@@ -1,12 +1,7 @@
 <?php namespace App\Http\Controllers\WMS;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\SUtils\SUtil;
-use App\SUtils\SMenu;
+use App\SUtils\SImportUtils;
 use App\SUtils\SProcess;
 
 class SWmsController extends Controller
@@ -22,13 +17,18 @@ class SWmsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function home()
     {
         return view('wms.index');
     }
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         return view('wms.index');

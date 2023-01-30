@@ -1,29 +1,23 @@
 <?php namespace App\Http\Controllers\SYS;
 
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use App\SUtils\SValidation;
-use App\SUtils\SUtil;
-use App\SUtils\SSessionUtils;
-use App\SUtils\SConnectionUtils;
-use App\SYS\SCompany;
-use App\SYS\SConfiguration;
-use App\ERP\SErpConfiguration;
 use App\Database\Config;
-use App\ERP\SPartner;
-use App\ERP\SCurrency;
-use App\SYS\SUserCompany;
-use App\ERP\SUserBranch;
-use App\ERP\SUserWhs;
 use App\ERP\SBranch;
+use App\ERP\SCurrency;
+use App\ERP\SErpConfiguration;
+use App\ERP\SPartner;
 use App\ERP\SYear;
-use App\WMS\SWarehouse;
-use App\SCore\SStockManagment;
+use App\Http\Controllers\Controller;
 use App\SCore\SSegregationCore;
+use App\SCore\SStockManagment;
 use App\SPadLocks\SRecordLock;
+use App\SUtils\SConnectionUtils;
+use App\SUtils\SImportUtils;
+use App\SUtils\SSessionUtils;
+use App\SUtils\SUtil;
+use App\SYS\SCompany;
+use App\WMS\SWarehouse;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class SStartController extends Controller
 {
@@ -36,7 +30,7 @@ class SStartController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index()
     {
@@ -203,7 +197,9 @@ class SStartController extends Controller
 
         session('utils')->setUserPermissions();
 
-        return SStartController::selectModule();
+        SImportUtils::synchronize();
+
+        return view('start.modules');
     }
 
     /**

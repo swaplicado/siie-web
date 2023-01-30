@@ -231,7 +231,7 @@ class SMovsController extends Controller
      *                         this document. But if the movement is for production, 
      *                         this id will be the id of production order
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function create(Request $request, $mvtType, $sTitle = '', $iElementId = 0)
     {
@@ -458,8 +458,30 @@ class SMovsController extends Controller
                                 ->lists('prod_ord', 'id_order');
             }
             else {
-              $lSrcPO = $lSrcPO->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
-                                ->lists('prod_ord', 'id_order');
+              if ($iElementId == "IN_ADJ_OP") {
+                $lSrcPO = $lSrcPO->join('wms_lots as wl', function ($join) {
+                                  $join->on('wl.id_lot', '=', 'mms_production_orders.lot_id')
+                                    ->on('wl.item_id', '=', 'mms_production_orders.item_id')
+                                    ->on('wl.unit_id', '=', 'mms_production_orders.unit_id');
+                                  })
+                                  ->selectRaw('(CONCAT("Lote: ", wl.lot, " / ", wl.dt_expiry, " / Fol.:", LPAD(folio, '.
+                                      session('long_folios').', "0"),
+                                          " / ", identifier)) as prod_ord,
+                                          id_order')
+                                  ->orderBy('mms_production_orders.date', 'DESC')
+                                  ->whereIn('status_id', [
+                                                            \Config::get('scmms.PO_STATUS.ST_NEW'),
+                                                            \Config::get('scmms.PO_STATUS.ST_HEAVY'),
+                                                            \Config::get('scmms.PO_STATUS.ST_FLOOR'),
+                                                            \Config::get('scmms.PO_STATUS.ST_PROCESS'),
+                                                            \Config::get('scmms.PO_STATUS.ST_ENDED'),
+                                                          ])
+                                  ->lists('prod_ord', 'id_order');
+              }
+              else {
+                $lSrcPO = $lSrcPO->where('status_id', \Config::get('scmms.PO_STATUS.ST_PROCESS'))
+                                  ->lists('prod_ord', 'id_order');
+              }
             }
 
             $lDesPO = [];
@@ -520,7 +542,7 @@ class SMovsController extends Controller
      *
      * @param  Request $request
      *
-     * @return redirect to whs.home
+     * @return \Illuminate\Http\RedirectResponse to whs.home
      */
     public function store(Request $request)
     {
@@ -662,7 +684,7 @@ class SMovsController extends Controller
      *
      * @param  integer $id id of movement
      *
-     * @return view('wms.movs.whsmovs')
+     * @return \Illuminate\View\View||\Illuminate\Http\RedirectResponse ('wms.movs.whsmovs')
      */
     public function edit($id = 0)
     {
@@ -868,13 +890,14 @@ class SMovsController extends Controller
                                 id_order')
                       ->orderBy('folio', 'DESC');
 
-          if ($sTitle == trans('mms.DELIVERY_PM')
-              || $sTitle == trans('mms.RETURN_PACKING_MATERIAL')) {
+          // if ($sTitle == trans('mms.DELIVERY_PM')
+          //     || $sTitle == trans('mms.RETURN_PACKING_MATERIAL')) {
 
-            $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PACK');
-            $iAssType = \Config::get('scmms.ASSIGN_TYPE.PACK');
-          }
-          else if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_OUT_ASSIGN_PP')) {
+          //   $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PACK');
+          //   $iAssType = \Config::get('scmms.ASSIGN_TYPE.PACK');
+          // }
+          // else 
+          if ($oMovement->mvt_whs_type_id == \Config::get('scwms.MVT_OUT_ASSIGN_PP')) {
             $iMvtSubType = \Config::get('scwms.MVT_MFG_TP_PRO');
             $iAssType = \Config::get('scmms.ASSIGN_TYPE.PP');
 
@@ -989,7 +1012,7 @@ class SMovsController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response||\Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
@@ -1054,7 +1077,7 @@ class SMovsController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response||\Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, $id)
     {
@@ -1347,6 +1370,8 @@ class SMovsController extends Controller
             $oData->oProductionOrder->item;
             $oData->oProductionOrder->unit;
             $oData->oProductionOrder->lot;
+
+            $oData->sLotPrintRoute = route('wms.lots.barcode', $oData->oProductionOrder->lot_id);
 
             $oData->oProductionOrder->dDelivered = SProductionCore::getDeliveredByPO($oData->oProductionOrder);
         }

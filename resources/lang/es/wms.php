@@ -36,6 +36,7 @@ return [
           'MOV_STK' => 'Operaciones',
           'MOV_STK_IN_ADJ' => 'Entrada por ajuste',
           'MOV_STK_OUT_ADJ' => 'Salida por ajuste',
+          'MOV_STK_IN_ADJ_LOT' => 'Entrada por ajuste: Ord. Prod.',
           'MOV_WHS_TRS_OUT' => 'Traspaso de almacén',
           'MOV_WHS_INTERNAL_TRS_OUT' => 'Traspaso interno de almacén',
           'MOV_WHS_SEND_EXTERNAL_TRS_OUT' => 'Enviar traspaso externo de almacén',

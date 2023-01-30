@@ -34,6 +34,7 @@
 
     @if (App\SUtils\SGuiUtils::isProductionMovement($oMovement->mvt_whs_type_id))
       <div class="form-group">
+        <label for="">Seleccione:</label>
         {!! Form::button(trans('mms.labels.PRODUCTION_ORDER'),
                                     ['class' => 'btn btn-info',
                                     'onclick' => 'openModal()',
@@ -41,7 +42,6 @@
                                     ]) !!}
       </div>
     @endif
-
 
   </div>
   <div class="col-md-6">

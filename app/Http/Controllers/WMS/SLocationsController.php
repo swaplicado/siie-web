@@ -1,22 +1,16 @@
 <?php namespace App\Http\Controllers\WMS;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Requests\WMS\SLocRequest;
 use App\Http\Controllers\Controller;
-
-use Laracasts\Flash\Flash;
-use App\SUtils\SUtil;
-use App\SUtils\SMenu;
-use App\SUtils\SValidation;
-use App\WMS\SWarehouse;
-use App\WMS\SLocation;
-use App\SUtils\SProcess;
+use App\Http\Requests\WMS\SLocRequest;
 use App\SBarcode\SBarcode;
+use App\SUtils\SProcess;
+use App\SUtils\SValidation;
 use App\WMS\SComponetBarcode;
+use App\WMS\SLocation;
+use App\WMS\SWarehouse;
+use Illuminate\Http\Request;
+use Laracasts\Flash\Flash;
 use PDF;
-
 
 class SLocationsController extends Controller
 {
@@ -34,7 +28,7 @@ class SLocationsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index(Request $request)
     {
@@ -54,7 +48,7 @@ class SLocationsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function create()
     {
@@ -77,7 +71,7 @@ class SLocationsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function store(SLocRequest $request)
     {
@@ -106,7 +100,7 @@ class SLocationsController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\View\View
      */
     public function edit($id)
     {
@@ -225,7 +219,7 @@ class SLocationsController extends Controller
         $location->is_deleted = \Config::get('scsys.STATUS.ACTIVE');
         $location->updated_by_id = \Auth::user()->id;
 
-        $errors = $folio->save();
+        $errors = $location->save();
         if (sizeof($errors) > 0)
         {
            return redirect()->route('wms.locs.index')->withErrors($errors);

@@ -37,4 +37,6 @@ class SData
     public $lMovements = array();
 
     public $oProductionOrder = null;
+
+    public $sLotPrintRoute = "#";
 }
