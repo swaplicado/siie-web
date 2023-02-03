@@ -2,6 +2,7 @@
 
 namespace App\SBarcode;
 use App\WMS\SComponetBarcode;
+use App\WMS\SLocation;
 use App\WMS\SWmsLot;
 use App\WMS\SPallet;
 use App\ERP\SItem;

@@ -10,7 +10,7 @@ namespace App\SLotGeneration;
       $middlePart = datePart($date);
       $firtsPart = firstLetter($product);
 
-      $Lot = $fistsPart.$middlePart.$identifier;
+      $Lot = $firtsPart.$middlePart.$identifier;
 
     }
 

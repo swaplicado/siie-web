@@ -602,7 +602,7 @@ class CertConfigsController extends Controller
         $errors = $oCertConfig->save();
         if (sizeof($errors) > 0)
         {
-           return redirect()->back()->withInput($request->input())->withErrors($error);
+           return redirect()->back()->withInput($request->input())->withErrors($errors);
         }
 
         Flash::success(trans('messages.REG_ACTIVATED'))->important();
