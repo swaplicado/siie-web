@@ -57,34 +57,12 @@ class SImportDocumentRows {
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
 
-      $lWebRows = SDocumentRow::get();
-      $lDocuments = SDocument::get();
-      $lItems = SItem::get();
-      $lUnits = SUnit::get();
       $lWebDocuments = array();
       $lWebItems = array();
       $lWebUnits = array();
       $lRows = array();
       $lRowsToWeb = array();
       $taxRows = new SImportDocumentTaxRows($this->webhost, $this->webdbname);
-
-      $lYears = [
-        '1' => '2016',
-        '2' => '2017',
-        '3' => '2018',
-        '4' => '2019',
-        '5' => '2020',
-        '6' => '2021',
-        '7' => '2022',
-        '8' => '2023',
-        '9' => '2024',
-        '10' => '2025',
-        '11' => '2026',
-        '12' => '2027',
-        '13' => '2028',
-        '14' => '2029',
-        '15' => '2030',
-      ];
 
       $lYearsId = [
         '2016' => '1',
@@ -103,72 +81,80 @@ class SImportDocumentRows {
         '2029' => '14',
         '2030' => '15',
       ];
-
-      foreach ($lWebRows as $key => $value) {
-          $lRows[''.$value->document_id.$lYears[$value->year_id].$value->external_id] = $value;
-      }
-
-      foreach ($lDocuments as $key => $document) {
-          $lWebDocuments[$document->external_id] = $document->id_document;
-      }
-
-      foreach ($lItems as $key => $item) {
-          $lWebItems[$item->external_id] = $item->id_item;
-      }
-
-      foreach ($lUnits as $key => $unit) {
-          $lWebUnits[$unit->external_id] = $unit->id_unit;
-      }
-
+      
       if ($result->num_rows > 0) {
+        $lWebDocuments = SDocument::orderBy('id_document', 'ASC')
+                                  ->where(function ($query) use ($lYearsId, $iYearId) {
+                                        $query->where('year_id', '=', $lYearsId[$iYearId])
+                                              ->orWhere('year_id', '=', $lYearsId[$iYearId-1]);
+                                    })
+                                  ->distinct()
+                                  ->get()
+                                  ->pluck('id_document', 'external_id');
+
+        $lWebItems = SItem::get()->pluck('id_item', 'external_id');
+        $lWebUnits = SUnit::get()->pluck('id_unit', 'external_id');
+
+        $lRows = SDocumentRow::selectRaw('*, CONCAT(document_id, "_", external_id) AS row_key')
+                              ->where(function ($query) use ($lYearsId, $iYearId) {
+                                    $query->where('year_id', '=', $lYearsId[$iYearId])
+                                          ->orWhere('year_id', '=', $lYearsId[$iYearId-1]);
+                                })
+                              ->get()
+                              ->keyBy('row_key');
+
          // output data of each row
          while($row = $result->fetch_assoc()) {
-            if (array_key_exists($row["id_year"].'_'.$row["id_doc"], $lWebDocuments)) {
-                $sKey = ''.$lWebDocuments[$row["id_year"].'_'.$row["id_doc"]].$row["id_year"].$row["id_ety"];
+            if ($lWebDocuments->has($row["id_year"].'_'.$row["id_doc"])) {
+              $idDocument = $lWebDocuments[$row["id_year"].'_'.$row["id_doc"]];
+              $sKey = $idDocument."_".$row["id_ety"];
 
-             if (array_key_exists($sKey, $lRows)) {
+             if ($lRows->has($sKey)) {
                 if ($row["ts_edit"] > $oImportation->last_importation ||
                       $row["ts_del"] > $oImportation->last_importation) {
+                    $oRow = SDocumentRow::where('document_id', $idDocument)
+                                    ->where('external_id', $row["id_ety"])
+                                    ->orderBy('id_document_row', 'ASC')
+                                    ->first();
 
-                    $lRows[$sKey]->concept_key = $row["concept_key"];
-                    $lRows[$sKey]->concept = $row["concept"];
-                    $lRows[$sKey]->reference = $row["ref"];
-                    $lRows[$sKey]->quantity = $row["qty"];
-                    $lRows[$sKey]->price_unit = $row["price_u"];
-                    $lRows[$sKey]->price_unit_sys = $row["price_u_sys"];
-                    $lRows[$sKey]->subtotal = $row["stot_r"];
-                    $lRows[$sKey]->tax_charged = $row["tax_charged_r"];
-                    $lRows[$sKey]->tax_retained = $row["tax_retained_r"];
-                    $lRows[$sKey]->total = $row["tot_r"];
-                    $lRows[$sKey]->price_unit_cur = $row["price_u_cur"];
-                    $lRows[$sKey]->price_unit_sys_cur = $row["price_u_sys_cur"];
-                    $lRows[$sKey]->subtotal_cur = $row["stot_cur_r"];
-                    $lRows[$sKey]->tax_charged_cur = $row["tax_charged_cur_r"];
-                    $lRows[$sKey]->tax_retained_cur = $row["tax_retained_cur_r"];
-                    $lRows[$sKey]->total_cur = $row["tot_cur_r"];
-                    $lRows[$sKey]->length = $row["len"];
-                    $lRows[$sKey]->surface = $row["surf"];
-                    $lRows[$sKey]->volume = $row["vol"];
-                    $lRows[$sKey]->mass = $row["mass"];
-                    $lRows[$sKey]->is_inventory = $row["b_inv"];
-                    $lRows[$sKey]->is_deleted = $row["b_del"];
-                    $lRows[$sKey]->external_id = $row["id_ety"];
-                    $lRows[$sKey]->item_id = $lWebItems[$row["fid_item"]];
-                    $lRows[$sKey]->unit_id = $lWebUnits[$row["fid_unit"]];
-                    $lRows[$sKey]->year_id = $lYearsId[$row["id_year"]];
-                    $lRows[$sKey]->document_id = $lWebDocuments[$row["id_year"].'_'.$row["id_doc"]];
-                    $lRows[$sKey]->created_by_id = 1;
-                    $lRows[$sKey]->updated_by_id = 1;
-                    $lRows[$sKey]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
+                    $oRow->concept_key = $row["concept_key"];
+                    $oRow->concept = $row["concept"];
+                    $oRow->reference = $row["ref"];
+                    $oRow->quantity = $row["qty"];
+                    $oRow->price_unit = $row["price_u"];
+                    $oRow->price_unit_sys = $row["price_u_sys"];
+                    $oRow->subtotal = $row["stot_r"];
+                    $oRow->tax_charged = $row["tax_charged_r"];
+                    $oRow->tax_retained = $row["tax_retained_r"];
+                    $oRow->total = $row["tot_r"];
+                    $oRow->price_unit_cur = $row["price_u_cur"];
+                    $oRow->price_unit_sys_cur = $row["price_u_sys_cur"];
+                    $oRow->subtotal_cur = $row["stot_cur_r"];
+                    $oRow->tax_charged_cur = $row["tax_charged_cur_r"];
+                    $oRow->tax_retained_cur = $row["tax_retained_cur_r"];
+                    $oRow->total_cur = $row["tot_cur_r"];
+                    $oRow->length = $row["len"];
+                    $oRow->surface = $row["surf"];
+                    $oRow->volume = $row["vol"];
+                    $oRow->mass = $row["mass"];
+                    $oRow->is_inventory = $row["b_inv"];
+                    $oRow->is_deleted = $row["b_del"];
+                    $oRow->external_id = $row["id_ety"];
+                    $oRow->item_id = $lWebItems[$row["fid_item"]];
+                    $oRow->unit_id = $lWebUnits[$row["fid_unit"]];
+                    $oRow->year_id = $lYearsId[$row["id_year"]];
+                    $oRow->created_by_id = 1;
+                    $oRow->updated_by_id = 1;
+                    $oRow->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
-                    $lRows[$sKey]->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
+                    $oRow->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows, $oRow->id_document_row);
 
-                    array_push($lRowsToWeb, $lRows[$sKey]);
+                    array_push($lRowsToWeb, $oRow);
                 }
              }
              else {
                 $oRow = SImportDocumentRows::siieToSiieWeb($row, $lWebDocuments, $lYearsId, $lWebItems, $lWebUnits);
-                $oRow->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows);
+                $oRow->taxRowsAux = $taxRows->importTaxRows($row["id_year"], $row["id_doc"], $row["id_ety"], $lWebDocuments, $lRows, 0);
                 array_push($lRowsToWeb, $oRow);
              }
            }
@@ -189,7 +175,7 @@ class SImportDocumentRows {
   /**
    * Transform a siie object to siie-web object
    *
-   * @param  Object $oSiieRow Objet of siie DB row
+   * @param  array $oSiieRow Objet of siie DB row
    * @param  array $lWebDocuments  array of documents to map siie to siie-web documents
    * @param  array $lYearsId  array of years to map siie to siie-web years
    * @param  array $lWebItems  array of items to map siie to siie-web items

@@ -62,6 +62,24 @@ class SImportDocuments
         '2030' => '15',
       ];
 
+      $lYearsId = [
+        '2016' => '1',
+        '2017' => '2',
+        '2018' => '3',
+        '2019' => '4',
+        '2020' => '5',
+        '2021' => '6',
+        '2022' => '7',
+        '2023' => '8',
+        '2024' => '9',
+        '2025' => '10',
+        '2026' => '11',
+        '2027' => '12',
+        '2028' => '13',
+        '2029' => '14',
+        '2030' => '15',
+      ];
+
       $lCurrencies = [
         '1' => '2',
         '2' => '3',
@@ -114,83 +132,82 @@ class SImportDocuments
 
       $result = $this->webcon->query($sql);
       // $this->webcon->close();
-
-      $lSiieDocuments = array();
-      $lWebDocuments = SDocument::get();
-      $lPartners = SPartner::get();
-      $lBranches = SBranch::get();
-      $lAddress = SAddress::get();
-      $lDocuments = array();
       $lDocumentsToWeb = array();
       $lWebPartners = array();
       $lWebBranches = array();
       $lWebAddresses = array();
-
-      foreach ($lWebDocuments as $key => $value) {
-          $lDocuments[$value->external_id] = $value;
-          $lDocsYear[$value->external_id] = $value->id_document;
-      }
-
-      foreach ($lPartners as $key => $partner) {
-          $lWebPartners[$partner->external_id] = $partner->id_partner;
-      }
-
-      foreach ($lBranches as $key => $branch) {
-          $lWebBranches[$branch->external_id] = $branch->id_branch;
-      }
-
-      foreach ($lAddress as $key => $address) {
-          $lWebAddresses[$address->external_id.'-'.$address->external_ad_id] = $address->id_branch_address;
-      }
-
+      
       if ($result->num_rows > 0) {
+        $lDocuments = SDocument::where(function ($query) use ($lYearsId, $iYearId) {
+                                    $query->where('year_id', '=', $lYearsId[$iYearId])
+                                          ->orWhere('year_id', '=', $lYearsId[$iYearId-1]);
+                                })
+                                ->get()
+                                ->keyBy('external_id');
+                                
+        $lDocsYear = SDocument::where(function ($query) use ($lYearsId, $iYearId) {
+                                    $query->where('year_id', '=', $lYearsId[$iYearId])
+                                          ->orWhere('year_id', '=', $lYearsId[$iYearId-1]);
+                                })
+                                ->get()
+                                ->pluck('id_document', 'external_id');
+
+        $lWebPartners = SPartner::get()->pluck('id_partner', 'external_id');
+        $lWebBranches = SBranch::get()->pluck('id_branch', 'external_id');
+        $lWebAddresses = SAddress::selectRaw('id_branch_address, CONCAT(external_id, "_", external_ad_id) as ad_key')
+                                    ->get()->pluck('id_branch_address', 'ad_key');
+
          // output data of each row
          while($row = $result->fetch_assoc()) {
-             if (array_key_exists($row["id_year"].'_'.$row["id_doc"], $lDocuments)) {
+             if ($lDocuments->has($row["id_year"].'_'.$row["id_doc"])) {
                 if ($row["ts_edit"] > $oImportation->last_importation ||
                       $row["ts_del"] > $oImportation->last_importation) {
                     $sKey = $row["id_year"].'_'.$row["id_doc"];
 
-                    $lDocuments[$sKey]->dt_date = $row["dt"];
-                    $lDocuments[$sKey]->dt_doc = $row["dt_doc"];
-                    $lDocuments[$sKey]->num = $row["num"];
-                    $lDocuments[$sKey]->service_num = $row["num_ser"];
-                    $lDocuments[$sKey]->subtotal = $row["stot_r"];
-                    $lDocuments[$sKey]->tax_charged = $row["tax_charged_r"];
-                    $lDocuments[$sKey]->tax_retained = $row["tax_retained_r"];
-                    $lDocuments[$sKey]->total = $row["tot_r"];
-                    $lDocuments[$sKey]->exchange_rate = $row["exc_rate"];
-                    $lDocuments[$sKey]->exchange_rate_sys = $row["exc_rate_sys"];
-                    $lDocuments[$sKey]->subtotal_cur = $row["stot_cur_r"];
-                    $lDocuments[$sKey]->tax_charged_cur = $row["tax_charged_cur_r"];
-                    $lDocuments[$sKey]->tax_retained_cur = $row["tax_retained_cur_r"];
-                    $lDocuments[$sKey]->total_cur = $row["tot_cur_r"];
-                    $lDocuments[$sKey]->is_closed = $row["b_close"];
-                    $lDocuments[$sKey]->is_deleted = $row["b_del"];
-                    $lDocuments[$sKey]->external_id = $row["id_year"].'_'.$row["id_doc"];
-                    $lDocuments[$sKey]->year_id = $lYears[$row["id_year"]];
-                    $lDocuments[$sKey]->billing_branch_id = $lWebBranches[$row["fid_cob"]];
-                    $lDocuments[$sKey]->doc_category_id = $row["fid_ct_dps"];
-                    $lDocuments[$sKey]->doc_class_id = $row["fid_cl_dps"];
-                    $lDocuments[$sKey]->doc_type_id = $row["fid_tp_dps"];
+                    $oDocument = SDocument::where('external_id', $sKey)
+                                            ->orderBy('id_document', 'ASC')
+                                            ->first();
+
+                    $oDocument->dt_date = $row["dt"];
+                    $oDocument->dt_doc = $row["dt_doc"];
+                    $oDocument->num = $row["num"];
+                    $oDocument->service_num = $row["num_ser"];
+                    $oDocument->subtotal = $row["stot_r"];
+                    $oDocument->tax_charged = $row["tax_charged_r"];
+                    $oDocument->tax_retained = $row["tax_retained_r"];
+                    $oDocument->total = $row["tot_r"];
+                    $oDocument->exchange_rate = $row["exc_rate"];
+                    $oDocument->exchange_rate_sys = $row["exc_rate_sys"];
+                    $oDocument->subtotal_cur = $row["stot_cur_r"];
+                    $oDocument->tax_charged_cur = $row["tax_charged_cur_r"];
+                    $oDocument->tax_retained_cur = $row["tax_retained_cur_r"];
+                    $oDocument->total_cur = $row["tot_cur_r"];
+                    $oDocument->is_closed = $row["b_close"];
+                    $oDocument->is_deleted = $row["b_del"];
+                    $oDocument->external_id = $row["id_year"].'_'.$row["id_doc"];
+                    $oDocument->year_id = $lYears[$row["id_year"]];
+                    $oDocument->billing_branch_id = $lWebBranches[$row["fid_cob"]];
+                    $oDocument->doc_category_id = $row["fid_ct_dps"];
+                    $oDocument->doc_class_id = $row["fid_cl_dps"];
+                    $oDocument->doc_type_id = $row["fid_tp_dps"];
                     try {
-                      $src_id = $lDocsYear[$lYears[$row["fid_src_year_n"]].'_'.$row["fid_src_doc_n"]];
+                      $src_id = $lDocsYear[$row["fid_src_year_n"].'_'.$row["fid_src_doc_n"]];
                     }
                     catch (\ErrorException $e) {
                       $src_id = 1;
                     }
-                    $lDocuments[$sKey]->doc_src_id = is_numeric($src_id) ? $src_id : 1;
-                    $lDocuments[$sKey]->doc_status_id = 1;
-                    $lDocuments[$sKey]->doc_sys_status_id = $row["fid_st_dps"];
-                    $lDocuments[$sKey]->currency_id = $lCurrencies[$row["fid_cur"]];
-                    $lDocuments[$sKey]->partner_id = $lWebPartners[$row["fid_bp_r"]];
-                    $lDocuments[$sKey]->branch_id = $lWebBranches[$row["fid_bpb"]];
-                    $lDocuments[$sKey]->address_id = $lWebAddresses[$row["fid_bpb"].'-'.$row["fid_add"]];
-                    $lDocuments[$sKey]->created_by_id = 1;
-                    $lDocuments[$sKey]->updated_by_id = 1;
-                    $lDocuments[$sKey]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
+                    $oDocument->doc_src_id = is_numeric($src_id) ? $src_id : 1;
+                    $oDocument->doc_status_id = 1;
+                    $oDocument->doc_sys_status_id = $row["fid_st_dps"];
+                    $oDocument->currency_id = $lCurrencies[$row["fid_cur"]];
+                    $oDocument->partner_id = $lWebPartners[$row["fid_bp_r"]];
+                    $oDocument->branch_id = $lWebBranches[$row["fid_bpb"]];
+                    $oDocument->address_id = $lWebAddresses[$row["fid_bpb"].'_'.$row["fid_add"]];
+                    $oDocument->created_by_id = 1;
+                    $oDocument->updated_by_id = 1;
+                    $oDocument->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
-                    array_push($lDocumentsToWeb, $lDocuments[$sKey]);
+                    array_push($lDocumentsToWeb, $oDocument);
                 }
              }
              else {
@@ -217,7 +234,7 @@ class SImportDocuments
   /**
    * Transform a siie object to siie-web object
    *
-   * @param  Object $oSiieDocument
+   * @param  array $oSiieDocument
    * @param  array  $lYears  array of years to map siie to siie-web years
    * @param  array  $lWebPartners  array of partners to map siie to siie-web partners
    * @param  array  $lCurrencies  array of currencies to map siie to siie-web currencies
@@ -251,7 +268,7 @@ class SImportDocuments
        $oDocument->doc_class_id = $oSiieDocument["fid_cl_dps"];
        $oDocument->doc_type_id = $oSiieDocument["fid_tp_dps"];
        try {
-         $src_id = $lDocsYear[$lYears[$oSiieDocument["fid_src_year_n"]].'_'.$oSiieDocument["fid_src_doc_n"]];
+         $src_id = $lDocsYear[$oSiieDocument["fid_src_year_n"].'_'.$oSiieDocument["fid_src_doc_n"]];
        }
        catch (\ErrorException $e) {
          $src_id = 1;
@@ -263,7 +280,7 @@ class SImportDocuments
        $oDocument->currency_id = $lCurrencies[$oSiieDocument["fid_cur"]];
        $oDocument->partner_id = $lWebPartners[$oSiieDocument["fid_bp_r"]];
        $oDocument->branch_id = $lWebBranches[$oSiieDocument["fid_bpb"]];
-       $oDocument->address_id = $lWebAddresses[$oSiieDocument["fid_bpb"].'-'.$oSiieDocument["fid_add"]];
+       $oDocument->address_id = $lWebAddresses[$oSiieDocument["fid_bpb"].'_'.$oSiieDocument["fid_add"]];
        $oDocument->created_by_id = 1;
        $oDocument->updated_by_id = 1;
        $oDocument->created_at = $oSiieDocument["ts_new"];

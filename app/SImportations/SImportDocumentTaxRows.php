@@ -1,10 +1,6 @@
 <?php namespace App\SImportations;
 
-use App\ERP\SDocument;
-use App\ERP\SDocumentRow;
 use App\ERP\SDocumentRowTax;
-use App\ERP\SItem;
-use App\ERP\SUnit;
 
 /**
  * this class import the data of document taxes from siie
@@ -41,32 +37,15 @@ class SImportDocumentTaxRows
    * @param  integer $iYearId  id of year in siie ('2017')
    * @param  integer $iDocExternalId
    * @param  integer $iExternalRowId
-   * @param  array   $lWebDocuments  array of documents to map siie to siie-web documents
-   * @param  array   $lWebDocumentRows  array of document rows to map siie to siie-web document rows
+   * @param  array   $lWebDocuments key: year_iddoc  array of documents to map siie to siie-web documents
+   * @param  array   $lWebDocumentRows key: documentid_ety  array of document rows to map siie to siie-web document rows
+   * @param int $idRow puede ser 0
    *
    * @return array array of tax rows
    */
-  public function importTaxRows($iYear = 0, $iDocExternalId = 0, $iExternalRowId = 0,
-                                $lWebDocuments = [], $lWebDocumentRows = [])
+  public function importTaxRows($iYear, $iDocExternalId, $iExternalRowId,
+                                $lWebDocuments, $lWebDocumentRows, $idRow)
   {
-      $lYears = [
-        '1' => '2016',
-        '2' => '2017',
-        '3' => '2018',
-        '4' => '2019',
-        '5' => '2020',
-        '6' => '2021',
-        '7' => '2022',
-        '8' => '2023',
-        '9' => '2024',
-        '10' => '2025',
-        '11' => '2026',
-        '12' => '2027',
-        '13' => '2028',
-        '14' => '2029',
-        '15' => '2030',
-      ];
-
       $lYearsId = [
         '2016' => '1',
         '2017' => '2',
@@ -85,27 +64,22 @@ class SImportDocumentTaxRows
         '2030' => '15',
       ];
 
-      if (array_key_exists(''.$lWebDocuments[$iYear.'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId, $lWebDocumentRows)) {
-        $lTaxes = SDocumentRowTax::where('year_id', $lYearsId[$iYear])
-                                  ->where('document_id', $lWebDocuments[$iYear.'_'.$iDocExternalId])
-                                  ->where('document_row_id', $lWebDocumentRows[''.$lWebDocuments[$iYear.'_'.$iDocExternalId].$lYearsId[$iYear].$iExternalRowId]);
-        $lTaxes->delete();
+      if ($idRow > 0) {
+        SDocumentRowTax::where('document_row_id', $idRow)->delete();
       }
 
       $sql = "SELECT *
               FROM trn_dps_ety_tax
-              where id_year = $iYear and id_doc = $iDocExternalId and id_ety = $iExternalRowId";
+              where id_year = ".$iYear." and id_doc = ".$iDocExternalId." and id_ety = ".$iExternalRowId."";
 
       $result = $this->webcon->query($sql);
       $lTaxRowsToWeb = array();
 
-      if ($result->num_rows > 0)
-      {
-         // output data of each row
-         while($row = $result->fetch_assoc())
-         {
-            array_push($lTaxRowsToWeb, SImportDocumentTaxRows::siieToSiieWeb($row, $lWebDocuments, $lYearsId, $lWebDocumentRows));
-         }
+      if ($result->num_rows > 0) {
+        // output data of each row
+        while ($row = $result->fetch_assoc()) {
+          array_push($lTaxRowsToWeb, SImportDocumentTaxRows::siieToSiieWeb($row, $lWebDocuments, $lYearsId));
+        }
       }
 
       return $lTaxRowsToWeb;
@@ -114,14 +88,14 @@ class SImportDocumentTaxRows
   /**
    * Transform a siie object to siie-web object
    *
-   * @param  Object $oSiieRow
+   * @param  array $oSiieRow
    * @param  array  $lWebDocuments  array of documents to map siie to siie-web documents
    * @param  array  $lYearsId  array of years to map siie to siie-web years
    * @param  array  $lWebDocumentRows  array of document rows to map siie to siie-web document rows
    *
    * @return SDocumentRowTax
    */
-  private static function siieToSiieWeb($oSiieRow = null, $lWebDocuments = [], $lYearsId = [], $lWebDocumentRows = [])
+  private static function siieToSiieWeb($oSiieRow, $lWebDocuments, $lYearsId)
   {
       $oRow = new SDocumentRowTax();
 
