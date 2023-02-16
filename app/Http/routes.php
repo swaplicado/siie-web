@@ -979,6 +979,10 @@ Route::group(['prefix' => 'qms'], function () {
         'uses' => 'ERP\SDocumentsController@View',
         'as' => 'siie.docs.view'
       ]);
+      Route::get('docs/{year}/fix',[
+        'uses' => 'ERP\SDocumentsController@fixDocuments',
+        'as' => 'siie.docs.view'
+      ]);
 
       /*
       * branches
