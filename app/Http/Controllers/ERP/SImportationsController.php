@@ -23,6 +23,7 @@ use App\SImportations\SImportDocumentTaxRows;
 use App\SImportations\SImportProductionOrders;
 use App\SImportations\SImportFormulas;
 use App\SImportations\SImportFormulaRows;
+use App\SUtils\SDocumentsUtils;
 
 class SImportationsController extends Controller
 {
@@ -195,6 +196,8 @@ class SImportationsController extends Controller
       $adds = $this->importAddresses();
       $docs = $this->importDocuments($oDbImport->val_text, session('work_date')->year);
       $rows1 = $this->importDocumentRows($oDbImport->val_text, session('work_date')->year);
+
+      SDocumentsUtils::fixDocuments(session('work_date')->year);
 
       return [$items, $partners, $branches, $adds, $docs, $rows1];
    }
