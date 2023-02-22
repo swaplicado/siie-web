@@ -28,6 +28,7 @@ class SDocumentsUtils {
 
         // Documentos por external id
         $lDocuments = SDocument::where('year_id', $lYearsId[$year])
+                                // ->where('external_id', '2023_1345')
                                 ->orderBy('external_id', 'ASC')
                                 ->distinct()
                                 ->get()
@@ -71,26 +72,27 @@ class SDocumentsUtils {
 
     private static function fixRows($idDoc) {
         $lRows = SDocumentRow::where('document_id', $idDoc)
-                                ->select('id_document_row')
+                                ->where('is_deleted', false)
+                                ->select('id_document_row', 'external_id')
                                 ->orderBy('id_document_row', 'ASC')
                                 ->orderBy('external_id', 'ASC')
                                 ->get();
 
-        $externals = collect([]);
+        $externals = [];
         foreach ($lRows as $oRow) {
-            if ($externals->has($oRow->external_id)) {
+            if (in_array($oRow->external_id, $externals)) {
                 try {
-                    SDocumentRow::where('id_document_row', $oRow->id_document_row)->update(['is_deteled' => true]);
+                    SDocumentRow::where('id_document_row', $oRow->id_document_row)->update(['is_deleted' => true]);
 
-                    SDocumentRowTax::where('document_row_id', $oRow->id_document_row)
-                                                ->update(['is_deteled' => true]);
+                    // SDocumentRowTax::where('document_row_id', $oRow->id_document_row)
+                    //                             ->update(['is_deleted' => true]);
                 }
                 catch (\Throwable $th) {
                     \Log::error($th);
                 }
             }
             else {
-                $externals->push($oRow->external_id);
+                $externals[] = $oRow->external_id;
             }
         }
     }
