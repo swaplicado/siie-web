@@ -350,7 +350,7 @@ class SStockManagment
                                 wms_mvts WHERE doc_invoice_id IN
                                 (SELECT id_document
                                 FROM erpu_documents
-                                WHERE doc_src_id = ed.id_document)
+                                WHERE doc_src_id = ed.id_document AND erpu_document_rows.is_deleted = 0)
                                 AND NOT is_deleted)";
 
         $sSubQueryOrders = "(SELECT COUNT(*) supp_ord
@@ -393,7 +393,7 @@ class SStockManagment
                                   \DB::raw(($bOrder ? $sSubQueryInvoices : "'0'")." AS supp_inv"),
                                   \DB::raw(($bInvoice ? $sSubQueryOrders : "'0'")." AS supp_ord"),
                                   \DB::raw(($bCreditNote ? $sSubQueryCreditNotes : "'0'")." AS supp_cn"),
-                                  \DB::raw('(SELECT SUM(quantity) FROM erpu_document_rows where document_id = ed.id_document) AS qty_doc'),
+                                  \DB::raw('(SELECT SUM(quantity) FROM erpu_document_rows where document_id = ed.id_document AND erpu_document_rows.is_deleted = 0) AS qty_doc'),
                                   \DB::raw('COALESCE(SUM(
                                               IF (wm.is_deleted IS NULL
                                               OR (wm.is_deleted IS NOT NULL
@@ -406,7 +406,7 @@ class SStockManagment
                                             FROM
                                                 erpu_document_rows
                                             WHERE
-                                                document_id = ed.id_document) - COALESCE(SUM(
+                                                document_id = ed.id_document AND erpu_document_rows.is_deleted = 0) - COALESCE(SUM(
                                                     IF (wm.is_deleted IS NULL
                                                     OR (wm.is_deleted IS NOT NULL
                                                     AND wm.is_deleted = FALSE
