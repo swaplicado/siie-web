@@ -7,11 +7,10 @@ use App\ERP\SDocumentRowTax;
  */
 class SImportDocumentTaxRows
 {
-  protected $webhost        = 'localhost';
-  protected $webusername    = 'root';
-  protected $webpassword    = 'msroot';
-  protected $webdbname      = '';
-  protected $webcon         = '';
+  protected $webusername;
+  protected $webpassword;
+  protected $webdbname;
+  protected $webcon;
 
   /**
    * __construct
@@ -20,8 +19,10 @@ class SImportDocumentTaxRows
    *                  can be a IP or name of host
    * @param string $sDbName name of data base to read
    */
-  function __construct($sHost, $sDbName)
+  function __construct($sHost = '', $sDbName = '')
   {
+      $this->webusername = env("SIIE_DB_USER", "");
+      $this->webpassword = env("SIIE_DB_PASS", "");
       $this->webdbname = $sDbName;
       $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");

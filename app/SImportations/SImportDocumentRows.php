@@ -9,11 +9,12 @@ use App\ERP\SUnit;
  * this class import the data of document rows from siie
  */
 class SImportDocumentRows {
-  protected $webhost        = 'localhost';
-  protected $webusername    = 'root';
-  protected $webpassword    = 'msroot';
-  protected $webdbname      = '';
-  protected $webcon         = '';
+  protected $webusername;
+  protected $webpassword;
+  protected $webdbname;
+  protected $webcon;
+
+  protected $webhost;
 
   /**
    * __construct
@@ -24,9 +25,11 @@ class SImportDocumentRows {
    */
   function __construct($sHost = '', $sDbName = '')
   {
-      $this->webhost = $sHost;
+      $this->webusername = env("SIIE_DB_USER", "");
+      $this->webpassword = env("SIIE_DB_PASS", "");
       $this->webdbname = $sDbName;
-      $this->webcon = mysqli_connect($this->webhost, $this->webusername, $this->webpassword, $this->webdbname);
+      $this->webhost = $sHost;
+      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno())
       {

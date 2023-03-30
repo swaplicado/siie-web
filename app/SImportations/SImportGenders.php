@@ -7,14 +7,12 @@ use App\ERP\SItemGroup;
  * this class import the data of item genders from siie
  */
 class SImportGenders {
-  protected $webhost        = 'localhost';
-  protected $webusername    = 'root';
-  protected $webpassword    = 'msroot';
-  protected $webdbname      = 'erp';
-  protected $webcon         = '';
-
   protected $aClasses       = '';
   protected $aTypes         = '';
+  protected $webusername;
+  protected $webpassword;
+  protected $webdbname;
+  protected $webcon;
 
   /**
    * receive the name of host to connect
@@ -24,37 +22,48 @@ class SImportGenders {
    */
   function __construct($sHost)
   {
-      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
-      $this->webcon->set_charset("utf8");
-      if (mysqli_connect_errno()) {
-          echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
-      }
+    $this->webusername = env("SIIE_DB_USER", "");
+    $this->webpassword = env("SIIE_DB_PASS", "");
+    $this->webdbname = env("SIIE_DB_NAME", "");
 
-      $this->aCatClass = [
-                        '1' => '2', // VENTAS
-                        '2' => '1', // ACTIVOS
-                        '3' => '1', // COMPRAS
-                        '4' => '3', // GASTOS
-                    ];
+    $this->webcon = mysqli_connect(
+      $sHost, $this->webusername,
+      $this->webpassword, $this->webdbname
+    );
+    $this->webcon->set_charset("utf8");
 
-      $this->aTypes = [];
-                            //cat, class, type, webId
-      array_push($this->aTypes, new TypesMap(1,1,1,5)); // PRODUCTO
-      array_push($this->aTypes, new TypesMap(1,1,2,7)); // PRODUCTO TERMINADO
-      array_push($this->aTypes, new TypesMap(1,1,3,6)); // PRODUCTO EN PROCESO
-      array_push($this->aTypes, new TypesMap(1,1,4,8)); // SUBPRODUCTO
-      array_push($this->aTypes, new TypesMap(1,1,5,9)); // DESECHO
-      array_push($this->aTypes, new TypesMap(1,2,1,3)); // SERVICIO
-      array_push($this->aTypes, new TypesMap(2,1,1,3)); // ACTIVO
-      array_push($this->aTypes, new TypesMap(3,1,1,1)); // MATERIAL DIRECTO
-      array_push($this->aTypes, new TypesMap(3,1,2,3)); // MATERIAL INDIRECTO
-      array_push($this->aTypes, new TypesMap(3,2,1,10)); // GASTO COMPRA
-      array_push($this->aTypes, new TypesMap(4,1,1,1)); // MATERIA PRIMA PRODUCCIÃ“N
-      array_push($this->aTypes, new TypesMap(4,1,2,11)); // MANO DE OBRA PRODUCCIÃ“N
-      array_push($this->aTypes, new TypesMap(4,1,3,12)); // GASTO INDIRECTO PRODUCCIÃ“N
-      array_push($this->aTypes, new TypesMap(4,2,1,1)); // MATERIA PRIMA OPERACIÃ“N
-      array_push($this->aTypes, new TypesMap(4,2,2,12)); // MANO DE OBRA OPERACIÃ“N
-      array_push($this->aTypes, new TypesMap(4,2,3,12)); // GASTO INDIRECTO OPERACIÃ“N
+    if (mysqli_connect_errno()) {
+      echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
+    }
+
+    $this->aClasses = [
+      '1' => '2',
+      // VENTAS
+      '2' => '1',
+      // ACTIVOS
+      '3' => '1',
+      // COMPRAS
+      '4' => '3', // GASTOS
+    ];
+
+    $this->aTypes = [];
+    //cat, class, type, webId
+    array_push($this->aTypes, new TypesMap(1, 1, 1, 5)); // PRODUCTO
+    array_push($this->aTypes, new TypesMap(1, 1, 2, 7)); // PRODUCTO TERMINADO
+    array_push($this->aTypes, new TypesMap(1, 1, 3, 6)); // PRODUCTO EN PROCESO
+    array_push($this->aTypes, new TypesMap(1, 1, 4, 8)); // SUBPRODUCTO
+    array_push($this->aTypes, new TypesMap(1, 1, 5, 9)); // DESECHO
+    array_push($this->aTypes, new TypesMap(1, 2, 1, 3)); // SERVICIO
+    array_push($this->aTypes, new TypesMap(2, 1, 1, 3)); // ACTIVO
+    array_push($this->aTypes, new TypesMap(3, 1, 1, 1)); // MATERIAL DIRECTO
+    array_push($this->aTypes, new TypesMap(3, 1, 2, 3)); // MATERIAL INDIRECTO
+    array_push($this->aTypes, new TypesMap(3, 2, 1, 10)); // GASTO COMPRA
+    array_push($this->aTypes, new TypesMap(4, 1, 1, 1)); // MATERIA PRIMA PRODUCCIÃ“N
+    array_push($this->aTypes, new TypesMap(4, 1, 2, 11)); // MANO DE OBRA PRODUCCIÃ“N
+    array_push($this->aTypes, new TypesMap(4, 1, 3, 12)); // GASTO INDIRECTO PRODUCCIÃ“N
+    array_push($this->aTypes, new TypesMap(4, 2, 1, 1)); // MATERIA PRIMA OPERACIÃ“N
+    array_push($this->aTypes, new TypesMap(4, 2, 2, 12)); // MANO DE OBRA OPERACIÃ“N
+    array_push($this->aTypes, new TypesMap(4, 2, 3, 12)); // GASTO INDIRECTO OPERACIÃ“N
   }
 
   /**
@@ -119,7 +128,7 @@ class SImportGenders {
                     $lGenders[$row["id_igen"]]->is_bulk = $row["b_bulk"];
                     $lGenders[$row["id_igen"]]->is_deleted = $row["b_del"];
                     $lGenders[$row["id_igen"]]->item_group_id = $lWebGroups[$row["fid_igrp"]];
-                    $lGenders[$row["id_igen"]]->item_class_id = SImportGenders::getClassId($this->aCatClass, $row["fid_ct_item"]);
+                    $lGenders[$row["id_igen"]]->item_class_id = SImportGenders::getClassId($this->aClasses, $row["fid_ct_item"]);
                     $lGenders[$row["id_igen"]]->item_type_id = SImportGenders::getTypeId($this->aTypes, $row["fid_ct_item"], $row["fid_cl_item"], $row["fid_tp_item"]);
                     $lGenders[$row["id_igen"]]->updated_at = $row["ts_edit"] > $row["ts_del"] ? $row["ts_edit"] : $row["ts_del"];
 
@@ -127,7 +136,7 @@ class SImportGenders {
                 }
              }
              else {
-                array_push($lGendersToWeb, SImportGenders::siieToSiieWeb($row, $lWebGroups, $this->aCatClass, $this->aTypes));
+                array_push($lGendersToWeb, SImportGenders::siieToSiieWeb($row, $lWebGroups, $this->aClasses, $this->aTypes));
              }
          }
       }

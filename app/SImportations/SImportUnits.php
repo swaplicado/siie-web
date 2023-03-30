@@ -6,11 +6,10 @@ use App\ERP\SUnit;
  * this class import the data of units from siie
  */
 class SImportUnits {
-  protected $webhost        = 'localhost';
-  protected $webusername    = 'root';
-  protected $webpassword    = 'msroot';
-  protected $webdbname      = 'erp';
-  protected $webcon         = '';
+  protected $webusername;
+  protected $webpassword;
+  protected $webdbname;
+  protected $webcon;
 
   /**
    * receive the name of host to connect
@@ -20,11 +19,19 @@ class SImportUnits {
    */
   function __construct($sHost)
   {
-      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
-      $this->webcon->set_charset("utf8");
-      if (mysqli_connect_errno()) {
-          echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
-      }
+    $this->webusername = env("SIIE_DB_USER", "");
+    $this->webpassword = env("SIIE_DB_PASS", "");
+    $this->webdbname = env("SIIE_DB_NAME", "");
+
+    $this->webcon = mysqli_connect(
+      $sHost, $this->webusername,
+      $this->webpassword, $this->webdbname
+    );
+    $this->webcon->set_charset("utf8");
+
+    if (mysqli_connect_errno()) {
+      echo 'Failed to connect to MySQL: ' . mysqli_connect_error();
+    }
   }
 
   /**
