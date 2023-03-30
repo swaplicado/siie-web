@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\WMS;
 
+use App\SUtils\SLotsUtils;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -1488,6 +1489,9 @@ class SMovsController extends Controller
                  $oData->oLastLot = $oValidation->getLastLot();
                  $oData->lErrors = $oValidation->getErrors();
                }
+
+               // Validación de lotes versus sistema siie
+               $oData->lNewLots = SMovsUtils::validateLotsSiie($oData->lNewLots);
            }
 
            $aPallets = $oRow->lPallets;

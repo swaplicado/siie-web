@@ -8,6 +8,9 @@ class SWmsLot extends SModel {
   protected $primaryKey = 'id_lot';
   protected $table = "wms_lots";
 
+  public $warning = [];
+  public $message = [];
+
   public function getTable()
   {
     return $this->table;

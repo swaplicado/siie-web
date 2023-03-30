@@ -199,7 +199,54 @@ class SRowsCore {
                  lLotsToCreate = new Array();
               }
               else {
-                 lLotsToCreate = serverData.lNewLots;
+                lLotsToCreate = serverData.lNewLots;
+                for (const oNLot of lLotsToCreate) {
+                  if (!!oNLot.warning && oNLot.warning.length > 0) {
+                    let message = "";
+                    let counter = 0;
+                    for (const warn of oNLot.warning) {
+                      switch (warn) {
+                        case "NOT_FOUND":
+                          message =
+                            "El lote capturado no existe en el sistema SIIE, ¿desea continuar?";
+                          break;
+                        case "NO_ITEM":
+                          message =
+                            "El ítem de este lote no se encuntra en el sistema, ¿desea continuar?";
+                          break;
+                        case "NO_UNIT":
+                          message =
+                            "La unidad de este lote no se encuntra en el sistema, ¿desea continuar?";
+                          break;
+                        case "DIFF_ITEM":
+                          message =
+                            "El ítem no corresponde con el item del lote en SIIE,\n" +
+                            oNLot.message[counter] +
+                            " " +
+                            "¿desea continuar?";
+                          break;
+                        case "DIFF_UNIT":
+                          message =
+                            "La unidad no corresponde con la unidad del lote en SIIE,\n" +
+                            oNLot.message[counter] +
+                            " " +
+                            "¿desea continuar?";
+                          break;
+
+                        default:
+                          break;
+                      }
+
+                      if (!confirm(message)) {
+                        guiValidations.hideAdd();
+                        guiFunctions.changeClassToSecondary("btn_lots");
+                        return false;
+                      }
+
+                      counter++;
+                    }
+                  }
+                }
               }
 
               rowsCore.completeRow(serverData.lLotRows);

@@ -178,7 +178,7 @@ class SLotsValidations {
      */
     private function lotExists($sLot = '')
     {
-        $oSearchLot = SWmsLot::where('lot', $sLot)->get();
+        $oSearchLot = SWmsLot::where('lot', $sLot)->where('is_deleted', false)->get();
 
         $oFoundLot = null;
         foreach ($oSearchLot as $lot) {

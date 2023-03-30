@@ -1,5 +1,8 @@
 <?php namespace App\SUtils;
 
+use App\ERP\SErpConfiguration;
+use App\ERP\SItem;
+use App\ERP\SUnit;
 use Carbon\Carbon;
 use App\SUtils\SGuiUtils;
 use App\SCore\SProductionCore;
@@ -507,4 +510,68 @@ class SMovsUtils {
               || $iMvtType == \Config::get('scwms.MVT_TP_IN_ADJ');
   }
 
+  public static function validateLotsSiie($lNewLots)
+  {
+    try {
+      $objLots = new SLotsUtils(null, null);
+      $lReturn = [];
+  
+      foreach ($lNewLots as $oNLot) {
+        $lSiieLots = $objLots->getSiieLotWithOutPP($oNLot->lot);
+        
+        $oNewLot = new \stdClass();
+        $oNewLot->lot = $oNLot->lot;
+        $oNewLot->item_id = $oNLot->item_id;
+        $oNewLot->unit_id = $oNLot->unit_id;
+        $oNewLot->dt_expiry = $oNLot->dt_expiry;
+        $oNewLot->warning = [];
+        $oNewLot->message = [];
+  
+        if (count($lSiieLots) == 0) {
+          $oNewLot->warning[] = "NOT_FOUND";
+          $oNewLot->message[] = "";
+          $lReturn[] = $oNewLot;
+          continue;
+        }
+  
+        foreach ($lSiieLots as $oSiieLot) {
+          $oItemSiie = SItem::where('external_id', $oSiieLot->id_item)->first();
+          if (is_null($oItemSiie)) {
+            $oNewLot->warning[] = "NO_ITEM";
+            $oNewLot->message[] = "";
+          }
+  
+          $oUnitSiie = SUnit::where('external_id', $oSiieLot->id_unit)->first();
+          if (is_null($oUnitSiie)) {
+            $oNewLot->warning[] = "NO_UNIT";
+            $oNewLot->message[] = "";
+          }
+  
+          $oItemWeb = SItem::find($oNewLot->item_id);
+          $oUnitWeb = SUnit::find($oNewLot->unit_id);
+  
+          if ($oNewLot->item_id != $oItemSiie->id_item) {
+            $oNewLot->warning[] = "DIFF_ITEM";
+            $oNewLot->message[] = "Ítem SIIE: ".$oSiieLot->item_key."-".$oSiieLot->item.", Ítem en SIIE WEB: ".$oItemWeb->code."-".$oItemWeb->name."";
+          }
+  
+          if ($oNewLot->unit_id != $oUnitSiie->id_unit) {
+            $oNewLot->warning[] = "DIFF_UNIT";
+            $oNewLot->message[] = "Unidad SIIE: ".$oSiieLot->unit."-".$oSiieLot->symbol.", Unidad en SIIE WEB: ".$oUnitWeb->code."-".$oUnitWeb->name."";
+          }
+        }
+  
+        $lReturn[] = $oNewLot;
+      }
+      
+      $objLots->closeConnection();
+  
+      return $lReturn;
+    }
+    catch (\Throwable $th) {
+      
+    }
+
+    return $lNewLots;
+  }
 }
