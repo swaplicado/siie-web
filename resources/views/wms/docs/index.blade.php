@@ -10,7 +10,11 @@
 
 @section('title', $title)
 
-<?php $sRoute='wms.docs'?>
+<?php 
+$sRoute='wms.docs';
+$iDocSource = 1;
+$iDocDestiny = 1;
+?>
 
 @section('content')
   @section('thefilters')
