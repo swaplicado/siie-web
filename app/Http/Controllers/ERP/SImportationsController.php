@@ -128,7 +128,7 @@ class SImportationsController extends Controller
       $bAddresses = $request->input('addresses');
       $iYear = $request->input('year');
       $sDbName = $request->input('db_name');
-      $sDbHost = $request->input('db_host');
+      $sDbHost = is_null($request->input('db_host')) ? env('SIIE_HOST', 'localhost') : $request->input('db_host');
       $bDocs = $request->input('docs');
       $bRows1 = $request->input('rows1');
       $bRows2 = $request->input('rows2');
