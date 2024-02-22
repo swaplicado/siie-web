@@ -71,7 +71,7 @@
 								@if ($iViewType == Config::get('scwms.DOC_VIEW.NORMAL'))
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_doc, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber((($doc->qty_sur + $doc->qty_sur_ind) * 100)/$doc->qty_doc, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_doc <= 0 ? 0 : ((($doc->qty_sur + $doc->qty_sur_ind) * 100)/$doc->qty_doc), \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td>
 										<a href="{{ route('siie.docs.view', $doc->id_document) }}" title="Ver documento"
 																																class="btn btn-info btn-sm">
@@ -83,7 +83,7 @@
 									<td class="small">{{ $doc->item }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
 			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_sur + $doc->qty_sur_ind, \Config::get('scsiie.FRMT.QTY')) }}</td>
-			            <td class="small" align="right">{{ session('utils')->formatNumber((($doc->qty_sur + $doc->qty_sur_ind) * 100)/$doc->qty_row, \Config::get('scsiie.FRMT.QTY')) }}</td>
+			            <td class="small" align="right">{{ session('utils')->formatNumber($doc->qty_row <= 0 ? 0 : ((($doc->qty_sur + $doc->qty_sur_ind) * 100)/$doc->qty_row), \Config::get('scsiie.FRMT.QTY')) }}</td>
 									<td class="small">{{ $doc->unit }}</td>
 								@endif
 								<td>
