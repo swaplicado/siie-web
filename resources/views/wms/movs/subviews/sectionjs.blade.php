@@ -19,7 +19,7 @@
     this.lOperation = <?php echo json_encode(\Config::get('scwms.OPERATION')) ?>; //input-output
     this.bIsExternalTransfer = <?php echo json_encode($bIsExternalTransfer) ?>;
 
-    this.iAssignType = <?php echo json_encode($iAssType) ?>;
+    this.iAssignType = <?php echo json_encode(isset($iAssType) ? $iAssType : 0) ?>;
 
     this.scmms = <?php echo json_encode(\Config::get('scmms')) ?>;
     this.scwms = <?php echo json_encode(\Config::get('scwms')) ?>;

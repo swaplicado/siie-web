@@ -12,10 +12,10 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              {!! Form::label('src_po', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+              {!! Form::label('src_po', isset($iAssType) && $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         trans('mms.labels.PRODUCTION_ORDER') :
                                         trans('mms.labels.SRC_PRODUCTION_ORDER').'*') !!}
-              {!! Form::select('src_po', $lSrcPO, $iSrcPO, ['class'=>'form-control select-one',
+              {!! Form::select('src_po', isset($lSrcPO) ? $lSrcPO : [], isset($iSrcPO) ? $iSrcPO : 0, ['class'=>'form-control select-one',
                                                               'onChange' => 'updatePOs()',
                                                               'style' => 'text-align: right',
                                                               'id' => 'src_po']) !!}
@@ -36,7 +36,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              {!! Form::label('src_item', $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
+              {!! Form::label('src_item', isset($iAssType) && $iAssType == \Config::get('scmms.ASSIGN_TYPE.MP') ?
                                         trans('mms.labels.PRODUCT') :
                                         trans('mms.labels.SRC_ITEM').'*') !!}
               {!! Form::label('src_item', '--', ['class'=>'form-control',

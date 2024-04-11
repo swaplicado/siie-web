@@ -350,7 +350,7 @@ class SStockManagment
                                 wms_mvts WHERE doc_invoice_id IN
                                 (SELECT id_document
                                 FROM erpu_documents
-                                WHERE doc_src_id = ed.id_document AND erpu_document_rows.is_deleted = 0)
+                                WHERE doc_src_id = ed.id_document AND erpu_documents.is_deleted = 0)
                                 AND NOT is_deleted)";
 
         $sSubQueryOrders = "(SELECT COUNT(*) supp_ord
