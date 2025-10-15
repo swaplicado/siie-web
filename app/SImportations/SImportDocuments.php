@@ -27,7 +27,10 @@ class SImportDocuments
       $this->webusername = env("SIIE_DB_USER", "");
       $this->webpassword = env("SIIE_DB_PASS", "");
       $this->webdbname = $sDbName;
-      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
+      if (is_null($sHost) || $sHost == '') {
+        $sHost = env("SIIE_HOST", "192.168.1.39");
+      }
+      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname, 3307);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno())
       {

@@ -25,10 +25,14 @@ class SImportAddresses {
         $this->webusername = env("SIIE_DB_USER", "");
         $this->webpassword = env("SIIE_DB_PASS", "");
         $this->webdbname = env("SIIE_DB_NAME", "");
+
+        if (is_null($sHost) || $sHost == '') {
+            $sHost = env("SIIE_HOST", "192.168.1.39");
+        }
         
         $this->webcon = mysqli_connect(
             $sHost, $this->webusername,
-            $this->webpassword, $this->webdbname
+            $this->webpassword, $this->webdbname, 3307
         );
         $this->webcon->set_charset("utf8");
 
