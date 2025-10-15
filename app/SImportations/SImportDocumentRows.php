@@ -4,6 +4,8 @@ use App\ERP\SDocumentRow;
 use App\ERP\SDocument;
 use App\ERP\SItem;
 use App\ERP\SUnit;
+use App\ERP\SDocumentRowTax;
+use Illuminate\Support\Facades\DB;
 
 /**
  * this class import the data of document rows from siie
@@ -165,9 +167,50 @@ class SImportDocumentRows {
       }
 
       foreach ($lRowsToWeb as $key => $oRow) {
-         $oRowCopy = clone $oRow;
-         $oRow->save();
-         $oRow->taxRows()->saveMany($oRowCopy->taxRowsAux);
+        // guardar cada fila en transacción usando upsert para evitar duplicados y sincronizar taxes
+        \DB::beginTransaction();
+
+        try {
+          // clave única lógica
+          $uniqueKey = [
+            'document_id' => $oRow->document_id,
+            'external_id' => $oRow->external_id
+          ];
+
+          // atributos a guardar (excluye propiedades no persistibles)
+          $attrs = $oRow->getAttributes();
+          // Si el modelo trae la PK desde SIIE, no la usamos para crear
+          if (isset($attrs['id_document_row'])) {
+            unset($attrs['id_document_row']);
+          }
+
+          // updateOrCreate garantiza upsert por la clave lógica
+          $oSaved = SDocumentRow::updateOrCreate($uniqueKey, $attrs);
+
+          // mantener timestamps si vienen del SIIE
+          if (isset($attrs['created_at'])) {
+            $oSaved->created_at = $attrs['created_at'];
+          }
+          if (isset($attrs['updated_at'])) {
+            $oSaved->updated_at = $attrs['updated_at'];
+          }
+          $oSaved->save();
+
+          // sincronizar tax rows: eliminar viejos y guardar los nuevos
+          SDocumentRowTax::where('document_row_id', $oSaved->id_document_row)->delete();
+
+          if (!empty($oRow->taxRowsAux)) {
+            $oSaved->taxRows()->saveMany($oRow->taxRowsAux);
+          }
+          \DB::commit();
+
+        } catch (\Exception $e) {
+          \DB::rollback();
+          throw $e;
+        } catch (\Throwable $e) {
+          \DB::rollback();
+          throw $e;
+        }
       }
 
       SImportUtils::saveImportation($oImportation, $iYearId);
