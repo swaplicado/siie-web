@@ -58,7 +58,7 @@ return [
             'database'  => env('DB_DATABASE', 'forge'),
             'username'  => env('DB_USERNAME', 'forge'),
             'password'  => env('DB_PASSWORD', ''),
-            'port'      => '3307',
+            'port'      => '3306',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
@@ -68,7 +68,7 @@ return [
         'siie_sap_mysql' => [
             'driver' => 'mysql',
             'host' => env('SIIE_SAP_DB_HOST', 'localhost'),
-            'port'      => '3307',
+            'port'      => '3306',
             'database' => env('SIIE_SAP_DB_DATABASE', 'erp'),
             'username' => env('SIIE_SAP_DB_USERNAME', 'root'),
             'password' => env('SIIE_SAP_DB_PASSWORD', 'Adrian2021DB'),
@@ -79,7 +79,7 @@ return [
         'erp_mysql' => [
             'driver' => 'mysql',
             'host' => env('ERP_DB_HOST', 'localhost'),
-            'port'      => '3307',
+            'port'      => '3306',
             'database' => env('ERP_DB_DATABASE', 'erp'),
             'username' => env('ERP_DB_USERNAME', 'root'),
             'password' => env('ERP_DB_PASSWORD', 'Adrian2021DB'),
@@ -90,7 +90,7 @@ return [
         'erp_sc_mysql' => [
             'driver' => 'mysql',
             'host' => env('ERP_SC_DB_HOST', 'localhost'),
-            'port'      => '3307',
+            'port'      => '3306',
             'database' => env('ERP_SC_DB_DATABASE', 'erp'),
             'username' => env('ERP_SC_DB_USERNAME', 'root'),
             'password' => env('ERP_SC_DB_PASSWORD', 'Adrian2021DB'),
@@ -108,14 +108,14 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
-            'port'      => '3307',
+            'port'      => '3306',
         ],
 
         'siie' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST_ERP', 'localhost'),
             'database'  => env('DB_DATABASE_ERP', 'forge'),
-            'port'      => '3307',
+            'port'      => '3306',
             'username'  => env('DB_USERNAME_ERP', 'forge'),
             'password'  => env('DB_PASSWORD_ERP', ''),
             'charset'   => 'utf8',
@@ -127,7 +127,7 @@ return [
         'company' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST_IN', 'localhost'),
-            'port'      => '3307',
+            'port'      => '3306',
             'database'  => env('DB_DATABASE_IN', 'forge'),
             'username'  => env('DB_USERNAME_IN', 'forge'),
             'password'  => env('DB_PASSWORD_IN', ''),
