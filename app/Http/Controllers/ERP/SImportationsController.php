@@ -129,13 +129,13 @@ class SImportationsController extends Controller
       $bAddresses = $request->input('addresses');
       $iYear = $request->input('year');
       $sDbName = $request->input('db_name');
-      $sDbHost = is_null($request->input('db_host')) ? env('SIIE_HOST', '192.168.1.39') : $request->input('db_host');
+      $sDbHost = is_null($request->input('db_host')) ? env('SIIE_HOST', 'localhost') : $request->input('db_host');
       $bDocs = $request->input('docs');
       $bRows1 = $request->input('rows1');
       $bRows2 = $request->input('rows2');
 
       Log::info('Importation: ' . $sDbName . ' ' . $iYear);
-      Log::info('Importation: ' . env('SIIE_HOST', '192.168.1.39') . ' ');
+      Log::info('Importation: ' . env('SIIE_HOST', 'localhost') . ' ');
       $this->sHost = $sDbHost;
       $items = 0;
       $partners = 0;

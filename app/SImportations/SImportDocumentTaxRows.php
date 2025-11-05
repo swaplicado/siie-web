@@ -24,7 +24,7 @@ class SImportDocumentTaxRows
       $this->webusername = env("SIIE_DB_USER", "");
       $this->webpassword = env("SIIE_DB_PASS", "");
       $this->webdbname = $sDbName;
-      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
+      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname, 3306);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno())
       {

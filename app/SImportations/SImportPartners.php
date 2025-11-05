@@ -21,7 +21,7 @@ class SImportPartners {
     function __construct($sHost)
     {
         if (is_null($sHost) || $sHost == '') {
-            $sHost = env("SIIE_HOST", "192.168.1.39");
+            $sHost = env("SIIE_HOST", "localhost");
         }
         $this->webusername = env("SIIE_DB_USER", "");
         $this->webpassword = env("SIIE_DB_PASS", "");
@@ -29,7 +29,7 @@ class SImportPartners {
         
         $this->webcon = mysqli_connect(
             $sHost, $this->webusername,
-            $this->webpassword, $this->webdbname, 3307
+            $this->webpassword, $this->webdbname, 3306
         );
         $this->webcon->set_charset("utf8");
 

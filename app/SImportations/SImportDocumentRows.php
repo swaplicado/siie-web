@@ -29,9 +29,12 @@ class SImportDocumentRows {
   {
       $this->webusername = env("SIIE_DB_USER", "");
       $this->webpassword = env("SIIE_DB_PASS", "");
+      if (is_null($sHost) || $sHost == '') {
+        $sHost = env("SIIE_HOST", "localhost");
+      }
       $this->webdbname = $sDbName;
       $this->webhost = $sHost;
-      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname);
+      $this->webcon = mysqli_connect($sHost, $this->webusername, $this->webpassword, $this->webdbname, 3306);
       $this->webcon->set_charset("utf8");
       if (mysqli_connect_errno())
       {
